@@ -1061,3 +1061,80 @@ NumericMatrix cpp_jaccard_cross_pairs(
   }
   return result;
 }
+
+
+// ---------------------------------------------------------------------------
+// Per-tree entropy / information batch functions
+//
+// These replace per-tree R vapply() calls in .FastDistPath() with a single
+// C++ call over all trees, eliminating N R->C++ round-trips.
+// ---------------------------------------------------------------------------
+
+// ClusteringEntropy: sum of binary_entropy(k/n) over splits, in nats then
+// converted to bits (divide by log(2)).
+// binary_entropy(p) = -(p log p + (1-p) log(1-p))
+// [[Rcpp::export]]
+NumericVector cpp_clustering_entropy_batch(
+    const List& splits_list,
+    const int   n_tip
+) {
+  const int N = splits_list.size();
+  NumericVector result(N);
+  if (N == 0 || n_tip <= 0) return result;
+
+  const double invN = 1.0 / static_cast<double>(n_tip);
+  constexpr double invLog2 = 1.442695040888963387005;
+
+  for (int i = 0; i < N; ++i) {
+    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
+    double total = 0.0;
+    for (int16 s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k <= 0 || k >= n_tip) continue;
+      const double p = k * invN;
+      const double q = 1.0 - p;
+      total += -(p * std::log(p) + q * std::log1p(-p));
+    }
+    result[i] = total * invLog2;
+  }
+  return result;
+}
+
+// SplitwiseInfo: sum of (Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k))
+// over splits.
+// Log2Rooted(m) = log2((2m-3)!!) = sum_{j=1,3,...,2m-3} log2(j)
+// Log2Unrooted(n) = Log2Rooted(n) - log2(2n-3)  [= log2((2n-5)!!)]
+//
+// We precompute a table of Log2Rooted values up to n_tip.
+// [[Rcpp::export]]
+NumericVector cpp_splitwise_info_batch(
+    const List& splits_list,
+    const int   n_tip
+) {
+  const int N = splits_list.size();
+  NumericVector result(N);
+  if (N == 0 || n_tip < 4) return result;
+
+  // Precompute Log2Rooted table: log2((2m-3)!!) for m = 0..n_tip
+  // Log2Rooted(0) = Log2Rooted(1) = 0 (convention)
+  // Log2Rooted(2) = log2(1) = 0
+  // Log2Rooted(m) = Log2Rooted(m-1) + log2(2m-3)
+  std::vector<double> l2r(n_tip + 1, 0.0);
+  for (int m = 3; m <= n_tip; ++m) {
+    l2r[m] = l2r[m - 1] + std::log2(2 * m - 3);
+  }
+  // Log2Unrooted(n) = log2((2n-5)!!) = Log2Rooted(n) - log2(2n-3)
+  const double l2u_n = l2r[n_tip] - std::log2(2 * n_tip - 3);
+
+  for (int i = 0; i < N; ++i) {
+    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
+    double total = 0.0;
+    for (int16 s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k < 2 || (n_tip - k) < 2) continue;
+      total += l2u_n - l2r[k] - l2r[n_tip - k];
+    }
+    result[i] = total;
+  }
+  return result;
+}

@@ -24,7 +24,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
   # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
                         cpp_msi_all_pairs,
-                        SplitwiseInfo.Splits)
+                        cpp_splitwise_info_batch)
   if (!is.null(fast)) {
     msi <- fast[["info"]]
     treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])

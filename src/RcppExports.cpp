@@ -377,6 +377,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_clustering_entropy_batch
+NumericVector cpp_clustering_entropy_batch(const List& splits_list, const int n_tip);
+RcppExport SEXP _TreeDist_cpp_clustering_entropy_batch(SEXP splits_listSEXP, SEXP n_tipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits_list(splits_listSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_tip(n_tipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_clustering_entropy_batch(splits_list, n_tip));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_splitwise_info_batch
+NumericVector cpp_splitwise_info_batch(const List& splits_list, const int n_tip);
+RcppExport SEXP _TreeDist_cpp_splitwise_info_batch(SEXP splits_listSEXP, SEXP n_tipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits_list(splits_listSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_tip(n_tipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_splitwise_info_batch(splits_list, n_tip));
+    return rcpp_result_gen;
+END_RCPP
+}
 // path_vector
 IntegerVector path_vector(IntegerMatrix edge);
 RcppExport SEXP _TreeDist_path_vector(SEXP edgeSEXP) {
@@ -610,6 +634,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_msi_cross_pairs", (DL_FUNC) &_TreeDist_cpp_msi_cross_pairs, 4},
     {"_TreeDist_cpp_shared_phylo_cross_pairs", (DL_FUNC) &_TreeDist_cpp_shared_phylo_cross_pairs, 4},
     {"_TreeDist_cpp_jaccard_cross_pairs", (DL_FUNC) &_TreeDist_cpp_jaccard_cross_pairs, 6},
+    {"_TreeDist_cpp_clustering_entropy_batch", (DL_FUNC) &_TreeDist_cpp_clustering_entropy_batch, 2},
+    {"_TreeDist_cpp_splitwise_info_batch", (DL_FUNC) &_TreeDist_cpp_splitwise_info_batch, 2},
     {"_TreeDist_path_vector", (DL_FUNC) &_TreeDist_path_vector, 1},
     {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
     {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},

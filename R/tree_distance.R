@@ -132,7 +132,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 # fast path is not applicable.
 #' @importFrom TreeTools as.Splits TipLabels
 .FastDistPath <- function(tree1, tree2, reportMatching,
-                          cpp_batch_fn, InfoSplitsFn) {
+                          cpp_batch_fn, cpp_entropy_fn) {
   if (!is.null(tree2) || reportMatching) return(NULL)
   if (inherits(tree1, c("phylo", "Splits"))) return(NULL)
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
@@ -151,7 +151,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   n_threads <- as.integer(getOption("mc.cores", 1L))
   
   info_vec <- cpp_batch_fn(splits_list, as.integer(nTip), n_threads)
-  entropies <- vapply(splits_list, InfoSplitsFn, double(1L))
+  entropies <- cpp_entropy_fn(splits_list, as.integer(nTip))
   
   list(
     info = structure(info_vec, class = "dist",

@@ -71,7 +71,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   if (!similarity) {
     fast <- .FastDistPath(tree1, tree2, reportMatching,
                           cpp_rf_info_all_pairs,
-                          SplitwiseInfo.Splits)
+                          cpp_splitwise_info_batch)
     if (!is.null(fast)) {
       treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
       unnormalized <- treesIndependentInfo - fast[["info"]] - fast[["info"]]

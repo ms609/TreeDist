@@ -245,7 +245,7 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
                         cpp_shared_phylo_all_pairs,
-                        SplitwiseInfo.Splits)
+                        cpp_splitwise_info_batch)
   if (!is.null(fast)) {
     spi <- fast[["info"]]
     treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
@@ -288,7 +288,7 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
                         cpp_mutual_clustering_all_pairs,
-                        ClusteringEntropy.Splits)
+                        cpp_clustering_entropy_batch)
   if (!is.null(fast)) {
     mci <- fast[["info"]]
     treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])

@@ -152,6 +152,14 @@ cpp_jaccard_cross_pairs <- function(splits_a, splits_b, n_tip, k = 1.0, allow_co
     .Call(`_TreeDist_cpp_jaccard_cross_pairs`, splits_a, splits_b, n_tip, k, allow_conflict, n_threads)
 }
 
+cpp_clustering_entropy_batch <- function(splits_list, n_tip) {
+    .Call(`_TreeDist_cpp_clustering_entropy_batch`, splits_list, n_tip)
+}
+
+cpp_splitwise_info_batch <- function(splits_list, n_tip) {
+    .Call(`_TreeDist_cpp_splitwise_info_batch`, splits_list, n_tip)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }

@@ -900,14 +900,76 @@ cross-pairs and 5 × 5 all-pairs tests.
 
 ---
 
+### C++ batch entropy/info functions (DONE, kept)
+
+Replaced per-tree `vapply(splits_list, InfoSplitsFn, double(1L))` in
+`.FastDistPath()` with two C++ batch functions in `pairwise_distances.cpp`:
+
+- **`cpp_clustering_entropy_batch(splits_list, n_tip)`**: computes per-tree
+  clustering entropy (binary entropy of split proportions, sum over splits).
+  Used by `ClusteringInfoDistance`.
+- **`cpp_splitwise_info_batch(splits_list, n_tip)`**: computes per-tree
+  splitwise information (`Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k)`
+  summed over splits). Uses a precomputed `Log2Rooted` table. Used by
+  `PhylogeneticInfoDistance`, `MatchingSplitInfoDistance`, `InfoRobinsonFoulds`.
+
+**Micro-benchmark (100 trees × 50-tip, debug build):**
+
+| Function | R vapply | C++ batch | Speedup |
+|---|---|---|---|
+| ClusteringEntropy | 2.64 ms | 0.58 ms | 4.6× |
+| SplitwiseInfo | 17.84 ms | 0.40 ms | **45×** |
+
+SplitwiseInfo was especially slow in R because `SplitwiseInfo.Splits` calls
+`vapply(inSplit, Log2Rooted.int, 0)` internally — a nested R dispatch loop.
+
+**Numerical accuracy:** ClusteringEntropy: max |diff| ≈ 1.4e-14 (identical
+precision). SplitwiseInfo: max |diff| ≈ 3.7e-10 for 200-tip trees (cumulative
+log2 summation in the C++ table vs TreeTools' precomputed lookup).
+
+**Files changed:** `src/pairwise_distances.cpp` (new functions),
+`R/tree_distance.R` (`.FastDistPath` parameter change),
+`R/tree_distance_info.R`, `R/tree_distance_msi.R`, `R/tree_distance_rf.R`
+(callers updated).
+
+---
+
+## Combined A/B Benchmark: main vs dev (all optimizations)
+
+**Baseline (ref):** main branch (OpenMP PR #176 only).
+**Dev:** posit-optim-5 branch (all optimizations listed above).
+Release build, same-process comparison via `compare-ab.R`.
+Trees: `as.phylo(0:N, tipLabels = ...)` — similar trees (high split overlap).
+
+| Metric | Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|---|
+| CID | 100×50-tip | 69.6 | 47.0 | **−32%** |
+| CID | 40×200-tip | 179 | 140 | **−22%** |
+| MSD | 100×50-tip | 63.1 | 16.9 | **−73%** |
+| MSD | 40×200-tip | 214 | 69.9 | **−67%** |
+| PID | 100×50-tip | 119 | 90.9 | **−24%** |
+| PID | 40×200-tip | 296 | 266 | **−10%** |
+| MSID | 100×50-tip | 110 | 84.1 | **−24%** |
+| MSID | 40×200-tip | 380 | 342 | **−10%** |
+| IRF | 100×50-tip | 37.4 | 16.7 | **−55%** |
+| IRF | 40×200-tip | 62.2 | 32.0 | **−49%** |
+| CID cross 20×30 | 50-tip | 16.6 | 10.1 | **−39%** |
+| MSD cross 20×30 | 50-tip | 13.6 | 3.5 | **−74%** |
+| LAPJV 400 | (canary) | 1.26 | 1.26 | neutral |
+| LAPJV 1999 | (canary) | 89.7 | 90.2 | neutral |
+
+Correctness: all metrics max |ref − dev| ≤ 5.5e-12 (floating-point level).
+LAPJV canary: neutral (no LAP regression).
+
+---
+
 ## Remaining Optimization Opportunities
 
-- **C++ batch entropy function** to replace per-tree R dispatch (~3% potential)
 - **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
 - LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
   Opportunities" above)
 - SPR distance profiling under VTune
-- **ManyMany batch paths** for *Distance functions: `.FastDistPath` currently
+- **ManyMany fast paths** for *Distance functions: `.FastDistPath` currently
   only handles the all-pairs case; the ManyMany case goes through
   `.SplitDistanceManyMany` which has the C++ batch path but still has
   duplicate `as.Splits()` in the calling distance functions
