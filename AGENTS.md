@@ -745,3 +745,51 @@ memset — caused by per-pair allocation and zero-initialisation of CostMatrix
 Numerically exact (max |ref − dev| = 0).  Gains are largest on similar trees
 (where exact-match detection makes per-pair compute cheap, so allocation overhead
 is a larger fraction) but also meaningful on random trees (5–10% for 50-tip).
+
+### R-level overhead investigation for ClusteringInfoDistance (investigated, not yet optimised)
+
+Profiled the R-level overhead in `ClusteringInfoDistance()` (CID) to determine
+whether further gains are available above the C++ layer.
+
+**Breakdown** (CID 100 × 50-tip, ~67ms total):
+
+| Component | Time | Notes |
+|---|---|---|
+| `as.Splits` (batch path) | ~2.1 ms | Necessary — converts trees to SplitList |
+| `as.Splits` (entropy path) | ~3.5 ms | **DUPLICATE** — same trees re-converted |
+| Per-tree R dispatch for `ClusteringEntropy.Splits` | ~2.2 ms | `vapply` over N trees |
+| Other (dispatch, `structure()`, etc.) | ~0.5 ms | General R overhead |
+| **Total R overhead** | **~8.2 ms (12%)** | |
+
+**Root cause:** `ClusteringInfoDistance()` calls two separate paths:
+1. `MutualClusteringInfo()` → `.SplitDistanceAllPairs()` → `as.Splits()` + C++ batch
+2. `.MaxValue(tree1, tree2, ClusteringEntropy)` → `as.Splits()` **again** + per-tree
+   `ClusteringEntropy.Splits` via `vapply`
+
+The duplicate `as.Splits()` (3.5ms) and per-tree R dispatch (2.2ms) together account
+for ~5.7ms (~8.5% of total).
+
+**Potential fixes** (in order of impact/complexity):
+
+1. **Avoid duplicate `as.Splits()`** — pass pre-computed splits from batch path to
+   entropy computation (~5% speedup, simple R-level change)
+2. **Add C++ `cpp_clustering_entropy_batch()`** — compute per-tree entropy in one C++
+   call instead of per-tree R dispatch (~3% additional speedup)
+3. **Fuse into batch function** — return per-tree entropies as attribute alongside
+   pairwise scores (no separate normalisation pass; most complex)
+
+**Cost-benefit note:** the overhead is modest in absolute terms (~6ms for 50-tip,
+~4ms for 200-tip) and scales O(N) rather than O(N²).  It matters most for high N
+(e.g., 1000 × 50-tip trees: ~60ms overhead vs ~500ms compute).
+
+---
+
+## Remaining Optimization Opportunities
+
+- **Duplicate `as.Splits()` elimination** in `ClusteringInfoDistance` normalisation
+  (~5% potential speedup, simple R-level change — see above)
+- **C++ batch entropy function** to replace per-tree R dispatch (~3% potential)
+- **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
+- LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
+  Opportunities" above)
+- SPR distance profiling under VTune
