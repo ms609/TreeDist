@@ -3,6 +3,9 @@
 #include <algorithm> // for std::copy
 #include <cmath> // for sqrt
 #include <memory> // for make_unique
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 using namespace Rcpp;
 
 #define PO_PARENT(i) edge(postorder[i] - 1, 0)
@@ -136,47 +139,66 @@ NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1,
   const int col1 = vec1.cols();
   const int col2 = vec2.cols();
   const int n_row = vec1.rows();
-  
+
   assert(n_row == vec2.rows());
-  
+
   NumericMatrix ret(col1, col2);
-  for (int i = 0; i < col1; ++i) {
-    for (int j = 0; j < col2; ++j) {
-      int val = 0;
-      for (int row = 0; row < n_row; ++row) {
-        const int x = vec1(row, i) - vec2(row, j);
-        val += x * x;
-      }
-      ret(i, j) = std::sqrt(val);
+  const int n_pairs = col1 * col2;
+  const int* v1 = INTEGER(vec1);
+  const int* v2 = INTEGER(vec2);
+  double* out = REAL(ret);
+
+  #pragma omp parallel for schedule(dynamic) if(n_pairs > 100)
+  for (int idx = 0; idx < n_pairs; ++idx) {
+    const int i = idx / col2;
+    const int j = idx % col2;
+    const int* col_i = v1 + (std::size_t)i * n_row;
+    const int* col_j = v2 + (std::size_t)j * n_row;
+    int64_t val = 0;
+    for (int row = 0; row < n_row; ++row) {
+      const int64_t x = col_i[row] - col_j[row];
+      val += x * x;
     }
+    out[(std::size_t)j * col1 + i] = std::sqrt((double)val);
   }
-  
+
   return ret;
+}
+
+// dist-order index for pair (i, j) where i < j, in an n×n lower-triangle:
+//   offset = n*i - i*(i+1)/2 + (j - i - 1)
+static inline int dist_index(int i, int j, int n) {
+  return n * i - i * (i + 1) / 2 + (j - i - 1);
 }
 
 // [[Rcpp::export]]
 NumericVector pair_diff_euclidean(const IntegerMatrix vecs) {
-  const int 
+  const int
     n_col = vecs.cols(),
     n_row = vecs.rows()
   ;
-  
-  int ptr = n_col * (n_col - 1) / 2;
-  NumericVector ret(ptr);
-  for (int i = n_col - 1; i--; ) {
-    for (int j_it = n_col - i - 1; j_it--; ) {
-      const int j = i + 1 + j_it;
-      assert(ptr > 0);
-      assert(j > i);
-      
-      int val = 0;
-      for (int row = n_row; row--; ) {
-        const int x = vecs(row, i) - vecs(row, j);
+
+  const int n_pairs = n_col * (n_col - 1) / 2;
+  NumericVector ret(n_pairs);
+  const int* v = INTEGER(vecs);
+  double* out = REAL(ret);
+
+  // Linearise the upper triangle: pair index k maps to (i, j) with i < j.
+  // Parallelise over the outer index i (each i owns a contiguous block of
+  // output slots), avoiding the need to map linear k → (i,j).
+  #pragma omp parallel for schedule(dynamic) if(n_pairs > 100)
+  for (int i = 0; i < n_col - 1; ++i) {
+    const int* col_i = v + (std::size_t)i * n_row;
+    for (int j = i + 1; j < n_col; ++j) {
+      const int* col_j = v + (std::size_t)j * n_row;
+      int64_t val = 0;
+      for (int row = 0; row < n_row; ++row) {
+        const int64_t x = col_i[row] - col_j[row];
         val += x * x;
       }
-      ret[--ptr] = std::sqrt(val);
+      out[dist_index(i, j, n_col)] = std::sqrt((double)val);
     }
   }
-  
+
   return ret;
 }
