@@ -66,6 +66,18 @@ expected_mi <- function(ni, nj) {
     .Call(`_TreeDist_expected_mi`, ni, nj)
 }
 
+cpp_kc_vector <- function(edge, tip_order) {
+    .Call(`_TreeDist_cpp_kc_vector`, edge, tip_order)
+}
+
+vec_diff_euclidean <- function(vec1, vec2) {
+    .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
+}
+
+pair_diff_euclidean <- function(vecs) {
+    .Call(`_TreeDist_pair_diff_euclidean`, vecs)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }
@@ -162,18 +174,6 @@ cpp_splitwise_info_batch <- function(splits_list, n_tip) {
 
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
-}
-
-cpp_kc_vector <- function(edge, tip_order) {
-    .Call(`_TreeDist_cpp_kc_vector`, edge, tip_order)
-}
-
-vec_diff_euclidean <- function(vec1, vec2) {
-    .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
-}
-
-pair_diff_euclidean <- function(vecs) {
-    .Call(`_TreeDist_pair_diff_euclidean`, vecs)
 }
 
 reduce_trees <- function(x, y, original_label) {
