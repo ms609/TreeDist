@@ -102,6 +102,33 @@ test_that("cpp_jaccard_all_pairs: k = Inf and k != 1", {
                tolerance = 1e-10)
 })
 
+test_that("cpp_msd_all_pairs: unequal split counts, no exact matches", {
+  # Three 6-tip trees with different numbers of non-trivial splits:
+  #
+  #   tr_3  — 3 splits: fully resolved
+  #   tr_1a — 1 split:  {t1,t2,t3} | {t4,t5,t6}
+  #   tr_1b — 1 split:  {t1,t4}    | {t2,t3,t5,t6}
+  #
+  # tr_1a and tr_1b share no splits (including complements), so their
+  # comparison with tr_3 exercises:
+  #   - line 361: padRowAfterCol when a.n_splits > b.n_splits
+  #     (pair col=0 [tr_3, 3 splits] > row=1 [tr_1a, 1 split])
+  #   - lines 393–396: the else branch (exact_n == 0) with unequal counts
+  #     (pair col=0 [tr_3] vs row=1 [tr_1a], no shared splits)
+  tr_3  <- ape::read.tree(text = "(((t1,t4),(t2,t5)),(t3,t6));")
+  tr_1a <- ape::read.tree(text = "((t1,t2,t3),(t4,t5,t6));")
+  tr_1b <- ape::read.tree(text = "((t1,t4),(t2,t3,t5,t6));")
+  trees <- structure(list(tr_3, tr_1a, tr_1b), class = "multiPhylo")
+
+  r <- MatchingSplitDistance(trees)
+  m <- as.matrix(r)
+
+  # Cross-validate batch vs single-pair path
+  expect_equal(m[2, 1], MatchingSplitDistance(tr_3,  tr_1a), tolerance = 0)
+  expect_equal(m[3, 1], MatchingSplitDistance(tr_3,  tr_1b), tolerance = 0)
+  expect_equal(m[3, 2], MatchingSplitDistance(tr_1a, tr_1b), tolerance = 0)
+})
+
 test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
   # Exercise the lg2 / lg2_double_factorial / lg2_unrooted tables at indices
 
