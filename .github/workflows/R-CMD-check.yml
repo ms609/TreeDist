@@ -21,9 +21,7 @@ on:
       - "**.R[dD]ata"
       - "**.Rpro*"
   pull_request:
-    branches:
-      - main
-      - master
+    branches: ["*"]
     paths-ignore:
       - "Meta**"
       - "memcheck**"
