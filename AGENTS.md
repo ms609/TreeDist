@@ -961,6 +961,29 @@ Trees: `as.phylo(0:N, tipLabels = ...)` — similar trees (high split overlap).
 Correctness: all metrics max |ref − dev| ≤ 5.5e-12 (floating-point level).
 LAPJV canary: neutral (no LAP regression).
 
+### ManyMany fast paths for *Distance functions (DONE, kept)
+
+Created `.FastManyManyPath()` helper in `tree_distance.R` that reuses
+pre-computed Splits for both pairwise distance computation AND per-tree
+entropy/info calculations. This complements `.FastDistPath()` (all-pairs)
+for the cross-pairs case.
+
+**Pattern**: When `tree1` and `tree2` are both collections with uniform
+(identical) tip sets and `reportMatching=FALSE`:
+- Single `as.Splits()` call per collection with unified tip labels
+- Pass both Splits to C++ batch cross-pairs function (`cpp_*_cross_pairs`)
+- Simultaneously compute per-tree entropies via C++ batch entropy function
+- Compute normalization info via `outer(info1, info2, "+")`
+- Return to calling distance function (e.g., `ClusteringInfoDistance`)
+
+**Applied to:**
+- `ClusteringInfoDistance` (tree_distance_info.R)
+- `DifferentPhylogeneticInfo` (tree_distance_info.R)
+- `MatchingSplitInfoDistance` (tree_distance_msi.R)
+- `InfoRobinsonFoulds` (tree_distance_rf.R)
+
+**Correctness verified**: max |fast − slow| ≤ 2.8e-14 (floating-point level).
+
 ---
 
 ## Remaining Optimization Opportunities
@@ -969,7 +992,3 @@ LAPJV canary: neutral (no LAP regression).
 - LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
   Opportunities" above)
 - SPR distance profiling under VTune
-- **ManyMany fast paths** for *Distance functions: `.FastDistPath` currently
-  only handles the all-pairs case; the ManyMany case goes through
-  `.SplitDistanceManyMany` which has the C++ batch path but still has
-  duplicate `as.Splits()` in the calling distance functions

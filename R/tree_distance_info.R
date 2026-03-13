@@ -242,7 +242,7 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                       reportMatching = FALSE) {
   
-  # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
+  # Fast path (all-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
                         cpp_shared_phylo_all_pairs,
                         cpp_splitwise_info_batch)
@@ -256,6 +256,24 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                          InfoInTree = SplitwiseInfo, Combine = "+")
     ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0
     attributes(ret) <- attributes(spi)
+    return(ret)
+  }
+  
+  # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
+  fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
+                                 cpp_shared_phylo_cross_pairs,
+                                 cpp_splitwise_info_batch)
+  if (!is.null(fast_many)) {
+    spi <- fast_many[["dists"]]
+    info1 <- fast_many[["info1"]]
+    info2 <- fast_many[["info2"]]
+    treesIndependentInfo <- outer(info1, info2, "+")
+    
+    ret <- treesIndependentInfo - spi - spi
+    ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
+                         infoInBoth = treesIndependentInfo,
+                         InfoInTree = SplitwiseInfo, Combine = "+")
+    ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0
     return(ret)
   }
   
@@ -285,7 +303,7 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
   
-  # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
+  # Fast path (all-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
                         cpp_mutual_clustering_all_pairs,
                         cpp_clustering_entropy_batch)
@@ -299,6 +317,24 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                          InfoInTree = ClusteringEntropy, Combine = "+")
     ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0
     attributes(ret) <- attributes(mci)
+    return(ret)
+  }
+  
+  # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
+  fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
+                                 cpp_mutual_clustering_cross_pairs,
+                                 cpp_clustering_entropy_batch)
+  if (!is.null(fast_many)) {
+    mci <- fast_many[["dists"]]
+    info1 <- fast_many[["info1"]]
+    info2 <- fast_many[["info2"]]
+    treesIndependentInfo <- outer(info1, info2, "+")
+    
+    ret <- treesIndependentInfo - mci - mci
+    ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
+                         infoInBoth = treesIndependentInfo,
+                         InfoInTree = ClusteringEntropy, Combine = "+")
+    ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0
     return(ret)
   }
   
