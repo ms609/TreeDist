@@ -934,10 +934,56 @@ log2 summation in the C++ table vs TreeTools' precomputed lookup).
 
 ---
 
-## Combined A/B Benchmark: main vs dev (all optimizations)
+### Sort+merge exact-match pre-scan (DONE, kept)
+
+The fused O(n²) exact-match detection + cost-matrix fill loop in CID, MSD, and
+Jaccard was the dominant per-pair cost for similar trees.  For 200-tip similar
+trees, ~194 of 197 splits match exactly, so 99% of the O(n²) loop iterations
+produced cost-matrix entries that were never used by the LAP.
+
+**Fix:** two-phase approach:
+
+1. **Phase 1 — O(n log n) sort+merge matching**: `find_exact_matches()` helper
+   canonicalises each split (flip if bit 0 is unset), sorts both index arrays by
+   canonical form, then merge-scans to find exact matches.
+2. **Phase 2 — O(k²) cost-matrix fill**: only unmatched splits (k ≪ n for similar
+   trees) enter the cost-matrix fill and LAP.
+
+Applied to `mutual_clustering_score`, `msd_score`, and `jaccard_score`.  Not
+applied to `shared_phylo_score` or `msi_score` (exact-match detection is
+incorrect for SPI/MSI — see earlier bug fix).
+
+**Files changed:** `src/pairwise_distances.cpp` (new `find_exact_matches()` helper
++ refactored score functions).
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|
+| CID 100×50-tip | 70.1 | 16.0 | **−77%** |
+| CID 40×200-tip | 178.2 | 17.6 | **−90%** |
+| MSD 100×50-tip | 64.8 | 13.9 | **−79%** |
+| MSD 40×200-tip | 215.8 | 15.9 | **−93%** |
+| PID 100×50-tip | 122.9 | 95.1 | −23% |
+| IRF 100×50-tip | 37.4 | 16.9 | −55% |
+| CID cross 20×30 50-tip | 24.8 | 3.9 | **−84%** |
+| MSD cross 20×30 50-tip | 13.8 | 3.1 | **−77%** |
+| LAPJV 400 (canary) | 2.12 | 1.27 | neutral |
+| LAPJV 1999 (canary) | 95.2 | 95.5 | neutral |
+
+Random trees (no exact matches): no regression (full LAP path unchanged).
+Numerical accuracy: max |ref − dev| ≤ 5.7e-12.
+
+Key insight: for MCMC posteriors and bootstrap replicates (the common real-world
+case), most splits are shared between trees.  The sort+merge pre-scan reduces
+the effective LAP dimension from ~n to ~3, yielding order-of-magnitude speedups.
+
+---
+
+## Combined A/B Benchmark: main vs dev (all optimizations, pre-sort+merge)
 
 **Baseline (ref):** main branch (OpenMP PR #176 only).
-**Dev:** posit-optim-5 branch (all optimizations listed above).
+**Dev:** posit-optim-5 branch (all optimizations except sort+merge).
 Release build, same-process comparison via `compare-ab.R`.
 Trees: `as.phylo(0:N, tipLabels = ...)` — similar trees (high split overlap).
 
@@ -988,9 +1034,17 @@ for the cross-pairs case.
 
 ## Remaining Optimization Opportunities
 
-- LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
-  Opportunities" above)
-- SPR distance algorithmic improvements (see section below)
+- Sort+merge pre-scan for `rf_info_score`: uses O(n²) loop but no LAP; could
+  benefit from `find_exact_matches()` since matched splits contribute directly
+  to the score without needing a cost matrix.
+- KendallColijn distance: pure-R MRCA computation is 60× slower than CID;
+  `apply(combn(...), intersect(...))` is the bottleneck.  Low priority unless
+  users report it.
+- LAP inner loop: AVX2 SIMD intrinsics assessed and deemed **unpromising** —
+  64-bit cost values limit AVX2 to 4-wide (same as existing manual 4× unroll);
+  indirect `col_list` indexing prevents efficient vectorisation; platform
+  independence required for CRAN.  Closed.
+- SPR distance: algorithm-limited (see profiling section below).  Closed.
 
 ---
 
