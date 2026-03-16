@@ -173,6 +173,41 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_kc_vector
+IntegerVector cpp_kc_vector(IntegerMatrix edge, IntegerVector tip_order);
+RcppExport SEXP _TreeDist_cpp_kc_vector(SEXP edgeSEXP, SEXP tip_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge(edgeSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type tip_order(tip_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_kc_vector(edge, tip_order));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vec_diff_euclidean
+NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1, const IntegerMatrix vec2);
+RcppExport SEXP _TreeDist_vec_diff_euclidean(SEXP vec1SEXP, SEXP vec2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec2(vec2SEXP);
+    rcpp_result_gen = Rcpp::wrap(vec_diff_euclidean(vec1, vec2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pair_diff_euclidean
+NumericVector pair_diff_euclidean(const IntegerMatrix vecs);
+RcppExport SEXP _TreeDist_pair_diff_euclidean(SEXP vecsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vecs(vecsSEXP);
+    rcpp_result_gen = Rcpp::wrap(pair_diff_euclidean(vecs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 Rcpp::List lapjv(Rcpp::NumericMatrix& x, Rcpp::NumericVector& maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -412,29 +447,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// vec_diff_euclidean
-NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1, const IntegerMatrix vec2);
-RcppExport SEXP _TreeDist_vec_diff_euclidean(SEXP vec1SEXP, SEXP vec2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec2(vec2SEXP);
-    rcpp_result_gen = Rcpp::wrap(vec_diff_euclidean(vec1, vec2));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pair_diff_euclidean
-NumericVector pair_diff_euclidean(const IntegerMatrix vecs);
-RcppExport SEXP _TreeDist_pair_diff_euclidean(SEXP vecsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type vecs(vecsSEXP);
-    rcpp_result_gen = Rcpp::wrap(pair_diff_euclidean(vecs));
-    return rcpp_result_gen;
-END_RCPP
-}
 // reduce_trees
 Rcpp::List reduce_trees(const IntegerMatrix x, const IntegerMatrix y, const CharacterVector original_label);
 RcppExport SEXP _TreeDist_reduce_trees(SEXP xSEXP, SEXP ySEXP, SEXP original_labelSEXP) {
@@ -619,6 +631,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_relabel_hpart", (DL_FUNC) &_TreeDist_relabel_hpart, 2},
     {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
     {"_TreeDist_expected_mi", (DL_FUNC) &_TreeDist_expected_mi, 2},
+    {"_TreeDist_cpp_kc_vector", (DL_FUNC) &_TreeDist_cpp_kc_vector, 2},
+    {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
+    {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
@@ -637,8 +652,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_clustering_entropy_batch", (DL_FUNC) &_TreeDist_cpp_clustering_entropy_batch, 2},
     {"_TreeDist_cpp_splitwise_info_batch", (DL_FUNC) &_TreeDist_cpp_splitwise_info_batch, 2},
     {"_TreeDist_path_vector", (DL_FUNC) &_TreeDist_path_vector, 1},
-    {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
-    {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 3},
     {"_TreeDist_mismatch_size", (DL_FUNC) &_TreeDist_mismatch_size, 2},
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},

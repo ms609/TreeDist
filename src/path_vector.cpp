@@ -1,14 +1,11 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/renumber_tree.h> // for postorder_order
 #include <algorithm> // for std::copy
-#include <cmath> // for sqrt
 #include <memory> // for make_unique
 using namespace Rcpp;
 
 #define PO_PARENT(i) edge(postorder[i] - 1, 0)
 #define PO_CHILD(i) edge(postorder[i] - 1, 1)
-#define GET_DIST(i, j) i < j ? dist_from(j, i) : dist_from(i, j)
-#define SET_DIST(i, j, x) i < j ? dist_from(j, i) = x : dist_from(i, j) = x
 
 #define ANC(label, i) ancestry[n_tip * (label - 1) + i]
 
@@ -64,57 +61,6 @@ IntegerVector path_vector(IntegerMatrix edge) {
       }
       --ptr;
       ret[ptr] = n_ancs[tip_i] + n_ancs[tip_j] - (common << 1);
-    }
-  }
-  
-  return ret;
-}
-
-// [[Rcpp::export]]
-NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1,
-                                 const IntegerMatrix vec2) {
-  const int col1 = vec1.cols();
-  const int col2 = vec2.cols();
-  const int n_row = vec1.rows();
-  
-  assert(n_row == vec2.rows());
-  
-  NumericMatrix ret(col1, col2);
-  for (int i = 0; i < col1; ++i) {
-    for (int j = 0; j < col2; ++j) {
-      int val = 0;
-      for (int row = 0; row < n_row; ++row) {
-        const int x = vec1(row, i) - vec2(row, j);
-        val += x * x;
-      }
-      ret(i, j) = std::sqrt(val);
-    }
-  }
-  
-  return ret;
-}
-
-// [[Rcpp::export]]
-NumericVector pair_diff_euclidean(const IntegerMatrix vecs) {
-  const int 
-    n_col = vecs.cols(),
-    n_row = vecs.rows()
-  ;
-  
-  int ptr = n_col * (n_col - 1) / 2;
-  NumericVector ret(ptr);
-  for (int i = n_col - 1; i--; ) {
-    for (int j_it = n_col - i - 1; j_it--; ) {
-      const int j = i + 1 + j_it;
-      assert(ptr > 0);
-      assert(j > i);
-      
-      int val = 0;
-      for (int row = n_row; row--; ) {
-        const int x = vecs(row, i) - vecs(row, j);
-        val += x * x;
-      }
-      ret[--ptr] = std::sqrt(val);
     }
   }
   
