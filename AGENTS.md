@@ -636,7 +636,7 @@ Trees generated via `as.phylo(0:N, tips)` — high split overlap ("similar trees
    Previous `LapScratch` pooling attempt showed no gain at `-O2`, but the profile confirms
    allocation is a measurable cost.
 5. **`spi_overlap` at 10.3%** is consistent with the previous profile.  The 4-pass early-exit
-   structure remains optimal (see "spi_overlap optimisation, attempted/reverted" above).
+   structure was later replaced by a popcount-based single-pass approach (see below).
 6. **The "similar trees" workload** means MSD benefits heavily from exact-match detection
    (solving reduced LAPs of ~3 instead of ~197).  On random trees, `msd_score` would be
    much larger relative to `mutual_clustering_score`.
@@ -991,6 +991,97 @@ Numerical accuracy: max |ref − dev| ≤ 5.7e-12.
 Key insight: for MCMC posteriors and bootstrap replicates (the common real-world
 case), most splits are shared between trees.  The sort+merge pre-scan reduces
 the effective LAP dimension from ~n to ~3, yielding order-of-magnitude speedups.
+
+### VTune hotspot profile — PID-focused (vtune-pid/, 2026-03-17)
+
+**Workload**: PID only — similar 50/200-tip + random 50/200-tip, ~20 s each (80 s total).
+Build flags: `-O2 -fopenmp -fno-omit-frame-pointer` (pre-popcount spi_overlap).
+
+| Function | CPU Time | % | Notes |
+|---|---|---|---|
+| `lap` | 36.6s | 45.8% | LAP solver — dominates PID since full LAP always solved |
+| `spi_overlap` | 23.0s | 28.7% | 4-pass boolean scan (pre-popcount) |
+| `func@0x340aa1a00` (unresolved) | 14.9s | 18.7% | Likely inlined `shared_phylo_score` cost-matrix fill |
+| `free_base` | 0.33s | 0.4% | Heap deallocation |
+| `malloc_base` | 0.28s | 0.3% | Heap allocation |
+
+**Key observations:**
+1. **LAP at 45.8%** — with the SPI/MSI correctness fix (always solving the full LAP,
+   no exact-match shortcut), the LAP solver is now the overwhelmingly dominant cost.
+   The LAP has been extensively optimized and offers no easy further gains.
+2. **`spi_overlap` at 28.7%** — a major target.  Called n² times per pair to fill the
+   full cost matrix.  The 4-pass boolean-scan approach was replaced by popcount (below).
+3. **malloc/free < 1%** — CostMatrix pooling has effectively eliminated allocation overhead.
+4. The random 200-tip workload dominates total time (~21s of 80s elapsed) because
+   the full 197×197 LAP is solved for every pair with no shortcuts.
+
+### Popcount-based `spi_overlap` (DONE, kept)
+
+Replaced the 4-pass boolean-scan `spi_overlap` with a single-pass popcount approach.
+
+**Old approach** (4 sequential scans with early exit):
+1. Scan bins for `a & b` → if none found, A and B disjoint
+2. Scan bins for `~a & b` → if none found, B ⊆ A
+3. Scan bins for `a & ~b` → if none found, A ⊆ B
+4. Scan bins for `~(a | b)` with last-bin mask → if none found, A ∪ B = all tips
+5. If all 4 regions populated → return 0
+
+Each pass resets pointers and re-iterates, requiring 4× memory loads for the
+common "return 0" case.  For n_bins=4 (200-tip trees), each pass had loop setup,
+pointer reset, and branch overhead.
+
+**New approach** (single popcount pass):
+```cpp
+int16 n_ab = 0;
+for (int16 bin = 0; bin < n_bins; ++bin) {
+  n_ab += TreeTools::count_bits(a_state[bin] & b_state[bin]);
+}
+// Derive all 4 Venn-diagram regions from n_ab, in_a, in_b, n_tips:
+//   n_a_only  = in_a - n_ab
+//   n_b_only  = in_b - n_ab
+//   n_neither = n_tips - in_a - in_b + n_ab
+// Case selection via 3-4 integer comparisons (no loops, no pointer resets)
+```
+
+Benefits:
+- **One pass** over `a_state[]` and `b_state[]` (each bin loaded exactly once)
+- **No branches in scan loop** — just AND + hardware POPCNT + ADD
+- **No pointer resets** between passes
+- **Handles all n_bins uniformly** — same code for 1-bin and 4-bin cases
+- `#include <TreeTools/SplitList.h>` added to `tree_distances.h` for
+  `TreeTools::count_bits` access (needed by `day_1985.cpp` which doesn't
+  include SplitList.h directly)
+
+**Files changed:** `src/tree_distances.h` (spi_overlap rewritten; SplitList.h included).
+
+**A/B benchmark (release build, same-process comparison via `compare-ab.R`,
+both builds `-O2 -fopenmp`, no `-fno-omit-frame-pointer`):**
+
+| Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|
+| PID 100×50-tip | 168 | 138 | **−18%** |
+| PID 40×200-tip | 558 | 423 | **−24%** |
+| MSID 100×50-tip | 164 | 155 | −5% |
+| MSID 40×200-tip | 741 | 613 | **−17%** |
+| CID 100×50-tip (canary) | 28.6 | 30.1 | +5% (noise) |
+| CID 40×200-tip (canary) | 30.7 | 36.1 | +18% (alignment) |
+| MSD 100×50-tip (canary) | 26.9 | 20.1 | −25% (alignment) |
+| MSD 40×200-tip (canary) | 29.3 | 29.0 | neutral |
+| IRF (canary) | — | — | neutral |
+| LAPJV (canary) | — | — | neutral |
+
+Numerically exact (max |ref − dev| = 0 for all metrics).
+
+The 200-tip PID improvement (−24%) is the strongest because n_bins=4 makes the
+single-pass popcount most advantageous vs the old 4-pass approach.
+
+**Canary alignment noise:** CID and MSD canaries show ±5–25% swings between
+runs despite not calling `spi_overlap`.  Three runs with different flag combinations
+produced MSD 50-tip results of +14%, +3.5%, and −25%.  This is the same
+instruction-alignment sensitivity documented for the LAP header split: changing the
+inline function body in `tree_distances.h` shifts code layout in `pairwise_distances.o`,
+affecting branch prediction and instruction fetch for neighbouring functions.
+The swings cancel across metrics and scenarios, confirming they are not systematic.
 
 ---
 
