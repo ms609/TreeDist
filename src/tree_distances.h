@@ -2,6 +2,7 @@
 #define _TREEDIST_TREE_DISTANCES_H
 
 #include "lap.h"
+#include <TreeTools/SplitList.h>
 
 /***** Constants requiring initialization *****/
 
@@ -83,84 +84,40 @@ namespace TreeDist {
   }
 
 
-[[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
-                     const int16 n_tips, const int16 in_a,
-                     const int16 in_b, const int16 n_bins) noexcept {
-    
+// Popcount-based: single pass over bins replaces 4 sequential boolean scans.
+  // Counts n_ab = |A ∩ B| via hardware POPCNT, then derives all 4 Venn-diagram
+  // region populations from arithmetic on n_ab, in_a, in_b, n_tips.
+  [[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
+                       const int16 n_tips, const int16 in_a,
+                       const int16 in_b, const int16 n_bins) noexcept {
+
     assert(SL_MAX_BINS <= INT16_MAX);
-    
-    const splitbit* a_ptr = a_state;
-    const splitbit* b_ptr = b_state;
-    const splitbit* end_ptr = a_state + n_bins;
-    
-    bool a_and_b = false;
-    
-    while(a_ptr != end_ptr) {
-      if (*a_ptr & *b_ptr) {
-        a_and_b = true;
-        break;
-      }
-      ++a_ptr;
-      ++b_ptr;
+
+    int16 n_ab = 0;
+    for (int16 bin = 0; bin < n_bins; ++bin) {
+      n_ab += TreeTools::count_bits(a_state[bin] & b_state[bin]);
     }
-    
-    if (!a_and_b) return one_overlap_notb(in_a, in_b, n_tips);
-    
-    
-    a_ptr = a_state;
-    b_ptr = b_state;
-    
-    bool b_only = false;
-    
-    while (a_ptr != end_ptr) {
-      if (~(*a_ptr) & *b_ptr) {
-        b_only = true;
-        break;
-      }
-      ++a_ptr;
-      ++b_ptr;
+
+    // n_a_only  = in_a - n_ab   (tips in A but not B)
+    // n_b_only  = in_b - n_ab   (tips in B but not A)
+    // n_neither = n_tips - in_a - in_b + n_ab  (tips in neither)
+    //
+    // Return 0 when all 4 regions are populated (the common case for
+    // unrelated splits).  Otherwise return the appropriate one_overlap score.
+
+    if (n_ab == 0) {
+      return one_overlap_notb(in_a, in_b, n_tips);
     }
-    
-    if (!b_only) return one_overlap(in_a, in_b, n_tips);
-    
-    
-    a_ptr = a_state;
-    b_ptr = b_state;
-    bool a_only = false;
-    
-    while (a_ptr != end_ptr) {
-      if (*a_ptr & ~(*b_ptr)) {
-        a_only = true;
-        break;
-      }
-      ++a_ptr;
-      ++b_ptr;
+    if (n_ab == in_b || n_ab == in_a) {
+      // B ⊆ A (n_b_only == 0) or A ⊆ B (n_a_only == 0)
+      return one_overlap(in_a, in_b, n_tips);
     }
-    
-    if (!a_only) return one_overlap(in_a, in_b, n_tips);
-    
-    
-    const int16 loose_end_tips = n_tips % SL_BIN_SIZE;
-    const splitbit tidy_ends = ~(ALL_ONES << loose_end_tips);
-    bool neither = false;
-    
-    for (int16 bin = 0; bin != n_bins; bin++) {
-      
-      splitbit test = ~(a_state[bin] | b_state[bin]);
-      
-      if (bin == n_bins - 1 && loose_end_tips) {
-        test &= tidy_ends;
-      }
-      
-      if (test) {
-        neither = true;
-        break;
-      }
+    if (in_a + in_b - n_ab == n_tips) {
+      // A ∪ B covers all tips (n_neither == 0)
+      return one_overlap_notb(in_a, in_b, n_tips);
     }
-    
-    if (!neither) return one_overlap_notb(in_a, in_b, n_tips);
-    
-    return 0;
+
+    return 0.0;
   }
 }
 
