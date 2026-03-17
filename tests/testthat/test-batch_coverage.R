@@ -339,3 +339,42 @@ test_that("Nye all-pairs batch agrees with per-pair", {
                NyeSimilarity(trees20[[1]], trees20[[2]]),
                tolerance = 1e-10)
 })
+
+
+# Regression test for issue #162 ----
+# MutualClusteringInfo matching was not globally optimal for larger trees,
+# causing ClusteringInfoDistance to disagree with manual calculation.
+# Fixed in v2.11.0 (PR #163).  This test verifies the fix holds in the
+# batch path as well as the per-pair path.
+
+test_that("Issue #162: CID by-hand matches function for 33-taxon trees", {
+  tree1 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),((K,I),J)),((Q,R),((((AE,(AC,AD)),(AB,(N,(P,O)))),(((Y,(Z,AA)),(W,X)),(V,(T,U)))),((M,S),L))))));")
+  tree2 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),(((Q,R),((((AE,(AC,AD)),AB),(N,(P,O))),((Y,(Z,AA)),((V,(T,U)),(W,X))))),((M,L),S))),((K,I),J))));")
+
+  # Per-pair path: reported matching score must equal MCI value
+
+  mci <- MutualClusteringInfo(tree1, tree2, reportMatching = TRUE)
+  expect_equal(sum(attr(mci, "matchedScores")), mci[[1]], tolerance = 1e-10)
+
+  # Per-pair path: CID by hand must equal CID function
+  h <- ClusteringEntropy(tree1) + ClusteringEntropy(tree2)
+  d_fn <- ClusteringInfoDistance(tree1, tree2, normalize = TRUE)
+  d_hand <- (h - 2 * mci[[1]]) / h
+  expect_equal(d_fn, d_hand, tolerance = 1e-10)
+})
+
+test_that("Issue #162: batch path agrees with per-pair for 33-taxon trees", {
+  tree1 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),((K,I),J)),((Q,R),((((AE,(AC,AD)),(AB,(N,(P,O)))),(((Y,(Z,AA)),(W,X)),(V,(T,U)))),((M,S),L))))));")
+  tree2 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),(((Q,R),((((AE,(AC,AD)),AB),(N,(P,O))),((Y,(Z,AA)),((V,(T,U)),(W,X))))),((M,L),S))),((K,I),J))));")
+  tree3 <- PectinateTree(tree1[["tip.label"]])
+  trees <- structure(list(tree1, tree2, tree3), class = "multiPhylo")
+
+  # Batch all-pairs via fast path
+  batch_cid <- ClusteringInfoDistance(trees)
+  m <- as.matrix(batch_cid)
+
+  # All three pairwise CIDs must match per-pair computation
+  expect_equal(m[2, 1], ClusteringInfoDistance(tree1, tree2), tolerance = 1e-10)
+  expect_equal(m[3, 1], ClusteringInfoDistance(tree1, tree3), tolerance = 1e-10)
+  expect_equal(m[3, 2], ClusteringInfoDistance(tree2, tree3), tolerance = 1e-10)
+})

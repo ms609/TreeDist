@@ -407,6 +407,7 @@ SPRDist.multiPhylo <- SPRDist.list
 # \insertCite{deOliveira2008;textual}{TreeDist}
 # An exact match is unlikely due to the arbitrary breaking of ties when leaves
 # are selected for removal.
+# SPR approximation via Oliveira Martins _et al._ (2008)
 #' @examples
 #' # de Oliveira Martins et al 2008, fig. 7
 #' tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
