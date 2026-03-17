@@ -156,6 +156,7 @@ test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
 
 test_that("Batch path handles asymmetric split counts with exact matches", {
   # Trees with different numbers of splits (polytomies) that share some
+
   # splits exactly.  After exact-match detection removes the shared splits,
   # the reduced LAP matrix is asymmetric (a_unmatched_n != b_unmatched_n),
   # exercising the padAfterRow guard in msd_score and jaccard_score.
@@ -186,7 +187,7 @@ test_that("Batch path handles asymmetric split counts with exact matches", {
 
 test_that("InfoRobinsonFoulds(similarity = TRUE) uses batch path", {
   # similarity = TRUE bypasses .FastDistPath() and falls through to
-  # CalculateTreeDistance -> .SplitDistanceAllPairs / .SplitDistanceManyMany,
+  # CalculateTreeDistance → .SplitDistanceAllPairs / .SplitDistanceManyMany,
   # exercising the IRF dispatch branches in tree_distance_utilities.R.
   trees <- ape::as.phylo(0:9, tipLabels = paste0("t", seq_len(20)))
 
@@ -226,12 +227,77 @@ test_that(".FastManyManyPath: guards return NULL for edge cases", {
   tA <- ape::as.phylo(0:2, tipLabels = tips)
   tB <- ape::as.phylo(3:5, tipLabels = tips)
 
-  # Mismatched tip sets -> falls back to slow path (returns non-NULL result)
+  # Mismatched tip sets → falls back to slow path (returns non-NULL result)
   tB_diff <- ape::as.phylo(3:5, tipLabels = paste0("s", seq_len(8)))
   expect_true(!is.null(ClusteringInfoDistance(tA, tB_diff)))
 
-  # Small trees (nTip < 4) -> falls back to slow path
+  # Small trees (nTip < 4) → falls back to slow path
   tA3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
   tB3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
   expect_true(!is.null(ClusteringInfoDistance(tA3, tB3)))
+})
+
+test_that("SPI batch does not greedily match identical splits", {
+  # Regression test for a correctness bug in shared_phylo_score().
+  #
+  # For the SPI (SharedPhylogeneticInfo) metric, matching identical splits
+  # to each other is NOT necessarily globally optimal: spi_overlap(A, B)
+  # where B *contains* A can exceed spi_overlap(A, A), so the full LAP
+  # can find a better total score by pairing some identical splits with
+  # non-identical (containing) partners.
+  #
+  # A greedy exact-match shortcut (match identical splits first, then
+  # solve a reduced LAP) understates SPI, causing DifferentPhylogeneticInfo
+  # (= Info1 + Info2 - 2 * SPI) to be overstated (trees appear more
+  # different than they are).
+  #
+  # Counterexample: as.phylo(1, 10) and as.phylo(3, 10) share 5 of 7
+  # splits.  The optimal LAP matches s1's 5|5 split to s2's 7|3 split
+  # (which contains it) rather than to its identical copy in s2, because
+  # spi_overlap({2,6,7,8,9,10}, {2,4,6,7,8,9,10}) > spi_overlap of the
+  # identical pair.  The full-LAP SPI (32.012) exceeds the greedy
+  # exact-match credit (31.771) even before the reduced LAP adds to it.
+  # The same issue affects MatchingSplitInfoSplits (MSI).
+  t1 <- ape::as.phylo(1, 10)
+  t2 <- ape::as.phylo(3, 10)
+
+  # Verify: optimal matching pairs s1[2] with s2[1] (non-identical),
+  # even though s1[2] is identical to s2[2].
+  s1 <- TreeTools::as.Splits(t1)
+  s2 <- TreeTools::as.Splits(t2)
+  result <- SharedPhylogeneticInfoSplits(s1, s2, reportMatching = TRUE)
+  matching <- attr(result, "matching")
+
+  # s1[2] is identical to s2[2] (same 5|5 split)
+  expect_true(
+    identical(as.logical(s1[[2]]), as.logical(s2[[2]])),
+    label = "s1[2] and s2[2] are the same bipartition"
+  )
+  # But the optimal LAP matches s1[2] to s2[1] (a containing 7|3 split)
+  expect_equal(matching[2], 1L,
+               label = "optimal LAP matches s1[2] to s2[1], not its identical copy")
+
+  # Batch path (all-pairs) must agree with the per-pair path
+  trees <- structure(list(t1, t2), class = "multiPhylo")
+  batch_spi <- SharedPhylogeneticInfo(trees)
+  pair_spi <- SharedPhylogeneticInfo(t1, t2)
+  expect_equal(as.matrix(batch_spi)[2, 1], pair_spi, tolerance = 1e-10)
+
+  # The full-LAP SPI must exceed the sum of self-info for the 5 shared
+  # splits (what the greedy approach would credit as exact-match score).
+  # This proves the greedy is wrong — it understates SPI.
+  n <- 10L
+  shared_self_info <- sum(vapply(2:6, function(a) {
+    k <- sum(as.logical(s1[[a]]))
+    log2(TreeTools::NUnrooted(n)) -
+      log2(TreeTools::NRooted(k)) - log2(TreeTools::NRooted(n - k))
+  }, double(1)))
+  expect_gt(pair_spi, shared_self_info,
+            label = "full-LAP SPI exceeds greedy exact-match credit")
+
+  # Verify the same holds for MSI (same vulnerability: msi_score formerly
+  # used greedy exact-match detection, which is incorrect for MSI).
+  batch_msi <- MatchingSplitInfoDistance(trees)
+  pair_msi <- MatchingSplitInfoDistance(t1, t2)
+  expect_equal(as.matrix(batch_msi)[2, 1], pair_msi, tolerance = 1e-10)
 })

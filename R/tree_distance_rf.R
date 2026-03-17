@@ -66,6 +66,41 @@
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
+  
+  # Fast path for distance (not similarity): avoids duplicate as.Splits()
+  if (!similarity) {
+    # All-pairs fast path
+    fast <- .FastDistPath(tree1, tree2, reportMatching,
+                          cpp_rf_info_all_pairs,
+                          cpp_splitwise_info_batch)
+    if (!is.null(fast)) {
+      treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+      unnormalized <- treesIndependentInfo - fast[["info"]] - fast[["info"]]
+      unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
+      ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                           InfoInTree = SplitwiseInfo, Combine = "+")
+      attributes(ret) <- attributes(fast[["info"]])
+      return(ret)
+    }
+    
+    # Cross-pairs fast path
+    fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
+                                   cpp_rf_info_cross_pairs,
+                                   cpp_splitwise_info_batch)
+    if (!is.null(fast_many)) {
+      irf <- fast_many[["dists"]]
+      info1 <- fast_many[["info1"]]
+      info2 <- fast_many[["info2"]]
+      treesIndependentInfo <- outer(info1, info2, "+")
+      
+      unnormalized <- treesIndependentInfo - irf - irf
+      unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
+      ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                           InfoInTree = SplitwiseInfo, Combine = "+")
+      return(ret)
+    }
+  }
+  
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   

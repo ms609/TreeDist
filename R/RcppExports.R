@@ -66,6 +66,18 @@ expected_mi <- function(ni, nj) {
     .Call(`_TreeDist_expected_mi`, ni, nj)
 }
 
+cpp_kc_vector <- function(edge, tip_order) {
+    .Call(`_TreeDist_cpp_kc_vector`, edge, tip_order)
+}
+
+vec_diff_euclidean <- function(vec1, vec2) {
+    .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
+}
+
+pair_diff_euclidean <- function(vecs) {
+    .Call(`_TreeDist_pair_diff_euclidean`, vecs)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }
@@ -122,16 +134,46 @@ cpp_jaccard_all_pairs <- function(splits_list, n_tip, k = 1.0, allow_conflict = 
     .Call(`_TreeDist_cpp_jaccard_all_pairs`, splits_list, n_tip, k, allow_conflict, n_threads)
 }
 
+#' @keywords internal
+cpp_mutual_clustering_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_mutual_clustering_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_rf_info_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_rf_info_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msd_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msd_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msi_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msi_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_shared_phylo_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_shared_phylo_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_jaccard_cross_pairs <- function(splits_a, splits_b, n_tip, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_jaccard_cross_pairs`, splits_a, splits_b, n_tip, k, allow_conflict, n_threads)
+}
+
+cpp_clustering_entropy_batch <- function(splits_list, n_tip) {
+    .Call(`_TreeDist_cpp_clustering_entropy_batch`, splits_list, n_tip)
+}
+
+cpp_splitwise_info_batch <- function(splits_list, n_tip) {
+    .Call(`_TreeDist_cpp_splitwise_info_batch`, splits_list, n_tip)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
-}
-
-vec_diff_euclidean <- function(vec1, vec2) {
-    .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
-}
-
-pair_diff_euclidean <- function(vecs) {
-    .Call(`_TreeDist_pair_diff_euclidean`, vecs)
 }
 
 reduce_trees <- function(x, y, original_label) {

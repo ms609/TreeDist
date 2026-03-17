@@ -127,6 +127,106 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
 }
 
+# Fast path for *Distance() functions: computes pairwise distances and
+# per-tree info in a single as.Splits() conversion.  Returns NULL when the
+# fast path is not applicable.
+#' @importFrom TreeTools as.Splits TipLabels
+.FastDistPath <- function(tree1, tree2, reportMatching,
+                          cpp_batch_fn, cpp_entropy_fn) {
+  if (!is.null(tree2) || reportMatching) return(NULL)
+  if (inherits(tree1, c("phylo", "Splits"))) return(NULL) # nocov
+  if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
+  
+  labs <- TipLabels(tree1)
+  if (is.list(labs)) {
+    # nocov start
+    if (!all(vapply(labs[-1], setequal, logical(1), labs[[1]]))) return(NULL)
+    tipLabels <- labs[[1]]
+    # nocov end
+  } else {
+    tipLabels <- labs
+  }
+  nTip <- length(tipLabels)
+  if (nTip < 4) return(NULL) # nocov
+  
+  splits_list <- as.Splits(tree1, tipLabels = tipLabels)
+  n_threads <- as.integer(getOption("mc.cores", 1L))
+  
+  info_vec <- cpp_batch_fn(splits_list, as.integer(nTip), n_threads)
+  entropies <- cpp_entropy_fn(splits_list, as.integer(nTip))
+  
+  list(
+    info = structure(info_vec, class = "dist",
+                     Size = length(tree1), Labels = names(tree1),
+                     Diag = FALSE, Upper = FALSE),
+    entropies = entropies
+  )
+}
+
+# Fast path for cross-pairs (ManyMany): avoids duplicate as.Splits() calls by
+# computing both pairwise distances and per-tree entropies in a single pass.
+# Returns NULL when not applicable. When applicable, returns list with:
+#   $dists: nA × nB matrix of pairwise distances
+#   $info1: per-tree entropies for tree1 (length nA)
+#   $info2: per-tree entropies for tree2 (length nB)
+#' @importFrom TreeTools as.Splits TipLabels
+.FastManyManyPath <- function(tree1, tree2, reportMatching,
+                              cpp_cross_pairs_fn, cpp_entropy_fn) {
+  if (is.null(tree2) || reportMatching) return(NULL)
+  if (inherits(tree1, c("phylo", "Splits")) || inherits(tree2, c("phylo", "Splits"))) {
+    return(NULL) # nocov
+  }
+  if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
+  
+  lab1 <- TipLabels(tree1)
+  lab2 <- TipLabels(tree2)
+  
+  # Check tip label agreement
+  if (is.list(lab1)) {
+    if (!all(vapply(lab1[-1], setequal, logical(1), lab1[[1]]))) return(NULL) # nocov
+    tipLabels1 <- lab1[[1]] # nocov
+  } else {
+    tipLabels1 <- lab1
+  }
+  
+  if (is.list(lab2)) {
+    if (!all(vapply(lab2[-1], setequal, logical(1), lab2[[1]]))) return(NULL) # nocov
+    tipLabels2 <- lab2[[1]] # nocov
+  } else {
+    tipLabels2 <- lab2
+  }
+  
+  # Only use fast path if both collections have the same tip set
+  if (!setequal(tipLabels1, tipLabels2)) return(NULL)
+  
+  nTip <- length(tipLabels1)
+  if (nTip < 4) return(NULL)
+  
+  splits1 <- as.Splits(tree1, tipLabels = tipLabels1)
+  splits2 <- as.Splits(tree2, tipLabels = tipLabels1)  # Use tipLabels1 to ensure order consistency
+  n_threads <- as.integer(getOption("mc.cores", 1L))
+  
+  dists <- cpp_cross_pairs_fn(splits1, splits2, as.integer(nTip), n_threads)
+  info1 <- cpp_entropy_fn(splits1, as.integer(nTip))
+  info2 <- cpp_entropy_fn(splits2, as.integer(nTip))
+  
+  # Add row/column names to the distance matrix
+  rownames(dists) <- names(tree1)
+  colnames(dists) <- names(tree2)
+  
+  list(
+    dists = dists,
+    info1 = info1,
+    info2 = info2
+  )
+}
+
+# Lower-tri pairwise sums: outer(x, x, "+")[lower.tri(.)]
+.PairwiseSums <- function(x) {
+  g <- outer(x, x, "+")
+  g[lower.tri(g)]
+}
+
 .AllTipsSame <- function(x, y) {
   if (is.list(x)) {
     xPrime <- x[[1]]

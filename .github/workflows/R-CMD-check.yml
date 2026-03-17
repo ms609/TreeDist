@@ -5,9 +5,7 @@ on:
     - cron: "24 06 * * 1"
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
+    branches: ["*"]
     paths-ignore:
       - "Meta**"
       - "memcheck**"
