@@ -51,17 +51,30 @@ jobs:
             repos = NULL, type = "source"
           )
 
-          # ── Remove packages unrelated to the app ──
-          # setup-r-dependencies installs packages from extra-repositories
-          # (e.g. StratoBayes) that aren't used by the treespace app.
-          # Their deps may not all be installed, causing shinylive to
-          # crash when packageDescription() returns NA for a missing
-          # transitive dep (shinylive bug: coatless/quarto-webr#228).
-          # Remove such packages so shinylive never tries to resolve them.
-          trim <- c(
-            "StratoBayes",          # from extra-repo; imports R.cache which may not be installed
-            "otel"                  # see shiny pin above (belt-and-suspenders)
-          )
+          # ── Diagnose: find which installed package pulls in R.cache ──
+          # shinylive crashes when packageDescription() returns NA for a
+          # missing transitive dep (coatless/quarto-webr#228).  R.cache
+          # is the culprit — find who references it.
+          for (p in rownames(installed.packages())) {
+            desc <- tryCatch(utils::packageDescription(p), error = function(e) NA)
+            if (identical(desc, NA)) next
+            fields <- paste0(
+              desc$Depends %||% "", " ",
+              desc$Imports %||% "", " ",
+              desc$Suggests %||% ""
+            )
+            if (grepl("R\\.cache", fields)) {
+              message(">>> ", p, " references R.cache in: ",
+                paste0(
+                  if (grepl("R\\.cache", desc$Imports %||% "")) "Imports ",
+                  if (grepl("R\\.cache", desc$Depends %||% "")) "Depends ",
+                  if (grepl("R\\.cache", desc$Suggests %||% "")) "Suggests "
+                ))
+            }
+          }
+
+          # ── Remove packages not needed by the app ──
+          trim <- c("otel")
           for (pkg in trim) {
             tryCatch(remove.packages(pkg), error = function(e) NULL)
           }
