@@ -70,11 +70,6 @@ Typical speedups over v2.12.0 for tree sets where most splits are shared
   computed in C++ (`pair_diff_euclidean()`, `vec_diff_euclidean()`).
 
 
-# TreeDist 2.12.0.9000 (2026-02-19)
-
-- Tweak vignettes.
-
-
 # TreeDist 2.12.0 (2026-02-12)
 
 - Support larger trees in some functions by updating some functions to use
