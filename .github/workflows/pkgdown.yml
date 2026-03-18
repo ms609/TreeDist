@@ -26,7 +26,77 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      # ── Build pkgdown site (no shinylive, no deploy) ──────────────
       - uses: ms609/actions/pkgdown@main
         with: 
           extra-repositories: https://ms609.github.io/packages/
-          shinylive-app: treespace
+          deploy: 'false'
+
+      # ── Export Shinylive app ──────────────────────────────────────
+      - name: Export Shinylive app
+        shell: Rscript {0}
+        run: |
+          # ── Pin shiny to pre-otel version ──
+          # otel (OpenTelemetry) became a hard Import of shiny in 1.12.0,
+          # but otel is not yet available as a WebAssembly binary on
+          # repo.r-wasm.org.  shinylive resolves deps from the LOCAL
+          # library, so the installed shiny's otel dep causes a download
+          # failure.  Pin to the last CRAN release without otel.
+          #
+          # TODO: Remove this pin once otel appears at
+          #   http://repo.r-wasm.org/bin/emscripten/contrib/4.4/PACKAGES
+
+          install.packages(
+            "https://cran.r-project.org/src/contrib/Archive/shiny/shiny_1.11.1.tar.gz",
+            repos = NULL, type = "source"
+          )
+
+          # ── Trim packages the app does not need ──
+          # shinylive scans installed package metadata and can pull in
+          # Suggests (phangorn, igraph, …) that the Shiny app never
+          # uses.  Removing them shrinks the WASM bundle and avoids
+          # download failures for packages without WASM binaries
+          # (e.g. R.cache).
+          trim <- c(
+            "phangorn", "igraph", "Matrix", "quadprog", "generics",
+            "fastmatch",            # phangorn deps
+            "R.cache",              # not in dep tree; sometimes installed transitively
+            "otel"                  # see shiny pin above
+          )
+          for (pkg in trim) {
+            tryCatch(remove.packages(pkg), error = function(e) NULL)
+          }
+
+          # ── Locate app ──
+          pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
+          app_dir   <- system.file("treespace", package = pkg_name)
+          if (!dir.exists(app_dir)) app_dir <- "inst/treespace"
+          stopifnot(
+            "app.R not found" = file.exists(file.path(app_dir, "app.R"))
+          )
+
+          # ── Export ──
+          if (!requireNamespace("shinylive", quietly = TRUE)) {
+            install.packages("shinylive")
+          }
+          tryCatch(
+            shinylive::export(appdir = app_dir, destdir = "docs/app"),
+            error = function(e) {
+              msg <- conditionMessage(e)
+              message("\n===== shinylive::export() failed =====")
+              message(msg)
+              message("This is often caused by a dependency that is not")
+              message("available as a WebAssembly binary.  Check:")
+              message("  http://repo.r-wasm.org/bin/emscripten/contrib/4.4/PACKAGES")
+              stop(e)
+            }
+          )
+          file.create("docs/.nojekyll")
+
+      # ── Deploy ────────────────────────────────────────────────────
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs
+          branch: gh-pages
+          clean: false
