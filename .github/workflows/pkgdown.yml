@@ -51,13 +51,15 @@ jobs:
             repos = NULL, type = "source"
           )
 
-          # ── Remove packages that lack WASM binaries ──
-          # Only remove packages that (a) are NOT hard deps of the app
-          # AND (b) have no WebAssembly binary on repo.r-wasm.org.
-          # Packages like phangorn/igraph bloat the bundle but have
-          # WASM binaries, so leave them alone.
+          # ── Remove packages unrelated to the app ──
+          # setup-r-dependencies installs packages from extra-repositories
+          # (e.g. StratoBayes) that aren't used by the treespace app.
+          # Their deps may not all be installed, causing shinylive to
+          # crash when packageDescription() returns NA for a missing
+          # transitive dep (shinylive bug: coatless/quarto-webr#228).
+          # Remove such packages so shinylive never tries to resolve them.
           trim <- c(
-            "R.cache",              # not in dep tree; sometimes installed transitively
+            "StratoBayes",          # from extra-repo; imports R.cache which may not be installed
             "otel"                  # see shiny pin above (belt-and-suspenders)
           )
           for (pkg in trim) {
