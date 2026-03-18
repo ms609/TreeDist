@@ -51,33 +51,39 @@ jobs:
             repos = NULL, type = "source"
           )
 
-          # ── Diagnose: find which installed package pulls in R.cache ──
-          # shinylive crashes when packageDescription() returns NA for a
-          # missing transitive dep (coatless/quarto-webr#228).  R.cache
-          # is the culprit — find who references it.
-          for (p in rownames(installed.packages())) {
-            desc <- tryCatch(utils::packageDescription(p), error = function(e) NA)
-            if (identical(desc, NA)) next
-            fields <- paste0(
-              desc$Depends %||% "", " ",
-              desc$Imports %||% "", " ",
-              desc$Suggests %||% ""
-            )
-            if (grepl("R\\.cache", fields)) {
-              message(">>> ", p, " references R.cache in: ",
-                paste0(
-                  if (grepl("R\\.cache", desc$Imports %||% "")) "Imports ",
-                  if (grepl("R\\.cache", desc$Depends %||% "")) "Depends ",
-                  if (grepl("R\\.cache", desc$Suggests %||% "")) "Suggests "
-                ))
-            }
-          }
-
-          # ── Remove packages not needed by the app ──
-          trim <- c("otel")
-          for (pkg in trim) {
-            tryCatch(remove.packages(pkg), error = function(e) NULL)
-          }
+          # ── Work around shinylive bug (coatless/quarto-webr#228) ──
+          # shinylive resolves deps from the WASM repo's PACKAGES
+          # database, which may reference packages not installed
+          # locally (e.g. R.cache).  packageDescription() returns NA
+          # for these, and shinylive crashes on desc$Repository.
+          # Patch packageDescription to return a stub instead of NA.
+          #
+          # TODO: Remove once shinylive handles missing packages.
+          local({
+            real_pd <- utils::packageDescription
+            ns <- asNamespace("utils")
+            unlockBinding("packageDescription", ns)
+            assign("packageDescription", function(pkg, lib.loc = NULL,
+                  fields = NULL, drop = TRUE, encoding = "") {
+              result <- real_pd(pkg, lib.loc = lib.loc, fields = fields,
+                                drop = drop, encoding = encoding)
+              if (identical(result, NA)) {
+                message("  [shinylive patch] '", pkg,
+                        "' not installed locally; stub description used")
+                result <- structure(
+                  list(Package = pkg, Version = "0.0.0",
+                       Repository = "CRAN"),
+                  class = "packageDescription"
+                )
+                if (!is.null(fields)) {
+                  result <- result[fields]
+                  if (drop && length(fields) == 1L)
+                    return(result[[1L]])
+                }
+              }
+              result
+            }, envir = ns)
+          })
 
           # ── Locate app ──
           pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]

@@ -32,6 +32,7 @@
   },
   "model": {
     "id": "claude-opus-4-6",
-    "provider": "positai"
+    "provider": "positai",
+    "thinkingEffort": "high"
   }
 }
