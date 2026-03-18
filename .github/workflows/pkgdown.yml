@@ -51,17 +51,14 @@ jobs:
             repos = NULL, type = "source"
           )
 
-          # ── Trim packages the app does not need ──
-          # shinylive scans installed package metadata and can pull in
-          # Suggests (phangorn, igraph, …) that the Shiny app never
-          # uses.  Removing them shrinks the WASM bundle and avoids
-          # download failures for packages without WASM binaries
-          # (e.g. R.cache).
+          # ── Remove packages that lack WASM binaries ──
+          # Only remove packages that (a) are NOT hard deps of the app
+          # AND (b) have no WebAssembly binary on repo.r-wasm.org.
+          # Packages like phangorn/igraph bloat the bundle but have
+          # WASM binaries, so leave them alone.
           trim <- c(
-            "phangorn", "igraph", "Matrix", "quadprog", "generics",
-            "fastmatch",            # phangorn deps
             "R.cache",              # not in dep tree; sometimes installed transitively
-            "otel"                  # see shiny pin above
+            "otel"                  # see shiny pin above (belt-and-suspenders)
           )
           for (pkg in trim) {
             tryCatch(remove.packages(pkg), error = function(e) NULL)
