@@ -316,34 +316,32 @@ VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
 Böcker, S., Canzar, S., & Klau, G. W. (2013). The generalized
 Robinson-Foulds metric. In A. Darling & J. Stoye (Eds.), *Algorithms in
 Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126*
-(pp. 156–169). Berlin, Heidelberg: Springer. doi:
-[10.1007/978-3-642-40453-5_13](https://doi.org/10.1007/978-3-642-40453-5_13)
+(pp. 156–169). Springer. <https://doi.org/10.1007/978-3-642-40453-5_13>
 
 Bogdanowicz, D., & Giaro, K. (2012). Matching split distance for
 unrooted binary phylogenetic trees. *IEEE/ACM Transactions on
-Computational Biology and Bioinformatics*, *9*(1), 150–160. doi:
-[10.1109/TCBB.2011.48](https://doi.org/10.1109/TCBB.2011.48)
+Computational Biology and Bioinformatics*, *9*(1), 150–160.
+<https://doi.org/10.1109/TCBB.2011.48>
 
 Lin, Y., Rajan, V., & Moret, B. M. E. (2012). A metric for phylogenetic
 trees based on matching. *IEEE/ACM Transactions on Computational Biology
-and Bioinformatics*, *4*(9), 1014–1022. doi:
-[10.1109/TCBB.2011.157](https://doi.org/10.1109/TCBB.2011.157)
+and Bioinformatics*, *4*(9), 1014–1022.
+<https://doi.org/10.1109/TCBB.2011.157>
 
 Nelson, G. (1979). Cladistic analysis and synthesis: Principles and
 definitions, with a historical note on Adanson’s *Familles des Plantes*
-(1763–1764). *Systematic Biology*, *28*(1), 1–21. doi:
-[10.1093/sysbio/28.1.1](https://doi.org/10.1093/sysbio/28.1.1)
+(1763–1764). *Systematic Biology*, *28*(1), 1–21.
+<https://doi.org/10.1093/sysbio/28.1.1>
 
 Nye, T. M. W., Liò, P., & Gilks, W. R. (2006). A novel algorithm and
 web-based tool for comparing two alternative phylogenetic trees.
-*Bioinformatics*, *22*(1), 117–119. doi:
-[10.1093/bioinformatics/bti720](https://doi.org/10.1093/bioinformatics/bti720)
+*Bioinformatics*, *22*(1), 117–119.
+<https://doi.org/10.1093/bioinformatics/bti720>
 
 Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. *Bioinformatics*, *36*(20),
-5007–5013. doi:
-[10.1093/bioinformatics/btaa614](https://doi.org/10.1093/bioinformatics/btaa614)
+5007–5013. <https://doi.org/10.1093/bioinformatics/btaa614>
 
 Steel, M. A., & Penny, D. (2006). Maximum parsimony and the phylogenetic
 information in multistate characters. In V. A. Albert (Ed.), *Parsimony,
-phylogeny, and genomics* (pp. 163–178). Oxford: Oxford University Press.
+phylogeny, and genomics* (pp. 163–178). Oxford University Press.

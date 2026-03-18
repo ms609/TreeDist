@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ms609.github.io/TreeDist/404.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/AGENTS.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/CONTRIBUTING.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc></url>
@@ -57,8 +58,10 @@
 <url><loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/clone.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/cluster-statistics.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/reference/cpp_mutual_clustering_all_pairs.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/dot-MASTSizeEdges.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/dot-PairMean.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/reference/dot-ThreeDPlotServer.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/entropy_int.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/index.html</loc></url>

@@ -23,11 +23,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -174,7 +174,7 @@ arising from this mapping and be done:</p>
 <span>     ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Don't label axes: dimensions are meaningless</span></span>
 <span>     col <span class="op">=</span> <span class="va">treeCols</span>, pch <span class="op">=</span> <span class="fl">16</span></span>
 <span>     <span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/plot-mapping-2d-1.png" class="r-plt" width="288" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/plot-mapping-2d-1.png" class="r-plt" alt="" width="288" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="identifying-clusters">Identifying clusters<a class="anchor" aria-label="anchor" href="#identifying-clusters"></a>
@@ -229,7 +229,7 @@ worthwhile.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">kSils</span> <span class="op">~</span> <span class="va">possibleClusters</span>, pch <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PAM"</span>, <span class="st">"Hierarchical"</span>, <span class="st">"k-means++"</span><span class="op">)</span>,</span>
 <span>       pch <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/clustering-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/clustering-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>Silhouette coefficients of &lt; 0.25 suggest that structure is not
 meaningful; &gt; 0.5 denotes good evidence of clustering, and &gt; 0.7
 strong evidence <span class="citation">(Kaufman &amp; Rousseeuw,
@@ -247,7 +247,7 @@ hierarchical clustering solution anyway.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hTree</span>, labels <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>       col <span class="op">=</span> <span class="va">spectrum</span><span class="op">[</span><span class="va">hTree</span><span class="op">$</span><span class="va">order</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/h-tree-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/h-tree-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>Another thing we may wish to do is to take the consensus of each
 cluster:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -258,7 +258,7 @@ cluster:</p>
 <span>     edge.color <span class="op">=</span> <span class="va">col1</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="va">col1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="va">cluster</span> <span class="op">==</span> <span class="fl">2</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>     edge.color <span class="op">=</span> <span class="va">col2</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="va">col2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/cluster-consensus-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/cluster-consensus-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>Here, we learn that the two clusters are distinguished by the
 position of <code>t7</code>.</p>
 </div>
@@ -292,7 +292,7 @@ separated from all trees on another by at least a certain distance <span class="
 <span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">largeIsle</span><span class="op">)</span>, <span class="st">"grey"</span>, <span class="va">largeIsle</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>     pch <span class="op">=</span> <span class="fl">16</span></span>
 <span>     <span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/island-id-1.png" class="r-plt" width="288" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/island-id-1.png" class="r-plt" alt="" width="288" style="display: block; margin: auto;"></p>
 <p>Let’s view the consensus of each large island cluster:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
@@ -300,7 +300,7 @@ separated from all trees on another by at least a certain distance <span class="
 <span>     edge.color <span class="op">=</span> <span class="fl">2</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">largeIsle</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">largeIsle</span> <span class="op">==</span> <span class="fl">2</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>     edge.color <span class="op">=</span> <span class="fl">3</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/island-consensus-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/island-consensus-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="validating-a-mapping">Validating a mapping<a class="anchor" aria-label="anchor" href="#validating-a-mapping"></a>
@@ -317,7 +317,7 @@ trustworthiness × continuity score of &gt; 0.9 for a usable mapping, or
 <span><span class="op">}</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">txc</span>, xlab <span class="op">=</span> <span class="st">"Dimension"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.9</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/how-many-dims-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/how-many-dims-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>We are going to need at least five dimensions to adequately represent
 the distances between trees.</p>
 <p>To help establish visually what structures are more likely to be
@@ -365,7 +365,7 @@ the convex hulls of our clusters:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"Dimension 3"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, type <span class="op">=</span> <span class="st">"n"</span>, ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"Dimension 4"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/plot-mapping-5d-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/plot-mapping-5d-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>Our clusters, so distinct in dimension 1, overlap strongly in every
 other dimension. The fact that the minimum spanning tree moves between
 clusters also underlines the fact that they are not as well defined as
@@ -375,7 +375,7 @@ space, is a function of the tree distance metric. The phylogenetic
 information distance recovers a different pair of clusters, which may
 not correspond to those that are most apparent from a simple visual
 inspection of the two-dimensional tree space plot:</p>
-<p><img src="treespace_files/figure-html/pid-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/pid-1.png" class="r-plt" alt="" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="comparing-cluster-size">Comparing cluster size<a class="anchor" aria-label="anchor" href="#comparing-cluster-size"></a>
@@ -446,11 +446,10 @@ length:</p>
 </h3>
 <p>An alternative approach to visualizing tree space is to create
 emergent self-organizing maps <span class="citation">(Kohonen, 1982;
-Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which
-map high-dimensional data into two dimensions, then add a third
-dimension to indicate distance between data points: nearby points occur
-in valleys, and are separated by ridges from more distant data
-points.</p>
+Thrun et al., 2016; Ultsch, 2003)</span>, which map high-dimensional
+data into two dimensions, then add a third dimension to indicate
+distance between data points: nearby points occur in valleys, and are
+separated by ridges from more distant data points.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
@@ -486,17 +485,17 @@ points.</p>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">Umatrix</span> package.</span></span>
 <span><span class="co">##   Please report the issue to the authors.</span></span>
-<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">Umatrix</span> package.</span></span>
 <span><span class="co">##   Please report the issue to the authors.</span></span>
-<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">## <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
-<p><img src="treespace_files/figure-html/umatrix-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/umatrix-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="what-next">What next?<a class="anchor" aria-label="anchor" href="#what-next"></a>
@@ -521,62 +520,58 @@ tree distance metrics</a></p></li>
 <div id="ref-Arthur2007" class="csl-entry">
 Arthur, D., &amp; Vassilvitskii, S. (2007). K-means++: The advantages of
 careful seeding. <em>Proceedings of the Eighteenth Annual
-<span>ACM-SIAM</span> Symposium on <span>Discrete</span>
-Algorithms</em>, 1027–1035. <span>USA</span>: <span>Society for
-Industrial and Applied Mathematics</span>.
+<span>ACM-SIAM</span> Symposium on <span>Discrete</span> Algorithms,
+<span>SODA</span> ’07</em>, 1027–1035.
 </div>
 <div id="ref-Blonder2018" class="csl-entry">
 Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C.,
-Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating
-<span><em>n</em></span>-dimensional hypervolumes. <em>Methods in Ecology
-and Evolution</em>, <em>9</em>(2), 305–319. doi: <a href="https://doi.org/10.1111/2041-210X.12865" class="external-link">10.1111/2041-210X.12865</a>
+Violle, C., Enquist, B. J., &amp; Kerkhoff, A. J. (2018). New approaches
+for delineating <span><em>n</em></span>-dimensional hypervolumes.
+<em>Methods in Ecology and Evolution</em>, <em>9</em>(2), 305–319. <a href="https://doi.org/10.1111/2041-210X.12865" class="external-link">https://doi.org/10.1111/2041-210X.12865</a>
 </div>
 <div id="ref-Kaufman1990" class="csl-entry">
 Kaufman, L., &amp; Rousseeuw, P. J. (1990). Partitioning around medoids
-(<span>Program PAM</span>). In <em>Wiley <span>Series</span> in
-<span>Probability</span> and <span>Statistics</span></em>. <em>Finding
-groups in data: An introduction to cluster analysis</em> (pp. 68–125).
-<span>John Wiley &amp; Sons, Ltd</span>. doi: <a href="https://doi.org/10.1002/9780470316801.ch2" class="external-link">10.1002/9780470316801.ch2</a>
+(<span>Program PAM</span>). In <em>Finding groups in data: An
+introduction to cluster analysis</em> (pp. 68–125). <span>John Wiley
+&amp; Sons, Ltd</span>. <a href="https://doi.org/10.1002/9780470316801.ch2" class="external-link">https://doi.org/10.1002/9780470316801.ch2</a>
 </div>
 <div id="ref-Kohonen1982" class="csl-entry">
 Kohonen, T. (1982). Self-organized formation of topologically correct
-feature maps. <em>Biological Cybernetics</em>, <em>43</em>(1), 59–69.
-doi: <a href="https://doi.org/10.1007/BF00337288" class="external-link">10.1007/BF00337288</a>
+feature maps. <em>Biological Cybernetics</em>, <em>43</em>(1), 59–69. <a href="https://doi.org/10.1007/BF00337288" class="external-link">https://doi.org/10.1007/BF00337288</a>
 </div>
 <div id="ref-Kruskal1964" class="csl-entry">
 Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness
 of fit to a nonmetric hypothesis. <em>Psychometrika</em>,
-<em>29</em>(1), 1–27. doi: <a href="https://doi.org/10.1007/BF02289565" class="external-link">10.1007/BF02289565</a>
+<em>29</em>(1), 1–27. <a href="https://doi.org/10.1007/BF02289565" class="external-link">https://doi.org/10.1007/BF02289565</a>
 </div>
 <div id="ref-Mammola2019" class="csl-entry">
 Mammola, S. (2019). Assessing similarity of
 <span><em>n</em></span>-dimensional hypervolumes: <span>Which</span>
 metric to use? <em>Journal of Biogeography</em>, <em>46</em>(9),
-2012–2023. doi: <a href="https://doi.org/10.1111/jbi.13618" class="external-link">10.1111/jbi.13618</a>
+2012–2023. <a href="https://doi.org/10.1111/jbi.13618" class="external-link">https://doi.org/10.1111/jbi.13618</a>
 </div>
 <div id="ref-Sammon1969" class="csl-entry">
 Sammon, J. W. (1969). A nonlinear mapping for data structure analysis.
-<em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. doi:
-<a href="https://doi.org/10.1109/T-C.1969.222678" class="external-link">10.1109/T-C.1969.222678</a>
+<em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. <a href="https://doi.org/10.1109/T-C.1969.222678" class="external-link">https://doi.org/10.1109/T-C.1969.222678</a>
 </div>
 <div id="ref-Silva2021" class="csl-entry">
 Silva, A. S., &amp; Wilkinson, M. (2021). On defining and finding
 islands of trees and mitigating large island bias. <em>Systematic
-Biology</em>, <em>70</em>(6), 1282–1294. doi: <a href="https://doi.org/10.1093/sysbio/syab015" class="external-link">10.1093/sysbio/syab015</a>
+Biology</em>, <em>70</em>(6), 1282–1294. <a href="https://doi.org/10.1093/sysbio/syab015" class="external-link">https://doi.org/10.1093/sysbio/syab015</a>
 </div>
 <div id="ref-SmithDist" class="csl-entry">
 Smith, M. R. (2020). Information theoretic <span>Generalized
 Robinson-Foulds</span> metrics for comparing phylogenetic trees.
-<em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi: <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a>
+<em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">https://doi.org/10.1093/bioinformatics/btaa614</a>
 </div>
 <div id="ref-SmithSpace" class="csl-entry">
 Smith, M. R. (2022). Robust analysis of phylogenetic tree space.
-<em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a>
+<em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">https://doi.org/10.1093/sysbio/syab100</a>
 </div>
 <div id="ref-Smith2022" class="csl-entry">
 Smith, T. J., &amp; Donoghue, P. C. J. (2022). Evolution of fungal
 phenotypic disparity. <em>Nature Ecology &amp; Evolution</em>,
-s41559-022-01844-6. doi: <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">10.1038/s41559-022-01844-6</a>
+s41559-022-01844-6. <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">https://doi.org/10.1038/s41559-022-01844-6</a>
 </div>
 <div id="ref-Thrun2016" class="csl-entry">
 Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016).
@@ -584,12 +579,11 @@ Visualization and <span>3D</span> printing of multivariate data of
 biomarkers. <em>International <span>Conference</span> in <span>Central
 Europe</span> on <span>Computer Graphics</span>,
 <span>Visualization</span> and <span>Computer Vision</span></em>.
-<span>Plzen</span>.
 </div>
 <div id="ref-Ultsch2003" class="csl-entry">
 Ultsch, A. (2003). Maps for the visualization of high-dimensional data
 spaces. <em>Proceedings Workshop on Self-Organizing Maps (WSOM
-2003)</em>, 225–230. Kyushu, Japan.
+2003)</em>, 225–230.
 </div>
 </div>
 </div>

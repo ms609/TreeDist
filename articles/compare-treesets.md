@@ -77,10 +77,11 @@ Interpreting and comparing the areas of tree space from a projection can
 be misleading – the expanded apparent area of Greenland under the
 Mercator projection being a familiar example.
 
-![Mapping can introduce
-distortion](https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg)
+![Mercator map projection, with true size of each country overlaid.
+Credit: Neil Kaye](figures/mercator-projection.jpg)
 
-Mapping can introduce distortion
+Mercator map projection, with true size of each country overlaid.
+Credit: [Neil Kaye](https://x.com/neilrkaye)
 
 As such, it is always best to work with original distances when
 interpreting whether sets of trees occupy larger or smaller regions of
@@ -178,9 +179,9 @@ trees across tree space.
 ## References
 
 Smith, M. R. (2022a). Robust analysis of phylogenetic tree space.
-*Systematic Biology*, *71*(5), 1255–1270. doi:
-[10.1093/sysbio/syab100](https://doi.org/10.1093/sysbio/syab100)
+*Systematic Biology*, *71*(5), 1255–1270.
+<https://doi.org/10.1093/sysbio/syab100>
 
 Smith, M. R. (2022b). Using information theory to detect rogue taxa and
-improve consensus trees. *Systematic Biology*, *71*(5), 1088–1094. doi:
-[10.1093/sysbio/syab099](https://doi.org/10.1093/sysbio/syab099)
+improve consensus trees. *Systematic Biology*, *71*(5), 1088–1094.
+<https://doi.org/10.1093/sysbio/syab099>

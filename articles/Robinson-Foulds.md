@@ -111,11 +111,11 @@ VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, Plot = TreeDistPlot)
 
 ![](Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png)
 
-Generalized Robinson–Foulds distances (Böcker, Canzar, & Klau, 2013;
-Nye, Liò, & Gilks, 2006) seek to address this issue. This category of
-metrics aim to acknowledge semblances between
-similar-but-not-quite-identical pairs of splits, which would contribute
-zero to tree similarity under the standard Robinson–Foulds measure.
+Generalized Robinson–Foulds distances (Böcker et al., 2013; Nye et al.,
+2006) seek to address this issue. This category of metrics aim to
+acknowledge semblances between similar-but-not-quite-identical pairs of
+splits, which would contribute zero to tree similarity under the
+standard Robinson–Foulds measure.
 
 Generalized RF distances work by finding a *matching* that pairs splits
 from one tree with splits in the other. Each pairing is scored according
@@ -283,24 +283,22 @@ unpaired.
 Böcker, S., Canzar, S., & Klau, G. W. (2013). The generalized
 Robinson-Foulds metric. In A. Darling & J. Stoye (Eds.), *Algorithms in
 Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126*
-(pp. 156–169). Berlin, Heidelberg: Springer. doi:
-[10.1007/978-3-642-40453-5_13](https://doi.org/10.1007/978-3-642-40453-5_13)
+(pp. 156–169). Springer. <https://doi.org/10.1007/978-3-642-40453-5_13>
 
 Nye, T. M. W., Liò, P., & Gilks, W. R. (2006). A novel algorithm and
 web-based tool for comparing two alternative phylogenetic trees.
-*Bioinformatics*, *22*(1), 117–119. doi:
-[10.1093/bioinformatics/bti720](https://doi.org/10.1093/bioinformatics/bti720)
+*Bioinformatics*, *22*(1), 117–119.
+<https://doi.org/10.1093/bioinformatics/bti720>
 
 Robinson, D. F., & Foulds, L. R. (1981). Comparison of phylogenetic
-trees. *Mathematical Biosciences*, *53*(1-2), 131–147. doi:
-[10.1016/0025-5564(81)90043-2](https://doi.org/10.1016/0025-5564(81)90043-2)
+trees. *Mathematical Biosciences*, *53*(1-2), 131–147.
+<https://doi.org/10.1016/0025-5564(81)90043-2>
 
 Schuh, R. T., & Polhemus, J. T. (1980). Analysis of taxonomic congruence
 among morphological, ecological and biogeographic data sets for the
-Leptopodomorpha (Hemiptera). *Systematic Biology*, *29*(1), 1–26. doi:
-[10.1093/sysbio/29.1.1](https://doi.org/10.1093/sysbio/29.1.1)
+Leptopodomorpha (Hemiptera). *Systematic Biology*, *29*(1), 1–26.
+<https://doi.org/10.1093/sysbio/29.1.1>
 
 Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. *Bioinformatics*, *36*(20),
-5007–5013. doi:
-[10.1093/bioinformatics/btaa614](https://doi.org/10.1093/bioinformatics/btaa614)
+5007–5013. <https://doi.org/10.1093/bioinformatics/btaa614>

@@ -15,11 +15,11 @@ Matching Split Distance
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,11 +191,11 @@ so that it can be implemented.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">MatchingSplitDistance</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu">ape</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ape/man/rtree.html" class="external-link">rtree</a></span><span class="op">)</span>, normalize <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       1     2     3     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.750                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.750 0.500            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.625 0.625 0.875      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.750 0.500 0.250 0.750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        1      2      3      4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.7500                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0.8125 0.6875              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.7500 0.7500 0.8125       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.3750 0.7500 0.5625 0.8750</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">MatchingSplitDistance</span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">BalancedTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                      <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">PectinateTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>,</span></span>

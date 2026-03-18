@@ -434,11 +434,10 @@ MeanMSTEdge(pid_mapping, pid_cluster)
 ### Self-organizing maps
 
 An alternative approach to visualizing tree space is to create emergent
-self-organizing maps (Kohonen, 1982; Thrun, Lerch, Lötsch, & Ultsch,
-2016; Ultsch, 2003), which map high-dimensional data into two
-dimensions, then add a third dimension to indicate distance between data
-points: nearby points occur in valleys, and are separated by ridges from
-more distant data points.
+self-organizing maps (Kohonen, 1982; Thrun et al., 2016; Ultsch, 2003),
+which map high-dimensional data into two dimensions, then add a third
+dimension to indicate distance between data points: nearby points occur
+in valleys, and are separated by ridges from more distant data points.
 
 ``` r
 umatrixInstalled <- requireNamespace("Umatrix", quietly = TRUE)
@@ -478,7 +477,7 @@ if (umatrixInstalled) {
     ## ℹ See also `vignette("ggplot2-in-packages")` for more information.
     ## ℹ The deprecated feature was likely used in the Umatrix package.
     ##   Please report the issue to the authors.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
@@ -486,7 +485,7 @@ if (umatrixInstalled) {
     ## ℹ Please use `linewidth` instead.
     ## ℹ The deprecated feature was likely used in the Umatrix package.
     ##   Please report the issue to the authors.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
@@ -519,61 +518,55 @@ You may wish to:
 
 Arthur, D., & Vassilvitskii, S. (2007). K-means++: The advantages of
 careful seeding. *Proceedings of the Eighteenth Annual ACM-SIAM
-Symposium on Discrete Algorithms*, 1027–1035. USA: Society for
-Industrial and Applied Mathematics.
+Symposium on Discrete Algorithms, SODA ’07*, 1027–1035.
 
 Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C.,
-Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating
-*n*-dimensional hypervolumes. *Methods in Ecology and Evolution*,
-*9*(2), 305–319. doi:
-[10.1111/2041-210X.12865](https://doi.org/10.1111/2041-210X.12865)
+Violle, C., Enquist, B. J., & Kerkhoff, A. J. (2018). New approaches for
+delineating *n*-dimensional hypervolumes. *Methods in Ecology and
+Evolution*, *9*(2), 305–319. <https://doi.org/10.1111/2041-210X.12865>
 
 Kaufman, L., & Rousseeuw, P. J. (1990). Partitioning around medoids
-(Program PAM). In *Wiley Series in Probability and Statistics*. *Finding
-groups in data: An introduction to cluster analysis* (pp. 68–125). John
-Wiley & Sons, Ltd. doi:
-[10.1002/9780470316801.ch2](https://doi.org/10.1002/9780470316801.ch2)
+(Program PAM). In *Finding groups in data: An introduction to cluster
+analysis* (pp. 68–125). John Wiley & Sons, Ltd.
+<https://doi.org/10.1002/9780470316801.ch2>
 
 Kohonen, T. (1982). Self-organized formation of topologically correct
-feature maps. *Biological Cybernetics*, *43*(1), 59–69. doi:
-[10.1007/BF00337288](https://doi.org/10.1007/BF00337288)
+feature maps. *Biological Cybernetics*, *43*(1), 59–69.
+<https://doi.org/10.1007/BF00337288>
 
 Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness
-of fit to a nonmetric hypothesis. *Psychometrika*, *29*(1), 1–27. doi:
-[10.1007/BF02289565](https://doi.org/10.1007/BF02289565)
+of fit to a nonmetric hypothesis. *Psychometrika*, *29*(1), 1–27.
+<https://doi.org/10.1007/BF02289565>
 
 Mammola, S. (2019). Assessing similarity of *n*-dimensional
 hypervolumes: Which metric to use? *Journal of Biogeography*, *46*(9),
-2012–2023. doi: [10.1111/jbi.13618](https://doi.org/10.1111/jbi.13618)
+2012–2023. <https://doi.org/10.1111/jbi.13618>
 
 Sammon, J. W. (1969). A nonlinear mapping for data structure analysis.
-*IEEE Transactions on Computers*, *C-18*(5), 401–409. doi:
-[10.1109/T-C.1969.222678](https://doi.org/10.1109/T-C.1969.222678)
+*IEEE Transactions on Computers*, *C-18*(5), 401–409.
+<https://doi.org/10.1109/T-C.1969.222678>
 
 Silva, A. S., & Wilkinson, M. (2021). On defining and finding islands of
 trees and mitigating large island bias. *Systematic Biology*, *70*(6),
-1282–1294. doi:
-[10.1093/sysbio/syab015](https://doi.org/10.1093/sysbio/syab015)
+1282–1294. <https://doi.org/10.1093/sysbio/syab015>
 
 Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. *Bioinformatics*, *36*(20),
-5007–5013. doi:
-[10.1093/bioinformatics/btaa614](https://doi.org/10.1093/bioinformatics/btaa614)
+5007–5013. <https://doi.org/10.1093/bioinformatics/btaa614>
 
 Smith, M. R. (2022). Robust analysis of phylogenetic tree space.
-*Systematic Biology*, *71*(5), 1255–1270. doi:
-[10.1093/sysbio/syab100](https://doi.org/10.1093/sysbio/syab100)
+*Systematic Biology*, *71*(5), 1255–1270.
+<https://doi.org/10.1093/sysbio/syab100>
 
 Smith, T. J., & Donoghue, P. C. J. (2022). Evolution of fungal
 phenotypic disparity. *Nature Ecology & Evolution*, s41559-022-01844-6.
-doi:
-[10.1038/s41559-022-01844-6](https://doi.org/10.1038/s41559-022-01844-6)
+<https://doi.org/10.1038/s41559-022-01844-6>
 
 Thrun, M. C., Lerch, F., Lötsch, J., & Ultsch, A. (2016). Visualization
 and 3D printing of multivariate data of biomarkers. *International
 Conference in Central Europe on Computer Graphics, Visualization and
-Computer Vision*. Plzen.
+Computer Vision*.
 
 Ultsch, A. (2003). Maps for the visualization of high-dimensional data
 spaces. *Proceedings Workshop on Self-Organizing Maps (WSOM 2003)*,
-225–230. Kyushu, Japan.
+225–230.

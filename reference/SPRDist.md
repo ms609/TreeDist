@@ -1,9 +1,6 @@
-# Approximate the Subtree Prune and Regraft (SPR) distance.
+# Approximate the Subtree Prune and Regraft distance
 
-`SPRDist()` calculates an upper bound on the SPR distance between trees
-using the heuristic method of de Oliveira Martins et al. (2008) . Other
-approximations are available (e.g. Hickey et al. 2008, Goloboff 2008,
-Whidden and Matsen 2018) .
+`SPRDist()` approximates the SPR distance between trees.
 
 ## Usage
 
@@ -32,18 +29,29 @@ SPRDist(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 - method:
 
   Character specifying which method to use to approximate the SPR
-  distance. Currently defaults to `"deOliveira"`, the only available
-  option; a new method will eventually become the default.
+  distance. Currently defaults to ``` "deOliveira"``.  ```"Rogue"\`
+  implements an experimental method whose details are pending
+  publication; this function is under development, and may be modified
+  or removed without notice. Once formally validated, it is anticipated
+  that this method will become the default.
 
 - symmetric:
 
-  Ignored (redundant after fix of
+  Deprecated (redundant after fix of
   [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
 
 ## Value
 
 `SPRDist()` returns a vector or distance matrix of distances between
 trees.
+
+## Details
+
+The function currently defaults to the heuristic method of de Oliveira
+Martins et al. (2008) , which purports to provide an upper bound on the
+SPR distance (though exceptions exist). Other approximations (e.g.
+Hickey et al. 2008, Goloboff 2008, Whidden and Matsen 2018) are not yet
+implemented.
 
 ## References
 
@@ -111,7 +119,7 @@ library("TreeTools", quietly = TRUE)
 SPRDist(BalancedTree(7), PectinateTree(7))
 #> [1] 2
 
-# Compare all pairs of trees        
+# Compare all pairs of trees
 SPRDist(as.phylo(30:33, 8))
 #>   1 2 3 4
 #> 1   1 1 1

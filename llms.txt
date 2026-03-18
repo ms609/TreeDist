@@ -267,7 +267,7 @@ Functions for calculating distances between pairs of trees.
   information content
 
 - [`SPRDist()`](https://ms609.github.io/TreeDist/reference/SPRDist.md) :
-  Approximate the Subtree Prune and Regraft (SPR) distance.
+  Approximate the Subtree Prune and Regraft distance
 
 - [`CompareAll()`](https://ms609.github.io/TreeDist/reference/CompareAll.md)
   : Distances between each pair of trees

@@ -40,18 +40,64 @@ otherwise.
 
 ## Details
 
-"TreeDist" parallelizes the calculation of tree to tree distances via
-the `parCapply()` function, using a user-defined cluster specified in
-`options("TreeDist-cluster")`.
+### OpenMP (recommended for all split-based metrics)
 
-`StartParallel()` calls
-[`parallel::makeCluster()`](https://rdrr.io/r/parallel/makeCluster.html)
-and tells "TreeDist" to use the created cluster.
+When the package is built with OpenMP support (the default on Linux and
+Windows; optional on macOS), all pairwise split-based distance
+calculations use an efficient multi-threaded batch path automatically —
+no cluster setup is required. The affected functions are:
 
-`SetParallel()` tells "TreeDist" to use a pre-existing or user-specified
-cluster.
+- [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  /
+  [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
 
-`StopParallel()` stops the current TreeDist cluster.
+- [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  /
+  [`DifferentPhylogeneticInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+
+- [`MatchingSplitInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  /
+  [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+
+- [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.md)
+
+- [`InfoRobinsonFoulds()`](https://ms609.github.io/TreeDist/reference/Robinson-Foulds.md)
+
+- [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.md)
+
+- [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.md)
+
+The number of OpenMP threads is controlled by the standard `"mc.cores"`
+option:
+
+    options(mc.cores = parallel::detectCores())  # use all available cores
+    options(mc.cores = 4L)                        # or a fixed number
+
+The default is `1` (single-threaded).
+
+### R parallel cluster
+
+`StartParallel()` creates an R socket cluster (via `makeCluster()`) and
+registers it for use by TreeDist. `SetParallel()` registers a
+pre-existing cluster. `StopParallel()` stops the cluster and releases
+resources.
+
+**When to use `StartParallel()`:** for metrics that do not have an
+OpenMP batch path, namely tree-object-based distances such as
+[`NNIDist()`](https://ms609.github.io/TreeDist/reference/NNIDist.md) and
+[`MASTSize()`](https://ms609.github.io/TreeDist/reference/MASTSize.md) /
+[`MASTInfo()`](https://ms609.github.io/TreeDist/reference/MASTSize.md),
+or any function called via
+[`CompareAll()`](https://ms609.github.io/TreeDist/reference/CompareAll.md).
+R-cluster parallelism carries a serialisation overhead of ~2–3 s, so it
+is only beneficial for large problems.
+
+**When *not* to use `StartParallel()`:** for the split-based metrics
+listed above. Registering a cluster disables the OpenMP batch path for
+those functions, replacing a thread-local C++ loop with inter-process
+communication — which is slower at every problem size measured. Call
+`StopParallel()` before computing split-based distances if a cluster is
+active.
 
 ## Author
 
@@ -61,12 +107,20 @@ cluster.
 ## Examples
 
 ``` r
-if (interactive()) { # Only run in terminal
+# OpenMP parallelism: set mc.cores before calling any split-based metric.
+options(mc.cores = 2L)
+# MutualClusteringInfo(trees)  # uses 2 OpenMP threads automatically
+options(mc.cores = NULL)  # restore default (single-threaded)
+
+if (interactive()) {
+  # R cluster: beneficial for NNIDist, MASTSize/MASTInfo, CompareAll(), etc.
+  # Do NOT activate while computing split-based distances (MCI, SPI, MSI, …)
+  # as it bypasses the faster OpenMP path.
   library("TreeTools", quietly = TRUE)
   nCores <- ceiling(parallel::detectCores() / 2)
   StartParallel(nCores) # Takes a few seconds to set up processes
   GetParallel()
-  ClusteringInfoDistance(as.phylo(0:6, 100))
+  CompareAll(as.phylo(0:6, 100), NNIDist)
   StopParallel() # Returns system resources
 }
 ```

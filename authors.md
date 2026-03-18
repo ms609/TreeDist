@@ -15,6 +15,9 @@
 - **Yi Cao**. Contributor, copyright holder.  
   LAP algorithm
 
+- **Neil Kaye**. Copyright holder.  
+  Mercator image
+
 ## Citation
 
 Source:
@@ -50,11 +53,11 @@ Systematic Biology 71: 1255–1270. doi: 10.1093/sysbio/syab100
     }
 
 Smith, M.R. (2020b). TreeDist: Distances between Phylogenetic Trees. R
-package version 2.11.1. Comprehensive R Archive Network.
+package version 2.13.0. Comprehensive R Archive Network.
 doi:10.5281/zenodo.3528124
 
     @Manual{TreeDist,
-      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.11.1},
+      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.13.0},
       author = {Martin R. Smith},
       doi = {10.5281/zenodo.3528124},
       journal = {Comprehensive R Archive Network},

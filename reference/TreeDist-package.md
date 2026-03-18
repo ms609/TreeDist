@@ -185,3 +185,5 @@ Other contributors:
   copyright holder\]
 
 - Yi Cao (LAP algorithm) \[contributor, copyright holder\]
+
+- Neil Kaye (Mercator image) \[copyright holder\]
