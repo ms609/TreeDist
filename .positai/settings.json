@@ -28,6 +28,10 @@
       "rm -f src/*.o src/*.dll": "allow",
       "tail *": "allow",
       "wc *": "allow"
+    },
+    "external_directory": {
+      "../Quartet/*": "allow",
+      "../TreeTools/*": "allow"
     }
   },
   "model": {

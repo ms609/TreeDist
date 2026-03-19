@@ -64,52 +64,28 @@ TransferConsensus <- function(trees,
   tipLabels <- TipLabels(trees[[1]])
   nTip <- length(tipLabels)
 
-  splitInfo <- .PoolSplits(trees, tipLabels)
-  splitMat   <- splitInfo$splits     # integer matrix: nSplits x nTip (logical)
-  counts     <- splitInfo$counts
-  lightSide  <- splitInfo$lightSide
-  treeMembers <- splitInfo$treeMembers
-  nSplits <- nrow(splitMat)
+  # Convert each tree to a raw split matrix (TreeTools C++ internally)
+  splitsList <- lapply(trees, function(tr) {
+    sp <- as.Splits(tr, tipLabels)
+    unclass(sp)
+  })
 
-  # Pairwise transfer distance matrix (integer, nSplits x nSplits)
-  DIST <- .TransferDistMat(splitMat, nTip)
+  # Delegate all work to C++
+  res <- cpp_transfer_consensus(
+    splitsList, nTip, scale,
+    greedy_best_flag = (greedy == "best"),
+    init_majority = (init == "majority")
+  )
 
-  # Augment with sentinel column/row (distance to leaf bipartitions)
-  # sentinel index = nSplits + 1
-  sentDist <- lightSide - 1L  # length nSplits
-
-  # Transfer dissimilarity cost (FP cost of including each split)
-  TD <- .ComputeTD(DIST, sentDist, treeMembers, lightSide, nTree, scale)
-
-  # Compatibility matrix
-  compat <- .CompatMat(splitMat, nTip)
-
-  # Mutable state
-  st <- new.env(parent = emptyenv())
-  st$MATCH  <- rep(NA_integer_, nSplits)  # NA = sentinel
-
-  st$MATCH2 <- rep(NA_integer_, nSplits)
-  st$incl   <- logical(nSplits)
-
-  if (init == "majority") {
-    majIdx <- which(counts > nTree / 2)
-    if (length(majIdx)) {
-      for (idx in majIdx) st$incl[idx] <- TRUE
-      .InitMatches(st, DIST, sentDist, lightSide, scale)
-    }
+  included <- res$included
+  if (!any(included)) {
+    return(StarTree(tipLabels))
   }
 
-  sortOrd <- order(counts, decreasing = TRUE)
-
-  if (greedy == "best") {
-    .GreedyBest(st, DIST, sentDist, TD, counts, lightSide, compat,
-                sortOrd, scale, nSplits, nTip)
-  } else {
-    .GreedyFirst(st, DIST, sentDist, TD, counts, lightSide, compat,
-                 sortOrd, scale, nSplits, nTip)
-  }
-
-  .SplitsToPhylo(splitInfo$rawSplits, st$incl, tipLabels, nTip)
+  rawSplits <- res$raw_splits[included, , drop = FALSE]
+  sp <- structure(rawSplits, nTip = nTip, tip.label = tipLabels,
+                  class = "Splits")
+  as.phylo(sp)
 }
 
 

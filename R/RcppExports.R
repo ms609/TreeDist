@@ -200,6 +200,27 @@ spr_table_7 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_7`, sp1, sp2)
 }
 
+#' Transfer consensus (C++ implementation)
+#'
+#' @param splits_list List of raw matrices (one per tree), each from as.Splits().
+#' @param n_tip Number of tips.
+#' @param scale Logical: use scaled transfer distance?
+#' @param greedy_best Logical: TRUE for "best", FALSE for "first".
+#' @param init_majority Logical: TRUE to start from majority-rule splits.
+#'
+#' @return A LogicalVector of length n_splits indicating which pooled splits
+#'   are included in the consensus, plus attributes "raw_splits" (a raw matrix
+#'   of all unique splits) and "light_side" (integer vector).
+#' @keywords internal
+cpp_transfer_consensus <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority) {
+    .Call(`_TreeDist_cpp_transfer_consensus`, splits_list, n_tip, scale, greedy_best_flag, init_majority)
+}
+
+#' @keywords internal
+cpp_tc_profile <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter) {
+    .Call(`_TreeDist_cpp_tc_profile`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }

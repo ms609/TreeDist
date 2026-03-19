@@ -271,6 +271,26 @@ covr::file_coverage(cov, "src/pairwise_distances.cpp")  # per-file summary
 Aim for full line coverage of new C++ and R code.  If a new code path is not
 exercised by the existing test suite, add targeted tests in `tests/testthat/`.
 
+### ⚠ Exploratory / risky R code — use a subprocess
+
+When running experimental R code that may be slow, allocate large objects,
+or involve complex loops (e.g., hill-climbing over tree space, brute-force
+evaluation of many candidate trees), **run it in a subprocess** rather than
+the interactive RStudio session.  Long-running or memory-heavy computations
+in the main session can freeze or crash RStudio.
+
+```r
+# Write the experiment to a temp script, then run via Rscript:
+writeLines(code, tmp <- tempfile(fileext = ".R"))
+system2("Rscript", tmp, stdout = TRUE, stderr = TRUE)
+
+# Or use callr for structured subprocess execution:
+callr::r(function() { ... }, timeout = 120)
+```
+
+This applies especially to prototype algorithm exploration (e.g., CID
+hill-climbing over split space) where per-iteration cost is uncertain.
+
 ---
 
 ## Completed Optimizations (this dev cycle)
