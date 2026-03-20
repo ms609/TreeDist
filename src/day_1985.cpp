@@ -96,7 +96,7 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
 
   std::vector<ClusterTable> tables;
   if (std::size_t(n_trees) > tables.max_size()) {
-    Rf_error("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
+    Rcpp::stop("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
   }
 
   tables.reserve(n_trees);
@@ -322,30 +322,20 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
 double consensus_info(const List trees, const LogicalVector phylo,
                       const NumericVector p) {
   if (p[0] > 1 + 1e-15) { // epsilon catches floating point error
-    Rf_error("p must be <= 1.0 in consensus_info()");
+    Rcpp::stop("p must be <= 1.0 in consensus_info()");
   } else if (p[0] < 0.5) {
-    Rf_error("p must be >= 0.5 in consensus_info()");
+    Rcpp::stop("p must be >= 0.5 in consensus_info()");
   }
 
-  // First, peek at the tree size to determine allocation strategy
-  // We'll create a temporary ClusterTable just to check the size
-  try {
-    ClusterTable temp_table(Rcpp::List(trees(0)));
-    const int32 n_tip = temp_table.N();
-    
-    if (n_tip <= ct_stack_threshold) {
-      // Small tree: use stack-allocated array
-      std::array<StackEntry, ct_stack_threshold> S;
-      return calc_consensus_info(trees, phylo, p, S);
-    } else {
-      // Large tree: use heap-allocated vector
-      std::vector<StackEntry> S(n_tip);
-      return calc_consensus_info(trees, phylo, p, S);
-    }
-  } catch(const std::exception& e) {
-    Rf_error("%s", e.what());
+  // Peek at tree size to choose stack vs heap allocation for the work buffer
+  ClusterTable temp_table(Rcpp::List(trees(0)));
+  const int32 n_tip = temp_table.N();
+
+  if (n_tip <= ct_stack_threshold) {
+    std::array<StackEntry, ct_stack_threshold> S;
+    return calc_consensus_info(trees, phylo, p, S);
+  } else {
+    std::vector<StackEntry> S(n_tip);
+    return calc_consensus_info(trees, phylo, p, S);
   }
-  
-  ASSERT(false && "Unreachable code in consensus_tree");
-  return 0.0;
 }
