@@ -49,7 +49,7 @@ __attribute__((constructor))
 inline double split_phylo_info(const int32 n_in, const int32 *n_tip,
                                const double p) {
   if (*n_tip > CT_MAX_LEAVES) {
-    Rcpp::stop("This many leaves are not yet supported.");
+    Rf_error("This many leaves are not yet supported.");
   }
   const int32 n_out = *n_tip - n_in;
   assert(p > 0);
@@ -75,7 +75,7 @@ inline double split_phylo_info(const int32 n_in, const int32 *n_tip,
 inline double split_clust_info(const int32 n_in, const int32 *n_tip,
                                const double p) {
   if (*n_tip > CT_MAX_LEAVES) {
-    Rcpp::stop("This many leaves are not yet supported.");
+    Rf_error("This many leaves are not yet supported.");
   }
   const int32 n_out = *n_tip - n_in;
   assert(p > 0);

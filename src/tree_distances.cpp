@@ -29,7 +29,7 @@ namespace TreeDist {
 
   void check_ntip(const double n) {
     if (n > static_cast<double>(std::numeric_limits<int16>::max())) {
-      Rf_error("This many tips are not (yet) supported."); // not Rcpp::stop: ARM safety
+      Rcpp::stop("This many tips are not (yet) supported.");
     }
   }
 
@@ -602,14 +602,11 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
                       _["matching"] = final_matching);
 }
 
-// Input validation: Rf_error (longjmp) instead of Rcpp::stop (C++ exception)
-// for ARM compatibility.  R callers should validate before reaching C++.
-
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
                                   const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   return robinson_foulds_distance(x, y, static_cast<int32>(nTip[0]));
 }
@@ -618,7 +615,7 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
 List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
                               const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
@@ -629,7 +626,7 @@ List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
 List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
                                  const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
@@ -641,7 +638,7 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
                             const IntegerVector &nTip, const NumericVector &k,
                             const LogicalVector &allowConflict) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
@@ -652,7 +649,7 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
 List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
                       const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
@@ -663,7 +660,7 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
 List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                            const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
@@ -674,7 +671,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 List cpp_shared_phylo(const RawMatrix &x, const RawMatrix &y,
                       const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
-    Rf_error("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);

@@ -226,16 +226,7 @@ grf_match nni_rf_matching (
   
     ASSERT(n_splits > 0);
     ASSERT(n_tips > 3);
-    if (n_tips > NNI_MAX_TIPS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with so many tips.");
-    }
-    
-    // #nocov start
-    if (static_cast<int64_t>(n_splits) * static_cast<int64_t>(n_bins) >
-          static_cast<int64_t>(std::numeric_limits<int32_t>::max())) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with so many splits.");
-    }
-    // #nocov end
+    ASSERT(n_tips <= NNI_MAX_TIPS); // Validated by exported wrapper
     
     const int32_t last_bin = n_bins - 1;
     const int32_t unset_tips = (n_tips % SL_BIN_SIZE) ? 
@@ -317,7 +308,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   
   if (n_edge != int32_t(edge2.nrow())) {
     Rcpp::stop("Both trees must have the same number of edges. "
-             "Is one rooted and the other unrooted?");
+               "Is one rooted and the other unrooted?");
   }
 
   if (n_tip < 4) {
