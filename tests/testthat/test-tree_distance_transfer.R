@@ -240,11 +240,11 @@ test_that("cpp_transfer_dist() handles star trees", {
   expect_equal(res_ss$score_unscaled, 0)
 })
 
-test_that("cpp_transfer_dist() errors on column mismatch", {
+test_that("column mismatch caught by R-level guard", {
   sp1 <- matrix(as.raw(0), nrow = 1, ncol = 1)
   sp2 <- matrix(as.raw(0), nrow = 1, ncol = 2)
   expect_error(
-    TreeDist:::cpp_transfer_dist(sp1, sp2, 8L),
+    TreeDist:::.ValidateSplitArgs(sp1, sp2, 8L),
     "same number of tips"
   )
 })
@@ -254,11 +254,11 @@ test_that("cpp_transfer_dist() errors on column mismatch", {
 # cpp_transfer_dist_scored() edge cases
 # =========================================================================
 
-test_that("cpp_transfer_dist_scored() errors on column mismatch", {
+test_that("column mismatch caught by R-level guard (scored)", {
   sp1 <- matrix(as.raw(0), nrow = 1, ncol = 1)
   sp2 <- matrix(as.raw(0), nrow = 1, ncol = 2)
   expect_error(
-    TreeDist:::cpp_transfer_dist_scored(sp1, sp2, 8L, TRUE),
+    TreeDist:::.ValidateSplitArgs(sp1, sp2, 8L),
     "same number of tips"
   )
 })

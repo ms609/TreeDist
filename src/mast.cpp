@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <Rcpp/Lightest>
+#include <TreeTools/assert.h>
 #include "ints.h"
 using namespace Rcpp;
 
@@ -63,12 +64,8 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
               n_internal = n_tip - 1,
               n_all_nodes = n_tip + n_internal,
               n_edge = edge1.nrow();
-  if (edge2.nrow() != n_edge) {
-    Rcpp::stop("Both trees must contain the same number of edges.");
-  }
-  if (n_tip > MAST_MAX_TIP) {
-    Rcpp::stop("Tree too large; please contact maintainer for advice.");
-  }
+  ASSERT(edge2.nrow() == n_edge && "Both trees must contain the same number of edges.");
+  ASSERT(n_tip <= MAST_MAX_TIP && "Tree too large; please contact maintainer for advice.");
   
   int16
     t1_left[MAST_MAX_NODE] = {}, t1_right[MAST_MAX_NODE] = {},

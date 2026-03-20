@@ -12,6 +12,7 @@
  */
 
 #include <TreeTools/SplitList.h>
+#include <TreeTools/assert.h>
 #include <Rcpp/Lightest>
 #include <algorithm>
 #include <cstdint>
@@ -145,9 +146,8 @@ List cpp_transfer_dist(
     const RawMatrix& x, const RawMatrix& y,
     const IntegerVector& nTip
 ) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
+  // Validated by R caller (.ValidateSplitArgs or as.Splits with shared tipLabels)
+  ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
 
   const int n_tip = nTip[0];
   SplitList sl_x(x);
@@ -204,9 +204,8 @@ List cpp_transfer_dist_scored(
     const RawMatrix& x, const RawMatrix& y,
     const IntegerVector& nTip, bool scale
 ) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
+  // Validated by R caller (.ValidateSplitArgs or as.Splits with shared tipLabels)
+  ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
 
   const int n_tip = nTip[0];
   SplitList sl_x(x);

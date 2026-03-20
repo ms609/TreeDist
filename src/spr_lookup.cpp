@@ -223,7 +223,7 @@ int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
 
 inline SplitSet7 read_splits(const Rcpp::RawVector& r) {
   if (r.size() != 4)
-    Rcpp::stop("Expected a length-4 raw vector of splits");
+    ASSERT(false && "Expected a length-4 raw vector of splits");
   
   SplitSet7 sp{};
   for (int i = 0; i < 4; ++i) {
