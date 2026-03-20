@@ -511,9 +511,9 @@ struct GreedyState {
           // where match2[b] stayed at -1 while another split's removal
           // makes b's greedy match the removed split — theoretically
           // reachable but extremely unlikely in practice.
-          auto [first, first_d] = find_second(b, -1, incl, dist, M, pool, scale);
-          match[b]      = first;
-          match_dist[b] = first_d;
+          auto [first, first_d] = find_second(b, -1, incl, dist, M, pool, scale); // #nocov
+          match[b]      = first;   // #nocov
+          match_dist[b] = first_d; // #nocov
         }
 
         // Find new second-closest
