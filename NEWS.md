@@ -62,7 +62,7 @@ Typical speedups over v2.12.0 for tree sets where most splits are shared
 - Cross-pairs computations (`tree1` vs `tree2` where both are lists) now
   use the same optimized batch path as all-pairs computations.
 
-### KendallColijn distance
+### Kendall & Colijn distance
 
 - `KCVector()` reimplemented in C++, giving ~220× speedup per tree.
 

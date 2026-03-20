@@ -707,7 +707,7 @@ static void init_matches(
 //' @param greedy_best_flag Logical: TRUE for "best", FALSE for "first".
 //' @param init_majority Logical: TRUE to start from majority-rule splits.
 //'
-//' @return A LogicalVector of length n_splits indicating which pooled splits
+//' @return A `LogicalVector` of length n_splits indicating which pooled splits
 //'   are included in the consensus, plus attributes "raw_splits" (a raw matrix
 //'   of all unique splits) and "light_side" (integer vector).
 //' @keywords internal

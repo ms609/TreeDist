@@ -9,7 +9,8 @@ cpp_transfer_consensus(
   n_tip,
   scale,
   greedy_best_flag,
-  init_majority
+  init_majority,
+  n_threads = 1L
 )
 }
 \arguments{

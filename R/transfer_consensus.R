@@ -13,7 +13,7 @@
 #' pairwise transfer distances between them, and greedily adds or removes
 #' splits to minimize total transfer dissimilarity cost.  The approach
 #' follows \insertCite{Takazawa2026;textual}{TreeDist}, reimplemented for
-#' TreeDist's infrastructure.
+#' 'TreeDist' infrastructure.
 #'
 #' @param trees An object of class `multiPhylo`: the input trees.
 #'   All trees must share the same tip labels.

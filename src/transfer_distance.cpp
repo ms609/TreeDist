@@ -137,8 +137,8 @@ static double accumulate_transfer(
 //' @return A list with components:
 //'   - score_scaled: scaled transfer dissimilarity (double)
 //'   - score_unscaled: unscaled transfer dissimilarity (double)
-//'   - matching_xy: integer vector, best match in y for each split in x (1-based, NA if sentinel)
-//'   - matching_yx: integer vector, best match in x for each split in y (1-based, NA if sentinel)
+//'   - `matching_xy`: integer vector, best match in y for each split in x (1-based, NA if sentinel)
+//'   - `matching_yx`: integer vector, best match in x for each split in y (1-based, NA if sentinel)
 //' @keywords internal
 // [[Rcpp::export]]
 List cpp_transfer_dist(
@@ -324,7 +324,7 @@ NumericVector cpp_transfer_dist_all_pairs(
 //' @param scale Logical: use scaled transfer dissimilarity?
 //' @param n_threads Number of OpenMP threads.
 //'
-//' @return Numeric matrix of dimension nA x nB.
+//' @return Numeric matrix of dimension `nA` x `nB`.
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_transfer_dist_cross_pairs(

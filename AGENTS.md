@@ -257,6 +257,20 @@ source("benchmark/bench-tree-distances.R")
 C++ compilation flags are controlled by `src/Makevars.win` (Windows) / `src/Makevars`.
 The package requires **C++17** (`CXX_STD = CXX17`).
 
+### Documentation and spelling checks
+
+After any work that adds or modifies roxygen comments, Rd files, NEWS.md, or
+vignettes, run:
+
+```r
+devtools::check_man()                # regenerates Rd files and checks for issues
+spelling::spell_check_package()      # flags potential misspellings
+```
+
+Legitimate technical terms, proper nouns, and code identifiers flagged by the
+spell checker should be added to `inst/WORDLIST` (one word per line,
+alphabetically sorted).  Only fix actual typos in the source.
+
 ### Code coverage
 
 Check that existing tests cover all new code.  The GHA test suite uses codecov.
