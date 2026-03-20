@@ -364,16 +364,6 @@ static std::pair<int, int> find_second(
       best = c;
     }
   }
-  if (best >= 0) {
-    if (scale) {
-      if (p_minus_1 <= 0 ||
-          static_cast<double>(best_d) / p_minus_1 >= 1.0)
-        return {-1, p_minus_1};
-    } else {
-      if (best_d >= p_minus_1)
-        return {-1, p_minus_1};
-    }
-  }
   return {best, (best >= 0) ? best_d : p_minus_1};
 }
 
@@ -515,9 +505,12 @@ struct GreedyState {
         match_dist[b] = match2_dist[b];
 
         if (match[b] < 0) {
-          // Promoted value was sentinel — rescan from scratch to find
-          // the actual closest included split (find_second with
-          // matchIdx = -1 searches all included).
+          // Defensive guard: promoted match2 was the sentinel (no real
+          // second-closest split was known).  Rescan from scratch to find
+          // the actual closest included split.  This requires a topology
+          // where match2[b] stayed at -1 while another split's removal
+          // makes b's greedy match the removed split — theoretically
+          // reachable but extremely unlikely in practice.
           auto [first, first_d] = find_second(b, -1, incl, dist, M, pool, scale);
           match[b]      = first;
           match_dist[b] = first_d;

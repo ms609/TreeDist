@@ -73,6 +73,13 @@ NNIDist <- function(tree1, tree2 = tree1) {
 #' @importFrom TreeTools Postorder RenumberTips
 #' @importFrom ape Nnode.phylo
 .NNIDistSingle <- function(tree1, tree2, nTip, ...) {
+  if (nTip > 32768L) {
+    stop("Cannot calculate NNI distance for trees with so many tips.")
+  }
+  if (nrow(tree1[["edge"]]) != nrow(tree2[["edge"]])) {
+    stop("Both trees must have the same number of edges. ",
+         "Is one rooted and the other unrooted?")
+  }
   tree2 <- RenumberTips(tree2, as.character(tree1[["tip.label"]]))
   
   edge1 <- Postorder(tree1[["edge"]])

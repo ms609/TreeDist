@@ -146,7 +146,7 @@ List cpp_transfer_dist(
     const IntegerVector& nTip
 ) {
   if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
+    Rf_error("Input splits must address same number of tips.");
   }
 
   const int n_tip = nTip[0];
@@ -205,7 +205,7 @@ List cpp_transfer_dist_scored(
     const IntegerVector& nTip, bool scale
 ) {
   if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
+    Rf_error("Input splits must address same number of tips.");
   }
 
   const int n_tip = nTip[0];

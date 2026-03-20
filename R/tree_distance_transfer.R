@@ -104,7 +104,7 @@ TransferDistSplits <- function(splits1, splits2,
                                 nTip = attr(splits1, "nTip"),
                                 scale = TRUE,
                                 reportMatching = FALSE) {
-  
+  .ValidateSplitArgs(splits1, splits2, nTip)
   solution <- cpp_transfer_dist_scored(splits1, splits2,
                                         nTip = as.integer(nTip),
                                         scale = scale)
@@ -168,6 +168,7 @@ TransferDistSplits <- function(splits1, splits2,
   if (is.null(tipLabels)) return(NULL)
   nTip <- length(tipLabels)
   if (nTip < 4L) return(NULL)
+  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
   
   # Check all trees share same tip set
   allLabels <- TipLabels(tree1)
@@ -210,6 +211,7 @@ TransferDistSplits <- function(splits1, splits2,
   if (is.null(tipLabels)) return(NULL)
   nTip <- length(tipLabels)
   if (nTip < 4L) return(NULL)
+  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
   
   # Check all trees share same tip set
   allLabels1 <- TipLabels(trees1)

@@ -112,6 +112,61 @@ test_that("TransferConsensus covers all parameter combinations", {
   expect_s3_class(tc3, "phylo")
 })
 
+test_that("Greedy remove path fires with conflicting majority splits", {
+  # Two groups of trees with very different topologies: majority-init seeds
+  # splits from the larger group, some of which the greedy then removes.
+  t1 <- as.phylo(0, nTip = 12)
+  t2 <- as.phylo(100000, nTip = 12)
+  trees <- structure(c(rep(list(t1), 6), rep(list(t2), 5)),
+                     class = "multiPhylo")
+
+  # greedy="best" exercises do_remove + find_second in GreedyState
+  tc_best_s <- TransferConsensus(trees, greedy = "best", init = "majority",
+                                 scale = TRUE)
+  expect_s3_class(tc_best_s, "phylo")
+
+  tc_best_u <- TransferConsensus(trees, greedy = "best", init = "majority",
+                                 scale = FALSE)
+  expect_s3_class(tc_best_u, "phylo")
+
+  # greedy="first" exercises the same remove path via greedy_first
+
+  tc_first_s <- TransferConsensus(trees, greedy = "first", init = "majority",
+                                  scale = TRUE)
+  expect_s3_class(tc_first_s, "phylo")
+
+  tc_first_u <- TransferConsensus(trees, greedy = "first", init = "majority",
+                                  scale = FALSE)
+  expect_s3_class(tc_first_u, "phylo")
+})
+
+test_that("Greedy exercises diverse topologies (extra C++ path coverage)", {
+  # Random trees with many tips — sparse split overlap
+  set.seed(5123)
+  rand_trees <- structure(
+    lapply(1:30, function(i) TreeTools::RandomTree(10, root = TRUE)),
+    class = "multiPhylo")
+  # Diverse indexed trees
+  diverse_trees <- as.phylo(seq(0, 500, by = 25), nTip = 20)
+  # Three conflicting groups
+  mixed_trees <- structure(c(
+    rep(list(as.phylo(0, 8)), 5),
+    rep(list(as.phylo(300, 8)), 5),
+    rep(list(as.phylo(9999, 8)), 3)
+  ), class = "multiPhylo")
+
+  for (trees in list(rand_trees, diverse_trees, mixed_trees)) {
+    for (gr in c("best", "first")) {
+      for (init in c("empty", "majority")) {
+        for (sc in c(TRUE, FALSE)) {
+          tc <- TransferConsensus(trees, greedy = gr, init = init, scale = sc)
+          expect_s3_class(tc, "phylo")
+        }
+      }
+    }
+  }
+})
+
 test_that("cpp_tc_profile() runs without error", {
   trees <- as.phylo(0:4, nTip = 8)
   tipLabels <- TipLabels(trees[[1]])

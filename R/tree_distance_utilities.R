@@ -132,6 +132,9 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   # Fast paths: use OpenMP batch functions when all trees share the same tip
   # set and no R-level cluster has been configured.  Each branch mirrors the
   # generic path exactly but avoids per-pair R overhead.
+  if (!is.na(nTip) && nTip > 32767L) {
+    stop("This many tips are not (yet) supported.")
+  }
   if (!is.na(nTip) && is.null(cluster)) {
     .n_threads <- as.integer(getOption("mc.cores", 1L))
     .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
@@ -232,7 +235,9 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom stats setNames
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
-  
+  if (!is.na(nTip) && nTip > 32767L) {
+    stop("This many tips are not (yet) supported.")
+  }
   if (is.na(nTip)) {
     tipLabels <- union(unlist(tipLabels, use.names = FALSE),
                        unlist(TipLabels(splits2), use.names = FALSE))
@@ -393,6 +398,18 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     } else {
       ret
     }
+  }
+}
+
+# Validate split-matrix arguments before passing to C++.
+# On ARM, Rcpp::stop() can call std::terminate() instead of returning
+# a proper R error, so all expected-input validation must happen in R.
+.ValidateSplitArgs <- function(x, y, nTip) {
+  if (ncol(x) != ncol(y)) {
+    stop("Input splits must address same number of tips.")
+  }
+  if (nTip > 32767L) {
+    stop("This many tips are not (yet) supported.")
   }
 }
 

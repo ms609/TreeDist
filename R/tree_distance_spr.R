@@ -251,6 +251,9 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 
 .SPRExact7 <- function(sp1, sp2) {
+  if (length(sp1) != 4L || length(sp2) != 4L) {
+    stop("Expected a length-4 raw vector of splits") # nocov
+  }
   spr_table_7(sp1, sp2)
 }
 
@@ -421,6 +424,11 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeO <- function(tree1, tree2, check = TRUE) {
+  if (check) {
+    if (length(tree1[["tip.label"]]) != length(tree2[["tip.label"]])) {
+      stop("`tree1` and `tree2` must have the same number of tips.")
+    }
+  }
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
