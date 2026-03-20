@@ -47,18 +47,11 @@ IntegerVector calc_mismatch_size(const RawMatrix& x, const RawMatrix& y) {
 
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix& x, const RawMatrix& y) {
-  if (x.rows() != y.rows()) {
-    Rcpp::stop("`x` and `y` differ in number of splits.");
-  }
-  if (!x.hasAttribute("nTip")) {
-    Rcpp::stop("`x` lacks nTip attribute");
-  }
-  if (!y.hasAttribute("nTip")) {
-    Rcpp::stop("`y` lacks nTip attribute");
-  }
-  if (static_cast<int>(x.attr("nTip")) != static_cast<int>(y.attr("nTip"))) {
-    Rcpp::stop("`x` and `y` differ in `nTip`");
-  }
+  ASSERT(x.rows() == y.rows() && "`x` and `y` differ in number of splits.");
+  ASSERT(x.hasAttribute("nTip") && "`x` lacks nTip attribute");
+  ASSERT(y.hasAttribute("nTip") && "`y` lacks nTip attribute");
+  ASSERT(static_cast<int>(x.attr("nTip")) == static_cast<int>(y.attr("nTip"))
+         && "`x` and `y` differ in `nTip`");
   return calc_mismatch_size(x, y);
 }
 
@@ -102,25 +95,17 @@ IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
 
 // [[Rcpp::export]]
 IntegerVector confusion(const RawMatrix& x, const RawMatrix& y) {
-  if (x.rows() != y.rows()) {
-    Rcpp::stop("Input splits must contain same number of splits.");
-  }
-  if (!x.hasAttribute("nTip")) {
-    Rcpp::stop("`x` lacks nTip attribute");
-  }
-  if (!y.hasAttribute("nTip")) {
-    Rcpp::stop("`y` lacks nTip attribute");
-  }
-  if (static_cast<int>(x.attr("nTip")) != static_cast<int>(y.attr("nTip"))) {
-    Rcpp::stop("`x` and `y` differ in `nTip`");
-  }
+  ASSERT(x.rows() == y.rows() && "Input splits must contain same number of splits.");
+  ASSERT(x.hasAttribute("nTip") && "`x` lacks nTip attribute");
+  ASSERT(y.hasAttribute("nTip") && "`y` lacks nTip attribute");
+  ASSERT(static_cast<int>(x.attr("nTip")) == static_cast<int>(y.attr("nTip"))
+         && "`x` and `y` differ in `nTip`");
   return calc_confusion(x, y);
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
-  if (double(x.nrow()) > double(std::numeric_limits<intx>::max())) {
-    Rcpp::stop("This many edges are not (yet) supported.");
-  }
+  ASSERT(double(x.nrow()) <= double(std::numeric_limits<intx>::max())
+         && "This many edges are not (yet) supported.");
   const intx n_edge = intx(x.nrow());
   ASSERT(n_edge % 2 == 0); // Tree is binary
   IntegerMatrix ret(n_edge, 2);

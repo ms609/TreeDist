@@ -3,6 +3,8 @@ using namespace Rcpp;
 
 #include "tree_distances.h" /* includes <TreeTools/SplitList.h> */
 #include "information.h"
+#include <cassert>
+#include <TreeTools/assert.h>
 
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
@@ -96,7 +98,7 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
 
   std::vector<ClusterTable> tables;
   if (std::size_t(n_trees) > tables.max_size()) {
-    Rcpp::stop("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
+    ASSERT(false && "Not enough memory for consensus of so many trees"); // LCOV_EXCL_LINE
   }
 
   tables.reserve(n_trees);
@@ -321,11 +323,9 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
 // [[Rcpp::export]]
 double consensus_info(const List trees, const LogicalVector phylo,
                       const NumericVector p) {
-  if (p[0] > 1 + 1e-15) { // epsilon catches floating point error
-    Rcpp::stop("p must be <= 1.0 in consensus_info()");
-  } else if (p[0] < 0.5) {
-    Rcpp::stop("p must be >= 0.5 in consensus_info()");
-  }
+  // Validated by R caller (ConsensusInfo checks p range)
+  ASSERT(p[0] <= 1 + 1e-15 && "p must be <= 1.0 in consensus_info()");
+  ASSERT(p[0] >= 0.5 && "p must be >= 0.5 in consensus_info()");
 
   // Peek at tree size to choose stack vs heap allocation for the work buffer
   ClusterTable temp_table(Rcpp::List(trees(0)));
