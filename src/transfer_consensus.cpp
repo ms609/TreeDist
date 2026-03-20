@@ -7,6 +7,10 @@
  * Exported function: cpp_transfer_consensus()
  */
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <TreeTools/SplitList.h>
 #include <Rcpp/Lightest>
 #include <algorithm>
@@ -208,13 +212,17 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
 
 // Returns a flat n_splits x n_splits matrix (row-major).
 // DIST[i * n + j] = transfer distance between split i and split j.
-static std::vector<int> transfer_dist_mat(const PooledSplits& pool) {
+static std::vector<int> transfer_dist_mat(const PooledSplits& pool,
+                                          int n_threads) {
   const int M = pool.n_splits;
   const int nb = pool.n_bins;
   const int nt = pool.n_tips;
 
   std::vector<int> dist(M * M, 0);
 
+  #ifdef _OPENMP
+  #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+  #endif
   for (int i = 0; i < M; ++i) {
     const splitbit* a = pool.split(i);
     for (int j = i + 1; j < M; ++j) {
@@ -239,33 +247,40 @@ static std::vector<int> transfer_dist_mat(const PooledSplits& pool) {
 static std::vector<double> compute_td(
     const std::vector<int>& dist,
     const PooledSplits& pool,
-    bool scale
+    bool scale,
+    int n_threads
 ) {
   const int M = pool.n_splits;
   const int n_tree = static_cast<int>(pool.tree_members.size());
 
   std::vector<double> td(M, 0.0);
 
-  for (int t = 0; t < n_tree; ++t) {
-    const auto& members = pool.tree_members[t];
-    const int n_mem = static_cast<int>(members.size());
+  // Parallelise over splits (each td[b] is independent)
+  #ifdef _OPENMP
+  #pragma omp parallel for schedule(static) num_threads(n_threads)
+  #endif
+  for (int b = 0; b < M; ++b) {
+    const int p_minus_1 = pool.light_side[b] - 1;
+    if (p_minus_1 <= 0) continue;
 
-    for (int b = 0; b < M; ++b) {
-      // Min distance from split b to any split in tree t
-      int min_d = pool.light_side[b] - 1; // sentinel distance
+    double acc = 0.0;
+    for (int t = 0; t < n_tree; ++t) {
+      const auto& members = pool.tree_members[t];
+      const int n_mem = static_cast<int>(members.size());
+
+      int min_d = p_minus_1; // sentinel distance
       for (int k = 0; k < n_mem; ++k) {
         int d = dist[b * M + members[k]];
         if (d < min_d) min_d = d;
       }
-      const int p_minus_1 = pool.light_side[b] - 1;
-      if (p_minus_1 <= 0) continue;
       if (scale) {
         double contrib = static_cast<double>(min_d) / p_minus_1;
-        td[b] += (contrib < 1.0) ? contrib : 1.0;
+        acc += (contrib < 1.0) ? contrib : 1.0;
       } else {
-        td[b] += (min_d < p_minus_1) ? min_d : p_minus_1;
+        acc += (min_d < p_minus_1) ? min_d : p_minus_1;
       }
     }
+    td[b] = acc;
   }
   return td;
 }
@@ -277,7 +292,8 @@ static std::vector<double> compute_td(
 
 // Returns flat M x M bool matrix.
 // compat[i * M + j] = true iff splits i and j are compatible.
-static std::vector<uint8_t> compat_mat(const PooledSplits& pool) {
+static std::vector<uint8_t> compat_mat(const PooledSplits& pool,
+                                       int n_threads) {
   const int M = pool.n_splits;
   const int nb = pool.n_bins;
   const int last_bin = nb - 1;
@@ -285,6 +301,9 @@ static std::vector<uint8_t> compat_mat(const PooledSplits& pool) {
 
   std::vector<uint8_t> compat(M * M, 1);
 
+  #ifdef _OPENMP
+  #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+  #endif
   for (int i = 0; i < M; ++i) {
     const splitbit* a = pool.split(i);
     for (int j = i + 1; j < M; ++j) {
@@ -300,9 +319,9 @@ static std::vector<uint8_t> compat_mat(const PooledSplits& pool) {
         if (!nanb) nanb = (~a_bin & ~b_bin & mask) != 0;
         if (ab && anb && nab && nanb) break;
       }
-      bool comp = !ab || !anb || !nab || !nanb;
-      compat[i * M + j] = comp ? 1 : 0;
-      compat[j * M + i] = comp ? 1 : 0;
+      uint8_t comp = (!ab || !anb || !nab || !nanb) ? 1 : 0;
+      compat[i * M + j] = comp;
+      compat[j * M + i] = comp;
     }
   }
   return compat;
@@ -698,7 +717,8 @@ List cpp_transfer_consensus(
     const int n_tip,
     const bool scale,
     const bool greedy_best_flag,
-    const bool init_majority
+    const bool init_majority,
+    const int n_threads = 1
 ) {
   const int n_tree = splits_list.size();
 
@@ -715,13 +735,13 @@ List cpp_transfer_consensus(
   }
 
   // ---- Pairwise transfer distance matrix ----
-  std::vector<int> dist = transfer_dist_mat(pool);
+  std::vector<int> dist = transfer_dist_mat(pool, n_threads);
 
   // ---- Transfer dissimilarity cost ----
-  std::vector<double> td = compute_td(dist, pool, scale);
+  std::vector<double> td = compute_td(dist, pool, scale, n_threads);
 
   // ---- Compatibility matrix ----
-  std::vector<uint8_t> compat = compat_mat(pool);
+  std::vector<uint8_t> compat = compat_mat(pool, n_threads);
 
   // ---- Sort order (by count descending, then index ascending for ties) ----
   // Must match R's order(-counts, seq_along(counts)) for reproducibility.
@@ -796,7 +816,8 @@ Rcpp::NumericVector cpp_tc_profile(
     const bool scale,
     const bool greedy_best_flag,
     const bool init_majority,
-    const int n_iter
+    const int n_iter,
+    const int n_threads = 1
 ) {
   using clk = std::chrono::high_resolution_clock;
   const int n_tree = splits_list.size();
@@ -809,13 +830,13 @@ Rcpp::NumericVector cpp_tc_profile(
     auto t1 = clk::now();
     const int M = pool.n_splits;
 
-    std::vector<int> dist = transfer_dist_mat(pool);
+    std::vector<int> dist = transfer_dist_mat(pool, n_threads);
     auto t2 = clk::now();
 
-    std::vector<double> td = compute_td(dist, pool, scale);
+    std::vector<double> td = compute_td(dist, pool, scale, n_threads);
     auto t3 = clk::now();
 
-    std::vector<uint8_t> compat_v = compat_mat(pool);
+    std::vector<uint8_t> compat_v = compat_mat(pool, n_threads);
     auto t4 = clk::now();
 
     std::vector<int> sort_ord(M);

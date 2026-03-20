@@ -212,13 +212,13 @@ spr_table_7 <- function(sp1, sp2) {
 #'   are included in the consensus, plus attributes "raw_splits" (a raw matrix
 #'   of all unique splits) and "light_side" (integer vector).
 #' @keywords internal
-cpp_transfer_consensus <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority) {
-    .Call(`_TreeDist_cpp_transfer_consensus`, splits_list, n_tip, scale, greedy_best_flag, init_majority)
+cpp_transfer_consensus <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_transfer_consensus`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_threads)
 }
 
 #' @keywords internal
-cpp_tc_profile <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter) {
-    .Call(`_TreeDist_cpp_tc_profile`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter)
+cpp_tc_profile <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_tc_profile`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter, n_threads)
 }
 
 #' Per-pair transfer dissimilarity

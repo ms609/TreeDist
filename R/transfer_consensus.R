@@ -71,10 +71,13 @@ TransferConsensus <- function(trees,
   })
 
   # Delegate all work to C++
+  nThreads <- max(1L, getOption("TreeDist.threads",
+                                 getOption("mc.cores", 1L)))
   res <- cpp_transfer_consensus(
     splitsList, nTip, scale,
     greedy_best_flag = (greedy == "best"),
-    init_majority = (init == "majority")
+    init_majority = (init == "majority"),
+    n_threads = nThreads
   )
 
   included <- res$included

@@ -523,8 +523,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_transfer_consensus
-List cpp_transfer_consensus(const List& splits_list, const int n_tip, const bool scale, const bool greedy_best_flag, const bool init_majority);
-RcppExport SEXP _TreeDist_cpp_transfer_consensus(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP greedy_best_flagSEXP, SEXP init_majoritySEXP) {
+List cpp_transfer_consensus(const List& splits_list, const int n_tip, const bool scale, const bool greedy_best_flag, const bool init_majority, const int n_threads);
+RcppExport SEXP _TreeDist_cpp_transfer_consensus(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP greedy_best_flagSEXP, SEXP init_majoritySEXP, SEXP n_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -533,13 +533,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const bool >::type scale(scaleSEXP);
     Rcpp::traits::input_parameter< const bool >::type greedy_best_flag(greedy_best_flagSEXP);
     Rcpp::traits::input_parameter< const bool >::type init_majority(init_majoritySEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_transfer_consensus(splits_list, n_tip, scale, greedy_best_flag, init_majority));
+    Rcpp::traits::input_parameter< const int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_transfer_consensus(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_tc_profile
-Rcpp::NumericVector cpp_tc_profile(const List& splits_list, const int n_tip, const bool scale, const bool greedy_best_flag, const bool init_majority, const int n_iter);
-RcppExport SEXP _TreeDist_cpp_tc_profile(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP greedy_best_flagSEXP, SEXP init_majoritySEXP, SEXP n_iterSEXP) {
+Rcpp::NumericVector cpp_tc_profile(const List& splits_list, const int n_tip, const bool scale, const bool greedy_best_flag, const bool init_majority, const int n_iter, const int n_threads);
+RcppExport SEXP _TreeDist_cpp_tc_profile(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP greedy_best_flagSEXP, SEXP init_majoritySEXP, SEXP n_iterSEXP, SEXP n_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -549,7 +550,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const bool >::type greedy_best_flag(greedy_best_flagSEXP);
     Rcpp::traits::input_parameter< const bool >::type init_majority(init_majoritySEXP);
     Rcpp::traits::input_parameter< const int >::type n_iter(n_iterSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_tc_profile(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter));
+    Rcpp::traits::input_parameter< const int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_tc_profile(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter, n_threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -745,8 +747,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
     {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
-    {"_TreeDist_cpp_transfer_consensus", (DL_FUNC) &_TreeDist_cpp_transfer_consensus, 5},
-    {"_TreeDist_cpp_tc_profile", (DL_FUNC) &_TreeDist_cpp_tc_profile, 6},
+    {"_TreeDist_cpp_transfer_consensus", (DL_FUNC) &_TreeDist_cpp_transfer_consensus, 6},
+    {"_TreeDist_cpp_tc_profile", (DL_FUNC) &_TreeDist_cpp_tc_profile, 7},
     {"_TreeDist_cpp_transfer_dist", (DL_FUNC) &_TreeDist_cpp_transfer_dist, 3},
     {"_TreeDist_cpp_transfer_dist_scored", (DL_FUNC) &_TreeDist_cpp_transfer_dist_scored, 4},
     {"_TreeDist_cpp_transfer_dist_all_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_all_pairs, 4},
