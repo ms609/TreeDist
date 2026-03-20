@@ -110,6 +110,15 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
     ? ~splitbit(0)
     : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
 
+  // Count total splits across all trees to pre-allocate pool.data.
+  // This avoids reallocation, which would invalidate the pointers stored
+  // as keys in split_map.
+  int total_splits = 0;
+  for (int t = 0; t < n_tree; ++t) {
+    const RawMatrix mat = Rcpp::as<RawMatrix>(splits_list[t]);
+    total_splits += mat.nrow();
+  }
+
   // Hash map from canonical split → unique index
   SplitHash hasher(n_bins);
   SplitEqual eq(n_bins);
@@ -125,6 +134,10 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
   pool.last_mask = last_mask;
   pool.n_splits = 0;
   pool.tree_members.resize(n_tree);
+
+  // Reserve capacity for the maximum possible unique splits (= total splits).
+  // This ensures pool.data never reallocates, keeping split_map keys valid.
+  pool.data.reserve(static_cast<size_t>(total_splits) * n_bins);
 
   for (int t = 0; t < n_tree; ++t) {
     SplitList sl(Rcpp::as<RawMatrix>(splits_list[t]));
@@ -155,7 +168,7 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
         pool.count[idx]++;
       } else {
         idx = pool.n_splits++;
-        // Append canonical data
+        // Append canonical data (no reallocation due to reserve above)
         const size_t old_sz = pool.data.size();
         pool.data.resize(old_sz + n_bins);
         std::copy(canon_buf.begin(), canon_buf.end(),
@@ -169,7 +182,7 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
         }
         pool.light_side.push_back(std::min(pc, n_tips - pc));
 
-        // Insert pointer into map (points into pool.data)
+        // Insert pointer into map (points into pool.data; stable due to reserve)
         split_map[pool.split(idx)] = idx;
       }
 
@@ -478,9 +491,20 @@ struct GreedyState {
     // Update match/match2 for affected splits
     for (int b = 0; b < M; ++b) {
       if (match[b] == idx) {
-        // Promote match2 → match, find new match2
+        // Promote match2 → match
         match[b]      = match2[b];
         match_dist[b] = match2_dist[b];
+
+        if (match[b] < 0) {
+          // Promoted value was sentinel — rescan from scratch to find
+          // the actual closest included split (find_second with
+          // matchIdx = -1 searches all included).
+          auto [first, first_d] = find_second(b, -1, incl, dist, M, pool, scale);
+          match[b]      = first;
+          match_dist[b] = first_d;
+        }
+
+        // Find new second-closest
         auto [sec, sec_d] = find_second(b, match[b], incl, dist, M, pool, scale);
         match2[b]      = sec;
         match2_dist[b] = sec_d;
@@ -661,7 +685,7 @@ static void init_matches(
 //' @param splits_list List of raw matrices (one per tree), each from as.Splits().
 //' @param n_tip Number of tips.
 //' @param scale Logical: use scaled transfer distance?
-//' @param greedy_best Logical: TRUE for "best", FALSE for "first".
+//' @param greedy_best_flag Logical: TRUE for "best", FALSE for "first".
 //' @param init_majority Logical: TRUE to start from majority-rule splits.
 //'
 //' @return A LogicalVector of length n_splits indicating which pooled splits
@@ -699,11 +723,12 @@ List cpp_transfer_consensus(
   // ---- Compatibility matrix ----
   std::vector<uint8_t> compat = compat_mat(pool);
 
-  // ---- Sort order (by count, descending) ----
+  // ---- Sort order (by count descending, then index ascending for ties) ----
+  // Must match R's order(-counts, seq_along(counts)) for reproducibility.
   std::vector<int> sort_ord(M);
   std::iota(sort_ord.begin(), sort_ord.end(), 0);
-  std::sort(sort_ord.begin(), sort_ord.end(),
-            [&](int a, int b) { return pool.count[a] > pool.count[b]; });
+  std::stable_sort(sort_ord.begin(), sort_ord.end(),
+                   [&](int a, int b) { return pool.count[a] > pool.count[b]; });
 
   // ---- Mutable state ----
   std::vector<int> match(M, -1);   // -1 = sentinel
@@ -795,8 +820,8 @@ Rcpp::NumericVector cpp_tc_profile(
 
     std::vector<int> sort_ord(M);
     std::iota(sort_ord.begin(), sort_ord.end(), 0);
-    std::sort(sort_ord.begin(), sort_ord.end(),
-              [&](int a, int b) { return pool.count[a] > pool.count[b]; });
+    std::stable_sort(sort_ord.begin(), sort_ord.end(),
+                     [&](int a, int b) { return pool.count[a] > pool.count[b]; });
 
     std::vector<int> match(M, -1);
     std::vector<int> match2(M, -1);

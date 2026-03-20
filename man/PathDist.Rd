@@ -78,6 +78,7 @@ Other tree distances:
 \code{\link{NyeSimilarity}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{TransferDist}()},
 \code{\link{TreeDistance}()}
 }
 \author{

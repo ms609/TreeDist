@@ -553,6 +553,62 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_transfer_dist
+List cpp_transfer_dist(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip);
+RcppExport SEXP _TreeDist_cpp_transfer_dist(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_transfer_dist(x, y, nTip));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_transfer_dist_scored
+List cpp_transfer_dist_scored(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip, bool scale);
+RcppExport SEXP _TreeDist_cpp_transfer_dist_scored(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP scaleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< bool >::type scale(scaleSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_transfer_dist_scored(x, y, nTip, scale));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_transfer_dist_all_pairs
+NumericVector cpp_transfer_dist_all_pairs(const List& splits_list, int n_tip, bool scale, int n_threads);
+RcppExport SEXP _TreeDist_cpp_transfer_dist_all_pairs(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits_list(splits_listSEXP);
+    Rcpp::traits::input_parameter< int >::type n_tip(n_tipSEXP);
+    Rcpp::traits::input_parameter< bool >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_transfer_dist_all_pairs(splits_list, n_tip, scale, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_transfer_dist_cross_pairs
+NumericMatrix cpp_transfer_dist_cross_pairs(const List& splits_a, const List& splits_b, int n_tip, bool scale, int n_threads);
+RcppExport SEXP _TreeDist_cpp_transfer_dist_cross_pairs(SEXP splits_aSEXP, SEXP splits_bSEXP, SEXP n_tipSEXP, SEXP scaleSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits_a(splits_aSEXP);
+    Rcpp::traits::input_parameter< const List& >::type splits_b(splits_bSEXP);
+    Rcpp::traits::input_parameter< int >::type n_tip(n_tipSEXP);
+    Rcpp::traits::input_parameter< bool >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
@@ -691,6 +747,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
     {"_TreeDist_cpp_transfer_consensus", (DL_FUNC) &_TreeDist_cpp_transfer_consensus, 5},
     {"_TreeDist_cpp_tc_profile", (DL_FUNC) &_TreeDist_cpp_tc_profile, 6},
+    {"_TreeDist_cpp_transfer_dist", (DL_FUNC) &_TreeDist_cpp_transfer_dist, 3},
+    {"_TreeDist_cpp_transfer_dist_scored", (DL_FUNC) &_TreeDist_cpp_transfer_dist_scored, 4},
+    {"_TreeDist_cpp_transfer_dist_all_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_all_pairs, 4},
+    {"_TreeDist_cpp_transfer_dist_cross_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_cross_pairs, 5},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

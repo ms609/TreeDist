@@ -12,7 +12,7 @@
 #' The algorithm pools all splits observed across input trees, computes
 #' pairwise transfer distances between them, and greedily adds or removes
 #' splits to minimize total transfer dissimilarity cost.  The approach
-#' follows \insertCite{Takazawa2025;textual}{TreeDist}, reimplemented for
+#' follows \insertCite{Takazawa2026;textual}{TreeDist}, reimplemented for
 #' TreeDist's infrastructure.
 #'
 #' @param trees An object of class `multiPhylo`: the input trees.
@@ -396,8 +396,13 @@ TransferConsensus <- function(trees,
   affected1 <- which(st$MATCH == branchIdx & !is.na(st$MATCH))
   if (length(affected1)) {
     st$MATCH[affected1] <- st$MATCH2[affected1]
-    # Find new second match for these
     for (b in affected1) {
+      if (is.na(st$MATCH[b])) {
+        # Promoted value was sentinel — rescan for actual closest
+        st$MATCH[b] <- .FindSecond(b, NA_integer_, curInc, DIST,
+                                    pMinus1, scale)
+      }
+      # Find new second match
       st$MATCH2[b] <- .FindSecond(b, st$MATCH[b], curInc, DIST,
                                   pMinus1, scale)
     }

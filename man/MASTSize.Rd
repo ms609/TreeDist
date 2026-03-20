@@ -72,6 +72,7 @@ Other tree distances:
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{TransferDist}()},
 \code{\link{TreeDistance}()}
 }
 \author{
