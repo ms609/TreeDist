@@ -2,17 +2,24 @@
 #define _TREEDIST_TREE_DISTANCES_H
 
 #include "lap.h"
+#include <TreeDist/mutual_clustering.h>
 #include <TreeTools/SplitList.h>
 
-/***** Constants requiring initialization *****/
+/***** Re-export shared lookup tables to global scope *****/
+
+using TreeDist::lg2;
+using TreeDist::lg2_double_factorial;
+using TreeDist::lg2_unrooted;
+using TreeDist::lg2_rooted;
+
+/***** Constants *****/
 
 constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
-extern double lg2[SL_MAX_TIPS + 1];
-extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
-extern double lg2_unrooted[SL_MAX_TIPS + 2];
-extern double *lg2_rooted;
 
 namespace TreeDist {
+
+  // Re-exported from mutual_clustering.h:
+  //   ic_matching(int16 a, int16 b, int16 n)
 
   // See equation 16 in Meila 2007 (k' denoted K).
   // nkK is converted to pkK in the calling function when divided by n.
@@ -51,14 +58,6 @@ namespace TreeDist {
     return (score1 > score2) ? score1 : score2;
   }
 
-
-[[nodiscard]] inline double ic_matching(const int16 a, const int16 b, const int16 n) noexcept {
-    const double lg2a = lg2[a];
-    const double lg2b = lg2[b];
-    const double lg2n = lg2[n];
-    return (a + b) * lg2n - a * lg2a - b * lg2b;
-    //  (a * (lg2n - lg2a)) + (b * (lg2n - lg2b)); is substantially slower
-  }
 
 [[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
     assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok

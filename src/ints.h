@@ -1,10 +1,13 @@
 #ifndef _TREEDIST_INT_H
 #define _TREEDIST_INT_H
 
-#include <cstdint>
+#include <TreeDist/types.h>
 
-using int16 = int_fast16_t;
-using int32 = int_fast32_t;
+// Re-export shared types to global scope for backward compatibility.
+using TreeDist::int16;
+using TreeDist::int32;
+
+// Types used only within TreeDist's own source.
 using uint32 = uint_fast32_t;
 using grf_match = std::vector<int>;
 
