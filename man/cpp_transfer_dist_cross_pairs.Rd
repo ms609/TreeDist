@@ -16,7 +16,7 @@ cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads)
 \item{n_threads}{Number of OpenMP threads.}
 }
 \value{
-Numeric matrix of dimension nA x nB.
+Numeric matrix of dimension \code{nA} x \code{nB}.
 }
 \description{
 Cross-pairs transfer dissimilarity (OpenMP)

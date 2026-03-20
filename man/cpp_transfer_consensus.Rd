@@ -25,7 +25,7 @@ cpp_transfer_consensus(
 \item{init_majority}{Logical: TRUE to start from majority-rule splits.}
 }
 \value{
-A LogicalVector of length n_splits indicating which pooled splits
+A \code{LogicalVector} of length n_splits indicating which pooled splits
 are included in the consensus, plus attributes "raw_splits" (a raw matrix
 of all unique splits) and "light_side" (integer vector).
 }

@@ -46,7 +46,7 @@ The algorithm pools all splits observed across input trees, computes
 pairwise transfer distances between them, and greedily adds or removes
 splits to minimize total transfer dissimilarity cost.  The approach
 follows \insertCite{Takazawa2026;textual}{TreeDist}, reimplemented for
-TreeDist's infrastructure.
+'TreeDist' infrastructure.
 }
 \examples{
 library(TreeTools)

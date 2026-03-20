@@ -16,8 +16,8 @@ A list with components:
 \itemize{
 \item score_scaled: scaled transfer dissimilarity (double)
 \item score_unscaled: unscaled transfer dissimilarity (double)
-\item matching_xy: integer vector, best match in y for each split in x (1-based, NA if sentinel)
-\item matching_yx: integer vector, best match in x for each split in y (1-based, NA if sentinel)
+\item \code{matching_xy}: integer vector, best match in y for each split in x (1-based, NA if sentinel)
+\item \code{matching_yx}: integer vector, best match in x for each split in y (1-based, NA if sentinel)
 }
 }
 \description{
