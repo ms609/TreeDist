@@ -1,3 +1,4 @@
+#include <TreeTools/SplitList.h>
 #include <Rcpp/Lightest>
 
 // Provide the MCI table definitions and implementation in this TU.
@@ -11,3 +12,36 @@ __attribute__((constructor))
   void initialize_ldf() {
     TreeDist::init_lg2_tables(SL_MAX_TIPS);
   }
+
+// Thin wrapper that exercises the installable-header version of
+// mutual_clustering_score(), for test coverage and downstream validation.
+// [[Rcpp::export]]
+double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
+                          const Rcpp::RawMatrix& y,
+                          int n_tips) {
+  using TreeTools::SplitList;
+
+  const SplitList a(x);
+  const SplitList b(y);
+  TreeDist::LapScratch scratch;
+
+  // Build arrays matching the header's raw-pointer API types.
+  std::vector<const splitbit*> a_ptrs(a.n_splits);
+  std::vector<const splitbit*> b_ptrs(b.n_splits);
+  std::vector<TreeDist::int16> a_in(a.n_splits);
+  std::vector<TreeDist::int16> b_in(b.n_splits);
+  for (TreeDist::int16 i = 0; i < a.n_splits; ++i) {
+    a_ptrs[i] = a.state[i];
+    a_in[i] = static_cast<TreeDist::int16>(a.in_split[i]);
+  }
+  for (TreeDist::int16 i = 0; i < b.n_splits; ++i) {
+    b_ptrs[i] = b.state[i];
+    b_in[i] = static_cast<TreeDist::int16>(b.in_split[i]);
+  }
+
+  return TreeDist::mutual_clustering_score(
+    a_ptrs.data(), a_in.data(), a.n_splits,
+    b_ptrs.data(), b_in.data(), b.n_splits,
+    a.n_bins, static_cast<TreeDist::int32>(n_tips),
+    scratch);
+}

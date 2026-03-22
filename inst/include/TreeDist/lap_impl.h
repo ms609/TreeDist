@@ -32,6 +32,13 @@ namespace detail {
   }
 } // namespace detail
 
+// The LAP hot loops are sensitive to instruction alignment — even unrelated
+// changes to other code in the same translation unit can shift layout enough
+// to cause measurable regressions.  Force 64-byte function alignment and
+// 16-byte loop alignment to stabilise performance across builds.
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((optimize("align-functions=64", "align-loops=16")))
+#endif
 cost lap(const lap_row dim,
          CostMatrix& input_cost,
          std::vector<lap_col>& rowsol,

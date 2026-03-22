@@ -611,6 +611,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_mci_impl_score
+double cpp_mci_impl_score(const Rcpp::RawMatrix& x, const Rcpp::RawMatrix& y, int n_tips);
+RcppExport SEXP _TreeDist_cpp_mci_impl_score(SEXP xSEXP, SEXP ySEXP, SEXP n_tipsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RawMatrix& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type n_tips(n_tipsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_mci_impl_score(x, y, n_tips));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
@@ -753,6 +766,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_transfer_dist_scored", (DL_FUNC) &_TreeDist_cpp_transfer_dist_scored, 4},
     {"_TreeDist_cpp_transfer_dist_all_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_all_pairs, 4},
     {"_TreeDist_cpp_transfer_dist_cross_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_cross_pairs, 5},
+    {"_TreeDist_cpp_mci_impl_score", (DL_FUNC) &_TreeDist_cpp_mci_impl_score, 3},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

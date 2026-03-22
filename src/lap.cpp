@@ -50,16 +50,25 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   std::vector<lap_row> colsol(max_dim);
   
   // Build cost matrix from R's column-major NumericMatrix.
+  // Fill data and transpose simultaneously to avoid a separate
+  // makeTranspose() pass in lap().
   cost_matrix input(max_dim);
   const double* __restrict__ src_data = REAL(x);
   for (lap_row r = 0; r < n_row; ++r) {
     for (lap_col c = 0; c < n_col; ++c) {
-      input(r, c) = static_cast<cost>(
-        src_data[static_cast<std::size_t>(c) * n_row + r] * scale_factor);
+      input.setWithTranspose(r, c, static_cast<cost>(
+        src_data[static_cast<std::size_t>(c) * n_row + r] * scale_factor));
     }
-    input.padRowAfterCol(r, n_col, max_score);
+    for (lap_col c = n_col; c < max_dim; ++c) {
+      input.setWithTranspose(r, c, max_score);
+    }
   }
-  input.padAfterRow(n_row, max_score);
+  for (lap_row r = n_row; r < max_dim; ++r) {
+    for (lap_col c = 0; c < max_dim; ++c) {
+      input.setWithTranspose(r, c, max_score);
+    }
+  }
+  input.markTransposed();
   
   cost score = lap(max_dim, input, rowsol, colsol);
   

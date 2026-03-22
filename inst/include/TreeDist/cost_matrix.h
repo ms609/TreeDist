@@ -90,6 +90,16 @@ public:
     return &t_data_[static_cast<std::size_t>(i) * dim8_];
   }
 
+  // Write a value to both the data and transposed-data arrays.
+  // After filling the entire matrix this way, call markTransposed()
+  // to skip the lazy transpose in makeTranspose().
+  void setWithTranspose(lap_row i, lap_col j, cost value) {
+    data_[static_cast<std::size_t>(i) * dim8_ + j] = value;
+    t_data_[static_cast<std::size_t>(j) * dim8_ + i] = value;
+  }
+
+  void markTransposed() noexcept { transposed_ = true; }
+
   // ---- Transpose ----
 
   void makeTranspose() noexcept {
