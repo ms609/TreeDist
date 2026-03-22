@@ -1,3 +1,14 @@
+<!-- AI-generated branch summary (2026-03-22) -->
+# Branch: `expose-lapjv` → merge target: `master`
+
+This branch exposes the LAPJV (Jonker–Volgenant) linear assignment solver
+via C++ headers so that downstream packages can link to it (`LinkingTo`),
+and implements a transfer consensus method (`TransferConsensus()`,
+`TransferDist()`).  It also tightens error handling by moving all
+`Rcpp::stop()` / `Rf_error()` calls out of C++ implementation code
+into R-level input validation.
+<!-- end AI-generated summary -->
+
 # TreeDist 2.13.0 (2026-03-17)
 
 ## Performance
