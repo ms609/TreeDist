@@ -1,3 +1,11 @@
+<!-- AI-generated branch summary (2026-03-22) -->
+# Branch: `triangle-inequality` → merge target: `master`
+
+Adds a vignette (`triangle-inequality.Rmd`) testing whether TreeDist
+metrics satisfy the triangle inequality, with examples on 7-tip trees.
+Tiny, very stale.
+<!-- end AI-generated summary -->
+
 # TreeDist 2.9.2.9000 (development)
 
 - C++ source formatting.
