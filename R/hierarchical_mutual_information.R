@@ -66,6 +66,10 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       1
     }
   } else {
+    if (inherits(tree1, "phylo") && inherits(tree2, "phylo") &&
+        NTip(tree1) != NTip(tree2)) {
+      stop("Trees must have the same number of leaves")
+    }
     hp2 <- as.HPart(tree2, tree1)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {

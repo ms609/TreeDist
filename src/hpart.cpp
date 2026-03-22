@@ -171,8 +171,9 @@ size_t build_node_from_list(const RObject& node,
     return my_idx;
   }
   
-  // Invalid node type
+  // Invalid node type — unreachable when R caller validates input
   ASSERT(false && "Invalid node type");                                        // #nocov
+  return 0;                                                                    // #nocov
 }
 
 

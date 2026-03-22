@@ -7,9 +7,24 @@ and implements a transfer consensus method (`TransferConsensus()`,
 `TransferDist()`).  It also tightens error handling by moving all
 `Rcpp::stop()` / `Rf_error()` calls out of C++ implementation code
 into R-level input validation.
+
+# TreeDist 2.13.0.9000
+
+This branch implements transfer consensus trees (`TransferConsensus()`) and
+a corresponding transfer distance metric (`TransferDist()`), providing a
+consensus method based on the transfer distance rather than the majority-rule
+or strict approaches.  Error handling in C++ code is tightened to validate
+inputs at the R level rather than using `Rcpp::stop()` or `Rf_error()` in
+implementation code.
 <!-- end AI-generated summary -->
 
 # TreeDist 2.13.0 (2026-03-17)
+
+## New features
+
+- `MCITree()` selects the tree from a posterior sample with the highest
+  total split information content — a Maximum Clade Information analogue
+  of the Maximum Clade Credibility tree.
 
 ## Performance
 
