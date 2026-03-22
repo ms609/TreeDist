@@ -6,9 +6,10 @@ test_that("HMI fails nicely", {
   expect_error(HierarchicalMutualInfo(bal5, pec5, normalize = "Error"),
                "`normalize` must be logical, or a function")
   
-  expect_error(EHMI_xptr(bal5, pec5, tolerance = 1e-16),
-               ".olerance too low")
-  expect_error(EHMI_xptr(bal5, pec5, minResample = 1),
+  # R-level guards in EHMI(); C++ uses ASSERT only
+  expect_error(EHMI(BalancedTree(5), PectinateTree(5), precision = 1e-16),
+               "Tolerance too low")
+  expect_error(EHMI(BalancedTree(5), PectinateTree(5), minResample = 1),
                "Must perform at least one resampl")
 })
 

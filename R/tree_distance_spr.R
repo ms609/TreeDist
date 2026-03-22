@@ -489,3 +489,37 @@ SPRDist.multiPhylo <- SPRDist.list
   # Return:
   moves
 }
+
+# R-level validation wrappers for internal C++ functions.
+# C++ uses ASSERT() (compiled out in release); these ensure user-visible errors.
+mismatch_size <- function(x, y) {
+  if (!inherits(x, "Splits") || is.null(attr(x, "nTip"))) {
+    stop("`x` lacks nTip attribute")
+  }
+  if (!inherits(y, "Splits") || is.null(attr(y, "nTip"))) {
+    stop("`y` lacks nTip attribute")
+  }
+  if (attr(x, "nTip") != attr(y, "nTip")) {
+    stop("`x` and `y` differ in `nTip`")
+  }
+  if (nrow(x) != nrow(y)) {
+    stop("`x` and `y` differ in number of splits.")
+  }
+  .Call(`_TreeDist_mismatch_size`, x, y)
+}
+
+confusion <- function(x, y) {
+  if (!inherits(x, "Splits") || is.null(attr(x, "nTip"))) {
+    stop("`x` lacks nTip attribute")
+  }
+  if (!inherits(y, "Splits") || is.null(attr(y, "nTip"))) {
+    stop("`y` lacks nTip attribute")
+  }
+  if (attr(x, "nTip") != attr(y, "nTip")) {
+    stop("`x` and `y` differ in `nTip`")
+  }
+  if (nrow(x) != nrow(y)) {
+    stop("Input splits must contain same number of splits.")
+  }
+  .Call(`_TreeDist_confusion`, x, y)
+}

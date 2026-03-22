@@ -380,6 +380,23 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
   consensus_info(trees, mode == 1L, p = safeP)
 }
 
+# R-level validation wrapper; shadows RcppExports version.
+# C++ ASSERT() is compiled out in release builds.
+consensus_info <- function(trees, phylo, p) {
+  if (p > 1 + 1e-15) {
+    stop("p must be <= 1.0 in consensus_info()")
+  }
+  if (p < 0.5) {
+    stop("p must be >= 0.5 in consensus_info()")
+  }
+  nTip <- NTip(trees[[1]])
+  # CT_MAX_LEAVES = 16383 in information.h (lookup table size limit)
+  if (nTip > 16383L) {
+    stop("This many leaves are not yet supported")
+  }
+  .Call(`_TreeDist_consensus_info`, trees, phylo, p)
+}
+
 #' Maximum Clade Information Tree
 #'
 #' Analogous to the Maximum Clade Credibility tree:
