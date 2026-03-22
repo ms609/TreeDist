@@ -1,3 +1,14 @@
+<!-- AI-generated branch summary (2026-03-22) -->
+# Branch: `transfer-consensus` → merge target: `master`
+
+This branch implements transfer consensus trees (`TransferConsensus()`) and
+a corresponding transfer distance metric (`TransferDist()`), providing a
+consensus method based on the transfer distance rather than the majority-rule
+or strict approaches.  Error handling in C++ code is tightened to validate
+inputs at the R level rather than using `Rcpp::stop()` or `Rf_error()` in
+implementation code.
+<!-- end AI-generated summary -->
+
 # TreeDist 2.13.0 (2026-03-17)
 
 ## Performance
