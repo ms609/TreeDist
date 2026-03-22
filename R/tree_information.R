@@ -379,3 +379,77 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
   }
   consensus_info(trees, mode == 1L, p = safeP)
 }
+
+#' Maximum Clade Information Tree
+#'
+#' Analogous to the Maximum Clade Credibility tree:
+#' select the tree from a posterior distribution whose clades have the
+#' highest information content.
+#' Generate the MCC tree by specifying `info = "credibility"`.
+#'
+#' @inheritParams ConsensusInfo
+#' @return `MCITree()` returns the tree with the highest information
+#' content, selected from `trees`.
+#' @examples
+#' library("TreeTools", quietly = TRUE)
+#' trees <- as.phylo(24:40, 16)
+#'
+#' # Maximum Clade Information tree
+#' mci <- MCITree(trees)
+#' SplitwiseInfo(mci)
+#' plot(mci)
+#' p <- SplitFrequency(mci, trees) / length(trees)
+#' LabelSplits(mci, round(p * 100), "%", bg = SupportColor(p))
+#'
+#' \donttest{
+#' # Compare with Maximum Clade Credibility tree
+#' mcc <- MCITree(trees, "credibility")
+#' plot(mcc)
+#' p <- SplitFrequency(mcc, trees) / length(trees)
+#' LabelSplits(mcc, round(p * 100), "%", bg = SupportColor(p))
+#' SplitwiseInfo(mcc)
+#' }
+#'
+#' @template MRS
+#' @importFrom TreeTools as.Splits SplitFrequency
+#' @export
+MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
+  mode <- pmatch(tolower(info),
+                 c("phylogenetic", "clustering", "credibility",
+                   "spic", "scic"))
+  if (is.na(mode)) {
+    stop("`info` must be \"phylogenetic\", \"clustering\" or \"credibility\"")
+  }
+  if (inherits(trees, "phylo")) {
+    return(trees)
+  }
+  if (length(trees) == 1L) {
+    return(trees[[1]])
+  }
+  if (check.tips) {
+    trees <- RenumberTips(trees, trees[[1]])
+  }
+
+  nTree <- length(trees)
+  treeSplits <- as.Splits(trees)
+  InfoFn <- switch(mode,
+    function(sp, p) SplitwiseInfo(sp, p, sum = TRUE),
+    function(sp, p) ClusteringInfo(sp, p, sum = TRUE),
+    function(sp, p) sum(p),
+    function(sp, p) SplitwiseInfo(sp, p, sum = TRUE),
+    function(sp, p) ClusteringInfo(sp, p, sum = TRUE)
+  )
+
+  treeInfo <- vapply(treeSplits, function(sp) {
+    p <- SplitFrequency(sp, trees) / nTree
+    InfoFn(sp, p)
+  }, double(1))
+
+  chosen <- which.max(treeInfo)
+  nBest <- sum(treeInfo == max(treeInfo))
+  if (nBest > 1L) {
+    message(nBest, " trees tied for best score; returning tree ", chosen)
+  }
+
+  trees[[chosen]]
+}
