@@ -36,7 +36,7 @@ library("TreeTools", quietly = TRUE)
 trees <- list(bal1 = BalancedTree(1:8), 
               pec1 = PectinateTree(1:8),
               pec2 = PectinateTree(c(4:1, 5:8)))
-  
+
 # Compare each tree with each other tree
 CompareAll(trees, NNIDist)
   

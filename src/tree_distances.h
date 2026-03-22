@@ -10,17 +10,16 @@
 
 /*************** TYPES      *******************/
 
-typedef int_fast64_t cost;
-typedef int16 lap_row;
-typedef int16 lap_col;
+using cost = int_fast64_t;
+using lap_row = int16;
+using lap_col = int16;
 
-#define ALL_ONES splitbit((std::numeric_limits<splitbit>::max)())
+constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
 /* For a reason I've not determined, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
-#define BIG cost((std::numeric_limits<cost>::max)() / SL_MAX_SPLITS)
-
-#define ROUND_PRECISION cost(2048 * 2048)
+constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
+constexpr cost ROUND_PRECISION = 2048 * 2048;
 
 /***** Constants requiring initialization *****/
 

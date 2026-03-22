@@ -53,7 +53,8 @@
 #' splits as the phylogenetic information content of the most informative 
 #' split that is consistent with both input splits; `MatchingSplitInfoDistance()`
 #' is the corresponding measure of tree difference.
-#' ([More information here](https://ms609.github.io/TreeDist/articles/Generalized-RF.html).)
+#' ([More information here](
+#' https://ms609.github.io/TreeDist/articles/Generalized-RF.html).)
 #' 
 #' # Conversion to distances
 #' 
@@ -78,34 +79,46 @@
 #' It may thus be helpful to rescale the normalized value such that the
 #' _expected_ distance between a random pair of trees equals one.  This can
 #' be calculated with `ExpectedVariation()`; or see package
-#' '[TreeDistData](https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)'
+#' '[TreeDistData](
+#' https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)'
 #' for a compilation of expected values under different metrics for trees with
 #' up to 200 leaves.
 #' 
-#' Alternatively, to scale against the information content or entropy of all 
-#' splits in the most or least informative tree, use `normalize = `[`pmax`] or 
-#' [`pmin`] respectively.
+#' Alternatively, use `normalize = `[`pmax`] or [`pmin`] to scale against the
+#' information content or entropy of all splits in the most (`pmax`) or
+#' least (`pmin`) informative tree in each pair.
 #' To calculate the relative similarity against a reference tree that is known
 #' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
+#' For worked examples, see the internal function [`NormalizeInfo()`], which is
+#' called from distance functions with the parameter `how = normalize`.
+#' .
+#' 
 #'
 #' # Distances between large trees
 #' 
 #' To balance memory demands and runtime with flexibility, these functions are
 #' implemented for trees with up to 2048 leaves.
 #' To analyse trees with up to 8192 leaves, you will need to a modified version
-#' of \pkg{TreeTools}.
-#' First uninstall \pkg{TreeDist} and \pkg{TreeTools} using `remove.packages()`.
-#' Then use `devtools::install_github("ms609/TreeTools", ref = "more-leaves")`
-#' to install the modified \pkg{TreeTools} package.
-#' Finally, install \pkg{TreeDist} using
-#'`devtools::install_github("ms609/TreeDist")`.
+#' of the package:
+#' `install.packages("BigTreeDist", repos = "https://ms609.github.io/packages/")`
+#' Use `library("BigTreeDist")` *instead* of `library("TreeDist")` to load
+#' the modified package &ndash; or prefix functions with the package name, e.g.
+#' `BigTreeDist::TreeDistance()`.
+#' 
+#' As an alternative download method,
+#' uninstall \pkg{TreeDist} and \pkg{TreeTools} using
+#' `remove.packages()`, then use
+#'  `devtools::install_github("ms609/TreeTools", ref = "more-leaves")`
+#' to install the modified \pkg{TreeTools} package; then, 
+#' install \pkg{TreeDist} using
+#' `devtools::install_github("ms609/TreeDist", ref = "more-leaves")`.
 #' (\pkg{TreeDist} will need building from source _after_ the modified 
 #' \pkg{TreeTools} package has been installed, as its code links to values
 #' set in the TreeTools source code.)
 #' 
 #' Trees with over 8192 leaves require further modification of the source code,
-#' which the maintainer will attempt on demand; please [comment on GitHub](
+#' which the maintainer plans to attempt in the future; please [comment on GitHub](
 #' https://github.com/ms609/TreeTools/issues/141) if you would find this useful.
 #' 
 #' @template tree12ListParams
@@ -124,7 +137,8 @@
 #' @param reportMatching Logical specifying whether to return the clade
 #' matchings as an attribute of the score.
 #'
-#' @return If `reportMatching = FALSE`, the functions return a numeric 
+#' @returns
+#' If `reportMatching = FALSE`, the functions return a numeric 
 #' vector specifying the requested similarities or differences.
 #' 
 #' If `reportMatching = TRUE`, the functions additionally return an integer
@@ -132,6 +146,9 @@
 #' each split in `tree1` in the optimal matching.
 #' Unmatched splits are denoted `NA`.
 #' Use [`VisualizeMatching()`] to plot the optimal matching.
+#' 
+#' `TreeDistance()` simply returns the clustering information distance (it is
+#' an alias of `ClusteringInfoDistance()`).
 #'  
 #' @examples 
 #' tree1 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
@@ -164,7 +181,9 @@
 #' SharedPhylogeneticInfo(tree1, tree3) # = 0
 #' MutualClusteringInfo(tree1, tree3) # > 0
 #' 
-#' # Converting trees to Splits objects can speed up multiple comparisons
+#' # Distance functions internally convert trees to Splits objects.
+#' # Pre-conversion can reduce run time if the same trees will feature in
+#' # multiple comparisons
 #' splits1 <- TreeTools::as.Splits(tree1)
 #' splits2 <- TreeTools::as.Splits(tree2)
 #' 
@@ -184,9 +203,16 @@ TreeDistance <- function(tree1, tree2 = NULL) {
 }
 
 #' @rdname TreeDistance
+#' @importFrom TreeTools TopologyOnly
 #' @export
 SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE, diag = TRUE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
@@ -205,6 +231,12 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @export
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                       reportMatching = FALSE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
@@ -214,7 +246,7 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = SplitwiseInfo, Combine = "+")
   
-  ret[ret < .Machine$double.eps ^ 0.5] <- 0 # Catch floating point inaccuracy
+  ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0 # Catch floating point inaccuracy
   attributes(ret) <- attributes(spi)
   
   # Return:
@@ -230,6 +262,12 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @export
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, ClusteringEntropy)
@@ -239,14 +277,13 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = ClusteringEntropy, Combine = "+")
   
-  ret[ret < .Machine$double.eps ^ 0.5] <- 0 # Handle floating point inaccuracy
+  ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0 # Handle floating point inaccuracy
   attributes(ret) <- attributes(mci)
   
   # Return:
   ret
 }
 
-# TODO check that Internalizing this hasn't hidden TreeDistance from the index.
 #' @export
 ClusteringInfoDist <- ClusteringInfoDistance
 
@@ -297,9 +334,16 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
 
 #' @rdname TreeDistance
 #' @aliases MutualClusteringInformation
+#' @importFrom TreeTools TopologyOnly
 #' @export
 MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  reportMatching = FALSE, diag = TRUE) {
+  if (!reportMatching) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   unnormalized <- CalculateTreeDistance(Func = MutualClusteringInfoSplits,
                                         tree1, tree2, reportMatching)
   if (diag && is.null(tree2)) {

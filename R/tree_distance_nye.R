@@ -64,13 +64,18 @@
 #' @family tree distances
 #' 
 #' @encoding UTF-8
-#' @importFrom TreeTools NSplits SplitsInBinaryTree
+#' @importFrom TreeTools NSplits SplitsInBinaryTree TopologyOnly
 #' @export
 NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
                            normalize = FALSE,
                            normalizeMax = !is.logical(normalize),
                            reportMatching = FALSE,
                            diag = TRUE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
@@ -179,11 +184,16 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' @family tree distances
 #' 
 #' @encoding UTF-8
-#' @importFrom TreeTools NSplits
+#' @importFrom TreeTools NSplits TopologyOnly
 #' @export
 JaccardRobinsonFoulds <- function(tree1, tree2 = NULL, k = 1L, 
                                    allowConflict = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, allowConflict = allowConflict, 
                                         reportMatching = reportMatching) * 2L

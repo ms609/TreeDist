@@ -1,3 +1,49 @@
+# TreeDist 2.9.2.9000 (development)
+
+- C++ source formatting.
+- Discontinue tests against R 3.6 and 4.0.
+
+# TreeDist 2.9.2 (2025-01-11)
+
+- Fix crash when calculating NNI distance for large trees.
+
+
+# TreeDist 2.9.1 (2024-09-05)
+
+- Avoid false positive in MKL testing environment.
+
+
+# TreeDist 2.9.0 (2024-09-03)
+
+- `VisualizeMatching()` allows more control over output format, and returns
+  the matching ([#124](https://github.com/ms609/TreeDist/issues/124)).
+  
+- `DistanceFromMedian(Average = median)` allows calculation of MAD.
+
+- `SpectralEigens()` returns correct eigenvalues (smallest was overlooked).
+
+- `SpectralEigens()` handles values of `nEig` larger than the input.
+
+- Anticipate new behaviour of `unlist(use.names = TRUE)` in R 4.5.
+
+
+# TreeDist 2.8.0 (2024-07-25)
+
+- `Islands()` allows the identification of islands of trees.
+
+- Internal implementation of path and SPR distances, removing dependency
+  on phangorn (and thus R 4.4).
+  
+- Add progress bar within `.MaxValue()`
+
+
+# TreeDist 2.7.1 (2024-06-13)
+
+- Documentation improvements.
+
+- Fix `KCDiameter.multiPhylo()` for multiple trees.
+
+
 # TreeDist 2.7.0 (2023-10-25)
 
 - Fix calculation error in `StrainCol()`.

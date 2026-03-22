@@ -10,7 +10,8 @@ PathDist(tree1, tree2 = NULL)
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 }
 \value{
 \code{PathDist()} returns a vector or distance matrix of distances
@@ -20,10 +21,10 @@ between trees.
 Calculate the path distance between rooted or unrooted trees.
 }
 \details{
-This function is a wrapper for the function
-\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
-It pre-processes trees to ensure that their internal representation does
-not cause the \code{path.dist()} function to crash R.
+This function is a faster alternative to the function
+\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package,
+which can crash if the internal representation of trees does not conform to
+certain (unspecified) expectations, and which treats all trees as unrooted.
 
 The path distance is calculated by tabulating the cladistic difference (=
 topological distance) between each pair of tips in each tree.
@@ -60,7 +61,7 @@ PathDist(as.phylo(0:2, 7), PectinateTree(7))
 PathDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
-CompareAll(as.phylo(30:33, 8), PathDist)
+PathDist(as.phylo(30:33, 8))
  
 }
 \references{

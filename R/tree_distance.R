@@ -19,26 +19,28 @@
 #' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
 #' 
 #' - `matching`: which split in `splits2` is optimally matched to each split in 
-#' `split1` (`NA` if not matched);
-#'
-#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'   `split1` (`NA` if not matched);
 #' 
 #' - `matchedSplits`: Textual representation of each match
+#'
+#' - `matchedScores`: Scores for matched split.
 #' 
+#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'
 #' @keywords internal
 #' @template MRS
 #' @encoding UTF-8
 #' @export
 GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
-  nSplits1 <- dim(splits1)[1]
-  nSplits2 <- dim(splits2)[1]
+  nSplits1 <- dim(splits1)[[1]]
+  nSplits2 <- dim(splits2)[[1]]
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
-  ret <- solution$score
+  ret <- solution[["score"]]
   
   if (reportMatching) {
-    matching <- solution$matching
+    matching <- solution[["matching"]]
     matching[matching > nSplits2 | matching == 0L] <- NA
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
@@ -51,10 +53,9 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       for (j in seq_len(nSplits2)) {
         pairScores[i, j] <- PairScorer(splits1[i, , drop = FALSE], 
                                        splits2[j, , drop = FALSE],
-                                       nTip = nTip, ...)$score
+                                       nTip = nTip, ...)[["score"]]
       }
     }
-    attr(ret, "pairScores") <- pairScores
     
     if (!is.null(attr(splits1, "tip.label"))) {
       matched1 <- !is.na(matching)
@@ -68,11 +69,21 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                          pairScores[matrix(c(matched1, matched2), ncol = 2L)] > 0
                        } else rep(TRUE, length(matched1)))
     }
+    
+    attr(ret, "matchedScores") <- vapply(
+      seq_along(matching),
+      function(i) pairScores[i, matching[[i]]],
+      vector(mode(pairScores), 1)
+    )
+    
+    attr(ret, "pairScores") <- pairScores
   }
   # Return:
   ret
 }
 
+
+#' @importFrom cli cli_progress_along
 .MaxValue <- function(tree1, tree2, Value) {
   lab1 <- TipLabels(tree1)
   sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
@@ -93,15 +104,17 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
     } else {
       # !sameTips implies that tree1 contains multiple trees
       pairs <- combn(seq_along(tree1), 2)
-      nPairs <- dim(pairs)[2]
+      nPairs <- dim(pairs)[[2]]
       
-      apply(pairs, 2, function(ij) {
-        i <- ij[1]
-        j <- ij[2]
-        common <- intersect(lab1[[i]], lab1[[j]])
-        Value(KeepTip(tree1[[i]], common)) +
-          Value(KeepTip(tree1[[j]], common))
-      })
+      vapply(cli_progress_along(seq_len(nPairs), "Calc max value"),
+             function(pair) {
+               i <- pairs[1, pair]
+               j <- pairs[2, pair]
+               common <- intersect(lab1[[i]], lab1[[j]])
+               Value(KeepTip(tree1[[i]], common)) +
+                 Value(KeepTip(tree1[[j]], common))
+             }, double(1))
+      
     }
   } else {
     value1 <- Value(tree1)

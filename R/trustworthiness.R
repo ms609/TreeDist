@@ -59,7 +59,7 @@ MappingQuality <- function(original, mapped, neighbours = 10L) {
     stop("Original and mapped distances must have the same dimensions")
   }
   
-  N <- dim(originalRank)[2]
+  N <- dim(originalRank)[[2]]
   k <- neighbours
   MMax <- .MMax(N, k)
   

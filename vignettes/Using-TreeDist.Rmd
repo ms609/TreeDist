@@ -89,6 +89,9 @@ rely on matching each split within a tree with another split in the other tree.
 We can view an optimal matching:
 
 ```{r visualise-matching, fig.align='center', fig.width=8, out.width='90%'}
+#| fig.alt: >
+#|   Pair of similar phylogenetic trees with matched splits highlighted
+#|   according to the amount of clustering information in common.
 VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
 ```
 
@@ -116,6 +119,9 @@ The names of the splits correspond to the number of an associated node in the
 original tree:
 
 ```{r named-splits, fig.align='center', fig.width=7, fig.height = 5, out.width='80%'}
+#| fig.alt: >
+#|   Phylogenetic tree with nodes numbered, and labelled with the splits
+#|   to which they correspond.
 oldPar <- par(mar = rep(0, 4))
 plot(tree2)
 ape::nodelabels()

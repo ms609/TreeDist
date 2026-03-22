@@ -71,7 +71,7 @@ Plot3 <- function(x, y = NULL, z = NULL,
   if (!add) {
     plot(x, y, type = "n", axes = axes, frame.plot = frame.plot, ...)
     if (!is.na(plot.bg)) {
-      rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
+      rect(par("usr")[[1]], par("usr")[[3]], par("usr")[[2]], par("usr")[[4]],
            col = plot.bg, border = frame.plot)
     }
   }

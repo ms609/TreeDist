@@ -2,10 +2,10 @@
 #' 
 #' Calculate the path distance between rooted or unrooted trees.
 #' 
-#' This function is a wrapper for the function 
-#' \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
-#' It pre-processes trees to ensure that their internal representation does
-#' not cause the `path.dist()` function to crash R.
+#' This function is a faster alternative to the function 
+#' \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package,
+#' which can crash if the internal representation of trees does not conform to
+#' certain (unspecified) expectations, and which treats all trees as unrooted.
 #' 
 #' The path distance is calculated by tabulating the cladistic difference (=
 #' topological distance) between each pair of tips in each tree.
@@ -47,26 +47,62 @@
 #' PathDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 #'         as.phylo(0:2, 7))
 #'
-#' CompareAll(as.phylo(30:33, 8), PathDist)
+#' PathDist(as.phylo(30:33, 8))
 #'  
 #' @references \insertAllCited{}
 #' 
 #' @template MRS
 #' @family tree distances
-#' @importFrom phangorn path.dist
 #' @importFrom TreeTools Postorder
 #' @export
 PathDist <- function(tree1, tree2 = NULL) {
   if (inherits(tree1, "phylo")) {
-    tree1 <- Postorder(tree1)
+    if (inherits(tree2, "phylo")) {
+      .PathDist11(tree1, tree2)
+    } else {
+      .PathDist1Many(tree1, tree2)
+    }
+  } else if (is.null(tree2)) {
+    .PathDistManySelf(tree1)
+  } else if (inherits(tree2, "phylo")) {
+    .PathDist1Many(tree2, tree1)
   } else {
-    tree1 <- structure(lapply(tree1, Postorder), class = "multiPhylo")
+    .PathDistManyMany(tree1, tree2)
   }
+}
+
+.EuclideanDistance <- function(x) sqrt(sum(x * x))
+
+.PathDist11 <- function(tree1, tree2) {
+  .EuclideanDistance(PathVector(tree1) - PathVector(RenumberTips(tree2, tree1)))
+}
+
+.PathDist1Many <- function(tree1, treeMany) {
+  v1 <- PathVector(tree1)
+  apply(v1 - vapply(RenumberTips(treeMany, tree1), PathVector, v1), 2,
+        .EuclideanDistance)
+}
+
+.PathDistManyMany <- function(trees1, trees2) {
+  nTip <- NTip(trees1[[1]])
+  v1 <- vapply(RenumberTips(trees1, trees1), PathVector,
+               integer(nTip * (nTip - 1) / 2))
+  v2 <- vapply(RenumberTips(trees2, trees1), PathVector,
+               integer(nTip * (nTip - 1) / 2))
+  vec_diff_euclidean(v1, v2)
+}
+
+.PathDistManySelf <- function(trees) {
+  nTip <- NTip(trees[[1]])
+  v1 <- vapply(RenumberTips(trees, trees), PathVector,
+               integer(nTip * (nTip - 1) / 2))
   
-  if (inherits(tree2, "phylo")) {
-    tree2 <- Postorder(tree2)
-  } else if (!is.null(tree2)) {
-    tree2 <- structure(lapply(tree2, Postorder), class = "multiPhylo")
-  }
-  path.dist(tree1, tree2)
+  nTree <- length(trees)
+  
+  ret <- structure(pair_diff_euclidean(v1),
+                   Size = nTree, Diag = FALSE, Upper = FALSE,
+                   class = "dist")
+  
+  # Return:
+  ret
 }

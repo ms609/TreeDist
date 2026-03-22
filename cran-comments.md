@@ -1,18 +1,28 @@
 ## Test environments
-* Microsoft Windows:
-  * Windows 10, R devel, locally
-  * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
-    R release, via [GitHub Actions](https://github.com/ms609/TreeDist/actions)
-  * win_devel: with `devtools::check_win_devel()`, R devel
-  * win_oldrel: with `devtools::check_win_oldrelease()`.
-  
-* Linux:
-  * Ubuntu 20.04.1 LTS, R 4.1, release and devel, via GitHub Actions
-  * [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
-  * via R-hub, with `rhub::check_for_cran()`.
-  
-* Mac OS X 10.15.7, R release, via GitHub actions
+* Local machine, Windows 10, R devel (2024-09-02 r87090 ucrt)
 
+* `devtools::check_win_devel()`
+
+* [GitHub Actions](https://github.com/ms609/TreeDist/actions):
+  - windows-latest, R release
+  - Ubuntu-latest, R 4.1, release and devel
+  - Mac OS X 10.15.7, R release, via GitHub actions
+  
+* [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
+
+* [R-hub](https://github.com/ms609/TreeDist/actions/workflows/rhub.yaml):
+  - linux,macos,macos-arm64,windows,atlas,mkl,clang-asan,valgrind
+
+
+## Downstream dependencies
+
+["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml)
+confirmed no changes to worse in the three downstream dependencies:
+
+  'Rogue', 'TBRDist', and 'TreeSearch'
+  
+(all of which I maintain).
+  
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
@@ -32,10 +42,3 @@ All calls to `data(package = "TreeDistData")` are wrapped within
 `if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 
-
-## Downstream dependencies
-There are three downstream dependencies: 'Rogue', 'TBRDist', and 'TreeSearch'
-(all of which I maintain).
-
-No changes to worse were identified by
-["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml).

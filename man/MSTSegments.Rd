@@ -71,6 +71,7 @@ PlotTools::SpectrumLegend(
 }
 \seealso{
 Other tree space functions: 
+\code{\link{Islands}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()},

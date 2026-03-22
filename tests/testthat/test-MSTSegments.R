@@ -43,5 +43,5 @@ test_that("MST example plots as expected", {
 test_that("StrainCol() handles zeroes", {
   distances <- dist(c(1, 1, 10, 100))
   mapping <- cmdscale(distances)
-  expect_equal(attr(StrainCol(distances, mapping), "logStrain")[1], Inf)
+  expect_equal(attr(StrainCol(distances, mapping), "logStrain")[[1]], Inf)
 })

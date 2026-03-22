@@ -111,8 +111,8 @@ MeilaVariationOfInformation <- function(split1, split2) {
   associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
                          sum(!split1 & split2), sum(!split1 & !split2))
   probabilities <- associationMatrix / n
-  p1 <- probabilities[1] + probabilities[3]
-  p2 <- probabilities[1] + probabilities[2]
+  p1 <- probabilities[[1]] + probabilities[[3]]
+  p2 <- probabilities[[1]] + probabilities[[2]]
   
   jointEntropies <- Entropy(probabilities)
   
@@ -132,15 +132,15 @@ MeilaMutualInformation <- function(split1, split2) {
   associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
                          sum(!split1 & split2), sum(!split1 & !split2))
   probabilities <- associationMatrix / n
-  p1 <- probabilities[1] + probabilities[3]
-  p2 <- probabilities[1] + probabilities[2]
+  p1 <- probabilities[[1]] + probabilities[[3]]
+  p2 <- probabilities[[1]] + probabilities[[2]]
   
   jointEntropies <- Entropy(probabilities)
   mutualInformation <- Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) -
     jointEntropies
   
   # Return:
-  if (abs(mutualInformation) < .Machine$double.eps^0.5) 0 else mutualInformation
+  if (abs(mutualInformation) < .Machine[["double.eps"]]^0.5) 0 else mutualInformation
 }
 
 #' Variation of information for all split pairings

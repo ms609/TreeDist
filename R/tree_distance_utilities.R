@@ -133,8 +133,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     splits <- lapply(splits1, as.Splits)
     
     .PairDist <- function(i) {
-      s1 <- splits[[i[1]]]
-      s2 <- splits[[i[2]]]
+      s1 <- splits[[i[[1]]]]
+      s2 <- splits[[i[[2]]]]
       common <- intersect(TipLabels(s1), TipLabels(s2))
       Func(KeepTip(s1, common), KeepTip(s2, common),
            nTip = length(common), reportMatching = FALSE, ...)
@@ -144,7 +144,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     
     .PairDist <- function(i) {
-      Func(splits[[i[1]]], splits[[i[2]]],
+      Func(splits[[i[[1]]]], splits[[i[[2]]]],
            nTip = nTip, reportMatching = FALSE, ...)
     }
     
@@ -179,7 +179,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    tipLabels, nTip = length(tipLabels), ...) {
   
   if (is.na(nTip)) {
-    tipLabels <- union(unlist(tipLabels), unlist(TipLabels(splits2)))
+    tipLabels <- union(unlist(tipLabels, use.names = FALSE),
+                       unlist(TipLabels(splits2), use.names = FALSE))
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = TRUE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = TRUE)
     vapply(splits1, function(s1) {
@@ -287,7 +288,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 }
 
 .CheckLabelsSame <- function(labelList) {
-  nTip <- unique(vapply(labelList, length, 0L))
+  nTip <- unique(lengths(labelList))
   if (length(nTip) != 1) {
     stop("All trees must contain the same number of leaves.")
   }
@@ -346,7 +347,7 @@ Entropy <- function(...) {
 #' trees <- list(bal1 = BalancedTree(1:8), 
 #'               pec1 = PectinateTree(1:8),
 #'               pec2 = PectinateTree(c(4:1, 5:8)))
-#'   
+#' 
 #' # Compare each tree with each other tree
 #' CompareAll(trees, NNIDist)
 #'   
@@ -395,20 +396,76 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
   if (length(FUN.VALUE) == 1) {
     .WrapReturn(ret)
   } else {
-    structure(lapply(seq_len(dim(ret)[1]), 
+    structure(lapply(seq_len(dim(ret)[[1]]), 
                      function(i) .WrapReturn(unlist(ret[i, ]))),
               names = rownames(ret))
   }
 }
 
-#' Normalize information against total present in both starting trees
-#' @param unnormalized Numeric value to be normalized.
-#' @param tree1,tree2 Trees from which `unnormalized` was calculated
-#' @param InfoInTree Function to calculate the information content of each tree
-#' @param infoInBoth Numeric specifying information content of both trees
-#' independently (optional)
-#' @param how Method for normalization
-#' @param \dots Additional parameters to `InfoInTree()` or `how`.
+#' Normalize tree distances
+#' 
+#' `NormalizeInfo()` is an internal function used to normalize information
+#' against a reference, such as the total information present in a pair of
+#' trees.
+#' 
+#' The unnormalized value(s) are normalized by dividing by a denominator
+#' calculated based on the `how` parameter.  Valid options include:
+#' 
+#' \describe{
+#'  \item{`FALSE`}{No normalization is performed; the unnormalized values
+#'  are returned.}
+#'  \item{`TRUE`}{Unless `infoInBoth` is specified, the information in
+#'  each tree is computed using `InfoInTree()`, and the two values combined
+#'  using `Combine()`.}
+#'  \item{A numeric value, vector or matrix}{`how` is used as the denominator;
+#'  the returned value is `unnormalized / how`.}
+#'  \item{A function}{Unless `infoInBoth` is specified, the information in
+#'  each tree is computed using `InfoInTree()`, and the two values combined
+#'  using `how`.  `NormalizeInfo(how = Func)` is thus equivalent to
+#'  `NormalizeInfo(how = TRUE, Combine = Func)`.}
+#' }
+#' 
+#' @param unnormalized Numeric value, vector or matrix to be normalized.
+#' @param tree1,tree2 Trees from which `unnormalized` was calculated.
+#' @param InfoInTree Function to calculate the information content of each tree.
+#' @param infoInBoth Optional numeric specifying information content of both
+#' trees independently. If unspecified (`NULL`), this will be calculated using
+#' the method specified by `how`.
+#' @param how Method for normalization, perhaps specified using the `normalize`
+#' argument to a tree distance function.  See details for options.
+#' @param \dots Additional parameters to `InfoInTree()` or `how()`.
+#' @returns `NormalizeInfo()` returns an object corresponding to the normalized
+#' values of `unnormalized`.
+#' @examples
+#' library("TreeTools", quietly = TRUE)
+#' pair1 <- c(BalancedTree(9), StarTree(9))
+#' pair2 <- c(BalancedTree(9), PectinateTree(9))
+#' 
+#' # We'll let the number of nodes define the total information in a tree
+#' Nnode(pair1)
+#' Nnode(pair2)
+#' 
+#' # Let's normalize a unit distance
+#' rawDist <- cbind(c(1, 1), c(1, 1))
+#' 
+#' # With `Combine = "+"`, the maximum distance is the sum of
+#' # the information in each tree
+#' denominator <- outer(Nnode(pair1), Nnode(pair2), "+")
+#' 
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, Combine = "+")
+#' rawDist / denominator
+#' 
+#' 
+#' # A denominator can be specified manually using `how`:
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = 16)
+#' rawDist / 16
+#' 
+#' 
+#' # `how` also allows the denominator to be computed from trees:
+#' outer(Nnode(pair1), Nnode(pair2), pmin)
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = pmin)
+#' rawDist / outer(Nnode(pair1), Nnode(pair2), pmin)
+#' 
 #' @keywords internal
 #' @template MRS
 #' @importFrom TreeTools KeepTip TipLabels
@@ -419,7 +476,10 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
                           pairwise = FALSE) {
     if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
-      unlist(.mapply(Combiner, dots = list(tree1Info, tree2Info), NULL))
+      # TODO When requriring R4.0, remove match.fun - which is now part of
+      # .mapply
+      unlist(.mapply(match.fun(Combiner),
+                     dots = list(tree1Info, tree2Info), NULL))
     } else {
       ret <- outer(tree1Info, tree2Info, Combiner)
       if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
@@ -474,7 +534,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     # We require a triangular matrix suitable for a dist object
     if (.MultipleTrees(tree1)) {
       pairs <- combn(seq_along(tree1), 2)
-      nPairs <- dim(pairs)[2]
+      nPairs <- dim(pairs)[[2]]
       ret <- list(vector("list", nPairs), vector("list", nPairs))
       
       for (n in seq_len(nPairs)) {

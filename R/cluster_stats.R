@@ -81,7 +81,7 @@ SumOfVars <- SumOfVariances
 #' distance from the centroid to points in each cluster.
 #' @examples MeanCentroidDistance(points, cluster)
 #' @export
-MeanCentroidDistance <- function(x, cluster = 1) {
+MeanCentroidDistance <- function(x, cluster = 1, Average = mean) {
   if (is.null(dim(x))) {
     warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
@@ -90,7 +90,8 @@ MeanCentroidDistance <- function(x, cluster = 1) {
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanCentroidDist(x[cluster == i, , drop = FALSE]),
+         function(i) .MeanCentroidDist(x[cluster == i, , drop = FALSE],
+                                       Average = Average),
          numeric(1))
 }
 
@@ -102,37 +103,41 @@ MeanCentDist <- MeanCentroidDistance
 #' @export
 MeanCentroidDist <- MeanCentroidDistance
 
-.MeanCentroidDist <- function(x) {
+.MeanCentroidDist <- function(x, Average = mean) {
   recentred <- t(t(x) - apply(x, 2, mean))
   
   # Return:
-  mean(sqrt(rowSums(recentred ^ 2)))
+  Average(sqrt(rowSums(recentred ^ 2)))
 }
 
 #' @rdname cluster-statistics
+#' @param Average Function to use to summarize distances. Defaults to `mean`;
+#' specifying `median` returns a value akin to the median absolute divergence
+#' (see [`mad`]).
 #' @return `DistanceFromMedian()` returns a numeric specifying the mean distance
 #' of each point (except the median) from the median point of its cluster.
 #' @examples DistanceFromMedian(points, cluster)
 #' @export
-DistanceFromMedian <- function(x, cluster = 1) UseMethod("DistanceFromMedian")
+DistanceFromMedian <- function(x, cluster = 1, Average = mean)
+  UseMethod("DistanceFromMedian")
 
 #' @rdname cluster-statistics
 #' @export
 DistFromMed <- DistanceFromMedian
 
 #' @export
-DistanceFromMedian.dist <- function(x, cluster = 1) {
+DistanceFromMedian.dist <- function(x, cluster = 1, Average = mean) {
   d <- as.matrix(x)
   vapply(seq_along(unique(cluster)),
          function(i) {
            .DistanceFromMedian.dist(
-             d[cluster == i, cluster == i, drop = FALSE])
+             d[cluster == i, cluster == i, drop = FALSE], Average = Average)
          },
          numeric(1))
 }
 
 #' @export
-DistanceFromMedian.numeric <- function(x, cluster = 1) {
+DistanceFromMedian.numeric <- function(x, cluster = 1, Average = mean) {
   if (is.null(dim(x))) {
     warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
@@ -141,22 +146,23 @@ DistanceFromMedian.numeric <- function(x, cluster = 1) {
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .DistanceFromMedian(x[cluster == i, , drop = FALSE]),
+         function(i) .DistanceFromMedian(x[cluster == i, , drop = FALSE],
+                                         Average = Average),
          numeric(1))
 }
 
-.DistanceFromMedian <- function(x) {
-  if (dim(x)[1] > 1) {
-    .DistanceFromMedian.dist(as.matrix(dist(x)))
+.DistanceFromMedian <- function(x, Average = mean) {
+  if (dim(x)[[1]] > 1) {
+    .DistanceFromMedian.dist(as.matrix(dist(x)), Average = Average)
   } else {
     NA_real_
   }
 }
 
-.DistanceFromMedian.dist <- function(d) {
-  if (dim(d)[1] > 1) {
+.DistanceFromMedian.dist <- function(d, Average = mean) {
+  if (dim(d)[[1]] > 1) {
     medPoint <- which.min(unname(colSums(d)))
-    mean(d[medPoint, -medPoint])
+    Average(d[medPoint, -medPoint])
   } else {
     NA_real_
   }
@@ -167,27 +173,28 @@ DistanceFromMedian.numeric <- function(x, cluster = 1) {
 #' point within a cluster to its nearest neighbour.
 #' @examples MeanNN(points, cluster)
 #' @export
-MeanNN <- function(x, cluster = 1) UseMethod("MeanNN")
+MeanNN <- function(x, cluster = 1, Average = mean) UseMethod("MeanNN")
 
 #' @export
-MeanNN.dist <- function(x, cluster = 1) {
+MeanNN.dist <- function(x, cluster = 1, Average = mean) {
   d <- as.matrix(x)
   diag(d) <- NA_real_
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE]),
+         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE],
+                                  Average = Average),
          numeric(1))
 }
 
-.MeanNN.dist <- function(x) {
-  if (dim(x)[1] > 1) {
-    mean(apply(x, 1, min, na.rm = TRUE))
+.MeanNN.dist <- function(x, Average = mean) {
+  if (dim(x)[[1]] > 1) {
+    Average(apply(x, 1, min, na.rm = TRUE))
   } else {
     NA_real_
   }
 }
 
 #' @export
-MeanNN.numeric <- function(x, cluster = 1) {
+MeanNN.numeric <- function(x, cluster = 1, Average = mean) {
   if (is.null(dim(x))) {
     warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
@@ -196,17 +203,17 @@ MeanNN.numeric <- function(x, cluster = 1) {
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanNN(x[cluster == i, , drop = FALSE]),
+         function(i) .MeanNN(x[cluster == i, , drop = FALSE], Average = Average),
          numeric(1))
 }
 
-.MeanNN <- function(x) {
-  if (dim(x)[1] > 1) {
+.MeanNN <- function(x, Average = mean) {
+  if (dim(x)[[1]] > 1) {
     distances <- as.matrix(dist(x))
     diag(distances) <- NA_real_
     
     # Return:
-    mean(apply(distances, 1, min, na.rm = TRUE))
+    Average(apply(distances, 1, min, na.rm = TRUE))
     
   } else {
     # Return:
@@ -226,13 +233,13 @@ MeanMSTEdge.dist <- function(x, cluster = 1) {
   d <- as.matrix(x)
   diag(d) <- NA_real_
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE]),
+         function(i) .MeanMSTEdge.dist(d[cluster == i, cluster == i, drop = FALSE]),
          numeric(1))
 }
 
 #' @importFrom stats as.dist
 .MeanMSTEdge.dist <- function(x) {
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   # Return:
   if (n > 1) {
     MSTLength(as.dist(x)) / (n - 1)
@@ -257,7 +264,7 @@ MeanMSTEdge.numeric <- function(x, cluster = 1) {
 
 #' @importFrom TreeTools MSTLength
 .MeanMSTEdge <- function(x) {
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   # Return:
   if (n > 1) {
     MSTLength(dist(x)) / (n - 1)

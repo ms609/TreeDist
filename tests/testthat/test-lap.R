@@ -18,6 +18,10 @@ test_that("LAP handles non-square matrices", {
   
 })
 
+test_that("LAP handles tiny matrices", {
+  expect_equal(LAPJV(matrix(0, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(8, 1, 1)), list(score = 8, matching = 1))
+})
 
 test_that("Precision avoids interminable loop in LAP", {
   # Increase value of epsilon in nontrivially_less_than to avoid loop.
@@ -275,9 +279,9 @@ test_that("Precision avoids interminable loop in LAP", {
 })
 
 test_that("LAPJV fails gracefully", {
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 1, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 1)))
+  expect_equal(LAPJV(matrix(NA, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 1, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 0, 1)), list(score = 0, matching = integer(0)))
   expect_error(LAPJV(1:10), "x must be a.* matrix")
 })
 

@@ -16,7 +16,7 @@ and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
 Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
-\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
+Linear Sum Assignment Problem (LSAP).
 }
 \details{
 The Linear Assignment Problem seeks to match each row of a matrix with a
@@ -56,7 +56,7 @@ The JV algorithm is implemented for square matrices in the Bioconductor
 package \href{https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html}{\code{GraphAlignment::LinearAssignment()}}.
 }
 \author{
-\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}
+\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp}{C++ code}
 by Roy Jonker, MagicLogic Optimization Inc. \href{mailto:roy_jonker@magiclogic.com}{roy_jonker@magiclogic.com},
 with contributions from Yong Yang \href{mailto:yongyanglink@gmail.com}{yongyanglink@gmail.com}, after
 \href{https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao}{Yi Cao}

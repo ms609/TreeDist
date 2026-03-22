@@ -16,6 +16,22 @@ test_that("NNIDist() handles exceptions", {
   
 })
 
+test_that("NNIDist() at NNI_MAX_TIPS", {
+  maxTips <- 2048
+  n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
+                           maxTips)
+  expect_gt(n[["best_upper"]], n[["best_lower"]])
+  if (!is.na(n[["tight_upper"]])) {
+    expect_gte(n[["tight_upper"]], n[["best_upper"]])
+  }
+  expect_gte(n[["loose_upper"]], n[["best_upper"]])
+  expect_gte(n[["fack_upper"]], n[["best_upper"]])
+  expect_gte(n[["li_upper"]], n[["best_upper"]])
+  more <- maxTips + 1
+  expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
+               "so many tips")
+})
+
 test_that("Simple NNI approximations", {
   nTip <- 6L
   tree1 <- BalancedTree(nTip)

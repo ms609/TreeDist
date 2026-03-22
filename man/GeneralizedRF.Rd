@@ -40,8 +40,9 @@ specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
 \itemize{
 \item \code{matching}: which split in \code{splits2} is optimally matched to each split in
 \code{split1} (\code{NA} if not matched);
-\item \code{pairScores}: Calculated scores for each possible matching of each split.
 \item \code{matchedSplits}: Textual representation of each match
+\item \code{matchedScores}: Scores for matched split.
+\item \code{pairScores}: Calculated scores for each possible matching of each split.
 }
 }
 \description{

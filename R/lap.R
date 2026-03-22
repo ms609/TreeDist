@@ -1,8 +1,7 @@
 #' Solve linear assignment problem using LAPJV
 #'
 #' Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the 
-#' [Linear Sum Assignment Problem](
-#' http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf).
+#' Linear Sum Assignment Problem (LSAP).
 #' 
 #' The Linear Assignment Problem seeks to match each row of a matrix with a 
 #' column, such that the cost of the matching is minimized.
@@ -24,7 +23,7 @@
 #' @references \insertAllCited{}
 #'
 #' @author [C++ code](
-#' https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp)
+#' https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp)
 #' by Roy Jonker, MagicLogic Optimization Inc. <roy_jonker@magiclogic.com>, 
 #' with contributions from Yong Yang <yongyanglink@gmail.com>, after 
 #' [Yi Cao](https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao)
@@ -56,7 +55,7 @@ LAPJV <- function(x) {
   dims <- dim(x)
   if (length(dims) == 2L) {
     if (any(dims == 0L)) {
-      integer(0)
+      list(score = 0, matching = integer(0))
     } else {
       lapjv(x, max(x))
     }

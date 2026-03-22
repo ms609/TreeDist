@@ -114,7 +114,7 @@ R using \code{vignette(package = "TreeDist")}.
 
 Other R packages implementing tree distance functions include:
 \itemize{
-\item \href{http://ape-package.ird.fr/}{ape}:
+\item \href{https://emmanuelparadis.github.io/}{ape}:
 \itemize{
 \item \code{cophenetic.phylo()}: Cophenetic distance
 \item \code{dist.topo()}: Path (topological) distance, Robinson–Foulds distance.
@@ -126,7 +126,7 @@ Other R packages implementing tree distance functions include:
 \item \href{https://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.
 \item \href{https://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
-unrooted trees, using the 'uspr; C library.
+unrooted trees, using the 'uspr' C library.
 \item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained):
 Geodesic distance
 }

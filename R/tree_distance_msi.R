@@ -29,7 +29,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = SplitwiseInfo, Combine = "+")
   
-  ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
+  ret[ret < .Machine[["double.eps"]]^0.5] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(msi)
   # Return:
   ret

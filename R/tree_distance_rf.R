@@ -1,20 +1,17 @@
 #' Robinson&ndash;Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson&ndash;Foulds distance
-#' \insertCite{Robinson1981}{TreeDist}, or
-#' the equivalent similarity measure, with options to
-#' (i) annotate matched splits; 
-#' (ii) weight splits according to their phylogenetic information content 
-#' \insertCite{SmithDist}{TreeDist}.
-#' Whilst slower to calculate, information theoretic modifications of the
-#' Robinson&ndash;Foulds distance (see [`TreeDistance()`])
+#' `RobinsonFoulds()` calculates the Robinson&ndash;Foulds distance
+#' \insertCite{Robinson1981}{TreeDist}, or the corresponding similarity measure.
+#' `InfoRobinsonFoulds()` weights splits according to their phylogenetic
+#' information content \insertCite{@§2.1 in @SmithDist}{TreeDist}.
+#' Optionally, the matching between identical splits may reported.
+#' Generalized Robinson&ndash;Foulds distances (see [`TreeDistance()`])
 #' are better suited to most use cases
 #' \insertCite{SmithDist,SmithSpace}{TreeDist}.
 #' 
-#' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
-#' a logical matrix specifying whether each pair of splits is identical.
-#' 
+#' `RobinsonFoulds()` calculates the standard Robinson&ndash;Foulds distance,
+#' i.e. the number of splits that occur in one tree but not the other.
 #' `InfoRobinsonFoulds()` calculates the tree similarity or distance by summing 
 #' the phylogenetic information content of all splits that are (or are not)
 #' identical in both trees.  Consequently, splits that are more likely
@@ -30,6 +27,9 @@
 #' 
 #' @templateVar returns `RobinsonFoulds()` and `InfoRobinsonFoulds()` return
 #' @template distReturn
+#' @return If `reportMatching = TRUE`, the `pairScores` attribute 
+#' returns a logical matrix specifying whether each pair of splits is identical.
+#' 
 #' 
 #' @section Normalization:
 #' 
@@ -37,7 +37,7 @@
 #'  are present.
 #'  
 #' - `InfoRobinsonFoulds()` is normalized against the sum of the phylogenetic 
-#' information of all splits in both trees, treated independently.
+#' information of all splits in each tree, treated independently.
 #'  
 #' @references \insertAllCited{}
 #' 
@@ -66,6 +66,12 @@
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   
@@ -74,7 +80,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   }
   
   # In case of floating point inaccuracy
-  unnormalized[unnormalized < .Machine$double.eps^0.5] <- 0
+  unnormalized[unnormalized < .Machine[["double.eps"]]^0.5] <- 0
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -96,10 +102,16 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 }
 
 #' @rdname Robinson-Foulds
-#' @importFrom TreeTools NSplits as.ClusterTable
+#' @importFrom TreeTools as.ClusterTable NSplits TopologyOnly
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
+  if (!isTRUE(reportMatching)) {
+    # Remove unnecessary metadata that will slow calculations
+    tree1 <- TopologyOnly(tree1)
+    tree2 <- TopologyOnly(tree2)
+  }
+  
   if (is.null(tree2)) {
     ct <- as.ClusterTable(tree1)
     rf <- robinson_foulds_all_pairs(if(is.list(ct)) ct else list(ct))

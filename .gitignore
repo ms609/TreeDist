@@ -25,3 +25,4 @@ vignettes/*_cache
 vignettes/*.R
 .Rproj.user
 *.bak
+codecov.yml

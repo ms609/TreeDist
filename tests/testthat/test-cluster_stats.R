@@ -47,6 +47,12 @@ test_that("DistanceFromMedian()", {
                  sum(0.6, 0.4, 0.2, 0.2, 0.4, 0.6, 0.8) / 7)
   )
   
+  expect_equal(DistanceFromMedian(points, cluster, median),
+               c(median(c(2, 2, 4)),
+                 NA_real_,
+                 median(c(0.6, 0.4, 0.2, 0.2, 0.4, 0.6, 0.8)))
+  )
+  
   expect_equal(
     sapply(1:3, function(i) DistFromMed(points[cluster == i, , drop = FALSE])),
     DistanceFromMedian(points, cluster)

@@ -24,12 +24,18 @@ bug, create an associated issue and illustrate the bug with a minimal
 *  We use the Oxford ending of 'ize' (not 'ise'), and UK spelling (e.g. 'colour') 
    where it is not possible to avoid the distinction (e.g. by shortening to 'col')
 *  We use [roxygen2](https://cran.r-project.org/package=roxygen2) to build
-documentation.  
+documentation.
 *  We use [testthat](https://cran.r-project.org/package=testthat). Contributions
-with test cases included are easier to accept.  
+with test cases included are easier to accept.
+*  We use [semantic versioning](https://semver.org/).
 *  For user-facing changes, add a bullet to the top of `NEWS.md` below the
 current development version header describing the changes made followed by your
 GitHub username, and links to relevant issue(s)/PR(s).
+
+### Contributor license agreement
+
+Contributors agree to reassign the copyright of their contributions to the
+maintainers of the package.
 
 ### Code of Conduct
 

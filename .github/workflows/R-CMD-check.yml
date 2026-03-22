@@ -48,9 +48,12 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: '4.1', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-22.04, r: '4.1',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
+          - {os: ubuntu-latest, r: 'release',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
+          - {os: ubuntu-latest, r: 'devel',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
 
     env:
       _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
@@ -60,56 +63,31 @@ jobs:
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # https://github.com/r-lib/actions/issues/534
-      - name: Remove TreeDistData from DESCRIPTION - pak bug workaround
-        if: runner.os != 'MacOS'
-        run: |
-          sed -i "s/  TreeDistData.*/  glue,/" DESCRIPTION # glue as placeholder
-        
-      - name: Remove TreeDistData from DESCRIPTION (Mac)
-        if: runner.os == 'MacOS'
-        run: |
-          brew install gnu-sed
-          gsed -i "s/  TreeDistData.*/  glue,/" DESCRIPTION # glue as placeholder
-          
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
+          extra-repositories: https://ms609.github.io/packages/
 
       - name: Install apt packages (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install \
-            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
-
-      - name: pak bug workaround - install pak # https://github.com/r-lib/actions/issues/534
-        run: |
-          install.packages("pak")
-          install.packages("pkgdepends")
-        shell: Rscript {0}
-
-      - name: pak bug workaround - install TreeDist (CRAN)
-        if: runner.os == 'Windows'
-        run: pak::pkg_install("TreeDist")
-        shell: Rscript {0}
-
-      - name: pak bug workaround - install TreeDistData
-        run: pak::pkg_install("ms609/TreeDistData")
-        shell: Rscript {0}
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            TreeDistData=?ignore-before-r=99.0.0
+            ms609/TreeDistData
           needs: |
             check
             coverage
@@ -119,26 +97,30 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            TreeDistData=?ignore-before-r=99.0.0
-            phangorn=?ignore-before-r=4.1.0
+            ms609/TreeDistData
+            phangorn=?ignore-before-r=4.4.0
+            ggplot2=?ignore-before-r=4.4.0
+            hypervolume=?ignore-before-r=4.4.0
+            kdensity=?ignore-before-r=4.4.0
+            Rogue=?ignore-before-r=4.4.0
+            TreeSearch=?ignore-before-r=4.4.0
+            Umatrix=?ignore-before-r=4.4.0
+            uwot=?ignore-before-r=4.4.0
           needs: |
             check
 
-      - name: Restore suggests-TreeDistData (Mac)
-        if: runner.os == 'MacOS'
-        run: |
-          gsed -i "s/  glue,/  TreeDistData,/" DESCRIPTION
-
-      - name: Restore suggests-TreeDistData (non-Mac)
-        if: runner.os != 'MacOS'
-        run: |
-          sed -i "s/  glue,/  TreeDistData,/" DESCRIPTION
-          
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
         
-      - name: Check package
+      - name: Check with incoming checks (PR)
+        if: github.event_name == 'pull_request'
         uses: r-lib/actions/check-r-package@v2
+
+      - name: Check without incoming checks (push/schedule)
+        if: github.event_name == 'push' || github.event_name == 'schedule'
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          check_args: "--no-incoming-check"
 
       - name: Code coverage
         if: runner.os == 'Windows'

@@ -44,15 +44,20 @@ test_that("TreesConsistentWithTwoSplits works", {
   
   Test <- function(n, a, b, score) {
     logScore <- log(score)
+    l2Score <- log2(score)
     
-    expect_equal(score, TreesConsistentWithTwoSplits(n, a, b))
-    expect_equal(score, TreesConsistentWithTwoSplits(n, b, a))
-    expect_equal(score, TreesConsistentWithTwoSplits(n, n - a, n - b))
-    expect_equal(score, TreesConsistentWithTwoSplits(n, n - b, n - a))
-    expect_equal(logScore, LnTreesConsistentWithTwoSplits(n, a, b))
-    expect_equal(logScore, LnTreesConsistentWithTwoSplits(n, b, a))
-    expect_equal(logScore, LnTreesConsistentWithTwoSplits(n, n - a, n - b))
-    expect_equal(logScore, LnTreesConsistentWithTwoSplits(n, n - b, n - a))
+    expect_equal(TreesConsistentWithTwoSplits(n, a, b), score)
+    expect_equal(TreesConsistentWithTwoSplits(n, b, a), score)
+    expect_equal(TreesConsistentWithTwoSplits(n, n - a, n - b), score)
+    expect_equal(TreesConsistentWithTwoSplits(n, n - b, n - a), score)
+    expect_equal(Log2TreesConsistentWithTwoSplits(n, a, b), l2Score)
+    expect_equal(Log2TreesConsistentWithTwoSplits(n, b, a), l2Score)
+    expect_equal(Log2TreesConsistentWithTwoSplits(n, n - a, n - b), l2Score)
+    expect_equal(Log2TreesConsistentWithTwoSplits(n, n - b, n - a), l2Score)
+    expect_equal(LnTreesConsistentWithTwoSplits(n, a, b), logScore)
+    expect_equal(LnTreesConsistentWithTwoSplits(n, b, a), logScore)
+    expect_equal(LnTreesConsistentWithTwoSplits(n, n - a, n - b), logScore)
+    expect_equal(LnTreesConsistentWithTwoSplits(n, n - b, n - a), logScore)
   }
   
   Test(8, 3, 0, 315)
