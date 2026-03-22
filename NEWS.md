@@ -1,3 +1,11 @@
+<!-- AI-generated branch summary (2026-03-22) -->
+# Branch: `treeko` → merge target: `master`
+
+Adds a TreeKO-style pairing script for gene tree / species tree
+reconciliation, with duplication tree extraction and subtree pruning.
+Tiny utility script.
+<!-- end AI-generated summary -->
+
 # TreeDist 2.9.2.9000 (development)
 
 - C++ source formatting.
