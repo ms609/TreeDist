@@ -1,5 +1,11 @@
 # TreeDist 2.13.0 (2026-03-17)
 
+## New features
+
+- `MCITree()` selects the tree from a posterior sample with the highest
+  total split information content — a Maximum Clade Information analogue
+  of the Maximum Clade Credibility tree.
+
 ## Performance
 
 Pairwise distance computation has been substantially optimized.
