@@ -55,8 +55,9 @@ jobs:
         run: |
           export LD_PRELOAD=$(gcc -print-file-name=libasan.so)
 
-          echo "PKG_CFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" > src/Makevars
-          echo "PKG_CXXFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" >> src/Makevars
+          # Replace PKG_CXXFLAGS in-place; preserve PKG_CPPFLAGS and PKG_LIBS
+          sed -i 's/^PKG_CXXFLAGS.*/PKG_CXXFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer/' src/Makevars
+          echo "PKG_CFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" >> src/Makevars
 
           mkdir ~/.R
           echo "LDFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" >> ~/.R/Makevars
