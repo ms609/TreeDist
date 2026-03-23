@@ -110,10 +110,6 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
    assignment problem */
 namespace TreeDist {
 
-// Force alignment to stabilise codegen across TU layout changes.
-#if defined(__GNUC__) && !defined(__clang__)
-__attribute__((optimize("align-functions=64", "align-loops=16")))
-#endif
 cost lap(const lap_row dim,
          CostMatrix &input_cost,
          std::vector<lap_col> &rowsol,
