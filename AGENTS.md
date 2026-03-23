@@ -1177,6 +1177,52 @@ for the cross-pairs case.
 
 ---
 
+## LinkingTo Header Exposure (`expose-lapjv` branch)
+
+Extracted LAP and MCI C++ APIs into `inst/include/TreeDist/` headers so that
+downstream packages (e.g., TreeSearch) can use `LinkingTo: TreeDist`:
+
+| Header | Content |
+|--------|---------|
+| `types.h` | `cost`, `lap_dim`, `lap_row`, `lap_col`, constants |
+| `cost_matrix.h` | `CostMatrix` class (Rcpp-free) |
+| `lap_scratch.h` | `LapScratch` struct |
+| `lap.h` | `lap()` declarations |
+| `lap_impl.h` | `lap()` implementation (include in exactly one TU) |
+| `mutual_clustering.h` | MCI declarations |
+| `mutual_clustering_impl.h` | MCI implementation (include in exactly one TU) |
+
+`src/lap.h` is now a thin wrapper that includes `<TreeDist/lap.h>` and
+re-exports types to global scope.
+
+### LAPJV codegen regression (diagnosed, partially mitigated)
+
+Including `lap_impl.h` in `lap.cpp` changed the TU context enough for GCC 14's
+register allocator to produce ~8% more instructions in the Dijkstra hot loop,
+causing a consistent 20–25% regression on standalone LAPJV (n ≥ 400).
+
+**Root cause:** the installed-header version of `CostMatrix` (in
+`inst/include/TreeDist/cost_matrix.h`) has a different method set than main's
+monolithic `src/lap.h` (extra methods like `setWithTranspose()`, `dim8()`;
+missing test variants like `findRowSubminNaive`).  This changes GCC's
+optimization heuristics for the entire TU, even though `lap()` never calls
+the differing methods.
+
+**Fix:** define `lap()` directly in `lap.cpp` (not via `#include <TreeDist/lap_impl.h>`)
+with `__attribute__((optimize("align-functions=64", "align-loops=16")))`.
+The `lapjv()` wrapper fills the transposed buffer first (matching R's
+column-major storage) then untransposes — restoring the cache-friendly pattern.
+
+**Residual:** ~5–9% on LAPJV 1999×1999 vs main (from the CostMatrix class
+definition difference).  Tree distance metrics are unaffected — they call
+`lap()` from `pairwise_distances.cpp`, whose TU context is unchanged.
+
+**Maintenance note:** if the `lap()` algorithm changes, update BOTH `src/lap.cpp`
+and `inst/include/TreeDist/lap_impl.h`.  The duplication is intentional — it
+preserves the TU context that was profiled and tuned.
+
+---
+
 ## Remaining Optimization Opportunities
 
 - Sort+merge pre-scan for `rf_info_score`: **DONE** — replaced O(n²) loop with

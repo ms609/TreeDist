@@ -26,6 +26,15 @@
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
+
+// NOTE: The LAP hot loops are highly sensitive to instruction alignment and
+// register allocation, which are affected by the TU's full include graph.
+// Do NOT include lap_impl.h here — that header is for downstream LinkingTo
+// consumers only.  TreeDist's own lap() is compiled directly in this file
+// to preserve the codegen context that was profiled and tuned.
+//
+// If the algorithm changes, update BOTH this file and lap_impl.h.
+
 #include "lap.h"
 #include <Rcpp/Lightest>
 
@@ -37,11 +46,42 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   const lap_dim spare_rows = n_row - n_col;
   const cost max_score = cost(BIG / max_dim);
   const double x_max = maxX[0];
+  const double scale_factor = max_score / x_max;
   
   std::vector<lap_col> rowsol(max_dim);
   std::vector<lap_row> colsol(max_dim);
   
-  cost_matrix input(x, x_max);
+  // Build cost matrix.  Fill the transposed buffer first (matching R's
+  // column-major storage for sequential reads) then untranspose.
+  cost_matrix input(max_dim);
+  const double* __restrict__ src_data = REAL(x);
+  cost* __restrict__ t_ptr = input.col(0);
+  const std::size_t dim8 = input.dim8();
+  
+  for (lap_col c = 0; c < n_col; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    const std::size_t s_off = static_cast<std::size_t>(c) * n_row;
+    for (lap_row r = 0; r < n_row; ++r) {
+      t_ptr[t_off + r] = static_cast<cost>(src_data[s_off + r] * scale_factor);
+    }
+    // Pad remaining rows in this transposed column
+    for (lap_row r = n_row; r < max_dim; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+    for (std::size_t r = max_dim; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+  }
+  // Pad remaining transposed columns
+  for (lap_col c = n_col; c < max_dim; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    for (std::size_t r = 0; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+  }
+  
+  // Untranspose: t_data_ -> data_
+  input.makeUntranspose();
   
   cost score = lap(max_dim, input, rowsol, colsol);
   
@@ -60,27 +100,22 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   );
 }
 
+namespace {
 inline bool nontrivially_less_than(cost a, cost b) noexcept {
   return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
 }
+} // anonymous namespace
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
+namespace TreeDist {
+
 cost lap(const lap_row dim,
-         cost_matrix &input_cost,
+         CostMatrix &input_cost,
          std::vector<lap_col> &rowsol,
          std::vector<lap_row> &colsol,
          const bool allow_interrupt,
          LapScratch &scratch)
-  
-  // input:
-  // dim        - problem size
-  // input_cost - cost matrix
-  
-  // output:
-  // rowsol     - column assigned to row in solution
-  // colsol     - row assigned to column in solution
-  
 {
   lap_row num_free = 0;
   scratch.ensure(dim);
@@ -316,3 +351,4 @@ cost lap(const lap_row dim,
 
   return lapcost;
 }
+} // namespace TreeDist

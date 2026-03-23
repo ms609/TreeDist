@@ -1,35 +1,47 @@
+#include <TreeTools/SplitList.h>
 #include <Rcpp/Lightest>
-#include <TreeTools/SplitList.h> /* for SL_MAX_TIPS */
 
-#include <cmath> /* for log2() */
+// Provide the MCI table definitions and implementation in this TU.
+#define TREEDIST_MCI_IMPLEMENTATION
+#include <TreeDist/mutual_clustering_impl.h>
 
 #include "tree_distances.h"
 
-using namespace Rcpp;
-
-constexpr int32 LG2_SIZE = SL_MAX_TIPS + 1;
-
-double lg2[LG2_SIZE];
-double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
-double lg2_unrooted[SL_MAX_TIPS + 2];
-double *lg2_rooted = &lg2_unrooted[0] + 1;
+// Populate lookup tables at library load time.
 __attribute__((constructor))
   void initialize_ldf() {
-    lg2[0] = 0;
-    for (int32 i = 1; i != LG2_SIZE; ++i) {
-      lg2[i] = log2(i);
-    }
-    for (int16 i = 0; i != 3; ++i) {
-      lg2_double_factorial[i] = 0;
-      lg2_unrooted[i] = 0;
-    }
-    assert(lg2_rooted[0] == 0);
-    assert(lg2_rooted[1] == 0);
-    for (int32 i = 2; i != SL_MAX_TIPS + SL_MAX_TIPS - 2; ++i) {
-      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
-    }
-    for (int32 i = 3; i != SL_MAX_TIPS + 2; ++i) {
-      lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
-      assert(lg2_rooted[i - 1] == lg2_double_factorial[i + i - 5]);
-    }
+    TreeDist::init_lg2_tables(SL_MAX_TIPS);
   }
+
+// Thin wrapper that exercises the installable-header version of
+// mutual_clustering_score(), for test coverage and downstream validation.
+// [[Rcpp::export]]
+double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
+                          const Rcpp::RawMatrix& y,
+                          int n_tips) {
+  using TreeTools::SplitList;
+
+  const SplitList a(x);
+  const SplitList b(y);
+  TreeDist::LapScratch scratch;
+
+  // Build arrays matching the header's raw-pointer API types.
+  std::vector<const splitbit*> a_ptrs(a.n_splits);
+  std::vector<const splitbit*> b_ptrs(b.n_splits);
+  std::vector<TreeDist::int16> a_in(a.n_splits);
+  std::vector<TreeDist::int16> b_in(b.n_splits);
+  for (TreeDist::int16 i = 0; i < a.n_splits; ++i) {
+    a_ptrs[i] = a.state[i];
+    a_in[i] = static_cast<TreeDist::int16>(a.in_split[i]);
+  }
+  for (TreeDist::int16 i = 0; i < b.n_splits; ++i) {
+    b_ptrs[i] = b.state[i];
+    b_in[i] = static_cast<TreeDist::int16>(b.in_split[i]);
+  }
+
+  return TreeDist::mutual_clustering_score(
+    a_ptrs.data(), a_in.data(), a.n_splits,
+    b_ptrs.data(), b_in.data(), b.n_splits,
+    a.n_bins, static_cast<TreeDist::int32>(n_tips),
+    scratch);
+}

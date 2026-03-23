@@ -267,6 +267,10 @@ cpp_transfer_dist_cross_pairs <- function(splits_a, splits_b, n_tip, scale, n_th
     .Call(`_TreeDist_cpp_transfer_dist_cross_pairs`, splits_a, splits_b, n_tip, scale, n_threads)
 }
 
+cpp_mci_impl_score <- function(x, y, n_tips) {
+    .Call(`_TreeDist_cpp_mci_impl_score`, x, y, n_tips)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }
