@@ -55,6 +55,7 @@ public:
   void reset() noexcept { transposed_ = false; }
 
   [[nodiscard]] std::size_t dim() const noexcept { return dim_; }
+  [[nodiscard]] std::size_t dim8() const noexcept { return dim8_; }
 
   // ---- Element access ----
 

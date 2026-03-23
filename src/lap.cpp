@@ -27,14 +27,16 @@
  *
  *************************************************************************/
 
-#include <Rcpp/Lightest>
-
-// Provide the LAP implementation in this translation unit.
-#define TREEDIST_CHECK_INTERRUPT() Rcpp::checkUserInterrupt()
-#define TREEDIST_LAP_IMPLEMENTATION
-#include <TreeDist/lap_impl.h>
+// NOTE: The LAP hot loops are highly sensitive to instruction alignment and
+// register allocation, which are affected by the TU's full include graph.
+// Do NOT include lap_impl.h here — that header is for downstream LinkingTo
+// consumers only.  TreeDist's own lap() is compiled directly in this file
+// to preserve the codegen context that was profiled and tuned.
+//
+// If the algorithm changes, update BOTH this file and lap_impl.h.
 
 #include "lap.h"
+#include <Rcpp/Lightest>
 
 // [[Rcpp::export]]
 Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
@@ -49,26 +51,37 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   std::vector<lap_col> rowsol(max_dim);
   std::vector<lap_row> colsol(max_dim);
   
-  // Build cost matrix from R's column-major NumericMatrix.
-  // Fill data and transpose simultaneously to avoid a separate
-  // makeTranspose() pass in lap().
+  // Build cost matrix.  Fill the transposed buffer first (matching R's
+  // column-major storage for sequential reads) then untranspose.
   cost_matrix input(max_dim);
   const double* __restrict__ src_data = REAL(x);
-  for (lap_row r = 0; r < n_row; ++r) {
-    for (lap_col c = 0; c < n_col; ++c) {
-      input.setWithTranspose(r, c, static_cast<cost>(
-        src_data[static_cast<std::size_t>(c) * n_row + r] * scale_factor));
+  cost* __restrict__ t_ptr = input.col(0);
+  const std::size_t dim8 = input.dim8();
+  
+  for (lap_col c = 0; c < n_col; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    const std::size_t s_off = static_cast<std::size_t>(c) * n_row;
+    for (lap_row r = 0; r < n_row; ++r) {
+      t_ptr[t_off + r] = static_cast<cost>(src_data[s_off + r] * scale_factor);
     }
-    for (lap_col c = n_col; c < max_dim; ++c) {
-      input.setWithTranspose(r, c, max_score);
+    // Pad remaining rows in this transposed column
+    for (lap_row r = n_row; r < max_dim; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+    for (std::size_t r = max_dim; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
     }
   }
-  for (lap_row r = n_row; r < max_dim; ++r) {
-    for (lap_col c = 0; c < max_dim; ++c) {
-      input.setWithTranspose(r, c, max_score);
+  // Pad remaining transposed columns
+  for (lap_col c = n_col; c < max_dim; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    for (std::size_t r = 0; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
     }
   }
-  input.markTransposed();
+  
+  // Untranspose: t_data_ -> data_
+  input.makeUntranspose();
   
   cost score = lap(max_dim, input, rowsol, colsol);
   
@@ -86,3 +99,260 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
     Rcpp::_["matching"] = matching
   );
 }
+
+namespace {
+inline bool nontrivially_less_than(cost a, cost b) noexcept {
+  return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
+}
+} // anonymous namespace
+
+/* This function is the jv shortest augmenting path algorithm to solve the 
+   assignment problem */
+namespace TreeDist {
+
+// Force alignment to stabilise codegen across TU layout changes.
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((optimize("align-functions=64", "align-loops=16")))
+#endif
+cost lap(const lap_row dim,
+         CostMatrix &input_cost,
+         std::vector<lap_col> &rowsol,
+         std::vector<lap_row> &colsol,
+         const bool allow_interrupt,
+         LapScratch &scratch)
+{
+  lap_row num_free = 0;
+  scratch.ensure(dim);
+  auto& v       = scratch.v;
+  auto& matches = scratch.matches;
+  // matches must start at zero for the column-reduction counter
+  std::fill(matches.begin(), matches.begin() + dim, 0);
+  const cost* __restrict__ v_ptr = v.data();
+  
+  // COLUMN REDUCTION
+  for (lap_col j = dim; j--; ) { // Reverse order gives better results.
+    
+    const auto [min, imin] = input_cost.findColMin(j);
+    v[j] = min;
+    ++matches[imin];
+    
+    if (matches[imin] == 1) {
+      // Init assignment if minimum row assigned for first time.
+      rowsol[imin] = j;
+      colsol[j] = imin;
+    } else if (v_ptr[j] < v_ptr[rowsol[imin]]) {
+      const lap_col j1 = rowsol[imin];
+      rowsol[imin] = j;
+      colsol[j] = imin;
+      colsol[j1] = -1;
+    } else {
+      colsol[j] = -1; // Row already assigned, column not assigned.
+    }
+  }
+  
+  // REDUCTION TRANSFER
+  auto& freeunassigned = scratch.freeunassigned;   // List of unassigned rows.
+  
+  for (lap_row i = 0; i < dim; ++i) {
+    if (matches[i] == 0) {
+      // Fill list of unassigned 'free' rows.
+      freeunassigned[num_free++] = i;
+    } else if (matches[i] == 1) {
+      // Transfer reduction from rows that are assigned once.
+      const lap_col j1 = rowsol[i];
+      const cost* row_i = input_cost.row(i);
+      cost min_cost;
+      if (j1 == 0) {
+        // Just worth the trouble to initialize with a realistic value
+        min_cost = row_i[1] - v_ptr[1];
+        
+        for (lap_col j = 2; j < dim; ++j) {
+          const cost reduced_cost = row_i[j] - v_ptr[j];
+          if (reduced_cost < min_cost) {
+            min_cost = reduced_cost;
+          }
+        }
+      } else {
+        min_cost = row_i[0] - v_ptr[0];
+        
+        for (lap_col j = 1; j < dim; ++j) {
+          if (j == j1) continue;
+          
+          const cost reduced_cost = row_i[j] - v_ptr[j];
+          if (reduced_cost < min_cost) {
+            min_cost = reduced_cost;
+          }
+        }
+      }
+      v[j1] -= min_cost;
+    }
+  }
+  
+  //   AUGMENTING ROW REDUCTION
+  auto& col_list = scratch.col_list;    // List of columns to be scanned in various ways.
+  int loopcnt = 0;                       // do-loop to be done twice.
+  
+  do {
+    ++loopcnt;
+    
+    //     Scan all free rows.
+    //     In some cases, a free row may be replaced with another one to be 
+    //     scanned next.
+    lap_row previous_num_free = num_free;
+    num_free = 0;             // Start list of rows still free after augmenting
+                              // row reduction.
+    lap_row k = 0;
+    while (k < previous_num_free) {
+      //  Find minimum and second minimum reduced cost over columns.
+      const lap_row i = freeunassigned[k++];
+      const auto [umin, usubmin, min_idx, j2] = input_cost.findRowSubmin(&i, v);
+      lap_col j1 = min_idx;
+      
+      lap_row i0 = colsol[j1];
+      const bool strictly_less = nontrivially_less_than(umin, usubmin);
+      if (strictly_less) {
+        //  Change the reduction of the minimum column to increase the minimum
+        //  reduced cost in the row to the subminimum.
+        v[j1] -= (usubmin - umin);
+      } else if (i0 > -1) {
+          // Minimum and subminimum equal.
+          // Minimum column j1 is assigned.
+          // Swap columns j1 and j2, as j2 may be unassigned.
+          j1 = j2;
+          i0 = colsol[j2];
+      }
+        
+      //    (Re-)assign i to j1, possibly de-assigning an i0.
+      rowsol[i] = j1;
+      colsol[j1] = i;
+      
+      if (i0 > -1) { // Minimum column j1 assigned earlier.
+        if (strictly_less) {
+          // Put in current k, and go back to that k.
+          // Continue augmenting path i - j1 with i0.
+          freeunassigned[--k] = i0;
+          if (allow_interrupt) Rcpp::checkUserInterrupt();
+        } else {
+          // No further augmenting reduction possible.
+          // Store i0 in list of free rows for next phase.
+          freeunassigned[num_free++] = i0;
+        }
+      }
+    }
+  } while (loopcnt < 2); // Repeat once.
+  
+  // AUGMENT SOLUTION for each free row.
+  auto& d           = scratch.d;           // 'Cost-distance' in augmenting path calculation.
+  auto& predecessor = scratch.predecessor; // Row-predecessor of column in augmenting/alternating path.
+  
+  for (lap_row f = 0; f < num_free; ++f) {
+    bool unassignedfound = false;
+    lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
+    const cost* free_row_cost = input_cost.row(free_row);
+    lap_col endofpath = 0;
+    lap_col last = 0;
+    lap_row i;
+    lap_col j1;
+    
+    // Dijkstra shortest path algorithm.
+    // Runs until unassigned column added to shortest path tree.
+    for (lap_col j = 0; j < dim; ++j) {
+      d[j] = free_row_cost[j] - v_ptr[j];
+      predecessor[j] = free_row;
+      col_list[j] = j;        // Init column list.
+    }
+    
+    cost min = 0;
+    lap_col low = 0; // Columns in 0..low-1 are ready, now none.
+    lap_col up = 0;  // Columns in low..up-1 are to be scanned for current minimum, now none.
+    // Columns in up..dim-1 are to be considered later to find new minimum;
+    // at this stage the list simply contains all columns.
+    
+    do {
+      if (up == low) { // No more columns to be scanned for current minimum.
+        last = low - 1;
+        
+        // Scan columns for up..dim-1 to find all indices for which new minimum occurs.
+        // Store these indices between low..up-1 (increasing up).
+        min = d[col_list[up++]];
+        
+        for (lap_dim k = up; k < dim; ++k) {
+          const lap_col j = col_list[k];
+          const cost h = d[j];
+          if (h <= min) {
+            if (h < min) {   // New minimum.
+              up = low;      // Restart list at index low.
+              min = h;
+            }
+            // New index with same minimum, put on undex up, and extend list.
+            col_list[k] = col_list[up];
+            col_list[up++] = j;
+          }
+        }
+        // Check if any of the minimum columns happens to be unassigned.
+        // If so, we have an augmenting path right away.
+        for (lap_dim k = low; k < up; ++k) {
+          if (colsol[col_list[k]] < 0) {
+            endofpath = col_list[k];
+            unassignedfound = true;
+            break;
+          }
+        }
+      }
+      
+      if (!unassignedfound) {
+        // Update 'distances' between free_row and all unscanned columns,
+        // via next scanned column.
+        j1 = col_list[low++];
+        i = colsol[j1];
+        const cost* row_i = input_cost.row(i);
+        const cost h = row_i[j1] - v_ptr[j1] - min;
+        
+        for (lap_dim k = up; k < dim; ++k) {
+          const lap_col j = col_list[k];
+          cost v2 = row_i[j] - v_ptr[j] - h;
+          if (v2 < d[j]) {
+            predecessor[j] = i;
+            if (v2 == min) { // New column found at same minimum value
+              if (colsol[j] < 0) {
+                // If unassigned, shortest augmenting path is complete.
+                endofpath = j;
+                unassignedfound = true;
+                break;
+              } else {
+              // Else add to list to be scanned right away.
+                col_list[k] = col_list[up];
+                col_list[up++] = j;
+              }
+            }
+            d[j] = v2; // <MS: Unintended>
+          }
+        }
+      }
+    } while (!unassignedfound);
+    
+    // Update column prices.
+    for(lap_dim k = 0; k <= last; ++k) {
+      j1 = col_list[k];
+      v[j1] += d[j1] - min;
+    }
+    
+    // Reset row and column assignments along the alternating path.
+    do {
+      i = predecessor[endofpath];
+      colsol[endofpath] = i;
+      j1 = endofpath;
+      endofpath = rowsol[i];
+      rowsol[i] = j1;
+    } while (i != free_row);
+  }
+  
+  // Calculate optimal cost.
+  cost lapcost = 0;
+  for (lap_dim i = 0; i < dim; ++i) {
+    lapcost += input_cost(i, rowsol[i]);
+  }
+
+  return lapcost;
+}
+} // namespace TreeDist
