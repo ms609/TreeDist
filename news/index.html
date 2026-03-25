@@ -61,6 +61,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.13.0" id="treedist-2130-2026-03-17">TreeDist 2.13.0 (2026-03-17)<a class="anchor" aria-label="anchor" href="#treedist-2130-2026-03-17"></a></h2>
 <div class="section level3">
+<h3 id="new-features-2-13-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0"></a></h3>
+<ul><li>
+<code><a href="../reference/MCITree.html">MCITree()</a></code> selects the tree from a posterior sample with the highest total split information content — a Maximum Clade Information analogue of the Maximum Clade Credibility tree.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="performance-2-13-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0"></a></h3>
 <p>Pairwise distance computation has been substantially optimized. Typical speedups over v2.12.0 for tree sets where most splits are shared (MCMC posteriors, bootstrap replicates):</p>
 <table class="table"><thead><tr class="header"><th>Metric</th>

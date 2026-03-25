@@ -211,12 +211,12 @@ summary(TreeTools::as.Splits(tree1, LETTERS[1:9]))
 
     ## 6 bipartition splits dividing 9 tips, A .. I
     ##      123456789
-    ##  11  **.......
-    ##  13  ..***....
-    ##  14  ...**....
-    ##  15  .....****
-    ##  16  ......***
-    ##  17  .......**
+    ##  11  **....... 
+    ##  13  ..***.... 
+    ##  14  ...**.... 
+    ##  15  .....**** 
+    ##  16  ......*** 
+    ##  17  .......** 
     ## 
     ##  Tip 1: A     Tip 2: B    Tip 3: C    Tip 4: D    Tip 5: E   
     ##  Tip 6: F     Tip 7: G    Tip 8: H    Tip 9: I   
@@ -227,11 +227,11 @@ summary(TreeTools::as.Splits(tree2, LETTERS[1:9]))
 
     ## 5 bipartition splits dividing 9 tips, A .. I
     ##      123456789
-    ##  11  **.......
-    ##  13  ..***...*
-    ##  14  ....*...*
-    ##  15  .....***.
-    ##  16  ......**.
+    ##  11  **....... 
+    ##  13  ..***...* 
+    ##  14  ....*...* 
+    ##  15  .....***. 
+    ##  16  ......**. 
     ## 
     ##  Tip 1: A     Tip 2: B    Tip 3: C    Tip 4: D    Tip 5: E   
     ##  Tip 6: F     Tip 7: G    Tip 8: H    Tip 9: I   

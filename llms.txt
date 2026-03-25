@@ -311,6 +311,13 @@ space.
 - [`Plot3()`](https://ms609.github.io/TreeDist/reference/Plot3.md) :
   Pseudo-3D plotting
 
+## Summary trees
+
+Produce trees to summarize a sample.
+
+- [`MCITree()`](https://ms609.github.io/TreeDist/reference/MCITree.md) :
+  Maximum Clade Information Tree
+
 ## Cluster analysis
 
 Functions for identifying and interrogating clusters of trees.
