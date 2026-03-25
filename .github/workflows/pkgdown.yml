@@ -85,6 +85,48 @@ jobs:
             }, envir = ns)
           })
 
+          # ── Fall back to r-universe for missing WASM binaries ──
+          # repo.r-wasm.org can lag days/weeks behind CRAN for new
+          # releases.  r-universe builds WASM per-commit, so we
+          # re-install from there to make shinylive look at the
+          # r-universe WASM endpoint instead.
+          # This means the r-universe (dev) version is bundled, not
+          # the CRAN release — acceptable as a temporary measure.
+          local({
+            r_ver <- paste(R.version$major,
+                           sub("\\..*", "", R.version$minor), sep = ".")
+            wasm_db <- tryCatch(
+              available.packages(repos = paste0(
+                "https://repo.r-wasm.org/bin/emscripten/contrib/", r_ver
+              )),
+              error = function(e) {
+                message("  Could not reach repo.r-wasm.org")
+                matrix(nrow = 0, ncol = 0,
+                       dimnames = list(NULL, character()))
+              }
+            )
+            # Packages to check (extend as needed)
+            pkgs <- "TreeTools"
+            for (pkg in pkgs) {
+              inst_ver <- as.character(packageVersion(pkg))
+              wasm_ver <- if (pkg %in% rownames(wasm_db))
+                wasm_db[pkg, "Version"] else NA_character_
+              if (is.na(wasm_ver) ||
+                  package_version(wasm_ver) < package_version(inst_ver)) {
+                message(pkg, " ", inst_ver,
+                        " WASM not on repo.r-wasm.org (have: ", wasm_ver,
+                        "); installing from r-universe")
+                install.packages(pkg, repos = c(
+                  "https://ms609.r-universe.dev",
+                  getOption("repos")
+                ))
+              } else {
+                message(pkg, " ", wasm_ver, " WASM available on ",
+                        "repo.r-wasm.org; using CRAN version")
+              }
+            }
+          })
+
           # ── Locate app ──
           pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
           app_dir   <- system.file("treespace", package = pkg_name)
