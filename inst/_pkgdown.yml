@@ -25,6 +25,11 @@ reference:
     contents:
      - has_concept("tree space functions")
      - Plot3
+  - title: "Summary trees"
+    desc: >
+      Produce trees to summarize a sample.
+    contents:
+     - has_concept("summary trees")
   - title: "Cluster analysis"
     desc: >
       Functions for identifying and interrogating clusters of trees.
