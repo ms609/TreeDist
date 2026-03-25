@@ -411,6 +411,7 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
 #' }
 #'
 #' @template MRS
+#' @family summary trees
 #' @importFrom TreeTools as.Splits SplitFrequency
 #' @export
 MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
