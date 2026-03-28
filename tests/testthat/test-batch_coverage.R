@@ -363,6 +363,72 @@ test_that("Issue #162: CID by-hand matches function for 33-taxon trees", {
   expect_equal(d_fn, d_hand, tolerance = 1e-10)
 })
 
+# RobinsonFoulds cross-pairs (Day 1985 ClusterTable batch) ----
+
+test_that("RF cross-pairs fast path agrees with per-pair", {
+  cross <- RobinsonFoulds(tA, tB)
+  expect_equal(dim(cross), c(5L, 5L))
+  expect_equal(cross[1, 1],
+               RobinsonFoulds(tA[[1]], tB[[1]]),
+               tolerance = 0)
+  expect_equal(cross[3, 2],
+               RobinsonFoulds(tA[[3]], tB[[2]]),
+               tolerance = 0)
+  expect_equal(cross[5, 5],
+               RobinsonFoulds(tA[[5]], tB[[5]]),
+               tolerance = 0)
+})
+
+test_that("RF cross-pairs similarity mode agrees with per-pair", {
+  cross_sim <- RobinsonFoulds(tA, tB, similarity = TRUE)
+  expect_equal(cross_sim[2, 3],
+               RobinsonFoulds(tA[[2]], tB[[3]], similarity = TRUE),
+               tolerance = 0)
+})
+
+test_that("RF cross-pairs normalization agrees with per-pair", {
+  cross_norm <- RobinsonFoulds(tA, tB, normalize = TRUE)
+  expect_equal(cross_norm[1, 4],
+               RobinsonFoulds(tA[[1]], tB[[4]], normalize = TRUE),
+               tolerance = 1e-10)
+})
+
+test_that("RF cross-pairs handles single-tree inputs via fallback", {
+  # Single tree1 → falls back to CalculateTreeDistance
+  d <- RobinsonFoulds(tA[[1]], tB)
+  expect_equal(length(d), 5L)
+  expect_equal(d[1], RobinsonFoulds(tA[[1]], tB[[1]]), tolerance = 0)
+})
+
+test_that("RF cross-pairs all-pairs matches cross-pairs diagonal", {
+  all_dist <- as.matrix(RobinsonFoulds(trees20))
+  # Cross-pairs of trees20 with itself should match all-pairs
+  cross <- RobinsonFoulds(trees20, trees20)
+  expect_equal(dim(cross), c(10L, 10L))
+  for (i in 1:10) {
+    for (j in 1:10) {
+      expect_equal(cross[i, j], all_dist[i, j], tolerance = 0,
+                   info = paste0("i=", i, " j=", j))
+    }
+  }
+})
+
+test_that("RF batch paths use heap allocation for large trees (>8192 tips)", {
+  skip_on_cran()
+  n <- 8193L
+  tr <- list(TreeTools::RandomTree(n), TreeTools::RandomTree(n))
+  class(tr) <- "multiPhylo"
+
+  # All-pairs (hits S_heap resize in robinson_foulds_all_pairs)
+  ap <- RobinsonFoulds(tr)
+  expect_length(ap, 1L)
+  expect_gte(ap, 0)
+
+  # Cross-pairs (hits S_heap resize in robinson_foulds_cross_pairs)
+  cp <- RobinsonFoulds(tr[1], tr[2])
+  expect_equal(cp[1, 1], as.matrix(ap)[1, 2])
+})
+
 test_that("Issue #162: batch path agrees with per-pair for 33-taxon trees", {
   tree1 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),((K,I),J)),((Q,R),((((AE,(AC,AD)),(AB,(N,(P,O)))),(((Y,(Z,AA)),(W,X)),(V,(T,U)))),((M,S),L))))));")
   tree2 <- ape::read.tree(text = "(B,A,((AG,AF),((((C,(E,D)),((F,G),H)),(((Q,R),((((AE,(AC,AD)),AB),(N,(P,O))),((Y,(Z,AA)),((V,(T,U)),(W,X))))),((M,L),S))),((K,I),J))));")

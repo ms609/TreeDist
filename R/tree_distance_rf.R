@@ -148,10 +148,43 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 class = "dist")
     }
   } else {
-    unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
-                                          reportMatching)
-    if (similarity) {
-      unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+    # Fast cross-pairs path: batch C++ via ClusterTable (Day 1985).
+    # Only applicable when both inputs are lists of trees with matching
+    # tip labels and reportMatching is not requested.
+    fast <- NULL
+    if (!reportMatching &&
+        !inherits(tree1, c("phylo", "Splits")) &&
+        !inherits(tree2, c("phylo", "Splits")) &&
+        is.null(getOption("TreeDist-cluster"))) {
+      lab1 <- TipLabels(tree1)
+      lab2 <- TipLabels(tree2)
+      if (is.list(lab1)) lab1 <- lab1[[1]]
+      if (is.list(lab2)) lab2 <- lab2[[1]]
+      if (setequal(lab1, lab2)) {
+        ct1 <- as.ClusterTable(tree1, tipLabels = lab1)
+        ct2 <- as.ClusterTable(tree2, tipLabels = lab1)
+        shared <- robinson_foulds_cross_pairs(
+          if (is.list(ct1)) ct1 else list(ct1),
+          if (is.list(ct2)) ct2 else list(ct2)
+        )
+        splits1 <- NSplits(tree1)
+        splits2 <- NSplits(tree2)
+        if (similarity) {
+          fast <- shared + shared
+        } else {
+          fast <- outer(splits1, splits2, "+") - shared - shared
+        }
+        dimnames(fast) <- list(names(tree1), names(tree2))
+      }
+    }
+    if (is.null(fast)) {
+      unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
+                                            reportMatching)
+      if (similarity) {
+        unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+      }
+    } else {
+      unnormalized <- fast
     }
   }
   

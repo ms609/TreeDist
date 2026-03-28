@@ -318,6 +318,110 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
   return shared;
 }
 
+// Cross-pairs variant: compute RF shared splits between two collections.
+// tables_a and tables_b are lists of ClusterTable XPtr objects
+// (all trees must share the same tip labels).
+// Returns an nA × nB IntegerMatrix of shared-split counts.
+// [[Rcpp::export]]
+IntegerMatrix robinson_foulds_cross_pairs(const List& tables_a,
+                                          const List& tables_b) {
+  const int nA = static_cast<int>(tables_a.size());
+  const int nB = static_cast<int>(tables_b.size());
+  if (nA == 0 || nB == 0) return IntegerMatrix(nA, nB);
+
+  std::vector<ClusterTable*> tbl_a, tbl_b;
+  tbl_a.reserve(nA);
+  tbl_b.reserve(nB);
+  for (int i = 0; i < nA; ++i) {
+    Rcpp::XPtr<ClusterTable> xp = tables_a[i];
+    tbl_a.push_back(xp.get());
+  }
+  for (int j = 0; j < nB; ++j) {
+    Rcpp::XPtr<ClusterTable> xp = tables_b[j];
+    tbl_b.push_back(xp.get());
+  }
+
+  IntegerMatrix result(nA, nB);
+
+  const int32 n_tip = tbl_a[0]->N();
+  StackEntry* S_start;
+  std::array<StackEntry, ct_stack_threshold> S_stack;
+  std::vector<StackEntry> S_heap;
+  if (n_tip <= ct_stack_threshold) {
+    S_start = S_stack.data();
+  } else {
+    S_heap.resize(n_tip);
+    S_start = S_heap.data();
+  }
+
+  for (int i = 0; i < nA; ++i) {
+
+    ClusterTable* Xi = tbl_a[i];
+
+    for (int j = 0; j < nB; ++j) {
+
+      int32 v;
+      int32 w;
+      int32 n_shared = 0;
+
+      ClusterTable* Tj = tbl_b[j];
+
+      StackEntry* S_top = S_start;
+
+      Tj->TRESET();
+      Tj->NVERTEX_short(&v, &w);
+
+      while (v) {
+        if (Tj->is_leaf(v)) {
+          const auto enc_v = Xi->ENCODE(v);
+          *S_top++ = {enc_v, enc_v, 1, 1};
+        } else {
+          const StackEntry& entry = *--S_top;
+          int32 L = entry.L;
+          int32 R = entry.R;
+          int32 N = entry.N;
+          const int32 W_i = entry.W;
+          int32 W = 1 + W_i;
+
+          w -= W_i;
+
+          if (w) {
+            const StackEntry& entry = *--S_top;
+            const int32 W_i = entry.W;
+
+            L = std::min(L, entry.L);
+            R = std::max(R, entry.R);
+            N += entry.N;
+            W += W_i;
+            w -= W_i;
+
+            while (w) {
+              const StackEntry& entry = *--S_top;
+              const int32 W_i = entry.W;
+
+              L = std::min(L, entry.L);
+              R = std::max(R, entry.R);
+              N += entry.N;
+              W += W_i;
+              w -= W_i;
+            }
+          }
+
+          *S_top++ = {L, R, N, W};
+
+          if (N == R - L + 1) {
+            if (Xi->ISCLUST(L, R)) ++n_shared;
+          }
+        }
+        Tj->NVERTEX_short(&v, &w);
+      }
+      result(i, j) = n_shared;
+    }
+  }
+
+  return result;
+}
+
 // [[Rcpp::export]]
 double consensus_info(const List trees, const LogicalVector phylo,
                       const NumericVector p) {
