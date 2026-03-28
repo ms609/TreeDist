@@ -13,6 +13,10 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
+robinson_foulds_cross_pairs <- function(tables_a, tables_b) {
+    .Call(`_TreeDist_robinson_foulds_cross_pairs`, tables_a, tables_b)
+}
+
 consensus_info <- function(trees, phylo, p) {
     .Call(`_TreeDist_consensus_info`, trees, phylo, p)
 }

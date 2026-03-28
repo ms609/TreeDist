@@ -1,3 +1,13 @@
+# TreeDist 2.13.0.9001
+
+## Performance
+
+- `RobinsonFoulds()` now uses a fast C++ batch path for cross-distance
+  computations (tree list vs tree list), matching the existing all-pairs
+  batch performance.  Previously, cross-distance calls fell through to
+  per-pair R dispatch (~27× slower per pair); the new path achieves ~21×
+  speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).
+
 # TreeDist 2.13.0 (2026-03-17)
 
 ## New features
