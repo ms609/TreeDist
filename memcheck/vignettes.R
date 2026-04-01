@@ -1,5 +1,3 @@
-# Code to be run with  
-#   R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/thisfile.R
-# First build and install the package.
-library("TreeDist")
-devtools::build_vignettes()
+# Code to be run with
+#   R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/thisfile.R
+devtools::build_vignettes(install = FALSE)

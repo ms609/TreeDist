@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - '**valgrind**'
     paths:
       - '.github/workflows/memcheck.yml'
       - 'src/**'
@@ -30,7 +31,8 @@ name: mem-check
 jobs:
   mem-check:
     runs-on: ubuntu-24.04
-    name: valgrind ${{ matrix.config.test }}, ubuntu, R release
+
+    name: valgrind ${{ matrix.config.test }}
 
     strategy:
       fail-fast: false
@@ -39,12 +41,13 @@ jobs:
           - {test: 'tests'}
           - {test: 'examples'}
           - {test: 'vignettes'}
-          
+
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
       RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      ASAN_OPTIONS: verify_asan_link_order=0
 
     steps:
       - uses: ms609/actions/memcheck@main
