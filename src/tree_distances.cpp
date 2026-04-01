@@ -51,12 +51,14 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
+  const int32 n_bins = a.n_bins;
+  std::vector<splitbit> b_complement(b.n_splits * n_bins);
   for (int32 i = b.n_splits; i--; ) {
+    splitbit* bc_i = &b_complement[i * n_bins];
     for (int32 bin = last_bin; bin--; ) {
-      b_complement[i][bin] = ~b.state[i][bin];
+      bc_i[bin] = ~b.state[i][bin];
     }
-    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+    bc_i[last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int32 ai = a.n_splits; ai--; ) {
@@ -64,16 +66,17 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
       
       bool all_match = true;
       bool all_complement = true;
+      const splitbit* bc_bi = &b_complement[bi * n_bins];
       
-      for (int32 bin = 0; bin < a.n_bins; ++bin) {
+      for (int32 bin = 0; bin < n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int32 bin = 0; bin < a.n_bins; ++bin) {
-          if (a.state[ai][bin] != b_complement[bi][bin]) {
+        for (int32 bin = 0; bin < n_bins; ++bin) {
+          if (a.state[ai][bin] != bc_bi[bin]) {
             all_complement = false;
             break;
           }
@@ -105,29 +108,31 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
-  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS]; 
+  const int16 n_bins = a.n_bins;
+  std::vector<splitbit> b_complement(b.n_splits * n_bins);
   for (int16 i = 0; i < b.n_splits; i++) {
+    splitbit* bc_i = &b_complement[i * n_bins];
     for (int16 bin = 0; bin < last_bin; ++bin) {
-      b_complement[i][bin] = ~b.state[i][bin];
+      bc_i[bin] = ~b.state[i][bin];
     }
-    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+    bc_i[last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       
       bool all_match = true, all_complement = true;
+      const splitbit* bc_bi = &b_complement[bi * n_bins];
       
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (int16 bin = 0; bin < n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
-          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+        for (int16 bin = 0; bin < n_bins; ++bin) {
+          if ((a.state[ai][bin] != bc_bi[bin])) {
             all_complement = false;
             break;
           }
