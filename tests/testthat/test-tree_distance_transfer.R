@@ -492,3 +492,16 @@ test_that("TransferDist() cross-pairs with single Splits input", {
   expect_length(result, 4)
   expect_true(all(result >= 0))
 })
+
+test_that("TransferDist fast-path guards handle edge cases", {
+  # Tiny trees (< 4 tips) fall through to generic path
+  tiny <- structure(rep(list(ape::read.tree(text = "(a,b,c);")), 3),
+                    class = "multiPhylo")
+  d <- TransferDist(tiny)
+  expect_s3_class(d, "dist")
+
+  # Cross-pairs with mixed-label trees fall through to generic path
+  t1 <- ape::read.tree(text = "((a,b),(c,d));")
+  t2 <- ape::read.tree(text = "((a,b),(e,f));")
+  expect_true(is.numeric(TransferDist(t1, t2)))
+})

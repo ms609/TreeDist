@@ -62,12 +62,23 @@ TransferConsensus <- function(trees,
   if (nTree < 2L) stop("Need at least 2 trees.")
   tipLabels <- TipLabels(trees[[1]])
   nTip <- length(tipLabels)
+  if (nTip < 4L) {
+    return(StarTree(tipLabels))
+  }
+  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
 
-  # Convert each tree to a raw split matrix (TreeTools C++ internally)
+  # Convert each tree to a raw split matrix (TreeTools C++ internally).
+  # as.Splits() will error if a tree's tips don't match tipLabels.
   splitsList <- lapply(trees, function(tr) {
     sp <- as.Splits(tr, tipLabels)
     unclass(sp)
   })
+
+  # Validate all split matrices have consistent column count
+  nCols <- vapply(splitsList, ncol, integer(1L))
+  if (length(unique(nCols)) != 1L) {
+    stop("Split matrices have inconsistent column counts.")
+  }
 
   # Delegate all work to C++
   nThreads <- max(1L, getOption("TreeDist.threads",
@@ -88,6 +99,30 @@ TransferConsensus <- function(trees,
   sp <- structure(rawSplits, nTip = nTip, tip.label = tipLabels,
                   class = "Splits")
   as.phylo(sp)
+}
+
+
+#' Profile transfer consensus timing (internal diagnostic)
+#' @keywords internal
+#' @noRd
+tc_profile <- function(trees, scale = TRUE, greedy = "best",
+                       init = "empty", n_iter = 1L, n_threads = 1L) {
+  if (!inherits(trees, "multiPhylo")) {
+    stop("`trees` must be an object of class 'multiPhylo'.")
+  }
+  if (length(trees) < 2L) stop("Need at least 2 trees.")
+  tipLabels <- TipLabels(trees[[1]])
+  nTip <- length(tipLabels)
+  if (nTip < 4L) stop("Need at least 4 tips for profiling.")
+  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+
+  splitsList <- lapply(trees, function(tr) unclass(as.Splits(tr, tipLabels)))
+
+  cpp_tc_profile(splitsList, nTip, scale,
+                 greedy_best_flag = (greedy == "best"),
+                 init_majority = (init == "majority"),
+                 n_iter = as.integer(n_iter),
+                 n_threads = as.integer(n_threads))
 }
 
 

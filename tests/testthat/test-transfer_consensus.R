@@ -71,6 +71,20 @@ test_that("Error on bad input", {
   expect_error(TransferConsensus(
     structure(list(TreeTools::BalancedTree(5)), class = "multiPhylo")),
     "at least 2")
+
+  # Fewer than 4 tips → star tree
+  tiny <- structure(rep(list(ape::read.tree(text = "(a,b,c);")), 3),
+                    class = "multiPhylo")
+  tc_tiny <- TransferConsensus(tiny)
+  expect_equal(NSplits(tc_tiny), 0)
+
+  # tc_profile validation
+  expect_error(TreeDist:::tc_profile(list(TreeTools::BalancedTree(5))),
+               "multiPhylo")
+  expect_error(TreeDist:::tc_profile(
+    structure(list(TreeTools::BalancedTree(5)), class = "multiPhylo")),
+    "at least 2")
+  expect_error(TreeDist:::tc_profile(tiny), "at least 4 tips")
 })
 
 test_that("Two-tree consensus returns a valid tree", {
@@ -167,13 +181,12 @@ test_that("Greedy exercises diverse topologies (extra C++ path coverage)", {
   }
 })
 
-test_that("cpp_tc_profile() runs without error", {
+test_that("tc_profile() runs without error", {
   trees <- as.phylo(0:4, nTip = 8)
-  tipLabels <- TipLabels(trees[[1]])
-  splitsList <- lapply(trees, function(tr) unclass(as.Splits(tr, tipLabels)))
 
   # Greedy best, empty init
-  res <- TreeDist:::cpp_tc_profile(splitsList, 8L, TRUE, TRUE, FALSE, 1L, 1L)
+  res <- TreeDist:::tc_profile(trees, scale = TRUE, greedy = "best",
+                               init = "empty", n_iter = 1L)
   expect_length(res, 5)
   expect_true(all(res >= 0))
   expect_equal(names(res),
@@ -181,16 +194,17 @@ test_that("cpp_tc_profile() runs without error", {
                  "compat_mat", "greedy"))
 
   # Greedy first, majority init, unscaled
-  res2 <- TreeDist:::cpp_tc_profile(splitsList, 8L, FALSE, FALSE, TRUE, 1L, 1L)
+  res2 <- TreeDist:::tc_profile(trees, scale = FALSE, greedy = "first",
+                                init = "majority")
   expect_length(res2, 5)
   expect_true(all(res2 >= 0))
 
   # Multiple iterations
-  res3 <- TreeDist:::cpp_tc_profile(splitsList, 8L, TRUE, TRUE, FALSE, 3L, 1L)
+  res3 <- TreeDist:::tc_profile(trees, n_iter = 3L)
   expect_length(res3, 5)
 
   # Greedy best, majority init
-  res4 <- TreeDist:::cpp_tc_profile(splitsList, 8L, TRUE, TRUE, TRUE, 1L, 1L)
+  res4 <- TreeDist:::tc_profile(trees, init = "majority")
   expect_length(res4, 5)
 })
 
