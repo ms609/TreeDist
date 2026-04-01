@@ -269,6 +269,7 @@ public:
     }
     return {min_val, submin_val, min_idx, submin_idx};
   }
+
 };
 
 } // namespace TreeDist

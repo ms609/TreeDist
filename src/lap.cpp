@@ -100,16 +100,17 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   );
 }
 
-namespace {
 inline bool nontrivially_less_than(cost a, cost b) noexcept {
   return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
 }
-} // anonymous namespace
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 namespace TreeDist {
 
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((optimize("align-functions=64", "align-loops=16")))
+#endif
 cost lap(const lap_row dim,
          CostMatrix &input_cost,
          std::vector<lap_col> &rowsol,
