@@ -1,5 +1,5 @@
 <!-- AI-generated branch summary (2026-03-22) -->
-# Branch: `expose-lapjv` → merge target: `master`
+# Branch: `transfer-consensus` → merge target: `main`
 
 This branch exposes the LAPJV (Jonker–Volgenant) linear assignment solver
 via C++ headers so that downstream packages can link to it (`LinkingTo`),
@@ -8,7 +8,7 @@ and implements a transfer consensus method (`TransferConsensus()`,
 `Rcpp::stop()` / `Rf_error()` calls out of C++ implementation code
 into R-level input validation.
 
-# TreeDist 2.13.0.9000
+# TreeDist 2.13.0.9001
 
 This branch implements transfer consensus trees (`TransferConsensus()`) and
 a corresponding transfer distance metric (`TransferDist()`), providing a
@@ -17,6 +17,14 @@ or strict approaches.  Error handling in C++ code is tightened to validate
 inputs at the R level rather than using `Rcpp::stop()` or `Rf_error()` in
 implementation code.
 <!-- end AI-generated summary -->
+
+## Performance
+
+- `RobinsonFoulds()` now uses a fast C++ batch path for cross-distance
+  computations (tree list vs tree list), matching the existing all-pairs
+  batch performance.  Previously, cross-distance calls fell through to
+  per-pair R dispatch (~27× slower per pair); the new path achieves ~21×
+  speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).
 
 # TreeDist 2.13.0 (2026-03-17)
 

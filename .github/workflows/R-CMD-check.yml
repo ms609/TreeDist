@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Temporarily bump package version
         run: |
@@ -112,7 +112,7 @@ jobs:
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Temporarily bump package version
         run: |
@@ -246,12 +246,12 @@ jobs:
 
     steps:
       - name: Checkout PR branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: pr
 
       - name: Checkout target branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.base.ref || 'main' }}
           path: main
@@ -301,14 +301,14 @@ jobs:
 
       - name: Upload PR benchmark results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pr-benchmark-results
           path: pr/pr-benchmark-results/*.bench.Rds
 
       - name: Upload main benchmark results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: main-benchmark-results
           path: pr/main-benchmark-results/*.bench.Rds

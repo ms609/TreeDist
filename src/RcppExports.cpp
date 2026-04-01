@@ -44,6 +44,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// robinson_foulds_cross_pairs
+IntegerMatrix robinson_foulds_cross_pairs(const List& tables_a, const List& tables_b);
+RcppExport SEXP _TreeDist_robinson_foulds_cross_pairs(SEXP tables_aSEXP, SEXP tables_bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tables_a(tables_aSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tables_b(tables_bSEXP);
+    rcpp_result_gen = Rcpp::wrap(robinson_foulds_cross_pairs(tables_a, tables_b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // consensus_info
 double consensus_info(const List trees, const LogicalVector phylo, const NumericVector p);
 RcppExport SEXP _TreeDist_consensus_info(SEXP treesSEXP, SEXP phyloSEXP, SEXP pSEXP) {
@@ -722,6 +734,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_binary_entropy_counts", (DL_FUNC) &_TreeDist_binary_entropy_counts, 2},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
+    {"_TreeDist_robinson_foulds_cross_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_cross_pairs, 2},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
     {"_TreeDist_HH_xptr", (DL_FUNC) &_TreeDist_HH_xptr, 1},

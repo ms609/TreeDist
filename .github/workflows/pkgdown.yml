@@ -36,19 +36,27 @@ jobs:
       - name: Export Shinylive app
         shell: Rscript {0}
         run: |
-          # ── Pin shiny to pre-otel version ──
-          # otel (OpenTelemetry) became a hard Import of shiny in 1.12.0,
-          # but otel is not yet available as a WebAssembly binary on
-          # repo.r-wasm.org.  shinylive resolves deps from the LOCAL
-          # library, so the installed shiny's otel dep causes a download
-          # failure.  Pin to the last CRAN release without otel.
-          #
-          # TODO: Remove this pin once otel appears at
-          #   http://repo.r-wasm.org/bin/emscripten/contrib/4.4/PACKAGES
+          # ── Use dev shinylive for R 4.5 WASM support ──
+          # CRAN shinylive 0.3.0 targets webR R 4.4.1.
+          # The dev version (0.3.0.9000) targets R 4.5.1, where:
+          #   - otel is available on repo.r-wasm.org
+          #   - R-universe has a fixed TreeTools (no RCurl dep)
+          # TODO: Switch back to CRAN shinylive once 0.4.0 ships.
+          remotes::install_github("posit-dev/r-shinylive", quiet = TRUE)
 
+          # ── Install TreeTools and TreeDist from R-universe ──
+          # repo.r-wasm.org has TreeTools 2.0.0 (still imports RCurl) for
+          # both R 4.4 and 4.5.  R-universe has 2.2.0.9001 (RCurl moved to
+          # Suggests) compiled for R 4.5.  Setting Repository to the
+          # R-universe URL makes shinylive fetch the WASM binary from there.
+          # Similarly, installing TreeDist from R-universe avoids the version
+          # mismatch warning (local dev != WASM 2.9.2 on repo.r-wasm.org).
+          # TODO: Remove once TreeTools >= 2.2.0 and TreeDist >= 2.13.0
+          #   are on CRAN and r-wasm.org has rebuilt them.
           install.packages(
-            "https://cran.r-project.org/src/contrib/Archive/shiny/shiny_1.11.1.tar.gz",
-            repos = NULL, type = "source"
+            c("TreeTools", "TreeDist"),
+            repos = c("https://ms609.r-universe.dev",
+                      "https://cloud.r-project.org")
           )
 
           # ── Work around shinylive bug (coatless/quarto-webr#228) ──
@@ -94,18 +102,16 @@ jobs:
           )
 
           # ── Export ──
-          if (!requireNamespace("shinylive", quietly = TRUE)) {
-            install.packages("shinylive")
-          }
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app"),
             error = function(e) {
               msg <- conditionMessage(e)
               message("\n===== shinylive::export() failed =====")
               message(msg)
-              message("This is often caused by a dependency that is not")
-              message("available as a WebAssembly binary.  Check:")
-              message("  http://repo.r-wasm.org/bin/emscripten/contrib/4.4/PACKAGES")
+              message("This is often caused by a dependency not available")
+              message("as a WebAssembly binary.  Check both:")
+              message("  https://repo.r-wasm.org/bin/emscripten/contrib/4.5/PACKAGES")
+              message("  https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/PACKAGES")
               stop(e)
             }
           )
