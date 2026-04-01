@@ -35,18 +35,17 @@
 #'
 #' @examples
 #' library(TreeTools)
-#' # Generate bootstrap-like trees
-#' trees <- as.phylo(1:20, nTip = 12)
+#' trees <- as.phylo(50:69, nTip = 12)
 #'
-#' # Transfer consensus (more resolved than majority rule)
 #' tc <- TransferConsensus(trees)
-#' plot(tc)
-#'
+#' mr <- UnrootTree(Consensus(trees, p = 0.5)) # As root position is arbitrary
+#' \dontshow{oPar <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 2, 0.4)) # Set up plotting area}
+#' plot(tc, main = "Transfer consensus")
+#' plot(mr, main = "Majority rule", direction = "left")
 #' # Compare resolution
-#' mr <- Consensus(trees, p = 0.5)
 #' cat("Majority-rule splits:", NSplits(mr), "\n")
 #' cat("Transfer consensus splits:", NSplits(tc), "\n")
-#'
+#' \dontshow{par(oPar) # Restore plotting defaults}
 #' @importFrom TreeTools as.Splits TipLabels NSplits Consensus StarTree
 #' @export
 TransferConsensus <- function(trees,
