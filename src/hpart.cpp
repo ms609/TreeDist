@@ -126,7 +126,7 @@ size_t build_node_from_list(const RObject& node,
   if (Rf_isInteger(node) || Rf_isReal(node)) {
     const IntegerVector leaf_vec(node);
     if (leaf_vec.size() != 1) {
-      Rcpp::stop("List must only contain integers, not vectors of integers");   // #nocov
+      ASSERT(false && "List must only contain integers, not vectors of integers"); // #nocov
     }
     const int leaf_label = leaf_vec[0];         // 1-based R leaf label
     const size_t leaf_idx = leaf_label - 1;     // 0-based label for HNode
@@ -171,8 +171,9 @@ size_t build_node_from_list(const RObject& node,
     return my_idx;
   }
   
-  // Invalid node type
-  Rcpp::stop("Invalid node type");                                              // #nocov
+  // Invalid node type — unreachable when R caller validates input
+  ASSERT(false && "Invalid node type");                                        // #nocov
+  return 0;                                                                    // #nocov
 }
 
 

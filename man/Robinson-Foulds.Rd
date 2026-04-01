@@ -154,6 +154,7 @@ Other tree distances:
 \code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{SPRDist}()},
+\code{\link{TransferDist}()},
 \code{\link{TreeDistance}()}
 }
 \author{

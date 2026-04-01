@@ -257,6 +257,20 @@ source("benchmark/bench-tree-distances.R")
 C++ compilation flags are controlled by `src/Makevars.win` (Windows) / `src/Makevars`.
 The package requires **C++17** (`CXX_STD = CXX17`).
 
+### Documentation and spelling checks
+
+After any work that adds or modifies roxygen comments, Rd files, NEWS.md, or
+vignettes, run:
+
+```r
+devtools::check_man()                # regenerates Rd files and checks for issues
+spelling::spell_check_package()      # flags potential misspellings
+```
+
+Legitimate technical terms, proper nouns, and code identifiers flagged by the
+spell checker should be added to `inst/WORDLIST` (one word per line,
+alphabetically sorted).  Only fix actual typos in the source.
+
 ### Code coverage
 
 Check that existing tests cover all new code.  The GHA test suite uses codecov.
@@ -270,6 +284,26 @@ covr::file_coverage(cov, "src/pairwise_distances.cpp")  # per-file summary
 
 Aim for full line coverage of new C++ and R code.  If a new code path is not
 exercised by the existing test suite, add targeted tests in `tests/testthat/`.
+
+### ⚠ Exploratory / risky R code — use a subprocess
+
+When running experimental R code that may be slow, allocate large objects,
+or involve complex loops (e.g., hill-climbing over tree space, brute-force
+evaluation of many candidate trees), **run it in a subprocess** rather than
+the interactive RStudio session.  Long-running or memory-heavy computations
+in the main session can freeze or crash RStudio.
+
+```r
+# Write the experiment to a temp script, then run via Rscript:
+writeLines(code, tmp <- tempfile(fileext = ".R"))
+system2("Rscript", tmp, stdout = TRUE, stderr = TRUE)
+
+# Or use callr for structured subprocess execution:
+callr::r(function() { ... }, timeout = 120)
+```
+
+This applies especially to prototype algorithm exploration (e.g., CID
+hill-climbing over split space) where per-iteration cost is uncertain.
 
 ---
 
@@ -1140,6 +1174,101 @@ for the cross-pairs case.
 - `InfoRobinsonFoulds` (tree_distance_rf.R)
 
 **Correctness verified**: max |fast − slow| ≤ 2.8e-14 (floating-point level).
+
+---
+
+## LinkingTo Header Exposure (`expose-lapjv` branch)
+
+Extracted LAP and MCI C++ APIs into `inst/include/TreeDist/` headers so that
+downstream packages (e.g., TreeSearch) can use `LinkingTo: TreeDist`:
+
+| Header | Content |
+|--------|---------|
+| `types.h` | `cost`, `lap_dim`, `lap_row`, `lap_col`, constants |
+| `cost_matrix.h` | `CostMatrix` class (Rcpp-free) |
+| `lap_scratch.h` | `LapScratch` struct |
+| `lap.h` | `lap()` declarations |
+| `lap_impl.h` | `lap()` implementation (include in exactly one TU) |
+| `mutual_clustering.h` | MCI declarations |
+| `mutual_clustering_impl.h` | MCI implementation (include in exactly one TU) |
+
+`src/lap.h` is now a thin wrapper that includes `<TreeDist/lap.h>` and
+re-exports types to global scope.
+
+### LAPJV codegen regression (diagnosed, characterised, accepted)
+
+Including `lap_impl.h` in `lap.cpp` changed the TU context enough for GCC 14's
+register allocator to produce ~8% more instructions in the Dijkstra hot loop,
+causing a consistent 20–25% regression on standalone LAPJV (n ≥ 400).
+
+**Root cause:** the installed-header version of `CostMatrix` (in
+`inst/include/TreeDist/cost_matrix.h`) has a different method set than main's
+monolithic `src/lap.h` (extra methods like `setWithTranspose()`, `dim8()`;
+missing test variants like `findRowSubminNaive`).  This changes GCC's
+optimization heuristics for the entire TU, even though `lap()` never calls
+the differing methods.
+
+**Fix:** define `lap()` directly in `lap.cpp` (not via `#include <TreeDist/lap_impl.h>`)
+with `__attribute__((optimize("align-functions=64", "align-loops=16")))`.
+The `lapjv()` wrapper fills the transposed buffer first (matching R's
+column-major storage) then untransposes — restoring the cache-friendly pattern.
+
+**VTune profiling (vtune-lap/, 2026-04-01):**  Profiled with `-O2 -g
+-fno-omit-frame-pointer` on the current branch (LAPJV 1999×1999 ×30s +
+400×400 ×30s + CID/MSD random 200-tip ×30s each).
+
+| Function | CPU Time | % | Notes |
+|---|---|---|---|
+| `TreeDist::CostMatrix::findRowSubmin` | 23.8s | 19.8% | Inlined into lap() at -O2 (separate symbol with -g) |
+| `TreeDist::lap` | 23.4s | 19.5% | Dijkstra phase dominates |
+| `msd_score` | 9.4s | 7.8% | Contains inlined lap() |
+| `mutual_clustering_score` | 9.3s | 7.7% | Contains inlined lap() |
+| `lapjv` (R wrapper) | 6.0s | 5.0% | Matrix conversion overhead |
+
+Source-line breakdown of `lap()`:
+
+| Phase | Lines | CPU Time (s) | % of lap() |
+|---|---|---|---|
+| Dijkstra inner update loop | 308–325 | ~16.5 | 72% |
+| Dijkstra min-scan | 274–287 | ~3.5 | 15% |
+| Matrix fill (lapjv wrapper) | 61–65 | ~2.7 | 12% |
+| findRowSubmin (reduction) | 173–184 | ~2.0 | 9% |
+
+**Optimisation attempts:**
+
+1. **`__restrict__` on Dijkstra pointers** (DONE, kept): Added restrict-qualified
+   local pointers (`d_ptr`, `pred_ptr`, `cl_ptr`) for the augment-solution phase
+   to eliminate potential alias reloads. Applied to both `lap.cpp` and `lap_impl.h`.
+   Benchmark: no measurable change in regression magnitude, but correct optimisation.
+
+2. **`#pragma GCC optimize("O3")`** (attempted, reverted): Forced O3 for the entire
+   `lap.cpp` TU. Benchmark: no measurable improvement; same alignment pattern.
+
+3. **Per-object Makevars flags** (attempted, failed): R's build system does not support
+   per-target variable overrides in `Makevars.win`.
+
+**Residual regression (confirmed, alignment-dependent):**
+
+| LAPJV size | dev/ref ratio | Direction |
+|---|---|---|
+| 400×400 | 0.81 | **Dev 19% faster** (alignment win) |
+| 1999×1999 | 1.08–1.13 | **Dev 8–13% slower** (alignment loss) |
+
+The regression is alignment-sensitive and manifests differently at different problem
+sizes. The same codegen change that makes 400×400 faster makes 1999×1999 slower.
+This is the classic instruction-alignment lottery: the Dijkstra inner loop's branch
+prediction and instruction fetch are affected by code placement that varies with
+TU context.
+
+**Conclusion:** The regression cannot be reliably eliminated without matching main's
+exact TU context (adding dead code back to the installed header, which is
+unacceptable for CRAN). **Tree distance metrics are completely unaffected** —
+`lap()` is called from `pairwise_distances.cpp` (different TU context), and
+benchmarks confirm neutral performance across all metrics and tree sizes.
+
+**Maintenance note:** if the `lap()` algorithm changes, update BOTH `src/lap.cpp`
+and `inst/include/TreeDist/lap_impl.h`.  The duplication is intentional — it
+preserves the TU context that was profiled and tuned.
 
 ---
 

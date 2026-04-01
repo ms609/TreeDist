@@ -93,6 +93,12 @@ MASTSize <- function(tree1, tree2 = tree1, rooted = TRUE) {
 #' @param nTip Integer specifying the number of leaves in each split.
 #' @keywords internal
 .MASTSizeEdges <- function(edge1, edge2, nTip) {
+  if (nrow(edge1) != nrow(edge2)) {
+    stop("Both trees must contain the same number of edges.")
+  }
+  if (nTip > 4096L) {
+    stop("Tree too large; please contact maintainer for advice.")
+  }
   cpp_mast(edge1 - 1L, Postorder(edge2) - 1L, nTip)
 }
 

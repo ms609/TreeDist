@@ -76,16 +76,10 @@ test_that("Size mismatch causes error", {
   expect_error(MeilaVariationOfInformation(splits7, splits8),
                "Split lengths differ")
   
-  Test <- function(Func) {
-    expect_error(Func(splits8, as.Splits(BalancedTree(9)), 8))
-  }
-  Test(cpp_robinson_foulds_distance)
-  Test(cpp_robinson_foulds_info)
-  Test(cpp_matching_split_distance)
-  Test(cpp_jaccard_similarity)
-  Test(cpp_msi_distance)
-  Test(cpp_mutual_clustering)
-  Test(cpp_shared_phylo)
+  # Validation is now in R (.ValidateSplitArgs), not C++
+  splits9 <- as.Splits(BalancedTree(9))
+  expect_error(.ValidateSplitArgs(splits8, splits9, 8L),
+               "same number of tips")
 })
 
 test_that("Metrics handle polytomies", {

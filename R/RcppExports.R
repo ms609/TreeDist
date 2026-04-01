@@ -204,6 +204,77 @@ spr_table_7 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_7`, sp1, sp2)
 }
 
+#' Transfer consensus (C++ implementation)
+#'
+#' @param splits_list List of raw matrices (one per tree), each from as.Splits().
+#' @param n_tip Number of tips.
+#' @param scale Logical: use scaled transfer distance?
+#' @param greedy_best_flag Logical: TRUE for "best", FALSE for "first".
+#' @param init_majority Logical: TRUE to start from majority-rule splits.
+#'
+#' @return A `LogicalVector` of length n_splits indicating which pooled splits
+#'   are included in the consensus, plus attributes "raw_splits" (a raw matrix
+#'   of all unique splits) and "light_side" (integer vector).
+#' @keywords internal
+cpp_transfer_consensus <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_transfer_consensus`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_threads)
+}
+
+#' @keywords internal
+cpp_tc_profile <- function(splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_tc_profile`, splits_list, n_tip, scale, greedy_best_flag, init_majority, n_iter, n_threads)
+}
+
+#' Per-pair transfer dissimilarity
+#'
+#' @param x,y Raw matrices representing splits (from as.Splits()).
+#' @param nTip Integer: number of tips.
+#'
+#' @return A list with components:
+#'   - score_scaled: scaled transfer dissimilarity (double)
+#'   - score_unscaled: unscaled transfer dissimilarity (double)
+#'   - `matching_xy`: integer vector, best match in y for each split in x (1-based, NA if sentinel)
+#'   - `matching_yx`: integer vector, best match in x for each split in y (1-based, NA if sentinel)
+#' @keywords internal
+cpp_transfer_dist <- function(x, y, nTip) {
+    .Call(`_TreeDist_cpp_transfer_dist`, x, y, nTip)
+}
+
+#' @keywords internal
+cpp_transfer_dist_scored <- function(x, y, nTip, scale) {
+    .Call(`_TreeDist_cpp_transfer_dist_scored`, x, y, nTip, scale)
+}
+
+#' All-pairs transfer dissimilarity (OpenMP)
+#'
+#' @param splits_list List of raw matrices (one per tree).
+#' @param n_tip Number of tips.
+#' @param scale Logical: use scaled transfer dissimilarity?
+#' @param n_threads Number of OpenMP threads.
+#'
+#' @return Numeric vector of length choose(N,2) in dist order.
+#' @keywords internal
+cpp_transfer_dist_all_pairs <- function(splits_list, n_tip, scale, n_threads) {
+    .Call(`_TreeDist_cpp_transfer_dist_all_pairs`, splits_list, n_tip, scale, n_threads)
+}
+
+#' Cross-pairs transfer dissimilarity (OpenMP)
+#'
+#' @param splits_a,splits_b Lists of raw matrices.
+#' @param n_tip Number of tips.
+#' @param scale Logical: use scaled transfer dissimilarity?
+#' @param n_threads Number of OpenMP threads.
+#'
+#' @return Numeric matrix of dimension `nA` x `nB`.
+#' @keywords internal
+cpp_transfer_dist_cross_pairs <- function(splits_a, splits_b, n_tip, scale, n_threads) {
+    .Call(`_TreeDist_cpp_transfer_dist_cross_pairs`, splits_a, splits_b, n_tip, scale, n_threads)
+}
+
+cpp_mci_impl_score <- function(x, y, n_tips) {
+    .Call(`_TreeDist_cpp_mci_impl_score`, x, y, n_tips)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }

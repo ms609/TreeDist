@@ -26,6 +26,15 @@
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
+
+// NOTE: The LAP hot loops are highly sensitive to instruction alignment and
+// register allocation, which are affected by the TU's full include graph.
+// Do NOT include lap_impl.h here — that header is for downstream LinkingTo
+// consumers only.  TreeDist's own lap() is compiled directly in this file
+// to preserve the codegen context that was profiled and tuned.
+//
+// If the algorithm changes, update BOTH this file and lap_impl.h.
+
 #include "lap.h"
 #include <Rcpp/Lightest>
 
@@ -37,11 +46,42 @@ Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   const lap_dim spare_rows = n_row - n_col;
   const cost max_score = cost(BIG / max_dim);
   const double x_max = maxX[0];
+  const double scale_factor = max_score / x_max;
   
   std::vector<lap_col> rowsol(max_dim);
   std::vector<lap_row> colsol(max_dim);
   
-  cost_matrix input(x, x_max);
+  // Build cost matrix.  Fill the transposed buffer first (matching R's
+  // column-major storage for sequential reads) then untranspose.
+  cost_matrix input(max_dim);
+  const double* __restrict__ src_data = REAL(x);
+  cost* __restrict__ t_ptr = input.col(0);
+  const std::size_t dim8 = input.dim8();
+  
+  for (lap_col c = 0; c < n_col; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    const std::size_t s_off = static_cast<std::size_t>(c) * n_row;
+    for (lap_row r = 0; r < n_row; ++r) {
+      t_ptr[t_off + r] = static_cast<cost>(src_data[s_off + r] * scale_factor);
+    }
+    // Pad remaining rows in this transposed column
+    for (lap_row r = n_row; r < max_dim; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+    for (std::size_t r = max_dim; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+  }
+  // Pad remaining transposed columns
+  for (lap_col c = n_col; c < max_dim; ++c) {
+    const std::size_t t_off = static_cast<std::size_t>(c) * dim8;
+    for (std::size_t r = 0; r < dim8; ++r) {
+      t_ptr[t_off + r] = max_score;
+    }
+  }
+  
+  // Untranspose: t_data_ -> data_
+  input.makeUntranspose();
   
   cost score = lap(max_dim, input, rowsol, colsol);
   
@@ -66,21 +106,17 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
+namespace TreeDist {
+
+#if defined(__GNUC__) && !defined(__clang__)
+__attribute__((optimize("align-functions=64", "align-loops=16")))
+#endif
 cost lap(const lap_row dim,
-         cost_matrix &input_cost,
+         CostMatrix &input_cost,
          std::vector<lap_col> &rowsol,
          std::vector<lap_row> &colsol,
          const bool allow_interrupt,
          LapScratch &scratch)
-  
-  // input:
-  // dim        - problem size
-  // input_cost - cost matrix
-  
-  // output:
-  // rowsol     - column assigned to row in solution
-  // colsol     - row assigned to column in solution
-  
 {
   lap_row num_free = 0;
   scratch.ensure(dim);
@@ -150,7 +186,6 @@ cost lap(const lap_row dim,
   }
   
   //   AUGMENTING ROW REDUCTION
-  auto& col_list = scratch.col_list;    // List of columns to be scanned in various ways.
   int loopcnt = 0;                       // do-loop to be done twice.
   
   do {
@@ -203,13 +238,16 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  auto& d           = scratch.d;           // 'Cost-distance' in augmenting path calculation.
-  auto& predecessor = scratch.predecessor; // Row-predecessor of column in augmenting/alternating path.
+  // Restrict-qualified local pointers enable the compiler to avoid
+  // reloads after stores in the Dijkstra inner loop.
+  cost* __restrict__ d_ptr        = scratch.d.data();
+  lap_row* __restrict__ pred_ptr  = scratch.predecessor.data();
+  lap_col* __restrict__ cl_ptr    = scratch.col_list.data();
   
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
-    const cost* free_row_cost = input_cost.row(free_row);
+    const cost* __restrict__ free_row_cost = input_cost.row(free_row);
     lap_col endofpath = 0;
     lap_col last = 0;
     lap_row i;
@@ -218,9 +256,9 @@ cost lap(const lap_row dim,
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
     for (lap_col j = 0; j < dim; ++j) {
-      d[j] = free_row_cost[j] - v_ptr[j];
-      predecessor[j] = free_row;
-      col_list[j] = j;        // Init column list.
+      d_ptr[j] = free_row_cost[j] - v_ptr[j];
+      pred_ptr[j] = free_row;
+      cl_ptr[j] = j;        // Init column list.
     }
     
     cost min = 0;
@@ -235,26 +273,26 @@ cost lap(const lap_row dim,
         
         // Scan columns for up..dim-1 to find all indices for which new minimum occurs.
         // Store these indices between low..up-1 (increasing up).
-        min = d[col_list[up++]];
+        min = d_ptr[cl_ptr[up++]];
         
         for (lap_dim k = up; k < dim; ++k) {
-          const lap_col j = col_list[k];
-          const cost h = d[j];
+          const lap_col j = cl_ptr[k];
+          const cost h = d_ptr[j];
           if (h <= min) {
             if (h < min) {   // New minimum.
               up = low;      // Restart list at index low.
               min = h;
             }
             // New index with same minimum, put on undex up, and extend list.
-            col_list[k] = col_list[up];
-            col_list[up++] = j;
+            cl_ptr[k] = cl_ptr[up];
+            cl_ptr[up++] = j;
           }
         }
         // Check if any of the minimum columns happens to be unassigned.
         // If so, we have an augmenting path right away.
         for (lap_dim k = low; k < up; ++k) {
-          if (colsol[col_list[k]] < 0) {
-            endofpath = col_list[k];
+          if (colsol[cl_ptr[k]] < 0) {
+            endofpath = cl_ptr[k];
             unassignedfound = true;
             break;
           }
@@ -264,16 +302,16 @@ cost lap(const lap_row dim,
       if (!unassignedfound) {
         // Update 'distances' between free_row and all unscanned columns,
         // via next scanned column.
-        j1 = col_list[low++];
+        j1 = cl_ptr[low++];
         i = colsol[j1];
-        const cost* row_i = input_cost.row(i);
+        const cost* __restrict__ row_i = input_cost.row(i);
         const cost h = row_i[j1] - v_ptr[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
-          const lap_col j = col_list[k];
+          const lap_col j = cl_ptr[k];
           cost v2 = row_i[j] - v_ptr[j] - h;
-          if (v2 < d[j]) {
-            predecessor[j] = i;
+          if (v2 < d_ptr[j]) {
+            pred_ptr[j] = i;
             if (v2 == min) { // New column found at same minimum value
               if (colsol[j] < 0) {
                 // If unassigned, shortest augmenting path is complete.
@@ -282,11 +320,11 @@ cost lap(const lap_row dim,
                 break;
               } else {
               // Else add to list to be scanned right away.
-                col_list[k] = col_list[up];
-                col_list[up++] = j;
+                cl_ptr[k] = cl_ptr[up];
+                cl_ptr[up++] = j;
               }
             }
-            d[j] = v2; // <MS: Unintended>
+            d_ptr[j] = v2;
           }
         }
       }
@@ -294,13 +332,13 @@ cost lap(const lap_row dim,
     
     // Update column prices.
     for(lap_dim k = 0; k <= last; ++k) {
-      j1 = col_list[k];
-      v[j1] += d[j1] - min;
+      j1 = cl_ptr[k];
+      v[j1] += d_ptr[j1] - min;
     }
     
     // Reset row and column assignments along the alternating path.
     do {
-      i = predecessor[endofpath];
+      i = pred_ptr[endofpath];
       colsol[endofpath] = i;
       j1 = endofpath;
       endofpath = rowsol[i];
@@ -316,3 +354,4 @@ cost lap(const lap_row dim,
 
   return lapcost;
 }
+} // namespace TreeDist

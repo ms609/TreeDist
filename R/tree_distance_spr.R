@@ -251,6 +251,9 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 
 .SPRExact7 <- function(sp1, sp2) {
+  if (length(sp1) != 4L || length(sp2) != 4L) {
+    stop("Expected a length-4 raw vector of splits") # nocov
+  }
   spr_table_7(sp1, sp2)
 }
 
@@ -407,7 +410,7 @@ SPRDist.multiPhylo <- SPRDist.list
 # \insertCite{deOliveira2008;textual}{TreeDist}
 # An exact match is unlikely due to the arbitrary breaking of ties when leaves
 # are selected for removal.
-# SPR approximation via Oliveira Martins _et al._ (2008)
+#' SPR approximation via Oliveira Martins _et al._ (2008)
 #' @examples
 #' # de Oliveira Martins et al 2008, fig. 7
 #' tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
@@ -421,6 +424,11 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeO <- function(tree1, tree2, check = TRUE) {
+  if (check) {
+    if (length(tree1[["tip.label"]]) != length(tree2[["tip.label"]])) {
+      stop("`tree1` and `tree2` must have the same number of tips.")
+    }
+  }
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
@@ -480,4 +488,38 @@ SPRDist.multiPhylo <- SPRDist.list
   
   # Return:
   moves
+}
+
+# R-level validation wrappers for internal C++ functions.
+# C++ uses ASSERT() (compiled out in release); these ensure user-visible errors.
+mismatch_size <- function(x, y) {
+  if (!inherits(x, "Splits") || is.null(attr(x, "nTip"))) {
+    stop("`x` lacks nTip attribute")
+  }
+  if (!inherits(y, "Splits") || is.null(attr(y, "nTip"))) {
+    stop("`y` lacks nTip attribute")
+  }
+  if (attr(x, "nTip") != attr(y, "nTip")) {
+    stop("`x` and `y` differ in `nTip`")
+  }
+  if (nrow(x) != nrow(y)) {
+    stop("`x` and `y` differ in number of splits.")
+  }
+  .Call(`_TreeDist_mismatch_size`, x, y)
+}
+
+confusion <- function(x, y) {
+  if (!inherits(x, "Splits") || is.null(attr(x, "nTip"))) {
+    stop("`x` lacks nTip attribute")
+  }
+  if (!inherits(y, "Splits") || is.null(attr(y, "nTip"))) {
+    stop("`y` lacks nTip attribute")
+  }
+  if (attr(x, "nTip") != attr(y, "nTip")) {
+    stop("`x` and `y` differ in `nTip`")
+  }
+  if (nrow(x) != nrow(y)) {
+    stop("Input splits must contain same number of splits.")
+  }
+  .Call(`_TreeDist_confusion`, x, y)
 }

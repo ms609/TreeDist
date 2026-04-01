@@ -66,6 +66,10 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       1
     }
   } else {
+    if (inherits(tree1, "phylo") && inherits(tree2, "phylo") &&
+        NTip(tree1) != NTip(tree2)) {
+      stop("Trees must have the same number of leaves")
+    }
     hp2 <- as.HPart(tree2, tree1)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {
@@ -132,6 +136,8 @@ HH <- SelfHMI
 #' @rdname HierarchicalMutualInfo
 #' @export
 EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
+  if (minResample < 2L) stop("Must perform at least one resampling")
+  if (precision < 1e-8) stop("Tolerance too low")
   EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(precision),
                 as.integer(minResample)) / log(2)
 }
@@ -162,6 +168,8 @@ EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
 #' @rdname HierarchicalMutualInfo
 #' @export
 AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minResample = 36) {
+  if (minResample < 2L) stop("Must perform at least one resampling")
+  if (precision < 1e-8) stop("Tolerance too low")
   hp1 <- as.HPart(tree1)
   hp2 <- as.HPart(tree2, hp1)
   

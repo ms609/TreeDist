@@ -1,4 +1,21 @@
-# TreeDist 2.13.0.9001
+# TreeDist 2.13.0.9002
+
+## New features
+
+- `TransferConsensus()` constructs a consensus tree that minimizes the sum
+  of transfer distances to a set of input trees, using a greedy
+  add-and-prune heuristic.  Unlike majority-rule consensus, which can be
+  highly unresolved when phylogenetic signal is diffuse, the transfer
+  consensus uses the finer-grained transfer distance to produce more
+  resolved trees.
+
+- `TransferDist()` computes the transfer dissimilarity between phylogenetic
+  trees, with scaled and unscaled variants.  Supports all-pairs, cross-pairs,
+  and single-pair computations.
+
+- LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering
+  Information) C++ implementations are now exposed via `inst/include/TreeDist/`
+  headers, allowing downstream packages to use `LinkingTo: TreeDist`.
 
 ## Performance
 
@@ -78,7 +95,7 @@ Typical speedups over v2.12.0 for tree sets where most splits are shared
 - Cross-pairs computations (`tree1` vs `tree2` where both are lists) now
   use the same optimized batch path as all-pairs computations.
 
-### KendallColijn distance
+### Kendall & Colijn distance
 
 - `KCVector()` reimplemented in C++, giving ~220× speedup per tree.
 

@@ -1,7 +1,9 @@
 library("TreeTools")
 
 test_that("MAST fails gracefully", {
-  expect_error(cpp_mast(BalancedTree(7)$edge, BalancedTree(8)$edge, 7)) # Different sizes
+  # R-level guard catches edge count mismatch
+  expect_error(.MASTSizeEdges(BalancedTree(7)$edge, BalancedTree(8)$edge, 7),
+               "same number of edges")
   expect_error(MASTSize(BalancedTree(8), UnrootTree(BalancedTree(8))))
   expect_error(MASTSize(BalancedTree(10000), PectinateTree(10000))) # Too large
   

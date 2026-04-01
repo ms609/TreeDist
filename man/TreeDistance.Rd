@@ -328,7 +328,8 @@ Other tree distances:
 \code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()}
+\code{\link{SPRDist}()},
+\code{\link{TransferDist}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

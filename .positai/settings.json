@@ -28,6 +28,17 @@
       "rm -f src/*.o src/*.dll": "allow",
       "tail *": "allow",
       "wc *": "allow"
+    },
+    "external_directory": {
+      "C:/Users/pjjg18/GitHub/TreeSearch-a/*": "allow",
+      "C:/Users/pjjg18/.positai/skills/r-package-profiling/references/*": "allow",
+      "../Quartet/*": "allow",
+      "../TreeTools/*": "allow"
+    },
+    "webfetch": {
+      "https://github.com/*": "allow",
+      "https://api.github.com/*": "allow",
+      "https://raw.githubusercontent.com/*": "allow"
     }
   },
   "model": {

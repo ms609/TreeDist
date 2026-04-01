@@ -8,9 +8,8 @@ test_that("NNIDist() handles exceptions", {
   expect_error(NNIDist(list(PectinateTree(1:8), 
                             PectinateTree(as.character(1:8)))),
                "trees must bear identical labels")
-  expect_error(cpp_nni_distance(
-    PectinateTree(40000)$edge, # Will fail before not being postorder is problem
-    BalancedTree(40000)$edge, 40000), "so many tips")
+  # R-level guard catches too-many-tips
+  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)), "so many tips")
   
   expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
   

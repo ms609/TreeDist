@@ -226,16 +226,7 @@ grf_match nni_rf_matching (
   
     ASSERT(n_splits > 0);
     ASSERT(n_tips > 3);
-    if (n_tips > NNI_MAX_TIPS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with so many tips.");
-    }
-    
-    // #nocov start
-    if (static_cast<int64_t>(n_splits) * static_cast<int64_t>(n_bins) >
-          static_cast<int64_t>(std::numeric_limits<int32_t>::max())) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with so many splits.");
-    }
-    // #nocov end
+    ASSERT(n_tips <= NNI_MAX_TIPS); // Validated by exported wrapper
     
     const int32_t last_bin = n_bins - 1;
     const int32_t unset_tips = (n_tips % SL_BIN_SIZE) ? 
@@ -298,10 +289,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
                                const IntegerMatrix& edge2,
                                const IntegerVector& nTip) {
   
-  if (nTip[0] > NNI_MAX_TIPS) {
-    Rcpp::stop("Cannot calculate NNI distance for trees with "
-                            "so many tips.");
-  }
+  ASSERT(nTip[0] <= NNI_MAX_TIPS && "Cannot calculate NNI distance for trees with so many tips.");
   const int32_t n_tip = static_cast<int32_t>(nTip[0]);
   const int32_t node_0 = n_tip;
   const int32_t node_0_r = n_tip + 1;
@@ -316,10 +304,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   int32_t fack_score_bound = 0;
   int32_t li_score_bound = 0;
   
-  if (n_edge != int32_t(edge2.nrow())) {
-    Rcpp::stop("Both trees must have the same number of edges. "
-                            "Is one rooted and the other unrooted?");
-  }
+  ASSERT(n_edge == int32_t(edge2.nrow())
+         && "Both trees must have the same number of edges.");
 
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
@@ -349,7 +335,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   const int32_t n_splits = n_distinct_edge - n_tip;
   
   if (n_splits < 1) {
-    Rcpp::stop("NNI distance is undefined for trees with no splits"); // #nocov
+    ASSERT(false && "NNI distance is undefined for trees with no splits"); // #nocov
   }
   
   std::unique_ptr<uint64_t[]> splits1(new uint64_t[n_splits * n_bin]);

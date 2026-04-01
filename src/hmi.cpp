@@ -139,9 +139,8 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
 double HMI_xptr(SEXP ptr1, SEXP ptr2) {
   Rcpp::XPtr<TreeDist::HPart> hp1(ptr1);
   Rcpp::XPtr<TreeDist::HPart> hp2(ptr2);
-  if (hp1->nodes[hp1->root].n_tip != hp2->nodes[hp2->root].n_tip) {
-    Rcpp::stop("Trees must have the same number of leaves");
-  }
+  ASSERT(hp1->nodes[hp1->root].n_tip == hp2->nodes[hp2->root].n_tip
+         && "Trees must have the same number of leaves");
   return TreeDist::hierarchical_mutual_info(hp1->nodes, hp1->root,
                                             hp2->nodes, hp2->root).second;
 }
@@ -170,12 +169,8 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
                               double tolerance = 0.01,
                               int minResample = 36) {
   
-  if (minResample < 2) {
-    Rcpp::stop("Must perform at least one resampling");
-  }
-  if (tolerance < 1e-8) {
-    Rcpp::stop("Tolerance too low");
-  }
+  ASSERT(minResample >= 2 && "Must perform at least one resampling");
+  ASSERT(tolerance >= 1e-8 && "Tolerance too low");
   
   Rcpp::XPtr<TreeDist::HPart> hp1(hp1_ptr);
   Rcpp::XPtr<TreeDist::HPart> hp2(hp2_ptr);
