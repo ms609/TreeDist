@@ -21,8 +21,7 @@
 
 - Stack-allocated split buffers replaced with dynamically-sized vectors,
   removing a hard dependency on the compile-time `SL_MAX_SPLITS` constant.
-  TreeDist now supports trees of any size permitted by TreeTools, including
-  the forthcoming increase to 32 768 tips.
+  TreeDist now supports trees of any size permitted by TreeTools.
 
 ## Performance
 
