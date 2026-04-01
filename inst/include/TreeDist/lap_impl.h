@@ -145,22 +145,25 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2);
 
   // AUGMENT SOLUTION for each free row.
-  auto& d           = scratch.d;
-  auto& predecessor = scratch.predecessor;
+  // Restrict-qualified local pointers enable the compiler to avoid
+  // reloads after stores in the Dijkstra inner loop.
+  cost* __restrict__ d_ptr        = scratch.d.data();
+  lap_row* __restrict__ pred_ptr  = scratch.predecessor.data();
+  lap_col* __restrict__ cl_ptr    = scratch.col_list.data();
 
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;
     lap_row free_row = freeunassigned[f];
-    const cost* free_row_cost = input_cost.row(free_row);
+    const cost* __restrict__ free_row_cost = input_cost.row(free_row);
     lap_col endofpath = 0;
     lap_col last = 0;
     lap_row i;
     lap_col j1;
 
     for (lap_col j = 0; j < dim; ++j) {
-      d[j] = free_row_cost[j] - v_ptr[j];
-      predecessor[j] = free_row;
-      col_list[j] = j;
+      d_ptr[j] = free_row_cost[j] - v_ptr[j];
+      pred_ptr[j] = free_row;
+      cl_ptr[j] = j;
     }
 
     cost min = 0;
@@ -170,23 +173,23 @@ cost lap(const lap_row dim,
     do {
       if (up == low) {
         last = low - 1;
-        min = d[col_list[up++]];
+        min = d_ptr[cl_ptr[up++]];
 
         for (lap_dim k = up; k < dim; ++k) {
-          const lap_col j = col_list[k];
-          const cost h = d[j];
+          const lap_col j = cl_ptr[k];
+          const cost h = d_ptr[j];
           if (h <= min) {
             if (h < min) {
               up = low;
               min = h;
             }
-            col_list[k] = col_list[up];
-            col_list[up++] = j;
+            cl_ptr[k] = cl_ptr[up];
+            cl_ptr[up++] = j;
           }
         }
         for (lap_dim k = low; k < up; ++k) {
-          if (colsol[col_list[k]] < 0) {
-            endofpath = col_list[k];
+          if (colsol[cl_ptr[k]] < 0) {
+            endofpath = cl_ptr[k];
             unassignedfound = true;
             break;
           }
@@ -194,39 +197,39 @@ cost lap(const lap_row dim,
       }
 
       if (!unassignedfound) {
-        j1 = col_list[low++];
+        j1 = cl_ptr[low++];
         i = colsol[j1];
-        const cost* row_i = input_cost.row(i);
+        const cost* __restrict__ row_i = input_cost.row(i);
         const cost h = row_i[j1] - v_ptr[j1] - min;
 
         for (lap_dim k = up; k < dim; ++k) {
-          const lap_col j = col_list[k];
+          const lap_col j = cl_ptr[k];
           cost v2 = row_i[j] - v_ptr[j] - h;
-          if (v2 < d[j]) {
-            predecessor[j] = i;
+          if (v2 < d_ptr[j]) {
+            pred_ptr[j] = i;
             if (v2 == min) {
               if (colsol[j] < 0) {
                 endofpath = j;
                 unassignedfound = true;
                 break;
               } else {
-                col_list[k] = col_list[up];
-                col_list[up++] = j;
+                cl_ptr[k] = cl_ptr[up];
+                cl_ptr[up++] = j;
               }
             }
-            d[j] = v2;
+            d_ptr[j] = v2;
           }
         }
       }
     } while (!unassignedfound);
 
     for (lap_dim k = 0; k <= last; ++k) {
-      j1 = col_list[k];
-      v[j1] += d[j1] - min;
+      j1 = cl_ptr[k];
+      v[j1] += d_ptr[j1] - min;
     }
 
     do {
-      i = predecessor[endofpath];
+      i = pred_ptr[endofpath];
       colsol[endofpath] = i;
       j1 = endofpath;
       endofpath = rowsol[i];
