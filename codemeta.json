@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R Under development (unstable) (2025-11-23 r89052 ucrt)",
+  "runtimePlatform": "R version 4.5.3 (2026-03-11)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -505,7 +505,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "2121.415KB",
+  "fileSize": "2080.301KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -572,7 +572,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.13.0.9001",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.13.0.9002",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
