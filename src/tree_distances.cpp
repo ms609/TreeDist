@@ -62,6 +62,7 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   }
   
   for (int32 ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int32 bi = b.n_splits; bi--; ) {
       
       bool all_match = true;
@@ -119,6 +120,7 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   }
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       
       bool all_match = true, all_complement = true;
@@ -173,6 +175,7 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
@@ -232,6 +235,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
@@ -338,6 +342,7 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   splitbit different[SL_MAX_BINS];
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       int16 
         n_different = 0,
@@ -415,6 +420,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
     
     const int16 na = a.in_split[ai];
@@ -571,6 +577,7 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = b.n_splits; bi--; ) {
       const double spi_over = TreeDist::spi_overlap(
         a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
