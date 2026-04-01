@@ -1,3 +1,18 @@
+# Validate that nTip does not exceed the compiled SL_MAX_TIPS limit.
+# Called from every distance entry point before any C++ work.
+.CheckMaxTips <- function(nTip) {
+  if (!is.na(nTip) && nTip > .SL_MAX_TIPS) {
+    stop(
+      "Trees with ", nTip, " tips exceed the compiled limit of ",
+      .SL_MAX_TIPS, " tips.",
+      if (.SL_MAX_TIPS < 32768L)
+        "\nUpdate TreeTools and reinstall TreeDist to support more tips."
+      else "",
+      call. = FALSE
+    )
+  }
+}
+
 #' Wrapper for tree distance calculations
 #' 
 #' Calls tree distance functions from trees or lists of trees
@@ -132,9 +147,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   # Fast paths: use OpenMP batch functions when all trees share the same tip
   # set and no R-level cluster has been configured.  Each branch mirrors the
   # generic path exactly but avoids per-pair R overhead.
-  if (!is.na(nTip) && nTip > 32767L) {
-    stop("This many tips are not (yet) supported.")
-  }
+  .CheckMaxTips(nTip)
   if (!is.na(nTip) && is.null(cluster)) {
     .n_threads <- as.integer(getOption("mc.cores", 1L))
     .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
@@ -235,9 +248,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom stats setNames
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
-  if (!is.na(nTip) && nTip > 32767L) {
-    stop("This many tips are not (yet) supported.")
-  }
+  .CheckMaxTips(nTip)
   if (is.na(nTip)) {
     tipLabels <- union(unlist(tipLabels, use.names = FALSE),
                        unlist(TipLabels(splits2), use.names = FALSE))
@@ -408,9 +419,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   if (ncol(x) != ncol(y)) {
     stop("Input splits must address same number of tips.")
   }
-  if (nTip > 32767L) {
-    stop("This many tips are not (yet) supported.")
-  }
+  .CheckMaxTips(nTip)
 }
 
 .CheckLabelsSame <- function(labelList) {

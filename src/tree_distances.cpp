@@ -28,13 +28,21 @@ namespace TreeDist {
     }
   }
 
-  void check_ntip(const double n) {
-    // Validated by R caller (nTip > 32767 guard in CalculateTreeDistance et al.)
-    ASSERT(n <= static_cast<double>(std::numeric_limits<int16>::max())
-           && "This many tips are not (yet) supported.");
+  void check_ntip(const int32 n) {
+    if (n > SL_MAX_TIPS) {
+      Rcpp::stop("Trees with %d tips exceed the compiled limit of %d. "
+                 "Update TreeTools to support more tips, then reinstall "
+                 "TreeDist.", static_cast<int>(n),
+                 static_cast<int>(SL_MAX_TIPS));
+    }
   }
 
 
+}
+
+// [[Rcpp::export]]
+int cpp_sl_max_tips() {
+  return static_cast<int>(SL_MAX_TIPS);
 }
 
 using TreeDist::resize_uninitialized;
@@ -619,7 +627,9 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
 List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
                                   const IntegerVector &nTip) {
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
-  return robinson_foulds_distance(x, y, static_cast<int32>(nTip[0]));
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return robinson_foulds_distance(x, y, n_tip);
 }
 
 // [[Rcpp::export]]

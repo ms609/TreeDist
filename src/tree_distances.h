@@ -18,6 +18,10 @@ constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
 namespace TreeDist {
 
+  // Validate that n_tips does not exceed the compiled SL_MAX_TIPS limit.
+  // Defined in tree_distances.cpp; calls Rcpp::stop() on failure.
+  void check_ntip(int32 n);
+
   // Re-exported from mutual_clustering.h:
   //   ic_matching(int16 a, int16 b, int16 n)
 

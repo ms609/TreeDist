@@ -275,6 +275,10 @@ cpp_mci_impl_score <- function(x, y, n_tips) {
     .Call(`_TreeDist_cpp_mci_impl_score`, x, y, n_tips)
 }
 
+cpp_sl_max_tips <- function() {
+    .Call(`_TreeDist_cpp_sl_max_tips`)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }

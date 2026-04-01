@@ -149,7 +149,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
   nTip <- length(tipLabels)
   if (nTip < 4) return(NULL) # nocov
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
   
   splits_list <- as.Splits(tree1, tipLabels = tipLabels)
   n_threads <- as.integer(getOption("mc.cores", 1L))
@@ -203,7 +203,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   
   nTip <- length(tipLabels1)
   if (nTip < 4) return(NULL)
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
   
   splits1 <- as.Splits(tree1, tipLabels = tipLabels1)
   splits2 <- as.Splits(tree2, tipLabels = tipLabels1)  # Use tipLabels1 to ensure order consistency

@@ -305,6 +305,7 @@ NumericVector cpp_mutual_clustering_all_pairs(
     const int   n_tip,
     const int   n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
 
@@ -397,6 +398,7 @@ NumericVector cpp_rf_info_all_pairs(
     const int   n_tip,
     const int   n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
   const int n_pairs = N * (N - 1) / 2;
@@ -516,6 +518,7 @@ NumericVector cpp_msd_all_pairs(
     const int   n_tip,
     const int   n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
   const int n_pairs = N * (N - 1) / 2;
@@ -618,6 +621,7 @@ NumericVector cpp_msi_all_pairs(
     const int   n_tip,
     const int   n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
   const int n_pairs = N * (N - 1) / 2;
@@ -710,6 +714,7 @@ NumericVector cpp_shared_phylo_all_pairs(
     const int   n_tip,
     const int   n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
   const int n_pairs = N * (N - 1) / 2;
@@ -875,6 +880,7 @@ NumericVector cpp_jaccard_all_pairs(
     const bool    allow_conflict = true,
     const int     n_threads     = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
   const int n_pairs = N * (N - 1) / 2;
@@ -944,6 +950,7 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -987,6 +994,7 @@ NumericMatrix cpp_rf_info_cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -1027,6 +1035,7 @@ NumericMatrix cpp_msd_cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -1070,6 +1079,7 @@ NumericMatrix cpp_msi_cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -1110,6 +1120,7 @@ NumericMatrix cpp_shared_phylo_cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -1153,6 +1164,7 @@ NumericMatrix cpp_jaccard_cross_pairs(
     const bool allow_conflict = true,
     const int n_threads = 1
 ) {
+  TreeDist::check_ntip(n_tip);
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
@@ -1206,6 +1218,7 @@ NumericVector cpp_clustering_entropy_batch(
     const List& splits_list,
     const int   n_tip
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip <= 0) return result;
@@ -1239,6 +1252,7 @@ NumericVector cpp_splitwise_info_batch(
     const List& splits_list,
     const int   n_tip
 ) {
+  TreeDist::check_ntip(n_tip);
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip < 4) return result;
