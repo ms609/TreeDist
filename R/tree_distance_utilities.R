@@ -11,6 +11,7 @@
 #' @importFrom TreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
+# Keep in sync with C++ guard: min(SL_MAX_TIPS, int16_t::max()).
 .MaxSupportedTips <- 32767L
 
 .AssertNtipSupported <- function(nTip) {

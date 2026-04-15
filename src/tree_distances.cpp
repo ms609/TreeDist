@@ -30,6 +30,10 @@ namespace TreeDist {
   }
 
   void check_ntip(const double n) {
+    // SplitList dimensions are bounded by SL_MAX_TIPS, and current scoring
+    // paths use int16-sized counts internally.
+    static_assert(SL_MAX_TIPS <= std::numeric_limits<int32>::max(),
+                  "SL_MAX_TIPS must fit in int32");
     constexpr int32 max_supported_tips = std::min(
       int32(SL_MAX_TIPS), int32(std::numeric_limits<int16_t>::max())
     );
@@ -55,6 +59,7 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
+  // Heap-backed scratch avoids large fixed-size stack allocation.
   std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
   for (int32 i = b.n_splits; i--; ) {
     for (int32 bin = last_bin; bin--; ) {
@@ -109,6 +114,7 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
+  // Heap-backed scratch avoids large fixed-size stack allocation.
   std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
   for (int16 i = 0; i < b.n_splits; i++) {
     for (int16 bin = 0; bin < last_bin; ++bin) {
