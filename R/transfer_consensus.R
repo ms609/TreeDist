@@ -46,6 +46,7 @@
 #' cat("Majority-rule splits:", NSplits(mr), "\n")
 #' cat("Transfer consensus splits:", NSplits(tc), "\n")
 #' \dontshow{par(oPar) # Restore plotting defaults}
+#' @family summary trees
 #' @importFrom TreeTools as.Splits TipLabels NSplits Consensus StarTree
 #' @export
 TransferConsensus <- function(trees,

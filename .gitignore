@@ -33,3 +33,4 @@ codecov.yml
 /benchmark/*_lib
 /vtune-*
 .positai
+/.dev*

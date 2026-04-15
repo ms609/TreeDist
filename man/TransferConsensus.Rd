@@ -65,3 +65,8 @@ cat("Transfer consensus splits:", NSplits(tc), "\n")
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other summary trees: 
+\code{\link{MCITree}()}
+}
+\concept{summary trees}
