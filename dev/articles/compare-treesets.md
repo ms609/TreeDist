@@ -78,10 +78,11 @@ Interpreting and comparing the areas of tree space from a projection can
 be misleading – the expanded apparent area of Greenland under the
 Mercator projection being a familiar example.
 
-![Mapping can introduce
-distortion](https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg)
+![Mercator map projection, with true size of each country overlaid.
+Credit: Neil Kaye](figures/mercator-projection.jpg)
 
-Mapping can introduce distortion
+Mercator map projection, with true size of each country overlaid.
+Credit: [Neil Kaye](https://x.com/neilrkaye)
 
 As such, it is always best to work with original distances when
 interpreting whether sets of trees occupy larger or smaller regions of

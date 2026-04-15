@@ -79,8 +79,8 @@ summary(distances)
 isle <- Islands(distances, quantile(distances, 0.1))
 table(isle)
 #> isle
-#>  1  2  3 
-#> 12  9 36 
+#>  1  2  3  4 
+#> 12  9  3 33 
 
 # Indicate island membership on 2D mapping of tree distances
 mapping <- cmdscale(distances, 2)

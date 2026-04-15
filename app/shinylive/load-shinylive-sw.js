@@ -1,5 +1,5 @@
-// Shinylive 0.9.1
-// Copyright 2024 Posit, PBC
+// Shinylive 0.10.8
+// Copyright 2026 Posit, PBC
 
 // src/utils.ts
 function dirname(path) {
@@ -34,7 +34,7 @@ if (shinyliveMetaTag !== null) {
 serviceWorkerDir = serviceWorkerDir.replace(/\/$/, "");
 var serviceWorkerPath = serviceWorkerDir + "/shinylive-sw.js";
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register(serviceWorkerPath, { type: "module" }).then(() => console.log("Service Worker registered")).catch(() => console.log("Service Worker registration failed"));
+  navigator.serviceWorker.register(serviceWorkerPath, { type: "module" }).then((registration) => registration.update()).then(() => console.log("Service Worker registered")).catch(() => console.log("Service Worker registration failed"));
   navigator.serviceWorker.ready.then(() => {
     if (!navigator.serviceWorker.controller) {
       window.location.reload();

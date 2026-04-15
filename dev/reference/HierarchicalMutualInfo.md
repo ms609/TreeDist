@@ -135,6 +135,7 @@ Other tree distances:
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md),
 [`TreeDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
 
 ## Examples
@@ -158,20 +159,20 @@ HMI(tree1, tree2) / mean(SelfHMI(tree1), SelfHMI(tree2))
 #> [1] 0.2411432
 # Expected mutual info for this pair of hierarchies
 EHMI(tree1, tree2, precision = 0.1)
-#> [1] 0.3027541
+#> [1] 0.3114007
 #> attr(,"var")
-#> [1] 0.002918266
+#> [1] 0.003188601
 #> attr(,"sd")
-#> [1] 0.05402098
+#> [1] 0.0564677
 #> attr(,"sem")
-#> [1] 0.009003497
+#> [1] 0.009411284
 #> attr(,"samples")
 #> [1] 36
 #> attr(,"relativeError")
-#> [1] 0.04290379
+#> [1] 0.04360174
 # The adjusted HMI normalizes against this expectation
 AHMI(tree1, tree2, precision = 0.1)
-#> [1] 0.07400499
+#> [1] 0.06063419
 #> attr(,"sem")
-#> [1] 0.004966383
+#> [1] 0.006586582
 ```

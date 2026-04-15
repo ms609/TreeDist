@@ -1,4 +1,5 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ms609.github.io/TreeDist/dev/AGENTS.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/CODE_OF_CONDUCT.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/CONTRIBUTING.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/articles/Generalized-RF.html</loc></url>
@@ -30,6 +31,7 @@
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/KendallColijn.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/LAPJV.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/MASTSize.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/MCITree.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/MSTSegments.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/MapTrees.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/MappingQuality.html</loc></url>
@@ -49,6 +51,8 @@
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/SplitSharedInformation.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/SplitsCompatible.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/StartParallel.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/TransferConsensus.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/TransferDist.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/TreeDist-package.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/TreeDistPlot.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/TreeDistance.html</loc></url>
@@ -56,8 +60,15 @@
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/VisualizeMatching.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/clone.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/cluster-statistics.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/cpp_mutual_clustering_all_pairs.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/cpp_transfer_consensus.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/cpp_transfer_dist.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/cpp_transfer_dist_all_pairs.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/cpp_transfer_dist_cross_pairs.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-MASTSizeEdges.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-PairMean.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-SPRPairDeO.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-ThreeDPlotServer.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-TreeDistance.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/entropy_int.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/index.html</loc></url>

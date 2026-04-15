@@ -3,15 +3,17 @@
  * @module Channel
  */
 import { AsyncQueue } from './queue';
-import { Message, Response } from './message';
+import { EventMessage, Message, Response } from './message';
 import { WebRPayload } from '../payload';
 export declare abstract class ChannelMain {
     #private;
     inputQueue: AsyncQueue<Message>;
     outputQueue: AsyncQueue<Message>;
     systemQueue: AsyncQueue<Message>;
+    eventQueue: EventMessage[];
     abstract initialised: Promise<unknown>;
     abstract close(): void;
+    abstract emit(msg: Message): void;
     abstract interrupt(): void;
     read(): Promise<Message>;
     flush(): Promise<Message[]>;
@@ -25,13 +27,15 @@ export interface ChannelWorker {
     resolve(): void;
     write(msg: Message, transfer?: [Transferable]): void;
     writeSystem(msg: Message, transfer?: [Transferable]): void;
+    syncRequest(msg: Message, transfer?: [Transferable]): Message;
     read(): Message;
-    handleInterrupt(): void;
+    handleEvents(): void;
     setInterrupt(interrupt: () => void): void;
     run(args: string[]): void;
     inputOrDispatch: () => number;
     setDispatchHandler: (dispatch: (msg: Message) => void) => void;
-    onMessageFromMainThread: (msg: Message) => void;
+    resolveRequest: (msg: Message) => void;
+    WebSocketProxy?: typeof WebSocket;
 }
 /**
  * Handler functions dealing with setup and communication over a Service Worker.

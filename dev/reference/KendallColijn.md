@@ -136,6 +136,7 @@ Other tree distances:
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md),
 [`TreeDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
 
 ## Author

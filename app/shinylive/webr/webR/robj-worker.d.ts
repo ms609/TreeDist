@@ -128,6 +128,14 @@ export declare class RFunction extends RObject {
     };
 }
 export declare class RString extends RObject {
+    static CEType: {
+        readonly CE_NATIVE: 0;
+        readonly CE_UTF8: 1;
+        readonly CE_LATIN1: 2;
+        readonly CE_BYTES: 3;
+        readonly CE_SYMBOL: 5;
+        readonly CE_ANY: 99;
+    };
     constructor(x: WebRDataScalar<string>);
     toString(): string;
     toJs(): WebRDataJsString;

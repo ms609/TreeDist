@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.11.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.13.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +21,7 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home fa-lg"></span></a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
 <li class="nav-item dropdown">
@@ -100,14 +100,48 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>"TreeDist" parallelizes the calculation of tree to tree distances via
-the <code>parCapply()</code> function, using a user-defined cluster specified in
-<code>options("TreeDist-cluster")</code>.</p>
-<p><code>StartParallel()</code> calls <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code> and tells "TreeDist" to
-use the created cluster.</p>
-<p><code>SetParallel()</code> tells "TreeDist" to use a pre-existing or user-specified
-cluster.</p>
-<p><code>StopParallel()</code> stops the current TreeDist cluster.</p>
+
+<div class="section">
+<h3 id="openmp-recommended-for-all-split-based-metrics-">OpenMP (recommended for all split-based metrics)<a class="anchor" aria-label="anchor" href="#openmp-recommended-for-all-split-based-metrics-"></a></h3>
+
+
+<p>When the package is built with <acronym>OpenMP</acronym> support (the default on
+Linux and Windows; optional on macOS), all pairwise split-based distance
+calculations use an efficient multi-threaded batch path automatically —
+no cluster setup is required.  The affected functions are:</p><ul><li><p><code><a href="TreeDistance.html">ClusteringInfoDistance()</a></code> / <code><a href="TreeDistance.html">MutualClusteringInfo()</a></code></p></li>
+<li><p><code><a href="TreeDistance.html">SharedPhylogeneticInfo()</a></code> / <code><a href="TreeDistance.html">DifferentPhylogeneticInfo()</a></code></p></li>
+<li><p><code><a href="TreeDistance.html">MatchingSplitInfo()</a></code> / <code><a href="TreeDistance.html">MatchingSplitInfoDistance()</a></code></p></li>
+<li><p><code><a href="MatchingSplitDistance.html">MatchingSplitDistance()</a></code></p></li>
+<li><p><code><a href="Robinson-Foulds.html">InfoRobinsonFoulds()</a></code></p></li>
+<li><p><code><a href="NyeSimilarity.html">NyeSimilarity()</a></code></p></li>
+<li><p><code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code></p></li>
+</ul><p>The number of <acronym>OpenMP</acronym> threads is controlled by the standard
+<code>"mc.cores"</code> option:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>  <span class="co"># use all available cores</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                        <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
+<p>The default is <code>1</code> (single-threaded).</p>
+</div>
+
+<div class="section">
+<h3 id="r-parallel-cluster">R parallel cluster<a class="anchor" aria-label="anchor" href="#r-parallel-cluster"></a></h3>
+
+
+<p><code>StartParallel()</code> creates an R socket cluster (via <code>makeCluster()</code>) and
+registers it for use by TreeDist.  <code>SetParallel()</code> registers a pre-existing
+cluster.  <code>StopParallel()</code> stops the cluster and releases resources.</p>
+<p><strong>When to use <code>StartParallel()</code>:</strong> for metrics that do not have an
+<acronym>OpenMP</acronym> batch path, namely tree-object-based distances such as
+<code><a href="NNIDist.html">NNIDist()</a></code> and <code><a href="MASTSize.html">MASTSize()</a></code> / <code><a href="MASTSize.html">MASTInfo()</a></code>, or any function called
+via <code><a href="CompareAll.html">CompareAll()</a></code>.  R-cluster parallelism carries a serialisation overhead
+of ~2–3 s, so it is only beneficial for large problems.</p>
+<p><strong>When <em>not</em> to use <code>StartParallel()</code>:</strong> for the split-based metrics listed
+above.  Registering a cluster disables the <acronym>OpenMP</acronym> batch path for
+those functions, replacing a thread-local C++ loop with inter-process
+communication — which is slower at every problem size measured.  Call
+<code>StopParallel()</code> before computing split-based distances if a cluster is
+active.</p>
+</div>
+
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -117,12 +151,20 @@ cluster.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># Only run in terminal</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># OpenMP parallelism: set mc.cores before calling any split-based metric.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># MutualClusteringInfo(trees)  # uses 2 OpenMP threads automatically</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>  <span class="co"># restore default (single-threaded)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># R cluster: beneficial for NNIDist, MASTSize/MASTInfo, CompareAll(), etc.</span></span></span>
+<span class="r-in"><span>  <span class="co"># Do NOT activate while computing split-based distances (MCI, SPI, MSI, …)</span></span></span>
+<span class="r-in"><span>  <span class="co"># as it bypasses the faster OpenMP path.</span></span></span>
 <span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">nCores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">StartParallel</span><span class="op">(</span><span class="va">nCores</span><span class="op">)</span> <span class="co"># Takes a few seconds to set up processes</span></span></span>
 <span class="r-in"><span>  <span class="fu">GetParallel</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="CompareAll.html">CompareAll</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">6</span>, <span class="fl">100</span><span class="op">)</span>, <span class="va">NNIDist</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">StopParallel</span><span class="op">(</span><span class="op">)</span> <span class="co"># Returns system resources</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>

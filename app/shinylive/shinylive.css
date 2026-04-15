@@ -1,9 +1,9 @@
-/* Shinylive 0.9.1
-// Copyright 2024 Posit, PBC */
+/* Shinylive 0.10.8
+// Copyright 2026 Posit, PBC */
 /* src/Components/App.css */
 @font-face {
   font-family: "Source Sans Pro";
-  src: url(./SourceSansPro-Regular.otf-PVQ5ZP77.woff2) format("woff2");
+  src: url("./SourceSansPro-Regular.otf-PVQ5ZP77.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }

@@ -131,12 +131,28 @@ export interface FSMessage extends Message {
     };
 }
 /** @internal */
+export interface FSAnalyzePathMessage extends Message {
+    type: 'analyzePath';
+    data: {
+        path: string;
+        dontResolveLastLink?: boolean;
+    };
+}
+/** @internal */
 export interface FSMountMessage extends Message {
     type: 'mount';
     data: {
         type: FSType;
         options: FSMountOptions;
         mountpoint: string;
+    };
+}
+/** @internal */
+export interface FSRenameMessage extends Message {
+    type: 'rename';
+    data: {
+        oldpath: string;
+        newpath: string;
     };
 }
 /** @internal */

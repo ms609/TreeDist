@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.11.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.13.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +21,7 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home fa-lg"></span></a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
 <li class="nav-item dropdown">
@@ -59,9 +59,78 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.11.1.9000" id="treedist-21119000-2025-11-13">TreeDist 2.11.1.9000 (2025-11-13)<a class="anchor" aria-label="anchor" href="#treedist-21119000-2025-11-13"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.13.0.9002" id="treedist-21309002">TreeDist 2.13.0.9002<a class="anchor" aria-label="anchor" href="#treedist-21309002"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-13-0-9002">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0-9002"></a></h3>
+<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic. Unlike majority-rule consensus, which can be highly unresolved when phylogenetic signal is diffuse, the transfer consensus uses the finer-grained transfer distance to produce more resolved trees.</p></li>
+<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants. Supports all-pairs, cross-pairs, and single-pair computations.</p></li>
+<li><p>LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering Information) C++ implementations are now exposed via <code>inst/include/TreeDist/</code> headers, allowing downstream packages to use <code>LinkingTo: TreeDist</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-2-13-0-9002">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0-9002"></a></h3>
 <ul><li>
-<code><a href="../reference/HierarchicalMutualInfo.html">AHMI()</a></code> now returns negative values (previously zeroed in error).</li>
+<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance. Previously, cross-distance calls fell through to per-pair R dispatch (~27× slower per pair); the new path achieves ~21× speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.13.0" id="treedist-2130-2026-03-17">TreeDist 2.13.0 (2026-03-17)<a class="anchor" aria-label="anchor" href="#treedist-2130-2026-03-17"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-13-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0"></a></h3>
+<ul><li>
+<code><a href="../reference/MCITree.html">MCITree()</a></code> selects the tree from a posterior sample with the highest total split information content — a Maximum Clade Information analogue of the Maximum Clade Credibility tree.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-2-13-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0"></a></h3>
+<p>Pairwise distance computation has been substantially optimized. Typical speedups over v2.12.0 for tree sets where most splits are shared (MCMC posteriors, bootstrap replicates):</p>
+<table class="table"><thead><tr class="header"><th>Metric</th>
+<th align="right">100 × 50 tips</th>
+<th align="right">40 × 200 tips</th>
+</tr></thead><tbody><tr class="odd"><td><code>ClusteringInfoDistance</code></td>
+<td align="right">~5×</td>
+<td align="right">~12×</td>
+</tr><tr class="even"><td><code>MatchingSplitDistance</code></td>
+<td align="right">~7×</td>
+<td align="right">~11×</td>
+</tr><tr class="odd"><td><code>InfoRobinsonFoulds</code></td>
+<td align="right">~4×</td>
+<td align="right">~5×</td>
+</tr><tr class="even"><td><code>DifferentPhylogeneticInfo</code></td>
+<td align="right">~1.3×</td>
+<td align="right">~1.1×</td>
+</tr><tr class="odd"><td><code>MatchingSplitInfoDistance</code></td>
+<td align="right">~1.4×</td>
+<td align="right">~1×</td>
+</tr></tbody></table><div class="section level4">
+<h4 id="openmp-parallelism-2-13-0">OpenMP parallelism<a class="anchor" aria-label="anchor" href="#openmp-parallelism-2-13-0"></a></h4>
+<ul><li><p>All pairwise distance functions now use an OpenMP multi-threaded batch path when the package is compiled with OpenMP support, for both all-pairs and cross-pairs (tree1 vs tree2) computations.</p></li>
+<li><p>The number of OpenMP threads is controlled by <code>options(mc.cores = N)</code>; the default is <code>1</code> (single-threaded). Set <code>mc.cores</code> to <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code> or a fixed integer to enable multi-threading. <code><a href="../reference/StartParallel.html">StartParallel()</a></code> / <code><a href="../reference/StartParallel.html">StopParallel()</a></code> are no longer needed when OpenMP is available.</p></li>
+</ul></div>
+<div class="section level4">
+<h4 id="algorithmic-improvements-2-13-0">Algorithmic improvements<a class="anchor" aria-label="anchor" href="#algorithmic-improvements-2-13-0"></a></h4>
+<ul><li><p>Exact split matches between trees are now detected via an O(<em>n</em> log <em>n</em>) sort-and-merge pre-scan, reducing the linear assignment problem to only the unmatched splits. For tree sets with high split overlap, this yields the largest portion of the speedups above.</p></li>
+<li><p>Internal lookup table for log₂ values shrunk from 32 MB to 16 KB, improving L1 cache locality for information-based distance metrics.</p></li>
+<li><p>Information content accumulation in <code><a href="../reference/TreeDistance.html">MutualClusteringInfo()</a></code> rewritten as a branchless expression, reducing per-split-pair table lookups from 16 to 4 and eliminating 8 branches.</p></li>
+<li><p><code>spi_overlap()</code> (used by <code><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code>, <code><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code>, and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>) rewritten to use a single-pass hardware POPCNT approach, replacing the previous four-pass boolean scan.</p></li>
+<li><p>Hardware POPCNT instruction now used on x86-64 via inline assembly (requires TreeTools ≥ 2.2).</p></li>
+<li><p>Internal cost-matrix storage is now pooled across tree pairs within each thread, eliminating per-pair heap allocation overhead.</p></li>
+</ul></div>
+<div class="section level4">
+<h4 id="r-level-fast-paths-2-13-0">R-level fast paths<a class="anchor" aria-label="anchor" href="#r-level-fast-paths-2-13-0"></a></h4>
+<ul><li><p><code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/TreeDistance.html">DifferentPhylogeneticInfo()</a></code>, <code><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code>, and <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> now avoid duplicate <code><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits()</a></code> conversions and use C++ batch functions for per-tree entropy/information computation. This reduces R-level overhead by ~8–17% for typical analyses.</p></li>
+<li><p>Cross-pairs computations (<code>tree1</code> vs <code>tree2</code> where both are lists) now use the same optimized batch path as all-pairs computations.</p></li>
+</ul></div>
+<div class="section level4">
+<h4 id="kendall--colijn-distance-2-13-0">Kendall &amp; Colijn distance<a class="anchor" aria-label="anchor" href="#kendall--colijn-distance-2-13-0"></a></h4>
+<ul><li><p><code><a href="../reference/KendallColijn.html">KCVector()</a></code> reimplemented in C++, giving ~220× speedup per tree.</p></li>
+<li><p>All-pairs and cross-pairs <code><a href="../reference/KendallColijn.html">KendallColijn()</a></code> Euclidean distances now computed in C++ (<code>pair_diff_euclidean()</code>, <code>vec_diff_euclidean()</code>).</p></li>
+</ul></div>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.12.0" id="treedist-2120-2026-02-12">TreeDist 2.12.0 (2026-02-12)<a class="anchor" aria-label="anchor" href="#treedist-2120-2026-02-12"></a></h2><p class="text-muted">CRAN release: 2026-02-13</p>
+<ul><li><p>Support larger trees in some functions by updating some functions to use 32-bit integers, per TreeTools v2.1.0.</p></li>
+<li><p><code><a href="../reference/HierarchicalMutualInfo.html">AHMI()</a></code> now returns negative values (previously zeroed in error).</p></li>
+<li><p>Experimental support for a new method of SPR distance calculation: subject to change or removal.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.11.1" id="treedist-2111-2025-10-13">TreeDist 2.11.1 (2025-10-13)<a class="anchor" aria-label="anchor" href="#treedist-2111-2025-10-13"></a></h2><p class="text-muted">CRAN release: 2025-10-13</p>
@@ -87,7 +156,7 @@
 <ul><li>Faster tree distance calculation.</li>
 <li>2x speed-up of LAPJV for large matrices.</li>
 </ul></li>
-<li><p>Require R4.0; discontinue tests against R 3.6 and 4.0.</p></li>
+<li><p>Require R4.0; discontinue tests against R4.0.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.9.2" id="treedist-292-2025-01-11">TreeDist 2.9.2 (2025-01-11)<a class="anchor" aria-label="anchor" href="#treedist-292-2025-01-11"></a></h2><p class="text-muted">CRAN release: 2025-01-11</p>

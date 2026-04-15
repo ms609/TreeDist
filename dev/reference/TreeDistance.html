@@ -17,7 +17,7 @@ proposed in Smith (2020)."><meta name="robots" content="noindex"><!-- Global sit
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.11.1.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.13.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,7 +25,7 @@ proposed in Smith (2020)."><meta name="robots" content="noindex"><!-- Global sit
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home fa-lg"></span></a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
 <li class="nav-item dropdown">
@@ -322,6 +322,18 @@ set in the TreeTools source code.)</p>
 which the maintainer plans to attempt in the future; please <a href="https://github.com/ms609/TreeTools/issues/141" class="external-link">comment on GitHub</a> if you would find this useful.</p>
     </div>
     <div class="section level2">
+    <h2 id="parallelism">Parallelism<a class="anchor" aria-label="anchor" href="#parallelism"></a></h2>
+    <p>When <code>tree2 = NULL</code> and all trees share the same tip labels, pairwise
+distance calculation uses a multi-threaded <acronym>OpenMP</acronym> batch path
+automatically.  Control the number of threads with the <code>"mc.cores"</code> option:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>  <span class="co"># use all cores</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                        <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
+<p>Do <strong>not</strong> call <code><a href="StartParallel.html">StartParallel()</a></code> for these functions: a registered
+R cluster disables the <acronym>OpenMP</acronym> path and replaces it with slower
+inter-process communication.  See <code><a href="StartParallel.html">StartParallel()</a></code> for full guidance
+on when an R cluster is appropriate.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Day WHE (1985).
 “Optimal algorithms for comparing trees with labeled leaves.”
@@ -356,7 +368,8 @@ Cambridge University Press, Cambridge.
 <code><a href="NyeSimilarity.html">NyeSimilarity()</a></code>,
 <code><a href="PathDist.html">PathDist()</a></code>,
 <code><a href="Robinson-Foulds.html">Robinson-Foulds</a></code>,
-<code><a href="SPRDist.html">SPRDist()</a></code></p></div>
+<code><a href="SPRDist.html">SPRDist()</a></code>,
+<code><a href="TransferDist.html">TransferDist()</a></code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -398,7 +411,7 @@ Cambridge University Press, Cambridge.
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Are they more similar than two trees of this shape would be by chance?</span></span></span>
 <span class="r-in"><span><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, sample<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="st">"DifferentPhylogeneticInfo"</span>, <span class="st">"Estimate"</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 34.5706</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31.25202</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Every split in tree1 conflicts with every split in tree3</span></span></span>
 <span class="r-in"><span><span class="co"># Pairs of conflicting splits contain clustering, but not phylogenetic, </span></span></span>

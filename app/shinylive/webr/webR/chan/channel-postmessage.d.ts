@@ -6,7 +6,8 @@ export declare class PostMessageChannelMain extends ChannelMain {
     initialised: Promise<unknown>;
     resolve: (_?: unknown) => void;
     reject: (message: string | Error) => void;
-    close: () => void;
+    close: ChannelMain['close'];
+    emit: ChannelMain['emit'];
     constructor(config: Required<WebROptions>);
     interrupt(): void;
 }
@@ -20,8 +21,9 @@ export declare class PostMessageChannelWorker {
     inputOrDispatch(): number;
     run(_args: string[]): void;
     setDispatchHandler(dispatch: (msg: Message) => void): void;
-    request(msg: Message, transferables?: [Transferable]): Promise<any>;
+    protected request(msg: Message, transferables?: [Transferable]): Promise<Message>;
+    syncRequest(): Message;
     setInterrupt(): void;
-    handleInterrupt(): void;
-    onMessageFromMainThread(message: Message): void;
+    handleEvents(): void;
+    resolveRequest(message: Message): void;
 }

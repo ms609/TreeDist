@@ -105,6 +105,7 @@ Other tree distances:
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md),
 [`TreeDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
 
 ## Author
@@ -116,11 +117,11 @@ Other tree distances:
 
 ``` r
 MatchingSplitDistance(lapply(rep(8, 5), ape::rtree), normalize = 16)
-#>       1     2     3     4
-#> 2 0.750                  
-#> 3 0.750 0.500            
-#> 4 0.625 0.625 0.875      
-#> 5 0.750 0.500 0.250 0.750
+#>        1      2      3      4
+#> 2 0.7500                     
+#> 3 0.8125 0.6875              
+#> 4 0.7500 0.7500 0.8125       
+#> 5 0.3750 0.7500 0.5625 0.8750
 
 MatchingSplitDistance(TreeTools::BalancedTree(6),
                       TreeTools::PectinateTree(6),

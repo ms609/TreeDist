@@ -1,5 +1,5 @@
-// Shinylive 0.9.1
-// Copyright 2024 Posit, PBC
+// Shinylive 0.10.8
+// Copyright 2026 Posit, PBC
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -45,13 +45,14 @@ var require_lz_string = __commonJS({
       }
       var LZString3 = {
         compressToBase64: function(input) {
-          if (input == null)
-            return "";
+          if (input == null) return "";
           var res = LZString3._compress(input, 6, function(a) {
             return keyStrBase64.charAt(a);
           });
           switch (res.length % 4) {
+            // To produce valid Base64
             default:
+            // When could this happen ?
             case 0:
               return res;
             case 1:
@@ -63,26 +64,21 @@ var require_lz_string = __commonJS({
           }
         },
         decompressFromBase64: function(input) {
-          if (input == null)
-            return "";
-          if (input == "")
-            return null;
+          if (input == null) return "";
+          if (input == "") return null;
           return LZString3._decompress(input.length, 32, function(index) {
             return getBaseValue(keyStrBase64, input.charAt(index));
           });
         },
         compressToUTF16: function(input) {
-          if (input == null)
-            return "";
+          if (input == null) return "";
           return LZString3._compress(input, 15, function(a) {
             return f(a + 32);
           }) + " ";
         },
         decompressFromUTF16: function(compressed) {
-          if (compressed == null)
-            return "";
-          if (compressed == "")
-            return null;
+          if (compressed == null) return "";
+          if (compressed == "") return null;
           return LZString3._decompress(compressed.length, 16384, function(index) {
             return compressed.charCodeAt(index) - 32;
           });
@@ -116,18 +112,15 @@ var require_lz_string = __commonJS({
         },
         //compress into a string that is already URI encoded
         compressToEncodedURIComponent: function(input) {
-          if (input == null)
-            return "";
+          if (input == null) return "";
           return LZString3._compress(input, 6, function(a) {
             return keyStrUriSafe.charAt(a);
           });
         },
         //decompress from an output of compressToEncodedURIComponent
         decompressFromEncodedURIComponent: function(input) {
-          if (input == null)
-            return "";
-          if (input == "")
-            return null;
+          if (input == null) return "";
+          if (input == "") return null;
           input = input.replace(/ /g, "+");
           return LZString3._decompress(input.length, 32, function(index) {
             return getBaseValue(keyStrUriSafe, input.charAt(index));
@@ -139,8 +132,7 @@ var require_lz_string = __commonJS({
           });
         },
         _compress: function(uncompressed, bitsPerChar, getCharFromInt) {
-          if (uncompressed == null)
-            return "";
+          if (uncompressed == null) return "";
           var i, value, context_dictionary = {}, context_dictionaryToCreate = {}, context_c = "", context_wc = "", context_w = "", context_enlargeIn = 2, context_dictSize = 3, context_numBits = 2, context_data = [], context_data_val = 0, context_data_position = 0, ii;
           for (ii = 0; ii < uncompressed.length; ii += 1) {
             context_c = uncompressed.charAt(ii);
@@ -325,16 +317,13 @@ var require_lz_string = __commonJS({
             if (context_data_position == bitsPerChar - 1) {
               context_data.push(getCharFromInt(context_data_val));
               break;
-            } else
-              context_data_position++;
+            } else context_data_position++;
           }
           return context_data.join("");
         },
         decompress: function(compressed) {
-          if (compressed == null)
-            return "";
-          if (compressed == "")
-            return null;
+          if (compressed == null) return "";
+          if (compressed == "") return null;
           return LZString3._decompress(compressed.length, 32768, function(index) {
             return compressed.charCodeAt(index);
           });

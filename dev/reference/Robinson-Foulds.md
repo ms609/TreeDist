@@ -166,6 +166,7 @@ Other tree distances:
 [`NyeSimilarity()`](https://ms609.github.io/TreeDist/dev/reference/NyeSimilarity.md),
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md),
 [`TreeDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
 
 ## Author

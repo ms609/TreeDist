@@ -3,6 +3,8 @@ import type { RPtr, RTypeNumber } from './robj';
 import type { RObject, RList } from './robj-worker';
 import type { EvalROptions } from './webr-chan';
 import type { UnwindProtectException } from './utils-r';
+import type { ChannelWorker } from './chan/channel';
+import type { FSMountOptions } from './webr-main';
 export interface Module extends EmscriptenModule {
     FS: typeof FS & {
         _mount: typeof FS.mount;
@@ -25,13 +27,13 @@ export interface Module extends EmscriptenModule {
     noImageDecoding: boolean;
     noAudioDecoding: boolean;
     noWasmDecoding: boolean;
-    setPrompt: (prompt: string) => void;
     downloadFileContent: (URL: string, headers?: Array<string>) => {
         status: number;
         response: string | ArrayBuffer;
     };
     mountImageUrl: (url: string, mountpoint: string) => void;
     mountImagePath: (path: string, mountpoint: string) => void;
+    mountDriveFS: (mountpoint: string, options: FSMountOptions<'DRIVEFS'>) => void;
     allocateUTF8: typeof allocateUTF8;
     allocateUTF8OnStack: typeof allocateUTF8OnStack;
     getValue: typeof getValue;
@@ -89,10 +91,12 @@ export interface Module extends EmscriptenModule {
     _Rf_lang4: (ptr1: RPtr, ptr2: RPtr, ptr3: RPtr, ptr4: RPtr) => RPtr;
     _Rf_lang5: (ptr1: RPtr, ptr2: RPtr, ptr3: RPtr, ptr4: RPtr, ptr5: RPtr) => RPtr;
     _Rf_lang6: (ptr1: RPtr, ptr2: RPtr, ptr3: RPtr, ptr4: RPtr, ptr5: RPtr, ptr6: RPtr) => RPtr;
-    _Rf_mkChar: (ptr: number) => RPtr;
+    _Rf_mkChar: (string: number) => RPtr;
+    _Rf_mkCharCE: (string: number, encoding: number) => RPtr;
     _Rf_mkString: (ptr: number) => RPtr;
     _Rf_onintr: () => void;
     _Rf_protect: (ptr: RPtr) => RPtr;
+    _Rf_translateCharUTF8: (ptr: RPtr) => RPtr;
     _R_ContinueUnwind: (cont: RPtr) => never;
     _R_ProtectWithIndex: (ptr1: RPtr, ptr2: RPtr) => void;
     _R_Reprotect: (ptr1: RPtr, ptr2: RPtr) => void;
@@ -121,8 +125,11 @@ export interface Module extends EmscriptenModule {
     _SET_VECTOR_ELT: (ptr: RPtr, idx: number, val: RPtr) => void;
     _setup_Rmainloop: () => void;
     _strcpy: (dest: RPtr, src: RPtr) => number;
+    _vmaxget: () => number;
+    _vmaxset: (ptr: number) => void;
     webr: {
         UnwindProtectException: typeof UnwindProtectException;
+        channel: ChannelWorker | undefined;
         canvas: {
             [key: number]: {
                 ctx: OffscreenCanvasRenderingContext2D;
@@ -131,6 +138,7 @@ export interface Module extends EmscriptenModule {
             };
         };
         readConsole: () => number;
+        setPrompt: (prompt: string) => void;
         resolveInit: () => void;
         handleEvents: () => void;
         dataViewer: (data: RPtr, title: string) => void;

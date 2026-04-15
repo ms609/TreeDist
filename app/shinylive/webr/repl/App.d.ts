@@ -8,7 +8,17 @@ export interface TerminalInterface {
 }
 export interface FilesInterface {
     refreshFilesystem: () => Promise<void>;
-    openFileInEditor: (name: string, path: string, readOnly: boolean) => Promise<void>;
+    openFilesInEditor: (openFiles: {
+        name: string;
+        path: string;
+        readOnly?: boolean;
+        forceRead?: boolean;
+        execute?: boolean;
+    }[], replace?: boolean) => Promise<void>;
+    openContentInEditor: (openFiles: {
+        name: string;
+        content: Uint8Array;
+    }[], replace?: boolean) => void;
     openDataInEditor: (title: string, data: NamedObject<WebRDataJsAtomic<string>>) => void;
     openHtmlInEditor: (src: string, path: string) => void;
 }

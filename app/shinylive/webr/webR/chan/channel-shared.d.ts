@@ -8,19 +8,24 @@ export declare class SharedBufferChannelMain extends ChannelMain {
     reject: (message: string | Error) => void;
     close: () => void;
     constructor(config: Required<WebROptions>);
+    emit(msg: Message): void;
     interrupt(): void;
 }
+import { WebSocketProxy } from './websocket';
 export declare class SharedBufferChannelWorker implements ChannelWorker {
     #private;
-    onMessageFromMainThread: (msg: Message) => void;
+    WebSocketProxy: typeof WebSocket;
+    proxies: Map<string, WebSocketProxy>;
+    resolveRequest: (msg: Message) => void;
     constructor();
     resolve(): void;
     write(msg: Message, transfer?: [Transferable]): void;
     writeSystem(msg: Message, transfer?: [Transferable]): void;
+    syncRequest(msg: Message, transfer?: [Transferable]): Message;
     read(): Message;
     inputOrDispatch(): number;
     run(args: string[]): void;
+    handleEvents(): void;
     setInterrupt(interrupt: () => void): void;
-    handleInterrupt(): void;
     setDispatchHandler(dispatch: (msg: Message) => void): void;
 }

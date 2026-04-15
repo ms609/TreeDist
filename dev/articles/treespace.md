@@ -48,10 +48,10 @@ treeCols <- spectrum[treeNumbers]
 #### Using a suitable distance metric
 
 Now we need to calculate the distance between each pair of trees in our
-list. The choice of distance metric is important (Smith, 2022). The
-widely used Robinson–Foulds distance is, unfortunately, unsuitable for
-tree space analysis. The clustering information distance (Smith, 2020)
-is a reliable alternative that is fast to calculate:
+list. The choice of distance metric is important (M. R. Smith, 2022).
+The widely used Robinson–Foulds distance is, unfortunately, unsuitable
+for tree space analysis. The clustering information distance (M. R.
+Smith, 2020) is a reliable alternative that is fast to calculate:
 
 ``` r
 library("TreeDist")
@@ -112,11 +112,11 @@ plot(mapping,
 
 A quick visual inspection suggests at least two clusters, with the
 possibility of further subdivision of the brighter trees. But visual
-inspection can be highly misleading (Smith, 2022). We must take a
+inspection can be highly misleading (M. R. Smith, 2022). We must take a
 statistical approach. A combination of partitioning around medoids and
 hierarchical clustering with minimax linkage will typically find a
-clustering solution that is close to optimal, if one exists (Smith,
-2022); if suitably initialized, k-means++ clustering (Arthur &
+clustering solution that is close to optimal, if one exists (M. R.
+Smith, 2022); if suitably initialized, k-means++ clustering (Arthur &
 Vassilvitskii, 2007) can also be worthwhile.
 
 ``` r
@@ -383,7 +383,7 @@ if (hypervolumeInstalled) {
 
 If the objective is to quantify the spread of different clusters, other
 metrics may be easier to interpret than the clusters’ hypervolume (e.g.
-Smith & Donoghue (2022)).
+T. J. Smith & Donoghue (2022)).
 
 The divergence of outlying points can be measures using the sum of
 ranges:

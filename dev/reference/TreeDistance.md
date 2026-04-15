@@ -262,6 +262,23 @@ code, which the maintainer plans to attempt in the future; please
 [comment on GitHub](https://github.com/ms609/TreeTools/issues/141) if
 you would find this useful.
 
+## Parallelism
+
+When `tree2 = NULL` and all trees share the same tip labels, pairwise
+distance calculation uses a multi-threaded OpenMP batch path
+automatically. Control the number of threads with the `"mc.cores"`
+option:
+
+    options(mc.cores = parallel::detectCores())  # use all cores
+    options(mc.cores = 4L)                        # or a fixed number
+
+Do **not** call
+[`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)
+for these functions: a registered R cluster disables the OpenMP path and
+replaces it with slower inter-process communication. See
+[`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)
+for full guidance on when an R cluster is appropriate.
+
 ## References
 
 Day WHE (1985). “Optimal algorithms for comparing trees with labeled
@@ -301,7 +318,8 @@ Other tree distances:
 [`NyeSimilarity()`](https://ms609.github.io/TreeDist/dev/reference/NyeSimilarity.md),
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md),
-[`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md)
+[`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md)
 
 ## Author
 
@@ -343,7 +361,7 @@ DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 
 # Are they more similar than two trees of this shape would be by chance?
 ExpectedVariation(tree1, tree2, sample=12)["DifferentPhylogeneticInfo", "Estimate"]
-#> [1] 34.5706
+#> [1] 31.25202
 
 # Every split in tree1 conflicts with every split in tree3
 # Pairs of conflicting splits contain clustering, but not phylogenetic, 
