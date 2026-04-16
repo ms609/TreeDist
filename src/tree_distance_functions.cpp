@@ -28,15 +28,15 @@ double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
   // Build arrays matching the header's raw-pointer API types.
   std::vector<const splitbit*> a_ptrs(a.n_splits);
   std::vector<const splitbit*> b_ptrs(b.n_splits);
-  std::vector<TreeDist::int16> a_in(a.n_splits);
-  std::vector<TreeDist::int16> b_in(b.n_splits);
-  for (TreeDist::int16 i = 0; i < a.n_splits; ++i) {
+  std::vector<TreeDist::split_int> a_in(a.n_splits);
+  std::vector<TreeDist::split_int> b_in(b.n_splits);
+  for (TreeDist::int32 i = 0; i < a.n_splits; ++i) {
     a_ptrs[i] = a.state[i];
-    a_in[i] = static_cast<TreeDist::int16>(a.in_split[i]);
+    a_in[i] = static_cast<TreeDist::split_int>(a.in_split[i]);
   }
-  for (TreeDist::int16 i = 0; i < b.n_splits; ++i) {
+  for (TreeDist::int32 i = 0; i < b.n_splits; ++i) {
     b_ptrs[i] = b.state[i];
-    b_in[i] = static_cast<TreeDist::int16>(b.in_split[i]);
+    b_in[i] = static_cast<TreeDist::split_int>(b.in_split[i]);
   }
 
   return TreeDist::mutual_clustering_score(
@@ -44,4 +44,9 @@ double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
     b_ptrs.data(), b_in.data(), b.n_splits,
     a.n_bins, static_cast<TreeDist::int32>(n_tips),
     scratch);
+}
+
+// [[Rcpp::export]]
+int cpp_max_tips() {
+  return static_cast<int>(SL_MAX_TIPS);
 }

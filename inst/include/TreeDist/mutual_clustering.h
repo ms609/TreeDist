@@ -37,8 +37,8 @@ namespace TreeDist {
 
   // Information content of a perfectly-matching split pair.
   // ic_matching(a, b, n) = (a + b) * lg2[n] - a * lg2[a] - b * lg2[b]
-  [[nodiscard]] inline double ic_matching(int16 a, int16 b,
-                                          int16 n) noexcept {
+  [[nodiscard]] inline double ic_matching(split_int a, split_int b,
+                                          split_int n) noexcept {
     const double lg2a = lg2[a];
     const double lg2b = lg2[b];
     const double lg2n = lg2[n];
@@ -77,9 +77,9 @@ namespace TreeDist {
   // Implementation in mutual_clustering_impl.h.
 
   double mutual_clustering_score(
-      const splitbit* const* a_state, const int16* a_in, int16 a_n_splits,
-      const splitbit* const* b_state, const int16* b_in, int16 b_n_splits,
-      int16 n_bins, int32 n_tips,
+      const splitbit* const* a_state, const split_int* a_in, split_int a_n_splits,
+      const splitbit* const* b_state, const split_int* b_in, split_int b_n_splits,
+      split_int n_bins, int32 n_tips,
       LapScratch& scratch);
 
 } // namespace TreeDist

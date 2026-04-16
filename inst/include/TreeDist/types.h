@@ -16,6 +16,9 @@ namespace TreeDist {
   using int32 = int_fast32_t;
   using cost  = int_fast64_t;
 
+  // Canonical type for split/tip/bin counters.
+  using split_int = int32;
+
   using lap_dim = int;
   using lap_row = lap_dim;
   using lap_col = lap_dim;

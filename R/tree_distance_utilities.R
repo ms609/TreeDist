@@ -11,14 +11,27 @@
 #' @importFrom TreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
-# Keep in sync with C++ guard: min(SL_MAX_TIPS, int16_t::max()).
-.MaxSupportedTips <- 32767L
+# Maximum number of tips supported by this compiled package build.
+# Set during .onLoad() from `cpp_max_tips()`.
+.SL_MAX_TIPS <- NULL
 
-.AssertNtipSupported <- function(nTip) {
-  if (!is.na(nTip) && nTip > .MaxSupportedTips) {
-    stop("This many tips are not (yet) supported.")
+.CheckMaxTips <- function(nTip, context = "") {
+  if (!is.na(nTip)) {
+    maxTips <- .SL_MAX_TIPS
+    if (is.null(maxTips) || is.na(maxTips)) {
+      maxTips <- cpp_max_tips()
+      .SL_MAX_TIPS <<- maxTips
+    }
+    if (nTip > maxTips) {
+      suffix <- if (!nzchar(context)) "." else paste0(" for ", context, ".")
+      stop("Trees with > ", maxTips, " tips are not yet supported", suffix)
+    }
   }
+  invisible(NULL)
 }
+
+# Backward-compatible alias for internal callers/tests.
+.AssertNtipSupported <- .CheckMaxTips
 
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   reportMatching = FALSE, ...) {
@@ -141,7 +154,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   # Fast paths: use OpenMP batch functions when all trees share the same tip
   # set and no R-level cluster has been configured.  Each branch mirrors the
   # generic path exactly but avoids per-pair R overhead.
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
   if (!is.na(nTip) && is.null(cluster)) {
     .n_threads <- as.integer(getOption("mc.cores", 1L))
     .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
@@ -242,7 +255,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom stats setNames
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
   if (is.na(nTip)) {
     tipLabels <- union(unlist(tipLabels, use.names = FALSE),
                        unlist(TipLabels(splits2), use.names = FALSE))
@@ -413,7 +426,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   if (ncol(x) != ncol(y)) {
     stop("Input splits must address same number of tips.")
   }
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
 }
 
 .CheckLabelsSame <- function(labelList) {

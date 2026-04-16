@@ -19,17 +19,20 @@ constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 namespace TreeDist {
 
   // Re-exported from mutual_clustering.h:
-  //   ic_matching(int16 a, int16 b, int16 n)
+  //   ic_matching(split_int a, split_int b, split_int n)
+
+  void check_ntip(const int32 n);
 
   // See equation 16 in Meila 2007 (k' denoted K).
   // nkK is converted to pkK in the calling function when divided by n.
-  inline void add_ic_element(double& ic_sum, const int16 nkK, const int16 nk,
-                             const int16 nK, const int16 n_tips,
+  inline void add_ic_element(double& ic_sum, const split_int nkK,
+                             const split_int nk, const split_int nK,
+                             const split_int n_tips,
                              const double lg2_n) noexcept {
     if (nkK && nk && nK) {
       assert(!(nkK == nk && nkK == nK && nkK << 1 == n_tips));
-      const int32 numerator = nkK * n_tips;
-      const int32 denominator = nk * nK;
+      const int64_t numerator = static_cast<int64_t>(nkK) * n_tips;
+      const int64_t denominator = static_cast<int64_t>(nk) * nK;
       if (numerator != denominator) {
         ic_sum += nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]);
       }
@@ -38,14 +41,15 @@ namespace TreeDist {
 
 
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
-  [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
-    
+  [[nodiscard]] inline double mmsi_pair_score(const split_int x,
+                                              const split_int y) noexcept {
     return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
   }
 
-  [[nodiscard]] inline double mmsi_score(const int16 n_same, const int16 n_a_and_b,
-                    const int16 n_different, const int16 n_a_only)  noexcept {
+  [[nodiscard]] inline double mmsi_score(const split_int n_same,
+                                         const split_int n_a_and_b,
+                                         const split_int n_different,
+                                         const split_int n_a_only) noexcept {
     if (n_same == 0 || n_same == n_a_and_b)
       return mmsi_pair_score(n_different, n_a_only);
     if (n_different == 0 || n_different == n_a_only)
@@ -59,20 +63,21 @@ namespace TreeDist {
   }
 
 
-[[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
+[[nodiscard]] inline double one_overlap(const split_int a, const split_int b,
+                                        const split_int n) noexcept {
     if (a == b) {
       return lg2_rooted[a] + lg2_rooted[n - a];
     }
     // Unify a<b and a>b via lo/hi: removes an unpredictable branch.
-    const int16 lo = (a < b) ? a : b;
-    const int16 hi = (a < b) ? b : a;
+    const split_int lo = (a < b) ? a : b;
+    const split_int hi = (a < b) ? b : a;
     return lg2_rooted[hi] + lg2_rooted[n - lo] - lg2_rooted[hi - lo + 1];
   }
   
-  [[nodiscard]] inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
-    const int16 b = n - n_minus_b;
+  [[nodiscard]] inline double one_overlap_notb(const split_int a,
+                                               const split_int n_minus_b,
+                                               const split_int n) noexcept {
+    const split_int b = n - n_minus_b;
     if (a == b) {
       return lg2_rooted[b] + lg2_rooted[n_minus_b];
     } else if (a < b) {
@@ -83,17 +88,15 @@ namespace TreeDist {
   }
 
 
-// Popcount-based: single pass over bins replaces 4 sequential boolean scans.
+  // Popcount-based: single pass over bins replaces 4 sequential boolean scans.
   // Counts n_ab = |A ∩ B| via hardware POPCNT, then derives all 4 Venn-diagram
   // region populations from arithmetic on n_ab, in_a, in_b, n_tips.
   [[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
-                       const int16 n_tips, const int16 in_a,
-                       const int16 in_b, const int16 n_bins) noexcept {
+                       const split_int n_tips, const split_int in_a,
+                       const split_int in_b, const split_int n_bins) noexcept {
 
-    assert(SL_MAX_BINS <= INT16_MAX);
-
-    int16 n_ab = 0;
-    for (int16 bin = 0; bin < n_bins; ++bin) {
+    split_int n_ab = 0;
+    for (split_int bin = 0; bin < n_bins; ++bin) {
       n_ab += TreeTools::count_bits(a_state[bin] & b_state[bin]);
     }
 

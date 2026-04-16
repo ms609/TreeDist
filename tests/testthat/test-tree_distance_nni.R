@@ -9,27 +9,31 @@ test_that("NNIDist() handles exceptions", {
                             PectinateTree(as.character(1:8)))),
                "trees must bear identical labels")
   # R-level guard catches too-many-tips
-  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)), "so many tips")
+  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
+               "not yet supported for NNI")
   
   expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
   
 })
 
-test_that("NNIDist() at NNI_MAX_TIPS", {
-  maxTips <- 32768
-  more <- maxTips + 1
+test_that("NNIDist() at max tips", {
+  maxTips <- .SL_MAX_TIPS
+  more <- maxTips + 1L
   expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
-               "so many tips")
+               "not yet supported for NNI")
   goingQuickly <- TRUE
   skip_if(goingQuickly)
   
   heapTips <- 16384 + 1
+  skip_if(maxTips < heapTips)
   skip_if_not_installed("testthat", "3.2.2")
   expect_no_error(.NNIDistSingle(PectinateTree(heapTips),
                                  BalancedTree(heapTips), heapTips))
   
+  skip_if(maxTips < 32768L)
+  maxTips <- 32768L
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
-                           maxTips)
+                            maxTips)
   expect_gt(n[["best_upper"]], n[["best_lower"]])
   if (!is.na(n[["tight_upper"]])) {
     expect_gte(n[["tight_upper"]], n[["best_upper"]])

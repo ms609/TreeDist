@@ -390,9 +390,10 @@ consensus_info <- function(trees, phylo, p) {
     stop("p must be >= 0.5 in consensus_info()")
   }
   nTip <- NTip(trees[[1]])
-  # CT_MAX_LEAVES = 16383 in information.h (lookup table size limit)
-  if (nTip > 16383L) {
-    stop("This many leaves are not yet supported")
+  # CT_MAX_LEAVES = 16383 in information.h (lookup-table size limit).
+  maxTips <- min(16383L, if (is.null(.SL_MAX_TIPS)) cpp_max_tips() else .SL_MAX_TIPS)
+  if (nTip > maxTips) {
+    stop("Trees with > ", maxTips, " tips are not yet supported for consensus info.")
   }
   .Call(`_TreeDist_consensus_info`, trees, phylo, p)
 }

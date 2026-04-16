@@ -29,16 +29,21 @@ namespace TreeDist {
     }
   }
 
-  void check_ntip(const double n) {
-    // SplitList dimensions are bounded by SL_MAX_TIPS, and current scoring
-    // paths use int16-sized counts internally.
+  void check_ntip(const int32 n) {
     static_assert(SL_MAX_TIPS <= std::numeric_limits<int32>::max(),
                   "SL_MAX_TIPS must fit in int32");
-    constexpr int32 max_supported_tips = std::min(
-      int32(SL_MAX_TIPS), int32(std::numeric_limits<int16_t>::max())
-    );
+    constexpr int32 compiled_tip_limit = static_cast<int32>(SL_MAX_TIPS);
+    constexpr int64_t split_int_limit =
+      static_cast<int64_t>((std::numeric_limits<split_int>::max)());
+    constexpr int64_t max_supported_tips =
+      std::min<int64_t>(compiled_tip_limit, split_int_limit);
+
     if (n > max_supported_tips) {
-      Rcpp::stop("This many tips are not (yet) supported.");
+      Rcpp::stop(
+        "Requested nTip = %d exceeds this TreeDist build limit (%d; "
+        "compiled SL_MAX_TIPS = %d): this many tips are not yet supported.",
+        n, static_cast<int32>(max_supported_tips), compiled_tip_limit
+      );
     }
   }
 
@@ -69,6 +74,7 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   }
   
   for (int32 ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int32 bi = b.n_splits; bi--; ) {
       
       bool all_match = true;
@@ -104,8 +110,8 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
                                  const int32 n_tips) {
   const SplitList a(x), b(y);
   
-  const int16 last_bin = a.n_bins - 1;
-  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+  const split_int last_bin = a.n_bins - 1;
+  const split_int unset_tips = (n_tips % SL_BIN_SIZE) ?
     SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   
   const splitbit unset_mask = ALL_ONES >> unset_tips;
@@ -116,26 +122,27 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
   // Heap-backed scratch avoids large fixed-size stack allocation.
   std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
-  for (int16 i = 0; i < b.n_splits; i++) {
-    for (int16 bin = 0; bin < last_bin; ++bin) {
+  for (split_int i = 0; i < b.n_splits; i++) {
+    for (split_int bin = 0; bin < last_bin; ++bin) {
       b_complement[size_t(i) * a.n_bins + bin] = ~b.state[i][bin];
     }
     b_complement[size_t(i) * a.n_bins + last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       
       bool all_match = true, all_complement = true;
       
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        for (split_int bin = 0; bin < a.n_bins; ++bin) {
           if ((a.state[ai][bin] != b_complement[size_t(bi) * a.n_bins + bin])) {
             all_complement = false;
             break;
@@ -143,8 +150,8 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
         }
       }
       if (all_match || all_complement) {
-        int16 leaves_in_split = 0;
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        split_int leaves_in_split = 0;
+        for (split_int bin = 0; bin < a.n_bins; ++bin) {
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
         
@@ -167,27 +174,28 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
 inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
                                     const int32 n_tips) {
   const SplitList a(x), b(y);
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  const int16 split_diff = most_splits - std::min(a.n_splits, b.n_splits);
-  const int16 half_tips = n_tips / 2;
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int split_diff = most_splits - std::min(a.n_splits, b.n_splits);
+  const split_int half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
   }
   const cost max_score = BIG / most_splits;
   cost_matrix score(most_splits);
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
          total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       score(ai, bi) = total;
     }
   }
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       if (score(ai, bi) > half_tips) {
         score(ai, bi) = n_tips - score(ai, bi);
       }
@@ -209,7 +217,7 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   std::vector<int> final_matching;
   final_matching.reserve(a.n_splits);
   
-  for (int16 i = 0; i < a.n_splits; ++i) {
+  for (split_int i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
     ? static_cast<int>(rowsol[i]) + 1
     : NA_INTEGER;
@@ -225,7 +233,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
                                    const int32 n_tips, const NumericVector &k,
                                    const LogicalVector &allowConflict) {
   const SplitList a(x), b(y);
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   
   constexpr cost max_score = BIG;
   constexpr double max_scoreL = max_score;
@@ -235,20 +243,21 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   
   cost_matrix score(most_splits);
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     
-    const int16 na = a.in_split[ai];
-    const int16 nA = n_tips - na;
+    const split_int na = a.in_split[ai];
+    const split_int nA = n_tips - na;
     
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       
       // x divides tips into a|A; y divides tips into b|B
-      int16 a_and_b = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      split_int a_and_b = 0;
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
       
-      const int16
+      const split_int
         nb = b.in_split[bi],
         nB = n_tips - nb,
         a_and_B = na - a_and_b,
@@ -266,7 +275,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
         score(ai, bi) = max_score; /* Prohibited */
         
       } else {
-        const int16
+        const split_int
           A_or_b  = n_tips - a_and_B,
           a_or_B = n_tips - A_and_b,
           a_or_b = n_tips - A_and_B,
@@ -315,7 +324,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   std::vector<int> final_matching;
   final_matching.reserve(a.n_splits);
   
-  for (int16 i = 0; i < a.n_splits; ++i) {
+  for (split_int i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
     ? static_cast<int>(rowsol[i]) + 1
     : NA_INTEGER;
@@ -330,31 +339,32 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
 
 List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   const SplitList a(x), b(y);
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
-    lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
+    lg2_rooted[split_int((n_tips + 1) / 2)] - lg2_rooted[split_int(n_tips / 2)];
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / max_score;
   
   cost_matrix score(most_splits);
   
-  splitbit different[SL_MAX_BINS];
+  std::vector<splitbit> different(a.n_bins);
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      int16 
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      split_int 
         n_different = 0,
         n_a_only = 0,
         n_a_and_b = 0
       ;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
         n_a_and_b += count_bits(a.state[ai][bin] & ~different[bin]);
       }
-      const int16 n_same = n_tips - n_different;
+      const split_int n_same = n_tips - n_different;
       
       score(ai, bi) = cost(max_score - 
         (score_over_possible *
@@ -377,7 +387,7 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   std::vector<int> final_matching;
   final_matching.reserve(a.n_splits);
   
-  for (int16 i = 0; i < a.n_splits; ++i) {
+  for (split_int i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
     ? static_cast<int>(rowsol[i]) + 1
     : NA_INTEGER;
@@ -394,9 +404,9 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   const SplitList a(x);
   const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
-  const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
-  const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
-  const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
+  const split_int most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
+  const split_int a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
+  const split_int b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
   const double n_tips_reciprocal = 1.0 / n_tips;
   
   if (most_splits == 0 || n_tips == 0) {
@@ -412,35 +422,36 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   double exact_match_score = 0;
-  int16 exact_matches = 0;
+  split_int exact_matches = 0;
   // vector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
   std::vector<int> a_match(a.n_splits);
-  std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
+  std::unique_ptr<split_int[]> b_match = std::make_unique<split_int[]>(b.n_splits);
   
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
     
-    const int16 na = a.in_split[ai];
-    const int16 nA = n_tips - na;
+    const split_int na = a.in_split[ai];
+    const split_int nA = n_tips - na;
     const auto *a_row = a.state[ai];
     const double offset_a = lg2_n - lg2[na];
     const double offset_A = lg2_n - lg2[nA];
     
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       
       // x divides tips into a|A; y divides tips into b|B
-      int16 a_and_b = 0;
+      split_int a_and_b = 0;
       const auto *b_row = b.state[bi];
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a_row[bin] & b_row[bin]);
       }
       
-      const int16 nb = b.in_split[bi];
-      const int16 nB = n_tips - nb;
-      const int16 a_and_B = na - a_and_b;
-      const int16 A_and_b = nb - a_and_b;
-      const int16 A_and_B = nA - A_and_b;
+      const split_int nb = b.in_split[bi];
+      const split_int nB = n_tips - nb;
+      const split_int a_and_B = na - a_and_b;
+      const split_int A_and_b = nb - a_and_b;
+      const split_int A_and_B = nA - A_and_b;
       
       if ((!a_and_B && !A_and_b) ||
           (!a_and_b && !A_and_B)) {
@@ -478,7 +489,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       _["matching"] = a_match);
   }
   
-  const int16 lap_dim = most_splits - exact_matches;
+  const split_int lap_dim = most_splits - exact_matches;
   ASSERT(lap_dim > 0);
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
@@ -487,11 +498,11 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   cost_matrix small_score(lap_dim);
   
   if (exact_matches) {
-    int16 a_pos = 0;
-    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    split_int a_pos = 0;
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
-      int16 b_pos = 0;
-      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+      split_int b_pos = 0;
+      for (split_int bi = 0; bi < b.n_splits; ++bi) {
         if (b_match[bi]) continue;
         small_score(a_pos, b_pos) = score(ai, bi);
         b_pos++;
@@ -505,9 +516,9 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
     const double final_score = lap_score + (exact_match_score / n_tips);
     
-    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
-    int16 fuzzy_match = 0;
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+    std::unique_ptr<split_int[]> lap_decode = std::make_unique<split_int[]>(lap_dim);
+    split_int fuzzy_match = 0;
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
       if (!b_match[bi]) {
         assert(fuzzy_match < lap_dim);
         lap_decode[fuzzy_match++] = bi + 1;
@@ -517,13 +528,13 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     fuzzy_match = 0;
     std::vector<int> final_matching;
     TreeDist::resize_uninitialized(final_matching, a.n_splits);
-    for (int16 i = 0; i < a.n_splits; ++i) {
+    for (split_int i = 0; i < a.n_splits; ++i) {
       if (a_match[i]) {
         final_matching[i] = a_match[i];
       } else {
         assert(fuzzy_match < lap_dim);
-        const int16 row_idx = fuzzy_match++;
-        const int16 col_idx = rowsol[row_idx];
+        const split_int row_idx = fuzzy_match++;
+        const split_int col_idx = rowsol[row_idx];
         final_matching[i] = (col_idx >= lap_dim - a_extra_splits) ? NA_INTEGER :
           lap_decode[col_idx];
       }
@@ -533,8 +544,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                         _["matching"] = final_matching);
   } else {
     
-    for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-      for (int16 bi = 0; bi < most_splits; ++bi) {
+    for (split_int ai = a.n_splits; ai < most_splits; ++ai) {
+      for (split_int bi = 0; bi < most_splits; ++bi) {
         score(ai, bi) = max_score;
       }
     }
@@ -545,7 +556,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     
     std::vector<int> final_matching;
     final_matching.reserve(a.n_splits);
-    for (int16 i = 0; i < a.n_splits; ++i) {
+    for (split_int i = 0; i < a.n_splits; ++i) {
       const int match = (rowsol[i] < b.n_splits)
       ? static_cast<int>(rowsol[i]) + 1
       : NA_INTEGER;
@@ -560,8 +571,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
                           const int32 n_tips) {
   const SplitList a(x), b(y);
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  const int16 overlap_a = int16(n_tips + 1) / 2; // avoids promotion to int
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int overlap_a = split_int(n_tips + 1) / 2; // avoids promotion to int
   
   constexpr cost max_score = BIG;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
@@ -574,8 +585,9 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   // In/out direction [i.e. 1/0 bit] is arbitrary.
   cost_matrix score(most_splits);
   
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
+  for (split_int ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = b.n_splits; bi--; ) {
       const double spi_over = TreeDist::spi_overlap(
         a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
                                                                     a.n_bins);
@@ -601,7 +613,7 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   std::vector<int> final_matching;
   final_matching.reserve(a.n_splits);
   
-  for (int16 i = 0; i < a.n_splits; ++i) {
+  for (split_int i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
     ? static_cast<int>(rowsol[i]) + 1
     : NA_INTEGER;
