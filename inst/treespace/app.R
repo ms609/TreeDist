@@ -16,6 +16,8 @@ suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
 })
+webr::install("Rdpack") # Until 2.6.6 available
+webr::install("TreeTools", repos = c("https://ms609.r-universe.dev", "https://repo.r-wasm.org"))
 library("TreeTools", quietly = TRUE)
 library("TreeDist")
 

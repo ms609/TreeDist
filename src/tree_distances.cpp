@@ -1,5 +1,6 @@
 #include <TreeTools/SplitList.h>
 #include <TreeTools/assert.h>
+#include <algorithm>
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp/Lightest>

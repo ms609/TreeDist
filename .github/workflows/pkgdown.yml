@@ -67,6 +67,7 @@ jobs:
           # Patch packageDescription to return a stub instead of NA.
           #
           # TODO: Remove once shinylive handles missing packages.
+          # TODO: Also remove remotes from DESCRIPTION/suggests/website
           local({
             real_pd <- utils::packageDescription
             ns <- asNamespace("utils")

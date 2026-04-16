@@ -26,6 +26,15 @@
 #' @importFrom TreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
+# Keep in sync with C++ guard: min(SL_MAX_TIPS, int16_t::max()).
+.MaxSupportedTips <- 32767L
+
+.AssertNtipSupported <- function(nTip) {
+  if (!is.na(nTip) && nTip > .MaxSupportedTips) {
+    stop("This many tips are not (yet) supported.")
+  }
+}
+
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   reportMatching = FALSE, ...) {
   supportedClasses <- c("phylo", "Splits")
