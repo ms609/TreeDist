@@ -2,6 +2,12 @@
 
 ## New features
 
+- **Large tree support**: TreeDist now correctly handles phylogenetic trees with
+  more than 8,192 splits (≈8,200+ tips).  The implementation uses `int32` for
+  split counts and matrix dimensions, enabling accurate distance computation for
+  even very large trees.  This is a substantial hardening of the implementation
+  that removes previous limitations on tree size.
+
 - `TransferConsensus()` constructs a consensus tree that minimizes the sum
   of transfer distances to a set of input trees, using a greedy
   add-and-prune heuristic.  Unlike majority-rule consensus, which can be
