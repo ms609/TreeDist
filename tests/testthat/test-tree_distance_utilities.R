@@ -31,6 +31,27 @@ test_that("CalculateTreeDistance() errs appropriately", {
   expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), "Not a tree"))
 })
 
+test_that("Tip-count guard is applied consistently", {
+  expect_no_error(.AssertNtipSupported(1000L))
+  expect_no_error(.AssertNtipSupported(32766L))
+  expect_no_error(.AssertNtipSupported(32767L))
+  expect_error(.AssertNtipSupported(32768L),
+               "This many tips are not \\(yet\\) supported\\.")
+
+  splits8 <- unclass(as.Splits(BalancedTree(8)))
+  expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L),
+               "This many tips are not \\(yet\\) supported\\.")
+  expect_error(cpp_robinson_foulds_info(splits8, splits8, 32768L),
+               "This many tips are not \\(yet\\) supported\\.")
+
+  trees <- list(BalancedTree(8), PectinateTree(8))
+  class(trees) <- "multiPhylo"
+  expect_error(
+    .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 32768L),
+    "This many tips are not \\(yet\\) supported\\."
+  )
+})
+
 test_that("CalculateTreeDistance() handles splits appropriately", {
   set.seed(101)
   tree10 <- ape::rtree(10)

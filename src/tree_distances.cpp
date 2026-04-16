@@ -1,5 +1,6 @@
 #include <TreeTools/SplitList.h>
 #include <TreeTools/assert.h>
+#include <algorithm>
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp/Lightest>
@@ -29,9 +30,16 @@ namespace TreeDist {
   }
 
   void check_ntip(const double n) {
-    // Validated by R caller (nTip > 32767 guard in CalculateTreeDistance et al.)
-    ASSERT(n <= static_cast<double>(std::numeric_limits<int16>::max())
-           && "This many tips are not (yet) supported.");
+    // SplitList dimensions are bounded by SL_MAX_TIPS, and current scoring
+    // paths use int16-sized counts internally.
+    static_assert(SL_MAX_TIPS <= std::numeric_limits<int32>::max(),
+                  "SL_MAX_TIPS must fit in int32");
+    constexpr int32 max_supported_tips = std::min(
+      int32(SL_MAX_TIPS), int32(std::numeric_limits<int16_t>::max())
+    );
+    if (n > max_supported_tips) {
+      Rcpp::stop("This many tips are not (yet) supported.");
+    }
   }
 
 
@@ -51,12 +59,13 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
+  // Heap-backed scratch avoids large fixed-size stack allocation.
+  std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
   for (int32 i = b.n_splits; i--; ) {
     for (int32 bin = last_bin; bin--; ) {
-      b_complement[i][bin] = ~b.state[i][bin];
+      b_complement[size_t(i) * a.n_bins + bin] = ~b.state[i][bin];
     }
-    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+    b_complement[size_t(i) * a.n_bins + last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int32 ai = a.n_splits; ai--; ) {
@@ -73,7 +82,7 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
       }
       if (!all_match) {
         for (int32 bin = 0; bin < a.n_bins; ++bin) {
-          if (a.state[ai][bin] != b_complement[bi][bin]) {
+          if (a.state[ai][bin] != b_complement[size_t(bi) * a.n_bins + bin]) {
             all_complement = false;
             break;
           }
@@ -105,13 +114,13 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
-  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS]; 
+  // Heap-backed scratch avoids large fixed-size stack allocation.
+  std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
   for (int16 i = 0; i < b.n_splits; i++) {
     for (int16 bin = 0; bin < last_bin; ++bin) {
-      b_complement[i][bin] = ~b.state[i][bin];
+      b_complement[size_t(i) * a.n_bins + bin] = ~b.state[i][bin];
     }
-    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+    b_complement[size_t(i) * a.n_bins + last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
@@ -127,7 +136,7 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
       }
       if (!all_match) {
         for (int16 bin = 0; bin < a.n_bins; ++bin) {
-          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+          if ((a.state[ai][bin] != b_complement[size_t(bi) * a.n_bins + bin])) {
             all_complement = false;
             break;
           }
@@ -607,7 +616,9 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
 List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
                                   const IntegerVector &nTip) {
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
-  return robinson_foulds_distance(x, y, static_cast<int32>(nTip[0]));
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return robinson_foulds_distance(x, y, n_tip);
 }
 
 // [[Rcpp::export]]
