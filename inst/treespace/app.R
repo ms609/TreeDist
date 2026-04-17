@@ -18,8 +18,10 @@ suppressPackageStartupMessages({
 })
 webr::install("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz") # until 2.6.6 available
 webr::install("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.tgz")
-library("TreeTools", quietly = TRUE)
-library("TreeDist")
+
+lapply(c("TreeTools", "TreeDist"), function(pkg) {
+  library(pkg, character.only = TRUE, quietly = TRUE)
+})
 
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
 if (!requireNamespace("protoclust", quietly = TRUE)) {

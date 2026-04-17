@@ -38,12 +38,14 @@
     "webfetch": {
       "https://github.com/*": "allow",
       "https://api.github.com/*": "allow",
-      "https://raw.githubusercontent.com/*": "allow"
+      "https://raw.githubusercontent.com/*": "allow",
+      "https://app.codecov.io/*": "allow",
+      "https://api.codecov.io/*": "allow"
     }
   },
   "model": {
-    "id": "claude-opus-4-6",
+    "id": "claude-sonnet-4-6",
     "provider": "positai",
-    "thinkingEffort": "high"
+    "thinkingEffort": "medium"
   }
 }
