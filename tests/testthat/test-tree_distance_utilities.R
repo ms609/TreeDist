@@ -57,19 +57,20 @@ test_that("Tip-count guard is applied consistently", {
 })
 
 test_that("Interrupt and tip-limit guards are wired in C++ distance paths", {
-  serial_src <- readLines(
-    testthat::test_path("..", "..", "src", "tree_distances.cpp"),
-    warn = FALSE
+  serial_path <- testthat::test_path("..", "..", "src", "tree_distances.cpp")
+  batch_path <- testthat::test_path("..", "..", "src", "pairwise_distances.cpp")
+  skip_if_not(
+    file.exists(serial_path) && file.exists(batch_path),
+    "C++ source files unavailable in installed-package checks"
   )
+
+  serial_src <- readLines(serial_path, warn = FALSE)
   interrupt_lines <- grep("checkUserInterrupt\\(", serial_src, value = TRUE)
   throttled_lines <- grep("\\(ai & 1023\\) == 0", serial_src, value = TRUE)
   expect_gte(length(interrupt_lines), 7L)
   expect_gte(length(throttled_lines), 7L)
 
-  batch_src <- readLines(
-    testthat::test_path("..", "..", "src", "pairwise_distances.cpp"),
-    warn = FALSE
-  )
+  batch_src <- readLines(batch_path, warn = FALSE)
   batch_guard_lines <- grep("TreeDist::check_ntip\\(", batch_src, value = TRUE)
   expect_gte(length(batch_guard_lines), 14L)
 })
