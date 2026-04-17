@@ -51,9 +51,16 @@ double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
 
 // [[Rcpp::export]]
 int cpp_max_tips() {
-  constexpr int64_t split_int_limit =
-    static_cast<int64_t>((std::numeric_limits<TreeDist::split_int>::max)());
-  constexpr int64_t int32_limit =
-    static_cast<int64_t>((std::numeric_limits<TreeDist::int32>::max)());
-  return static_cast<int>(std::min<int64_t>(split_int_limit, int32_limit));
+  constexpr auto split_int_limit =
+    (std::numeric_limits<TreeDist::split_int>::max)();
+  constexpr auto int32_limit = (std::numeric_limits<TreeDist::int32>::max)();
+  constexpr int int_limit = (std::numeric_limits<int>::max)();
+
+  static_assert(split_int_limit <= int_limit,
+    "split_int max must fit in int");
+  static_assert(int32_limit <= int_limit,
+    "int32 max must fit in int");
+
+  return std::min(static_cast<int>(split_int_limit),
+                  static_cast<int>(int32_limit));
 }
