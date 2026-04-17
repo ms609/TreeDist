@@ -56,6 +56,24 @@ test_that("Tip-count guard is applied consistently", {
   )
 })
 
+test_that("Interrupt and tip-limit guards are wired in C++ distance paths", {
+  serial_src <- readLines(
+    testthat::test_path("..", "..", "src", "tree_distances.cpp"),
+    warn = FALSE
+  )
+  interrupt_lines <- grep("checkUserInterrupt\\(", serial_src, value = TRUE)
+  throttled_lines <- grep("\\(ai & 1023\\) == 0", serial_src, value = TRUE)
+  expect_gte(length(interrupt_lines), 7L)
+  expect_gte(length(throttled_lines), 7L)
+
+  batch_src <- readLines(
+    testthat::test_path("..", "..", "src", "pairwise_distances.cpp"),
+    warn = FALSE
+  )
+  batch_guard_lines <- grep("TreeDist::check_ntip\\(", batch_src, value = TRUE)
+  expect_gte(length(batch_guard_lines), 14L)
+})
+
 test_that("CalculateTreeDistance() handles splits appropriately", {
   set.seed(101)
   tree10 <- ape::rtree(10)

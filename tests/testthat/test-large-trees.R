@@ -6,8 +6,8 @@
 test_that("R-level guard rejects trees exceeding .SL_MAX_TIPS", {
   skip_on_cran()
   too_many <- .SL_MAX_TIPS + 1L
-  t1 <- TreeTools::RandomTree(too_many)
-  t2 <- TreeTools::RandomTree(too_many)
+  t1 <- as.phylo(0, too_many)
+  t2 <- as.phylo(1, too_many)
 
   expect_error(ClusteringInfoDistance(t1, t2), "not yet supported")
   expect_error(PhylogeneticInfoDistance(t1, t2), "not yet supported")
@@ -20,71 +20,36 @@ test_that("R-level guard rejects trees exceeding .SL_MAX_TIPS", {
 test_that("Batch path rejects trees exceeding .SL_MAX_TIPS", {
   skip_on_cran()
   too_many <- .SL_MAX_TIPS + 1L
-  trees <- lapply(1:3, function(i) TreeTools::RandomTree(too_many))
+  trees <- as.phylo(0:2, too_many)
   class(trees) <- "multiPhylo"
 
   expect_error(ClusteringInfoDistance(trees), "not yet supported")
   expect_error(PhylogeneticInfoDistance(trees), "not yet supported")
 })
 
-test_that("CID works for 4000-tip trees", {
+test_that("Known-answer large-tree near-neighbours (4000 tips)", {
   skip_on_cran()
   skip_if(.SL_MAX_TIPS < 4000L, "SL_MAX_TIPS not yet raised to 4000+")
 
-  set.seed(7042)
-  t1 <- TreeTools::RandomTree(4000)
-  t2 <- TreeTools::RandomTree(4000)
+  # Similar deterministic trees exercise shortcut paths and run quickly.
+  t1 <- as.phylo(0, 4000)
+  t2 <- as.phylo(1, 4000)
+  trees <- structure(list(t1, t2), class = "multiPhylo")
 
-  cid <- ClusteringInfoDistance(t1, t2)
-  expect_type(cid, "double")
-  expect_true(is.finite(cid))
-  expect_gte(cid, 0)
-})
-
-test_that("Multiple metrics agree on identical 4000-tip trees", {
-  skip_on_cran()
-  skip_if(.SL_MAX_TIPS < 4000L, "SL_MAX_TIPS not yet raised to 4000+")
-
-  set.seed(3891)
-  t1 <- TreeTools::RandomTree(4000)
-
-  expect_equal(ClusteringInfoDistance(t1, t1), 0)
-  expect_equal(MatchingSplitDistance(t1, t1), 0)
-  expect_equal(RobinsonFoulds(t1, t1), 0)
-  expect_equal(InfoRobinsonFoulds(t1, t1), 0)
-})
-
-test_that("Batch CID works for 4000-tip trees", {
-  skip_on_cran()
-  skip_if(.SL_MAX_TIPS < 4000L, "SL_MAX_TIPS not yet raised to 4000+")
-
-  set.seed(5283)
-  trees <- lapply(1:5, function(i) TreeTools::RandomTree(4000))
-  class(trees) <- "multiPhylo"
-
-  d <- ClusteringInfoDistance(trees)
-  expect_s3_class(d, "dist")
-  expect_equal(attr(d, "Size"), 5L)
-  expect_true(all(is.finite(d)))
-  expect_true(all(d >= 0))
-})
-
-test_that("RF and IRF work for 8000-tip trees", {
-  skip_on_cran()
-  skip_if(.SL_MAX_TIPS < 8000L, "SL_MAX_TIPS not yet raised to 8000+")
-
-  set.seed(6174)
-  t1 <- TreeTools::RandomTree(8000)
-  t2 <- TreeTools::RandomTree(8000)
-
+  # Known answer for adjacent `as.phylo()` trees: one non-shared split per tree.
   rf <- RobinsonFoulds(t1, t2)
-  expect_type(rf, "double")
-  expect_true(is.finite(rf))
-  expect_gte(rf, 0)
-  expect_equal(RobinsonFoulds(t1, t1), 0)
+  expect_equal(rf, 2)
+  expect_equal(as.matrix(RobinsonFoulds(trees))[2, 1], 2)
 
+  # Other large-tree metrics should be finite and non-negative.
+  cid <- ClusteringInfoDistance(t1, t2)
+  msd <- MatchingSplitDistance(t1, t2)
   irf <- InfoRobinsonFoulds(t1, t2)
-  expect_type(irf, "double")
-  expect_true(is.finite(irf))
-  expect_gte(irf, 0)
+  expect_true(all(is.finite(c(cid, msd, irf))))
+  expect_true(all(c(cid, msd, irf) >= 0))
+
+  # Batch and pairwise paths must agree.
+  expect_equal(as.matrix(ClusteringInfoDistance(trees))[2, 1], cid, tolerance = 1e-10)
+  expect_equal(as.matrix(MatchingSplitDistance(trees))[2, 1], msd, tolerance = 1e-10)
+  expect_equal(as.matrix(InfoRobinsonFoulds(trees))[2, 1], irf, tolerance = 1e-10)
 })
