@@ -32,8 +32,10 @@ tryCatch({
     repos = "https://ms609.r-universe.dev"
   )
 })
-library("TreeTools", quietly = TRUE)
-library("TreeDist")
+
+lapply(c("TreeTools", "TreeDist"), function(pkg) {
+  library(pkg, character.only = TRUE, quietly = TRUE)
+})
 
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
 if (!requireNamespace("protoclust", quietly = TRUE)) {
