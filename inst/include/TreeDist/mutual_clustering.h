@@ -48,8 +48,8 @@ namespace TreeDist {
     if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
       return lg2_unrooted[n_tips];
     }
-    if (n_tips < 3) {
-      return 0.0;
+    if (n_tips < 3) { // LCOV_EXCL_START
+      return 0.0; // LCOV_EXCL_STOP
     }
     const double n = static_cast<double>(n_tips);
     // log2((2n - 5)!!) = log2((2n - 4)!) - (n - 2) - log2((n - 2)!)
@@ -61,8 +61,8 @@ namespace TreeDist {
     if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
       return lg2_rooted[n_tips];
     }
-    if (n_tips < 2) {
-      return 0.0;
+    if (n_tips < 2) { // LCOV_EXCL_START
+      return 0.0; // LCOV_EXCL_STOP
     }
     const double n = static_cast<double>(n_tips);
     // log2((2n - 3)!!) = log2((2n - 2)!) - (n - 1) - log2((n - 1)!)

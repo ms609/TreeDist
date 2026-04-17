@@ -199,3 +199,18 @@ test_that("NNIDiameter() is sane", {
 
   expect_equal(NNIDiameter(as.phylo(0:1, 6)), NNIDiameter(c(6, 6)))
 })
+
+test_that("cpp_nni_distance C++ guards fire for out-of-range nTip", {
+  # .NNIDistSingle calls .CheckMaxTips first, so the C++ guards inside
+  # cpp_nni_distance are only reachable via a direct call.
+  tree1 <- PectinateTree(5)
+  tree2 <- BalancedTree(5)
+  edge1 <- Postorder(tree1$edge)
+  edge2 <- Postorder(tree2$edge)
+  # Too many tips: fires nTip[0] > NNI_MAX_TIPS in C++
+  expect_error(cpp_nni_distance(edge1, edge2, 32769L),
+               "not yet supported for NNI")
+  # Negative nTip: fires nTip[0] < 0 in C++
+  expect_error(cpp_nni_distance(edge1, edge2, -1L),
+               "invalid")
+})

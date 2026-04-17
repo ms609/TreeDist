@@ -38,13 +38,13 @@ namespace TreeDist {
       Rcpp::stop("Requested nTip = %d is invalid.", n);
     }
 
-    if (n > max_supported_tips) {
+    if (n > max_supported_tips) { // LCOV_EXCL_START
       Rcpp::stop(
         "Requested nTip = %d exceeds this TreeDist build limit (%d): "
         "this many tips are not yet supported.",
         n, static_cast<int32>(max_supported_tips)
       );
-    }
+    } // LCOV_EXCL_STOP
   }
 
 

@@ -46,6 +46,7 @@ test_that("Tip-count guard is applied consistently", {
 
   splits8 <- unclass(as.Splits(BalancedTree(8)))
   expect_no_error(cpp_robinson_foulds_distance(splits8, splits8, 8L))
+  expect_error(cpp_robinson_foulds_distance(splits8, splits8, -1L), "invalid")
   expect_no_error(cpp_robinson_foulds_info(splits8, splits8, 8L))
 
   trees <- list(BalancedTree(8), PectinateTree(8))
