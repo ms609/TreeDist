@@ -30,9 +30,12 @@ namespace TreeDist {
                              const split_int n_tips,
                              const double lg2_n) noexcept {
     if (nkK && nk && nK) {
+      ASSERT(n_tips > 0 && "n_tips must be positive");
+      ASSERT(n_tips <= (std::numeric_limits<int32>::max)() / n_tips &&
+        "nTip too large for int32 products in add_ic_element");
       assert(!(nkK == nk && nkK == nK && nkK << 1 == n_tips));
-      const int64_t numerator = static_cast<int64_t>(nkK) * n_tips;
-      const int64_t denominator = static_cast<int64_t>(nk) * nK;
+      const int32 numerator = nkK * n_tips;
+      const int32 denominator = nk * nK;
       if (numerator != denominator) {
         ic_sum += nkK * (lg2_lookup(nkK) + lg2_n - lg2_lookup(nk) -
           lg2_lookup(nK));
