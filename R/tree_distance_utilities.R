@@ -1,10 +1,20 @@
+.CompiledTipLimit <- local({
+  cached <- NA_integer_
+  function() {
+    if (is.na(cached) || cached <= 0L) {
+      cached <<- cpp_max_tips()
+    }
+    cached
+  }
+})
+
 .CheckMaxTips <- function(nTip, context = "") {
   if (is.na(nTip)) {
     return(invisible(NULL))
   }
 
-  # Global limit from C++ integer types (not TreeTools stack thresholds).
-  maxTips <- cpp_max_tips()
+  # Compiled limit from C++ integer types (not TreeTools stack thresholds).
+  maxTips <- .CompiledTipLimit()
   if (nTip > maxTips) {
     suffix <- if (!nzchar(context)) "." else paste0(" for ", context, ".")
     stop("Trees with > ", maxTips, " tips are not yet supported", suffix)

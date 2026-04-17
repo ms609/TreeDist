@@ -576,32 +576,56 @@ static double msi_score(
 ) {
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
+  const bool use_lookup_table = TreeDist::can_use_lookup_table(n_tips);
 
   constexpr cost max_score = BIG;
-  const double max_possible = TreeDist::lg2_unrooted_lookup(n_tips)
-    - TreeDist::lg2_rooted_lookup(split_int((n_tips + 1) / 2))
-    - TreeDist::lg2_rooted_lookup(split_int(n_tips / 2));
+  const double max_possible = use_lookup_table
+    ? TreeDist::lg2_unrooted[n_tips]
+      - TreeDist::lg2_rooted[split_int((n_tips + 1) / 2)]
+      - TreeDist::lg2_rooted[split_int(n_tips / 2)]
+    : TreeDist::lg2_unrooted_lookup(n_tips)
+      - TreeDist::lg2_rooted_lookup(split_int((n_tips + 1) / 2))
+      - TreeDist::lg2_rooted_lookup(split_int(n_tips / 2));
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
 
-  for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    for (split_int bi = 0; bi < b.n_splits; ++bi) {
-      split_int n_a_only = 0, n_a_and_b = 0, n_different = 0;
-      splitbit different;
-      for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        different   = a.state[ai][bin] ^ b.state[bi][bin];
-        n_different += count_bits(different);
-        n_a_only   += count_bits(a.state[ai][bin] &  different);
-        n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
+  if (use_lookup_table) {
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      for (split_int bi = 0; bi < b.n_splits; ++bi) {
+        split_int n_a_only = 0, n_a_and_b = 0, n_different = 0;
+        splitbit different;
+        for (split_int bin = 0; bin < a.n_bins; ++bin) {
+          different   = a.state[ai][bin] ^ b.state[bi][bin];
+          n_different += count_bits(different);
+          n_a_only   += count_bits(a.state[ai][bin] &  different);
+          n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
+        }
+        const split_int n_same = n_tips - n_different;
+        score(ai, bi) = cost(max_score - score_over_possible *
+          TreeDist::mmsi_score_table(n_same, n_a_and_b, n_different, n_a_only));
       }
-      const split_int n_same = n_tips - n_different;
-      score(ai, bi) = cost(max_score - score_over_possible *
-        TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
+      score.padRowAfterCol(ai, b.n_splits, max_score);
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+  } else {
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      for (split_int bi = 0; bi < b.n_splits; ++bi) {
+        split_int n_a_only = 0, n_a_and_b = 0, n_different = 0;
+        splitbit different;
+        for (split_int bin = 0; bin < a.n_bins; ++bin) {
+          different   = a.state[ai][bin] ^ b.state[bi][bin];
+          n_different += count_bits(different);
+          n_a_only   += count_bits(a.state[ai][bin] &  different);
+          n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
+        }
+        const split_int n_same = n_tips - n_different;
+        score(ai, bi) = cost(max_score - score_over_possible *
+          TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
+      }
+      score.padRowAfterCol(ai, b.n_splits, max_score);
+    }
   }
   score.padAfterRow(a.n_splits, max_score);
 
@@ -675,27 +699,44 @@ static double shared_phylo_score(
 ) {
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
+  const bool use_lookup_table = TreeDist::can_use_lookup_table(n_tips);
 
   const split_int overlap_a = split_int(n_tips + 1) / 2;
   constexpr cost max_score = BIG;
-  const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
-  const double max_possible = TreeDist::lg2_unrooted_lookup(n_tips) -
-    best_overlap;
+  const double best_overlap = use_lookup_table
+    ? TreeDist::one_overlap_table(overlap_a, n_tips / 2, n_tips)
+    : TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
+  const double max_possible = (use_lookup_table
+    ? TreeDist::lg2_unrooted[n_tips]
+    : TreeDist::lg2_unrooted_lookup(n_tips)) - best_overlap;
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
 
-  for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    for (split_int bi = 0; bi < b.n_splits; ++bi) {
-      const double spi = TreeDist::spi_overlap(
-        a.state[ai], b.state[bi], n_tips,
-        a.in_split[ai], b.in_split[bi], a.n_bins);
-      score(ai, bi) = (spi == 0.0) ? max_score
-                                   : cost((spi - best_overlap) * score_over_possible);
+  if (use_lookup_table) {
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      for (split_int bi = 0; bi < b.n_splits; ++bi) {
+        const double spi = TreeDist::spi_overlap_table(
+          a.state[ai], b.state[bi], n_tips,
+          a.in_split[ai], b.in_split[bi], a.n_bins);
+        score(ai, bi) = (spi == 0.0) ? max_score
+                                     : cost((spi - best_overlap) * score_over_possible);
+      }
+      score.padRowAfterCol(ai, b.n_splits, max_score);
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+  } else {
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      for (split_int bi = 0; bi < b.n_splits; ++bi) {
+        const double spi = TreeDist::spi_overlap(
+          a.state[ai], b.state[bi], n_tips,
+          a.in_split[ai], b.in_split[bi], a.n_bins);
+        score(ai, bi) = (spi == 0.0) ? max_score
+                                     : cost((spi - best_overlap) * score_over_possible);
+      }
+      score.padRowAfterCol(ai, b.n_splits, max_score);
+    }
   }
   score.padAfterRow(a.n_splits, max_score);
 
