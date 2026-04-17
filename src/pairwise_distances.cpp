@@ -184,7 +184,7 @@ static double mutual_clustering_score(
   constexpr cost max_score  = BIG;
   constexpr double over_max = 1.0 / static_cast<double>(BIG);
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
-  const double lg2_n = lg2[n_tips];
+  const double lg2_n = TreeDist::lg2_lookup(n_tips);
 
   // --- Phase 1: O(n log n) exact-match detection ---
   const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
@@ -232,8 +232,8 @@ static double mutual_clustering_score(
     const split_int nA   = n_tips - na;
     const auto* a_row = a.state[ai];
 
-    const double offset_a = lg2_n - lg2[na];
-    const double offset_A = lg2_n - lg2[nA];
+    const double offset_a = lg2_n - TreeDist::lg2_lookup(na);
+    const double offset_A = lg2_n - TreeDist::lg2_lookup(nA);
 
     for (split_int b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
       const split_int bi   = b_unmatch[b_pos];
@@ -252,13 +252,13 @@ static double mutual_clustering_score(
       if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
         score(a_pos, b_pos) = max_score;
       } else {
-        const double lg2_nb = lg2[nb];
-        const double lg2_nB = lg2[nB];
+        const double lg2_nb = TreeDist::lg2_lookup(nb);
+        const double lg2_nB = TreeDist::lg2_lookup(nB);
         const double ic_sum =
-          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
-          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
-          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
-          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
+          a_and_b * (TreeDist::lg2_lookup(a_and_b) + offset_a - lg2_nb) +
+          a_and_B * (TreeDist::lg2_lookup(a_and_B) + offset_a - lg2_nB) +
+          A_and_b * (TreeDist::lg2_lookup(A_and_b) + offset_A - lg2_nb) +
+          A_and_B * (TreeDist::lg2_lookup(A_and_B) + offset_A - lg2_nB);
         score(a_pos, b_pos) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }
@@ -376,7 +376,7 @@ static double rf_info_score(
 
   // Sum info contribution for each matched split in a
   const split_int* a_match = mscratch.a_match.data();
-  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  const double lg2_unrooted_n = TreeDist::lg2_unrooted_lookup(n_tips);
   double score = 0;
   for (split_int ai = 0; ai < a_n; ++ai) {
     if (a_match[ai] == 0) continue;
@@ -385,8 +385,8 @@ static double rf_info_score(
       leaves_in_split += count_bits(a.state[ai][bin]);
     }
     score += lg2_unrooted_n
-           - lg2_rooted[leaves_in_split]
-           - lg2_rooted[n_tips - leaves_in_split];
+      - TreeDist::lg2_rooted_lookup(leaves_in_split)
+      - TreeDist::lg2_rooted_lookup(n_tips - leaves_in_split);
   }
   return score;
 }
@@ -578,9 +578,9 @@ static double msi_score(
   if (most_splits == 0) return 0.0;
 
   constexpr cost max_score = BIG;
-  const double max_possible = lg2_unrooted[n_tips]
-    - lg2_rooted[split_int((n_tips + 1) / 2)]
-    - lg2_rooted[split_int(n_tips / 2)];
+  const double max_possible = TreeDist::lg2_unrooted_lookup(n_tips)
+    - TreeDist::lg2_rooted_lookup(split_int((n_tips + 1) / 2))
+    - TreeDist::lg2_rooted_lookup(split_int(n_tips / 2));
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
@@ -679,7 +679,8 @@ static double shared_phylo_score(
   const split_int overlap_a = split_int(n_tips + 1) / 2;
   constexpr cost max_score = BIG;
   const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
-  const double max_possible = lg2_unrooted[n_tips] - best_overlap;
+  const double max_possible = TreeDist::lg2_unrooted_lookup(n_tips) -
+    best_overlap;
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 

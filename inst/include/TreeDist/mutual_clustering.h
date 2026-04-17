@@ -15,6 +15,8 @@
 
 namespace TreeDist {
 
+  constexpr double LOG2_E = 1.4426950408889634;
+
   // ---- Lookup tables (populated by init_lg2_tables) ----
   //
   // lg2[i]                = log2(i)  for  0 <= i <= SL_MAX_TIPS
@@ -22,7 +24,9 @@ namespace TreeDist {
   // lg2_unrooted[i]       = log2((2i-5)!!) for i >= 3
   // lg2_rooted             = &lg2_unrooted[0] + 1  (so lg2_rooted[i] = lg2_unrooted[i+1])
   //
-  // These are defined in mutual_clustering_impl.h.
+  // These are fast-path caches sized to TreeTools' stack threshold.
+  // For larger trees we fall back to on-the-fly computation.
+  // Definitions are in mutual_clustering_impl.h.
 
   extern double lg2[SL_MAX_TIPS + 1];
   extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
@@ -33,15 +37,48 @@ namespace TreeDist {
   // computation.  max_tips should be >= the largest tree size used.
   void init_lg2_tables(int max_tips);
 
+  [[nodiscard]] inline double lg2_lookup(split_int x) noexcept {
+    if (x <= static_cast<split_int>(SL_MAX_TIPS)) {
+      return lg2[x];
+    }
+    return std::log2(static_cast<double>(x));
+  }
+
+  [[nodiscard]] inline double lg2_unrooted_lookup(split_int n_tips) noexcept {
+    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
+      return lg2_unrooted[n_tips];
+    }
+    if (n_tips < 3) {
+      return 0.0;
+    }
+    const double n = static_cast<double>(n_tips);
+    // log2((2n - 5)!!) = log2((2n - 4)!) - (n - 2) - log2((n - 2)!)
+    return (std::lgamma((2.0 * n) - 3.0) - std::lgamma(n - 1.0)) * LOG2_E
+      - (n - 2.0);
+  }
+
+  [[nodiscard]] inline double lg2_rooted_lookup(split_int n_tips) noexcept {
+    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
+      return lg2_rooted[n_tips];
+    }
+    if (n_tips < 2) {
+      return 0.0;
+    }
+    const double n = static_cast<double>(n_tips);
+    // log2((2n - 3)!!) = log2((2n - 2)!) - (n - 1) - log2((n - 1)!)
+    return (std::lgamma((2.0 * n) - 1.0) - std::lgamma(n)) * LOG2_E
+      - (n - 1.0);
+  }
+
   // ---- Inline helpers ----
 
   // Information content of a perfectly-matching split pair.
   // ic_matching(a, b, n) = (a + b) * lg2[n] - a * lg2[a] - b * lg2[b]
   [[nodiscard]] inline double ic_matching(split_int a, split_int b,
                                           split_int n) noexcept {
-    const double lg2a = lg2[a];
-    const double lg2b = lg2[b];
-    const double lg2n = lg2[n];
+    const double lg2a = lg2_lookup(a);
+    const double lg2b = lg2_lookup(b);
+    const double lg2n = lg2_lookup(n);
     return (a + b) * lg2n - a * lg2a - b * lg2b;
   }
 

@@ -391,7 +391,7 @@ consensus_info <- function(trees, phylo, p) {
   }
   nTip <- NTip(trees[[1]])
   # CT_MAX_LEAVES = 16383 in information.h (lookup-table size limit).
-  maxTips <- min(16383L, if (is.null(.SL_MAX_TIPS)) cpp_max_tips() else .SL_MAX_TIPS)
+  maxTips <- min(16383L, cpp_max_tips())
   if (nTip > maxTips) {
     stop("Trees with > ", maxTips, " tips are not yet supported for consensus info.")
   }

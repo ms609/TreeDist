@@ -34,7 +34,8 @@ namespace TreeDist {
       const int64_t numerator = static_cast<int64_t>(nkK) * n_tips;
       const int64_t denominator = static_cast<int64_t>(nk) * nK;
       if (numerator != denominator) {
-        ic_sum += nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]);
+        ic_sum += nkK * (lg2_lookup(nkK) + lg2_n - lg2_lookup(nk) -
+          lg2_lookup(nK));
       }
     }
   }
@@ -43,7 +44,8 @@ namespace TreeDist {
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
   [[nodiscard]] inline double mmsi_pair_score(const split_int x,
                                               const split_int y) noexcept {
-    return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
+    return lg2_unrooted_lookup(x) - (lg2_rooted_lookup(y) +
+      lg2_rooted_lookup(x - y));
   }
 
   [[nodiscard]] inline double mmsi_score(const split_int n_same,
@@ -66,12 +68,13 @@ namespace TreeDist {
 [[nodiscard]] inline double one_overlap(const split_int a, const split_int b,
                                         const split_int n) noexcept {
     if (a == b) {
-      return lg2_rooted[a] + lg2_rooted[n - a];
+      return lg2_rooted_lookup(a) + lg2_rooted_lookup(n - a);
     }
     // Unify a<b and a>b via lo/hi: removes an unpredictable branch.
     const split_int lo = (a < b) ? a : b;
     const split_int hi = (a < b) ? b : a;
-    return lg2_rooted[hi] + lg2_rooted[n - lo] - lg2_rooted[hi - lo + 1];
+    return lg2_rooted_lookup(hi) + lg2_rooted_lookup(n - lo) -
+      lg2_rooted_lookup(hi - lo + 1);
   }
   
   [[nodiscard]] inline double one_overlap_notb(const split_int a,
@@ -79,11 +82,13 @@ namespace TreeDist {
                                                const split_int n) noexcept {
     const split_int b = n - n_minus_b;
     if (a == b) {
-      return lg2_rooted[b] + lg2_rooted[n_minus_b];
+      return lg2_rooted_lookup(b) + lg2_rooted_lookup(n_minus_b);
     } else if (a < b) {
-      return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+      return lg2_rooted_lookup(b) + lg2_rooted_lookup(n - a) -
+        lg2_rooted_lookup(b - a + 1);
     } else {
-      return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
+      return lg2_rooted_lookup(a) + lg2_rooted_lookup(n_minus_b) -
+        lg2_rooted_lookup(a - b + 1);
     }
   }
 

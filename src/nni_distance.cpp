@@ -288,8 +288,14 @@ grf_match nni_rf_matching (
 IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, 
                                const IntegerMatrix& edge2,
                                const IntegerVector& nTip) {
-  
-  ASSERT(nTip[0] <= NNI_MAX_TIPS && "Cannot calculate NNI distance for trees with so many tips.");
+
+  if (nTip[0] > NNI_MAX_TIPS) {
+    Rcpp::stop("Trees with > %d tips are not yet supported for NNI.",
+      NNI_MAX_TIPS);
+  }
+  if (nTip[0] < 0) {
+    Rcpp::stop("Requested nTip = %d is invalid for NNI.", nTip[0]);
+  }
   const int32_t n_tip = static_cast<int32_t>(nTip[0]);
   const int32_t node_0 = n_tip;
   const int32_t node_0_r = n_tip + 1;

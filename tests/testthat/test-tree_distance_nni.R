@@ -17,7 +17,7 @@ test_that("NNIDist() handles exceptions", {
 })
 
 test_that("NNIDist() at max tips", {
-  maxTips <- .SL_MAX_TIPS
+  maxTips <- 32768L
   more <- maxTips + 1L
   expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
                "not yet supported for NNI")

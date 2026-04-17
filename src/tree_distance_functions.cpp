@@ -1,5 +1,7 @@
 #include <TreeTools/SplitList.h>
 #include <Rcpp/Lightest>
+#include <algorithm>
+#include <limits>
 
 // Provide the MCI table definitions and implementation in this TU.
 #define TREEDIST_MCI_IMPLEMENTATION
@@ -10,6 +12,7 @@
 // Populate lookup tables at library load time.
 __attribute__((constructor))
   void initialize_ldf() {
+    // Cache up to TreeTools' stack-threshold value.
     TreeDist::init_lg2_tables(SL_MAX_TIPS);
   }
 
@@ -48,5 +51,9 @@ double cpp_mci_impl_score(const Rcpp::RawMatrix& x,
 
 // [[Rcpp::export]]
 int cpp_max_tips() {
-  return static_cast<int>(SL_MAX_TIPS);
+  constexpr int64_t split_int_limit =
+    static_cast<int64_t>((std::numeric_limits<TreeDist::split_int>::max)());
+  constexpr int64_t int32_limit =
+    static_cast<int64_t>((std::numeric_limits<TreeDist::int32>::max)());
+  return static_cast<int>(std::min<int64_t>(split_int_limit, int32_limit));
 }

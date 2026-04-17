@@ -1,3 +1,22 @@
+.CheckMaxTips <- function(nTip, context = "") {
+  if (is.na(nTip)) {
+    return(invisible(NULL))
+  }
+
+  # Global limit from C++ integer types (not TreeTools stack thresholds).
+  maxTips <- cpp_max_tips()
+  if (nTip > maxTips) {
+    suffix <- if (!nzchar(context)) "." else paste0(" for ", context, ".")
+    stop("Trees with > ", maxTips, " tips are not yet supported", suffix)
+  }
+
+  # NNI uses fixed-size lookup tables in C++.
+  if (identical(context, "NNI") && nTip > 32768L) {
+    stop("Trees with > 32768 tips are not yet supported for NNI.")
+  }
+  invisible(NULL)
+}
+
 #' Wrapper for tree distance calculations
 #' 
 #' Calls tree distance functions from trees or lists of trees
@@ -11,28 +30,6 @@
 #' @importFrom TreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
-# Maximum number of tips supported by this compiled package build.
-# Set during .onLoad() from `cpp_max_tips()`.
-.SL_MAX_TIPS <- NULL
-
-.CheckMaxTips <- function(nTip, context = "") {
-  if (!is.na(nTip)) {
-    maxTips <- .SL_MAX_TIPS
-    if (is.null(maxTips) || is.na(maxTips)) {
-      maxTips <- cpp_max_tips()
-      .SL_MAX_TIPS <<- maxTips
-    }
-    if (nTip > maxTips) {
-      suffix <- if (!nzchar(context)) "." else paste0(" for ", context, ".")
-      stop("Trees with > ", maxTips, " tips are not yet supported", suffix)
-    }
-  }
-  invisible(NULL)
-}
-
-# Backward-compatible alias for internal callers/tests.
-.AssertNtipSupported <- .CheckMaxTips
-
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   reportMatching = FALSE, ...) {
   supportedClasses <- c("phylo", "Splits")
@@ -344,7 +341,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @param checks Logical specifying whether to perform basic sanity checks to
 #' avoid crashes in C++.
 #' @keywords internal
-#' @seealso [`CalculateTreeDistance`]
+#' @seealso [`CalculateTreeDistance()`]
 #' @export
 .TreeDistance <- function(Func, tree1, tree2, checks = TRUE, ...) {
   single1 <- inherits(tree1, "phylo")

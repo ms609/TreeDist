@@ -178,7 +178,7 @@ double mutual_clustering_score(
   constexpr cost max_score  = BIG;
   constexpr double over_max = 1.0 / static_cast<double>(BIG);
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
-  const double lg2_n = lg2[n_tips];
+  const double lg2_n = lg2_lookup(static_cast<split_int>(n_tips));
 
   // --- Phase 1: O(n log n) exact-match detection ---
   std::vector<split_int> a_match_buf(a_n_splits);
@@ -233,8 +233,8 @@ double mutual_clustering_score(
     const split_int nA = static_cast<split_int>(n_tips - na);
     const splitbit* a_row = a_state[ai];
 
-    const double offset_a = lg2_n - lg2[na];
-    const double offset_A = lg2_n - lg2[nA];
+    const double offset_a = lg2_n - lg2_lookup(na);
+    const double offset_A = lg2_n - lg2_lookup(nA);
 
     for (split_int b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
       const split_int bi = b_unmatch[b_pos];
@@ -254,13 +254,13 @@ double mutual_clustering_score(
           && a_and_b == A_and_B) {
         score(a_pos, b_pos) = max_score;
       } else {
-        const double lg2_nb = lg2[nb];
-        const double lg2_nB = lg2[nB];
+        const double lg2_nb = lg2_lookup(nb);
+        const double lg2_nB = lg2_lookup(nB);
         const double ic_sum =
-          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
-          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
-          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
-          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
+          a_and_b * (lg2_lookup(a_and_b) + offset_a - lg2_nb) +
+          a_and_B * (lg2_lookup(a_and_B) + offset_a - lg2_nB) +
+          A_and_b * (lg2_lookup(A_and_b) + offset_A - lg2_nb) +
+          A_and_B * (lg2_lookup(A_and_B) + offset_A - lg2_nB);
         score(a_pos, b_pos) =
           max_score - static_cast<cost>(ic_sum * max_over_tips);
       }

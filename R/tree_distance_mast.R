@@ -96,7 +96,7 @@ MASTSize <- function(tree1, tree2 = tree1, rooted = TRUE) {
   if (nrow(edge1) != nrow(edge2)) {
     stop("Both trees must contain the same number of edges.")
   }
-  maxTips <- min(4096L, if (is.null(.SL_MAX_TIPS)) cpp_max_tips() else .SL_MAX_TIPS)
+  maxTips <- min(4096L, cpp_max_tips())
   if (nTip > maxTips) {
     stop("Trees with > ", maxTips, " tips are not yet supported for MAST.")
   }

@@ -30,19 +30,19 @@ namespace TreeDist {
   }
 
   void check_ntip(const int32 n) {
-    static_assert(SL_MAX_TIPS <= std::numeric_limits<int32>::max(),
-                  "SL_MAX_TIPS must fit in int32");
-    constexpr int32 compiled_tip_limit = static_cast<int32>(SL_MAX_TIPS);
     constexpr int64_t split_int_limit =
       static_cast<int64_t>((std::numeric_limits<split_int>::max)());
-    constexpr int64_t max_supported_tips =
-      std::min<int64_t>(compiled_tip_limit, split_int_limit);
+    constexpr int64_t max_supported_tips = split_int_limit;
+
+    if (n < 0) {
+      Rcpp::stop("Requested nTip = %d is invalid.", n);
+    }
 
     if (n > max_supported_tips) {
       Rcpp::stop(
-        "Requested nTip = %d exceeds this TreeDist build limit (%d; "
-        "compiled SL_MAX_TIPS = %d): this many tips are not yet supported.",
-        n, static_cast<int32>(max_supported_tips), compiled_tip_limit
+        "Requested nTip = %d exceeds this TreeDist build limit (%d): "
+        "this many tips are not yet supported.",
+        n, static_cast<int32>(max_supported_tips)
       );
     }
   }
@@ -115,7 +115,7 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
     SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   
   const splitbit unset_mask = ALL_ONES >> unset_tips;
-  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  const double lg2_unrooted_n = TreeDist::lg2_unrooted_lookup(n_tips);
   double score = 0;
   
   grf_match matching(a.n_splits, NA_INTEGER);
@@ -155,8 +155,9 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
         
-        score += lg2_unrooted_n - lg2_rooted[leaves_in_split] -
-          lg2_rooted[n_tips - leaves_in_split];
+        score += lg2_unrooted_n -
+          TreeDist::lg2_rooted_lookup(leaves_in_split) -
+          TreeDist::lg2_rooted_lookup(n_tips - leaves_in_split);
 
         matching[ai] = bi + 1;
         break; /* Only one match possible per split */
@@ -341,8 +342,9 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   const SplitList a(x), b(y);
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
   constexpr cost max_score = BIG;
-  const double max_possible = lg2_unrooted[n_tips] - 
-    lg2_rooted[split_int((n_tips + 1) / 2)] - lg2_rooted[split_int(n_tips / 2)];
+  const double max_possible = TreeDist::lg2_unrooted_lookup(n_tips) -
+    TreeDist::lg2_rooted_lookup(split_int((n_tips + 1) / 2)) -
+    TreeDist::lg2_rooted_lookup(split_int(n_tips / 2));
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / max_score;
   
@@ -417,7 +419,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   constexpr cost max_score = BIG;
   constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
-  const double lg2_n = lg2[n_tips];
+  const double lg2_n = TreeDist::lg2_lookup(n_tips);
   
   cost_matrix score(most_splits);
   
@@ -435,8 +437,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     const split_int na = a.in_split[ai];
     const split_int nA = n_tips - na;
     const auto *a_row = a.state[ai];
-    const double offset_a = lg2_n - lg2[na];
-    const double offset_A = lg2_n - lg2[nA];
+    const double offset_a = lg2_n - TreeDist::lg2_lookup(na);
+    const double offset_A = lg2_n - TreeDist::lg2_lookup(nA);
     
     for (split_int bi = 0; bi < b.n_splits; ++bi) {
       
@@ -465,13 +467,13 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                    && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
-        const double lg2_nb = lg2[nb];
-        const double lg2_nB = lg2[nB];
+        const double lg2_nb = TreeDist::lg2_lookup(nb);
+        const double lg2_nB = TreeDist::lg2_lookup(nB);
         const double ic_sum =
-          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
-          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
-          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
-          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
+          a_and_b * (TreeDist::lg2_lookup(a_and_b) + offset_a - lg2_nb) +
+          a_and_B * (TreeDist::lg2_lookup(a_and_B) + offset_a - lg2_nB) +
+          A_and_b * (TreeDist::lg2_lookup(A_and_b) + offset_A - lg2_nb) +
+          A_and_B * (TreeDist::lg2_lookup(A_and_B) + offset_A - lg2_nB);
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
@@ -575,7 +577,7 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   const split_int overlap_a = split_int(n_tips + 1) / 2; // avoids promotion to int
   
   constexpr cost max_score = BIG;
-  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  const double lg2_unrooted_n = TreeDist::lg2_unrooted_lookup(n_tips);
   const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
   const double max_possible = lg2_unrooted_n - best_overlap;
   const double score_over_possible = max_score / max_possible;
