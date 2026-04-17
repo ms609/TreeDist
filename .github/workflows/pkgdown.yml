@@ -53,12 +53,12 @@ jobs:
           # mismatch warning (local dev != WASM 2.9.2 on repo.r-wasm.org).
           # TODO: Remove once TreeTools >= 2.2.0 and TreeDist >= 2.13.0
           #   are on CRAN and r-wasm.org has rebuilt them.
-          install.packages(
-            c("TreeTools", "TreeDist"),
+          shinylive::export(
+            appdir = app_dir, 
+            destdir = "docs/app",
             repos = c("https://ms609.r-universe.dev",
-                      "https://cloud.r-project.org")
+                      "https://repo.r-wasm.org")
           )
-
           # ── Work around shinylive bug (coatless/quarto-webr#228) ──
           # shinylive resolves deps from the WASM repo's PACKAGES
           # database, which may reference packages not installed

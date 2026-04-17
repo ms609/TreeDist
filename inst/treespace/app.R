@@ -16,8 +16,22 @@ suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
 })
-webr::install("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz") # until 2.6.6 available
-webr::install("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.tgz")
+# Clear any previous failed attempts
+options(repos = c(
+  ms609 = "https://ms609.r-universe.dev", 
+  wasm = "https://repo.r-wasm.org"
+))
+tryCatch({
+  webr::install("Rdpack")
+  webr::install("TreeTools")
+  webr::install("TreeDist")
+}, error = function(e) {
+  # Fallback: If the index is still broken, we use the internal webr download
+  webr::download_packages(
+    c("Rdpack", "TreeTools", "TreeDist"), 
+    repos = "https://ms609.r-universe.dev"
+  )
+})
 
 lapply(c("TreeTools", "TreeDist"), function(pkg) {
   library(pkg, character.only = TRUE, quietly = TRUE)
