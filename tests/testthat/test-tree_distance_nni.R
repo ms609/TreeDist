@@ -21,8 +21,7 @@ test_that("NNIDist() at max tips", {
   more <- maxTips + 1L
   expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
                "not yet supported for NNI")
-  goingQuickly <- TRUE
-  skip_if(goingQuickly)
+  skip_if_not(getOption("slowMode", FALSE))
   
   heapTips <- 16384 + 1
   skip_if(maxTips < heapTips)

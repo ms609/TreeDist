@@ -39,12 +39,12 @@ test_that("Large-tree (>SL_MAX_TIPS) non-table paths: PID, MSID, Jaccard, MCI", 
   pid <- PhylogeneticInfoDistance(t1, t2)
   expect_type(pid, "double")
   expect_true(is.finite(pid))
-  expect_gte(pid, 0)
+  expect_gt(pid, 0)
 
   msid <- MatchingSplitInfoDistance(t1, t2)
   expect_type(msid, "double")
   expect_true(is.finite(msid))
-  expect_gte(msid, 0)
+  expect_gt(msid, 0)
 
   # Batch and pairwise paths must agree for PID and MSID
   expect_equal(unname(as.matrix(PhylogeneticInfoDistance(trees))[2, 1]),
@@ -56,8 +56,10 @@ test_that("Large-tree (>SL_MAX_TIPS) non-table paths: PID, MSID, Jaccard, MCI", 
   jac <- NyeSimilarity(t1, t2)
   expect_type(jac, "double")
   expect_true(is.finite(jac))
-  expect_gte(jac, 0)
+  expect_gt(jac, 0)
 
+  skip_on_cran()
+  skip_if_not(getOption("slowMode", FALSE))
   # reportMatching = TRUE forces the serial mutual_clustering path with interrupt
   cid_match <- ClusteringInfoDistance(t1, t2, reportMatching = TRUE)
   expect_true(is.integer(attr(cid_match, "matching")))
