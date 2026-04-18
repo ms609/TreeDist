@@ -9,6 +9,7 @@ on:
       - '*.md'
       - 'inst/CITATION'
       - 'inst/*.bib'
+      - 'inst/treespace/app.R'
       - 'man/**.Rd'
       - 'vignettes/**.Rmd'
       
