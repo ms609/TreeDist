@@ -21,32 +21,27 @@ options(repos = c(
   ms609 = "https://ms609.r-universe.dev", 
   wasm = "https://repo.r-wasm.org"
 ))
-tryCatch({
-  webr::install("Rdpack")
-  webr::install("TreeTools")
-  webr::install("TreeDist")
-}, error = function(e) {
-  # Fallback: If the index is still broken, we use the internal webr download
-  webr::download_packages(
-    c("Rdpack", "TreeTools", "TreeDist"), 
-    repos = "https://ms609.r-universe.dev"
+
+local({
+  pkgs_to_install <- list(
+    list(
+      name = "Rdpack",
+      url  = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz"
+    ),
+    list(
+      name = "TreeTools",
+      url  = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz"
+    )
   )
+  
+  for (pkg in pkgs_to_install) {
+    if (!requireNamespace(pkg$name, quietly = TRUE)) {
+      tmp <- paste0("/tmp/", basename(pkg$url))
+      utils::download.file(pkg$url, tmp, quiet = TRUE)
+      utils::install.packages(tmp, repos = NULL, type = "binary")
+    }
+  }
 })
-
-webr::install(
-  "Rdpack",
-  repos = NULL,
-  url = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz"
-)
-webr::install(
-  "TreeTools",
-  repos = NULL,  
-  url = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz"
-)
-
-library("Rdpack", character.only = TRUE, quietly = TRUE)
-library("TreeTools", character.only = TRUE, quietly = TRUE)
-
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
 if (!requireNamespace("protoclust", quietly = TRUE)) {
   install.packages("protoclust")
