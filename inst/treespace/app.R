@@ -33,21 +33,16 @@ tryCatch({
   )
 })
 
-mount_pkg <- function(url, pkg_name) {
-  # Create a temp file path
-  tmp <- paste0("/", pkg_name, ".tgz")
-  # Download the binary directly
-  download.file(url, tmp)
-  # Mount it directly into the webR library
-  webr::mount(tmp, paste0("/usr/lib/R/library/", pkg_name))
-}
-
-# Run the mounts
-try({
-  mount_pkg("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz", "Rdpack")
-  mount_pkg("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.tgz", "TreeTools")
-  # Add TreeDist here too if it's on your R-universe
-})
+webr::install(
+  "Rdpack",
+  repos = NULL,
+  url = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz"
+)
+webr::install(
+  "TreeTools",
+  repos = NULL,  
+  url = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz"
+)
 
 library("Rdpack", character.only = TRUE, quietly = TRUE)
 library("TreeTools", character.only = TRUE, quietly = TRUE)
