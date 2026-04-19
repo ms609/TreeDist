@@ -16,23 +16,15 @@ suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
 })
-# Clear any previous failed attempts
-options(repos = c(
-  ms609 = "https://ms609.r-universe.dev", 
-  wasm = "https://repo.r-wasm.org"
-))
 
 local({
-  bins <- list(
-    Rdpack    = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz",
-    TreeTools = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz",
-    TreeDist  = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeDist_2.13.0.9002.tgz"
-  )
-  for (pkg in names(bins)) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      tmp <- paste0("/tmp/", pkg, ".tgz")
-      utils::download.file(bins[[pkg]], tmp, quiet = TRUE)
-      utils::install.packages(tmp, repos = NULL, type = "source")
+  pkgs <- c("Rdpack", "TreeTools", "TreeDist")
+  for (i in seq_along(pkgs)) {
+    if (!requireNamespace(pkgs[i], quietly = TRUE)) {
+      webr::install(pkgs[i], repos = c(
+        "https://ms609.r-universe.dev",
+        "https://repo.r-wasm.org"
+      ))
     }
   }
 })
