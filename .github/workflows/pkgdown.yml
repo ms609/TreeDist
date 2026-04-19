@@ -44,14 +44,6 @@ jobs:
           stopifnot(
             "app.R not found" = file.exists(file.path(app_dir, "app.R"))
           )
-
-          # ── Use dev shinylive for R 4.5 WASM support ──
-          # CRAN shinylive 0.3.0 targets webR R 4.4.1.
-          # The dev version (0.3.0.9000) targets R 4.5.1, where:
-          #   - otel is available on repo.r-wasm.org
-          #   - R-universe has a fixed TreeTools (no RCurl dep)
-          # TODO: Switch back to CRAN shinylive once 0.4.0 ships.
-          remotes::install_github("posit-dev/r-shinylive", quiet = TRUE)
           
           # ── Work around shinylive bug (coatless/quarto-webr#228) ──
           # shinylive resolves deps from the WASM repo's PACKAGES
