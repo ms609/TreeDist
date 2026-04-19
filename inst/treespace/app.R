@@ -33,13 +33,12 @@ local({
 for (PlotTools in c("shiny", "TreeTools", "TreeDist")) {
   library(PlotTools, character.only = TRUE)
 }
-if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
-if (!requireNamespace("protoclust", quietly = TRUE)) {
-  install.packages("protoclust")
+
+.Install <- if (isTRUE(getOption("webr.initialized"))) webr::install else install.packages
+
+for (.pkg in c("cluster", "protoclust", "MASS", "Quartet", "readxl")) {
+  if (!requireNamespace(.pkg, quietly = TRUE)) .Install(.pkg)
 }
-if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
-if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
-if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
 
 # Indirect reference to hide from shinylive's static package scanner
 .uwot_pkg <- paste0("uw", "ot")

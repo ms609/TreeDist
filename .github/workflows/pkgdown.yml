@@ -83,6 +83,7 @@ jobs:
           # ── Export ──
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app",
+            wasm_packages = FALSE,
             repos = c("https://ms609.r-universe.dev",
                       "https://repo.r-wasm.org")),
             error = function(e) {
