@@ -32,7 +32,7 @@ local({
     if (!requireNamespace(pkg, quietly = TRUE)) {
       tmp <- paste0("/tmp/", pkg, ".tgz")
       utils::download.file(bins[[pkg]], tmp, quiet = TRUE)
-      utils::install.packages(tmp, repos = NULL, type = "binary")
+      utils::install.packages(tmp, repos = NULL, type = "source")
     }
   }
 })
