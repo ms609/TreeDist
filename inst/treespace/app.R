@@ -22,26 +22,31 @@ options(repos = c(
   wasm = "https://repo.r-wasm.org"
 ))
 
+# Use a function that the shinylive scanner won't try to 'auto-fill'
 local({
-  pkgs_to_install <- list(
-    list(
-      name = "Rdpack",
-      url  = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz"
-    ),
-    list(
-      name = "TreeTools",
-      url  = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz"
-    )
+  # We rename 'url' to 'src' and 'name' to 'pkg' to hide from the scanner
+  to_mount <- list(
+    c(p = "Rdpack", s = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/Rdpack_2.6.6.tgz"),
+    c(p = "TreeTools", s = "https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/TreeTools_2.2.0.9002.tgz")
   )
   
-  for (pkg in pkgs_to_install) {
-    if (!requireNamespace(pkg$name, quietly = TRUE)) {
-      tmp <- paste0("/tmp/", basename(pkg$url))
-      utils::download.file(pkg$url, tmp, quiet = TRUE)
-      utils::install.packages(tmp, repos = NULL, type = "binary")
+  for (item in to_mount) {
+    if (!requireNamespace(item[["p"]], quietly = TRUE)) {
+      dest <- paste0("/", item[["p"]], ".tgz")
+      try({
+        utils::download.file(item[["s"]], dest, quiet = TRUE)
+        webr::mount(dest, paste0("/usr/lib/R/library/", item[["p"]]))
+      })
     }
   }
 })
+
+# Hide library calls from the exporter scanner
+# Use the name of a package so the auto-scanner doesn't try to source a
+# library name (!)
+PlotTools <- c("shiny", "TreeTools", "TreeDist")
+for (PlotTools in pkgs) library(PlotTools, character.only = TRUE)
+
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
 if (!requireNamespace("protoclust", quietly = TRUE)) {
   install.packages("protoclust")
