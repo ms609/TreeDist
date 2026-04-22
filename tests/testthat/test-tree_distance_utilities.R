@@ -38,17 +38,22 @@ test_that("Tip-count guard is applied consistently", {
   expect_error(.AssertNtipSupported(32768L),
                "This many tips are not \\(yet\\) supported\\.")
 
+  errMsg <- if (packageVersion("TreeTools") >= "2.2.0.9002") {
+    "This many tips are not \\(yet\\) supported\\."
+  } else {
+    "Trees with 32768 tips exceed the compiled limit of 2048"
+  }
   splits8 <- unclass(as.Splits(BalancedTree(8)))
   expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L),
-               "This many tips are not \\(yet\\) supported\\.")
+               errMsg)
   expect_error(cpp_robinson_foulds_info(splits8, splits8, 32768L),
-               "This many tips are not \\(yet\\) supported\\.")
+               errMsg)
 
   trees <- list(BalancedTree(8), PectinateTree(8))
   class(trees) <- "multiPhylo"
   expect_error(
     .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 32768L),
-    "This many tips are not \\(yet\\) supported\\."
+    errMsg
   )
 })
 
