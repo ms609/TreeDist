@@ -31,10 +31,16 @@ namespace TreeDist {
 
   void check_ntip(const int32 n) {
     if (n > SL_MAX_TIPS) {
-      Rcpp::stop("Trees with %d tips exceed the compiled limit of %d. "
-                 "Update TreeTools to support more tips, then reinstall "
-                 "TreeDist.", static_cast<int>(n),
-                 static_cast<int>(SL_MAX_TIPS));
+      if (SL_MAX_TIPS <= 2048) {
+        Rcpp::stop("Trees with %d tips exceed the compiled limit of %d. "
+                     "Update TreeTools to support more tips, then reinstall "
+                     "TreeDist.", static_cast<int>(n),
+                     static_cast<int>(SL_MAX_TIPS));
+      } else {
+        Rcpp::stop("Trees with %d tips are not yet supported (maximum %d). ",
+                   static_cast<int>(n),
+                   static_cast<int>(SL_MAX_TIPS));
+      }
     }
   }
 

@@ -2,14 +2,15 @@
 # Called from every distance entry point before any C++ work.
 .CheckMaxTips <- function(nTip) {
   if (!is.na(nTip) && nTip > .SL_MAX_TIPS) {
-    stop(
-      "Trees with ", nTip, " tips exceed the compiled limit of ",
-      .SL_MAX_TIPS, " tips.",
-      if (.SL_MAX_TIPS < 32768L)
-        "\nUpdate TreeTools and reinstall TreeDist to support more tips."
-      else "",
-      call. = FALSE
-    )
+    if (.SL_MAX_TIPS < 32704L) {
+      stop(
+        "Trees with ", nTip, " tips exceed the compiled limit of ",
+        .SL_MAX_TIPS, " tips.",
+          "\nUpdate TreeTools and reinstall TreeDist to support more tips."
+      )
+    }
+    stop("Trees with ", nTip, " tips are not yet supported (maximum ",
+         .SL_MAX_TIPS, ")")
   }
 }
 
@@ -27,14 +28,6 @@
 #' @importFrom utils combn
 #' @export
 # Keep in sync with C++ guard: min(SL_MAX_TIPS, int16_t::max()).
-.MaxSupportedTips <- 32767L
-
-.AssertNtipSupported <- function(nTip) {
-  if (!is.na(nTip) && nTip > .MaxSupportedTips) {
-    stop("This many tips are not (yet) supported.")
-  }
-}
-
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   reportMatching = FALSE, ...) {
   supportedClasses <- c("phylo", "Splits")
@@ -346,7 +339,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @param checks Logical specifying whether to perform basic sanity checks to
 #' avoid crashes in C++.
 #' @keywords internal
-#' @seealso [`CalculateTreeDistance`]
+#' @seealso [`CalculateTreeDistance()`]
 #' @export
 .TreeDistance <- function(Func, tree1, tree2, checks = TRUE, ...) {
   single1 <- inherits(tree1, "phylo")

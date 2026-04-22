@@ -14,7 +14,7 @@ avoid crashes in C++.}
 Calculate distance between trees, or lists of trees
 }
 \seealso{
-\code{\link{CalculateTreeDistance}}
+\code{\link[=CalculateTreeDistance]{CalculateTreeDistance()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
