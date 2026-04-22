@@ -168,7 +168,7 @@ TransferDistSplits <- function(splits1, splits2,
   if (is.null(tipLabels)) return(NULL)
   nTip <- length(tipLabels)
   if (nTip < 4L) return(NULL)
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
   
   # Check all trees share same tip set
   allLabels <- TipLabels(tree1)
@@ -211,7 +211,7 @@ TransferDistSplits <- function(splits1, splits2,
   if (is.null(tipLabels)) return(NULL)
   nTip <- length(tipLabels)
   if (nTip < 4L) return(NULL)
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
   
   # Check all trees share same tip set
   allLabels1 <- TipLabels(trees1)

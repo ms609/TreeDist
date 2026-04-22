@@ -1,3 +1,19 @@
+# Validate that nTip does not exceed the compiled SL_MAX_TIPS limit.
+# Called from every distance entry point before any C++ work.
+.CheckMaxTips <- function(nTip) {
+  if (!is.na(nTip) && nTip > .SL_MAX_TIPS) {
+    if (.SL_MAX_TIPS < 32704L) {
+      stop(
+        "Trees with ", nTip, " tips exceed the compiled limit of ",
+        .SL_MAX_TIPS, " tips.",
+          "\nUpdate TreeTools and reinstall TreeDist to support more tips."
+      )
+    }
+    stop("Trees with ", nTip, " tips are not yet supported (maximum ",
+         .SL_MAX_TIPS, ")")
+  }
+}
+
 #' Wrapper for tree distance calculations
 #' 
 #' Calls tree distance functions from trees or lists of trees
@@ -12,14 +28,6 @@
 #' @importFrom utils combn
 #' @export
 # Keep in sync with C++ guard: min(SL_MAX_TIPS, int16_t::max()).
-.MaxSupportedTips <- 32767L
-
-.AssertNtipSupported <- function(nTip) {
-  if (!is.na(nTip) && nTip > .MaxSupportedTips) {
-    stop("This many tips are not (yet) supported.")
-  }
-}
-
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   reportMatching = FALSE, ...) {
   supportedClasses <- c("phylo", "Splits")
@@ -141,7 +149,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   # Fast paths: use OpenMP batch functions when all trees share the same tip
   # set and no R-level cluster has been configured.  Each branch mirrors the
   # generic path exactly but avoids per-pair R overhead.
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
   if (!is.na(nTip) && is.null(cluster)) {
     .n_threads <- as.integer(getOption("mc.cores", 1L))
     .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
@@ -242,7 +250,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom stats setNames
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
   if (is.na(nTip)) {
     tipLabels <- union(unlist(tipLabels, use.names = FALSE),
                        unlist(TipLabels(splits2), use.names = FALSE))
@@ -331,7 +339,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @param checks Logical specifying whether to perform basic sanity checks to
 #' avoid crashes in C++.
 #' @keywords internal
-#' @seealso [`CalculateTreeDistance`]
+#' @seealso [`CalculateTreeDistance()`]
 #' @export
 .TreeDistance <- function(Func, tree1, tree2, checks = TRUE, ...) {
   single1 <- inherits(tree1, "phylo")
@@ -413,7 +421,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   if (ncol(x) != ncol(y)) {
     stop("Input splits must address same number of tips.")
   }
-  .AssertNtipSupported(nTip)
+  .CheckMaxTips(nTip)
 }
 
 .CheckLabelsSame <- function(labelList) {

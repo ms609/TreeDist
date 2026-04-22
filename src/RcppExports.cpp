@@ -636,6 +636,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_sl_max_tips
+int cpp_sl_max_tips();
+RcppExport SEXP _TreeDist_cpp_sl_max_tips() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_sl_max_tips());
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
@@ -780,6 +790,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_transfer_dist_all_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_all_pairs, 4},
     {"_TreeDist_cpp_transfer_dist_cross_pairs", (DL_FUNC) &_TreeDist_cpp_transfer_dist_cross_pairs, 5},
     {"_TreeDist_cpp_mci_impl_score", (DL_FUNC) &_TreeDist_cpp_mci_impl_score, 3},
+    {"_TreeDist_cpp_sl_max_tips", (DL_FUNC) &_TreeDist_cpp_sl_max_tips, 0},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

@@ -18,6 +18,10 @@ constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
 namespace TreeDist {
 
+  // Validate that n_tips does not exceed the compiled SL_MAX_TIPS limit.
+  // Defined in tree_distances.cpp; calls Rcpp::stop() on failure.
+  void check_ntip(int32 n);
+
   // Re-exported from mutual_clustering.h:
   //   ic_matching(int16 a, int16 b, int16 n)
 
@@ -39,7 +43,8 @@ namespace TreeDist {
 
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
   [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
+    static_assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max(),
+                  "int16 too narrow for SL_MAX_TIPS");
     
     return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
   }
@@ -60,7 +65,8 @@ namespace TreeDist {
 
 
 [[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
+    static_assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max(),
+                  "int16 too narrow for SL_MAX_TIPS");
     if (a == b) {
       return lg2_rooted[a] + lg2_rooted[n - a];
     }
@@ -71,7 +77,8 @@ namespace TreeDist {
   }
   
   [[nodiscard]] inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
+    static_assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max(),
+                  "int16 too narrow for SL_MAX_TIPS");
     const int16 b = n - n_minus_b;
     if (a == b) {
       return lg2_rooted[b] + lg2_rooted[n_minus_b];
@@ -90,7 +97,8 @@ namespace TreeDist {
                        const int16 n_tips, const int16 in_a,
                        const int16 in_b, const int16 n_bins) noexcept {
 
-    assert(SL_MAX_BINS <= INT16_MAX);
+    static_assert(SL_MAX_BINS <= INT16_MAX,
+                  "int16 too narrow for SL_MAX_BINS");
 
     int16 n_ab = 0;
     for (int16 bin = 0; bin < n_bins; ++bin) {

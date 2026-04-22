@@ -29,20 +29,27 @@ namespace TreeDist {
     }
   }
 
-  void check_ntip(const double n) {
-    // SplitList dimensions are bounded by SL_MAX_TIPS, and current scoring
-    // paths use int16-sized counts internally.
-    static_assert(SL_MAX_TIPS <= std::numeric_limits<int32>::max(),
-                  "SL_MAX_TIPS must fit in int32");
-    constexpr int32 max_supported_tips = std::min(
-      int32(SL_MAX_TIPS), int32(std::numeric_limits<int16_t>::max())
-    );
-    if (n > max_supported_tips) {
-      Rcpp::stop("This many tips are not (yet) supported.");
+  void check_ntip(const int32 n) {
+    if (n > SL_MAX_TIPS) {
+      if (SL_MAX_TIPS <= 2048) {
+        Rcpp::stop("Trees with %d tips exceed the compiled limit of %d. "
+                     "Update TreeTools to support more tips, then reinstall "
+                     "TreeDist.", static_cast<int>(n),
+                     static_cast<int>(SL_MAX_TIPS));
+      } else {
+        Rcpp::stop("Trees with %d tips are not yet supported (maximum %d). ",
+                   static_cast<int>(n),
+                   static_cast<int>(SL_MAX_TIPS));
+      }
     }
   }
 
 
+}
+
+// [[Rcpp::export]]
+int cpp_sl_max_tips() {
+  return static_cast<int>(SL_MAX_TIPS);
 }
 
 using TreeDist::resize_uninitialized;
@@ -59,30 +66,33 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  // Heap-backed scratch avoids large fixed-size stack allocation.
-  std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
+  const int32 n_bins = a.n_bins;
+  std::vector<splitbit> b_complement(b.n_splits * n_bins);
   for (int32 i = b.n_splits; i--; ) {
+    splitbit* bc_i = &b_complement[i * n_bins];
     for (int32 bin = last_bin; bin--; ) {
-      b_complement[size_t(i) * a.n_bins + bin] = ~b.state[i][bin];
+      bc_i[bin] = ~b.state[i][bin];
     }
-    b_complement[size_t(i) * a.n_bins + last_bin] = b.state[i][last_bin] ^ unset_mask;
+    bc_i[last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int32 ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int32 bi = b.n_splits; bi--; ) {
       
       bool all_match = true;
       bool all_complement = true;
+      const splitbit* bc_bi = &b_complement[bi * n_bins];
       
-      for (int32 bin = 0; bin < a.n_bins; ++bin) {
+      for (int32 bin = 0; bin < n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int32 bin = 0; bin < a.n_bins; ++bin) {
-          if (a.state[ai][bin] != b_complement[size_t(bi) * a.n_bins + bin]) {
+        for (int32 bin = 0; bin < n_bins; ++bin) {
+          if (a.state[ai][bin] != bc_bi[bin]) {
             all_complement = false;
             break;
           }
@@ -114,29 +124,32 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
   grf_match matching(a.n_splits, NA_INTEGER);
   
-  // Heap-backed scratch avoids large fixed-size stack allocation.
-  std::vector<splitbit> b_complement(size_t(b.n_splits) * size_t(a.n_bins));
+  const int16 n_bins = a.n_bins;
+  std::vector<splitbit> b_complement(b.n_splits * n_bins);
   for (int16 i = 0; i < b.n_splits; i++) {
+    splitbit* bc_i = &b_complement[i * n_bins];
     for (int16 bin = 0; bin < last_bin; ++bin) {
-      b_complement[size_t(i) * a.n_bins + bin] = ~b.state[i][bin];
+      bc_i[bin] = ~b.state[i][bin];
     }
-    b_complement[size_t(i) * a.n_bins + last_bin] = b.state[i][last_bin] ^ unset_mask;
+    bc_i[last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       
       bool all_match = true, all_complement = true;
+      const splitbit* bc_bi = &b_complement[bi * n_bins];
       
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (int16 bin = 0; bin < n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
-          if ((a.state[ai][bin] != b_complement[size_t(bi) * a.n_bins + bin])) {
+        for (int16 bin = 0; bin < n_bins; ++bin) {
+          if ((a.state[ai][bin] != bc_bi[bin])) {
             all_complement = false;
             break;
           }
@@ -177,6 +190,7 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
@@ -236,6 +250,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
@@ -342,6 +357,7 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   splitbit different[SL_MAX_BINS];
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       int16 
         n_different = 0,
@@ -419,6 +435,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
     
     const int16 na = a.in_split[ai];
@@ -575,6 +592,7 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   cost_matrix score(most_splits);
   
   for (int16 ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
     for (int16 bi = b.n_splits; bi--; ) {
       const double spi_over = TreeDist::spi_overlap(
         a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],

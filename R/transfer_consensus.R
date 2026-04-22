@@ -66,7 +66,7 @@ TransferConsensus <- function(trees,
   if (nTip < 4L) {
     return(StarTree(tipLabels))
   }
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
 
   # Convert each tree to a raw split matrix (TreeTools C++ internally).
   # as.Splits() will error if a tree's tips don't match tipLabels.
@@ -115,7 +115,7 @@ tc_profile <- function(trees, scale = TRUE, greedy = "best",
   tipLabels <- TipLabels(trees[[1]])
   nTip <- length(tipLabels)
   if (nTip < 4L) stop("Need at least 4 tips for profiling.")
-  if (nTip > 32767L) stop("This many tips are not (yet) supported.")
+  .CheckMaxTips(nTip)
 
   splitsList <- lapply(trees, function(tr) unclass(as.Splits(tr, tipLabels)))
 
