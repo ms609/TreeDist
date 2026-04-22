@@ -31,10 +31,15 @@ test_that("CalculateTreeDistance() errs appropriately", {
   expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), "Not a tree"))
 })
 
+test_that(".SL_MAX_TIPS is populated", {
+  expect_true(is.integer(TreeDist:::.SL_MAX_TIPS))
+  expect_true(TreeDist:::.SL_MAX_TIPS >= 2048L)
+})
+
 test_that("Tip-count guard is applied consistently", {
   expect_no_error(.CheckMaxTips(1000L))
   
-  limit32704 <- packageVersion("TreeTools") >= "2.2.0.9002"
+  limit32704 <- TreeDist:::.SL_MAX_TIPS == 32704L
   if (limit32704) expect_no_error(.CheckMaxTips(32704L))
   
   errMsg <- if (limit32704) {
@@ -57,6 +62,7 @@ test_that("Tip-count guard is applied consistently", {
     errMsg
   )
 })
+
 
 test_that("CalculateTreeDistance() handles splits appropriately", {
   set.seed(101)
