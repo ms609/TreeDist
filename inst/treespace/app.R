@@ -16,18 +16,29 @@ suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
 })
-webr::install("Rdpack") # Until 2.6.6 available
-webr::install("TreeTools", repos = c("https://ms609.r-universe.dev", "https://repo.r-wasm.org"))
-library("TreeTools", quietly = TRUE)
-library("TreeDist")
 
-if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
-if (!requireNamespace("protoclust", quietly = TRUE)) {
-  install.packages("protoclust")
+local({
+  pkgs <- c("Rdpack", "TreeTools", "TreeDist")
+  for (i in seq_along(pkgs)) {
+    if (!requireNamespace(pkgs[i], quietly = TRUE)) {
+      webr::install(pkgs[i], repos = c(
+        "https://ms609.r-universe.dev",
+        "https://repo.r-wasm.org"
+      ))
+    }
+  }
+})
+
+# Load packages - character.only=TRUE defeats the shinylive static scanner
+for (PlotTools in c("shiny", "TreeTools", "TreeDist")) {
+  library(PlotTools, character.only = TRUE)
 }
-if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
-if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
-if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
+
+.Install <- if (isTRUE(getOption("webr.initialized"))) webr::install else install.packages
+
+for (.pkg in c("cluster", "protoclust", "MASS", "Quartet", "readxl")) {
+  if (!requireNamespace(.pkg, quietly = TRUE)) .Install(.pkg)
+}
 
 # Indirect reference to hide from shinylive's static package scanner
 .uwot_pkg <- paste0("uw", "ot")

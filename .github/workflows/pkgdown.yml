@@ -9,6 +9,7 @@ on:
       - '*.md'
       - 'inst/CITATION'
       - 'inst/*.bib'
+      - 'inst/treespace/app.R'
       - 'man/**.Rd'
       - 'vignettes/**.Rmd'
       
@@ -36,29 +37,14 @@ jobs:
       - name: Export Shinylive app
         shell: Rscript {0}
         run: |
-          # ── Use dev shinylive for R 4.5 WASM support ──
-          # CRAN shinylive 0.3.0 targets webR R 4.4.1.
-          # The dev version (0.3.0.9000) targets R 4.5.1, where:
-          #   - otel is available on repo.r-wasm.org
-          #   - R-universe has a fixed TreeTools (no RCurl dep)
-          # TODO: Switch back to CRAN shinylive once 0.4.0 ships.
-          remotes::install_github("posit-dev/r-shinylive", quiet = TRUE)
-
-          # ── Install TreeTools and TreeDist from R-universe ──
-          # repo.r-wasm.org has TreeTools 2.0.0 (still imports RCurl) for
-          # both R 4.4 and 4.5.  R-universe has 2.2.0.9001 (RCurl moved to
-          # Suggests) compiled for R 4.5.  Setting Repository to the
-          # R-universe URL makes shinylive fetch the WASM binary from there.
-          # Similarly, installing TreeDist from R-universe avoids the version
-          # mismatch warning (local dev != WASM 2.9.2 on repo.r-wasm.org).
-          # TODO: Remove once TreeTools >= 2.2.0 and TreeDist >= 2.13.0
-          #   are on CRAN and r-wasm.org has rebuilt them.
-          install.packages(
-            c("TreeTools", "TreeDist"),
-            repos = c("https://ms609.r-universe.dev",
-                      "https://cloud.r-project.org")
+          # ── Locate app ──
+          pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
+          app_dir   <- system.file("treespace", package = pkg_name)
+          if (!dir.exists(app_dir)) app_dir <- "inst/treespace"
+          stopifnot(
+            "app.R not found" = file.exists(file.path(app_dir, "app.R"))
           )
-
+          
           # ── Work around shinylive bug (coatless/quarto-webr#228) ──
           # shinylive resolves deps from the WASM repo's PACKAGES
           # database, which may reference packages not installed
@@ -94,17 +80,12 @@ jobs:
             }, envir = ns)
           })
 
-          # ── Locate app ──
-          pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
-          app_dir   <- system.file("treespace", package = pkg_name)
-          if (!dir.exists(app_dir)) app_dir <- "inst/treespace"
-          stopifnot(
-            "app.R not found" = file.exists(file.path(app_dir, "app.R"))
-          )
-
           # ── Export ──
           tryCatch(
-            shinylive::export(appdir = app_dir, destdir = "docs/app"),
+            shinylive::export(appdir = app_dir, destdir = "docs/app",
+            wasm_packages = FALSE,
+            repos = c("https://ms609.r-universe.dev",
+                      "https://repo.r-wasm.org")),
             error = function(e) {
               msg <- conditionMessage(e)
               message("\n===== shinylive::export() failed =====")
