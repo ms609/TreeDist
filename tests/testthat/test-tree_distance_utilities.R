@@ -32,15 +32,18 @@ test_that("CalculateTreeDistance() errs appropriately", {
 })
 
 test_that("Tip-count guard is applied consistently", {
-  errMsg <- if (packageVersion("TreeTools") >= "2.2.0.9002") {
+  expect_no_error(.CheckMaxTips(1000L))
+  
+  limit32704 <- packageVersion("TreeTools") >= "2.2.0.9002"
+  if (limit32704) expect_no_error(.CheckMaxTips(32704L))
+  
+  errMsg <- if (limit32704) {
     "Trees with 327.. tips are not yet supported \\(maximum 32704\\)"
   } else {
     "Trees with 327.. tips exceed the compiled limit of 2048"
   }
-
-  expect_no_error(.CheckMaxTips(1000L))
-  expect_no_error(.CheckMaxTips(32704L))
   expect_error(.CheckMaxTips(32705L), errMsg)
+  
   splits8 <- unclass(as.Splits(BalancedTree(8)))
   expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L),
                errMsg)
