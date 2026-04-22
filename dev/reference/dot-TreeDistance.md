@@ -17,7 +17,7 @@ Calculate distance between trees, or lists of trees
 
 ## See also
 
-[`CalculateTreeDistance`](https://ms609.github.io/TreeDist/dev/reference/CalculateTreeDistance.md)
+[`CalculateTreeDistance()`](https://ms609.github.io/TreeDist/dev/reference/CalculateTreeDistance.md)
 
 ## Author
 

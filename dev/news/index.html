@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.13.0.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.13.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,15 +59,19 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.13.0.9002" id="treedist-21309002">TreeDist 2.13.0.9002<a class="anchor" aria-label="anchor" href="#treedist-21309002"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.13.0.9003" id="treedist-21309003">TreeDist 2.13.0.9003<a class="anchor" aria-label="anchor" href="#treedist-21309003"></a></h2>
 <div class="section level3">
-<h3 id="new-features-2-13-0-9002">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0-9002"></a></h3>
+<h3 id="new-features-2-13-0-9003">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0-9003"></a></h3>
 <ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic. Unlike majority-rule consensus, which can be highly unresolved when phylogenetic signal is diffuse, the transfer consensus uses the finer-grained transfer distance to produce more resolved trees.</p></li>
 <li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants. Supports all-pairs, cross-pairs, and single-pair computations.</p></li>
 <li><p>LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering Information) C++ implementations are now exposed via <code>inst/include/TreeDist/</code> headers, allowing downstream packages to use <code>LinkingTo: TreeDist</code>.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-2-13-0-9002">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0-9002"></a></h3>
+<h3 id="internals-2-13-0-9003">Internals<a class="anchor" aria-label="anchor" href="#internals-2-13-0-9003"></a></h3>
+<ul><li>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-2-13-0-9003">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0-9003"></a></h3>
 <ul><li>
 <code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance. Previously, cross-distance calls fell through to per-pair R dispatch (~27× slower per pair); the new path achieves ~21× speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).</li>
 </ul></div>

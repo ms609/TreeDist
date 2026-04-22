@@ -1,6 +1,6 @@
 # Changelog
 
-## TreeDist 2.13.0.9002
+## TreeDist 2.13.0.9003
 
 ### New features
 
@@ -21,6 +21,13 @@
   Information) C++ implementations are now exposed via
   `inst/include/TreeDist/` headers, allowing downstream packages to use
   `LinkingTo: TreeDist`.
+
+### Internals
+
+- Stack-allocated split buffers replaced with dynamically-sized vectors,
+  removing a hard dependency on the compile-time `SL_MAX_SPLITS`
+  constant. TreeDist now supports trees of any size permitted by
+  TreeTools.
 
 ### Performance
 
