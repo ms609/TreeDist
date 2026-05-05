@@ -116,7 +116,7 @@ a command-line interface.
   interchange distance.” In Goos G, Hartmanis J, Leeuwen J, Cai J, Wong
   CK (eds.), *Computing and Combinatorics*, volume 1090, 343–351.
   Springer, Berlin, Heidelberg. ISBN 978-3-540-61332-9
-  978-3-540-68461-9,
+  978-3-540-68461-9.
   [doi:10.1007/3-540-61332-3_168](https://doi.org/10.1007/3-540-61332-3_168)
   .
 

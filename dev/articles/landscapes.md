@@ -19,6 +19,7 @@ A landscape is most simply visualized by colouring each tree according
 to its score:
 
 ``` r
+
 # Load required libraries
 library("TreeTools", quietly = TRUE)
 library("TreeDist")
@@ -73,6 +74,7 @@ or (in continuous tree spaces) the use of geodesics (Khodaei et al.,
 2022) can produce even better results.
 
 ``` r
+
 # Use an inverse distance weighting to interpolate between measured points
 Predict <- function (x, y) {
   Distance <- function (a, b) {
@@ -109,6 +111,7 @@ filled.contour(
 A variety of R add-on packages facilitate three-dimensional plots.
 
 ``` r
+
 if (requireNamespace("plotly", quietly = TRUE)) {
   library("plotly", quietly = TRUE)
   fig <- plot_ly(x = x, y = y, z = z)
@@ -128,7 +131,7 @@ Landscapes on spaces of trees. *Applied Mathematics and Computation*,
 *131*(2-3), 439–459. <https://doi.org/10.1016/S0096-3003(01)00164-3>
 
 Khodaei, M., Owen, M., & Beerli, P. (2022). Geodesics to characterize
-the phylogenetic landscape. *bioR$\chi$iv*.
+the phylogenetic landscape. *bioR$`\chi`$iv*.
 <https://doi.org/10.1101/2022.05.11.491507>
 
 Maddison, D. R. (1991). The discovery and importance of multiple islands

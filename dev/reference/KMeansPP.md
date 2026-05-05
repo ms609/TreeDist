@@ -43,7 +43,7 @@ Discrete Algorithms*, SODA '07, 1027–1035.
 Bahmani B, Moseley B, Vattani A, Kumar R, Vassilvitskii S (2012).
 “Scalable K-Means++.” *arXiv*.
 [doi:10.48550/arXiv.1203.6402](https://doi.org/10.48550/arXiv.1203.6402)
-, 1203.6402.  
+. 1203.6402.  
   
 Hartigan JA, Wong MA (1979). “Algorithm AS 136: a *K*-means clustering
 algorithm.” *Journal of the Royal Statistical Society. Series C (Applied

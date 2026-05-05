@@ -86,22 +86,22 @@
 <div class="section level3">
 <h3 id="performance-2-13-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0"></a></h3>
 <p>Pairwise distance computation has been substantially optimized. Typical speedups over v2.12.0 for tree sets where most splits are shared (MCMC posteriors, bootstrap replicates):</p>
-<table class="table"><thead><tr class="header"><th>Metric</th>
+<table class="table"><thead><tr><th>Metric</th>
 <th align="right">100 × 50 tips</th>
 <th align="right">40 × 200 tips</th>
-</tr></thead><tbody><tr class="odd"><td><code>ClusteringInfoDistance</code></td>
+</tr></thead><tbody><tr><td><code>ClusteringInfoDistance</code></td>
 <td align="right">~5×</td>
 <td align="right">~12×</td>
-</tr><tr class="even"><td><code>MatchingSplitDistance</code></td>
+</tr><tr><td><code>MatchingSplitDistance</code></td>
 <td align="right">~7×</td>
 <td align="right">~11×</td>
-</tr><tr class="odd"><td><code>InfoRobinsonFoulds</code></td>
+</tr><tr><td><code>InfoRobinsonFoulds</code></td>
 <td align="right">~4×</td>
 <td align="right">~5×</td>
-</tr><tr class="even"><td><code>DifferentPhylogeneticInfo</code></td>
+</tr><tr><td><code>DifferentPhylogeneticInfo</code></td>
 <td align="right">~1.3×</td>
 <td align="right">~1.1×</td>
-</tr><tr class="odd"><td><code>MatchingSplitInfoDistance</code></td>
+</tr><tr><td><code>MatchingSplitInfoDistance</code></td>
 <td align="right">~1.4×</td>
 <td align="right">~1×</td>
 </tr></tbody></table><div class="section level4">

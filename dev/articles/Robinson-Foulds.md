@@ -22,10 +22,10 @@ The simplicity of counting splits is appealing, but limited by the
 underlying assumption that all splits are equivalent.
 
 As an example, a split that separates eight leaves into two sets of four
-(as in the right-hand tree above) has a $\frac{1}{35}$ chance of being
+(as in the right-hand tree above) has a $`\frac{1}{35}`$ chance of being
 compatible with the reference tree. In contrast, a split that separates
-two leaves from the other six has a $\frac{1}{7}$ chance of matching the
-reference tree: the similarity observed is five times more likely to
+two leaves from the other six has a $`\frac{1}{7}`$ chance of matching
+the reference tree: the similarity observed is five times more likely to
 have arisen by chance. In other words, failure to match an even split is
 less noteworthy than failure to match an uneven one.
 
@@ -41,14 +41,14 @@ content](https://ms609.github.io/TreeDist/dev/articles/information.md)
 of a split is a function of the probability that the split will match a
 uniformly chosen random tree, i.e. the proportion of eight-leaf binary
 trees that contain the split in question. (Information content, in bits,
-is defined as $- \log_{2}\left( \text{probability} \right)$.) This, in
-turn, is a function of the evenness of the split:
+is defined as $`-\log_2(\textrm{probability})`$.) This, in turn, is a
+function of the evenness of the split:
 
-|                 | Matching trees | *P*(Match in random tree) | Phylogenetic information content |
-|:----------------|:---------------|:--------------------------|:---------------------------------|
-| Split size: 2:6 | 945 / 10 395   | 0.0909                    | 3.46 bits                        |
-| Split size: 3:5 | 315 / 10 395   | 0.0303                    | 5.04 bits                        |
-| Split size: 4:4 | 225 / 10 395   | 0.0216                    | 5.53 bits                        |
+|  | Matching trees | *P*(Match in random tree) | Phylogenetic information content |
+|:---|:---|:---|:---|
+| Split size: 2:6 | 945 / 10 395 | 0.0909 | 3.46 bits |
+| Split size: 3:5 | 315 / 10 395 | 0.0303 | 5.04 bits |
+| Split size: 4:4 | 225 / 10 395 | 0.0216 | 5.53 bits |
 
 In the first tree, split 1 is even, dividing four taxa from four others
 (`4|4`); splits 2–5 are maximally uneven (`2|6`). If each split is
@@ -75,6 +75,7 @@ split (`ABCDEF|GH`), so obtain a total difference of 22.54 − (3.46 +
 5.04 + 5.53 + 5.04) = 3.46 bits:
 
 ``` r
+
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
 tree2 <- ape::read.tree(text='(1, (2, (3, (4, (5, (7, (6, 8)))))));')
 tree3 <- ape::read.tree(text='(1, (2, (3, (5, (4, (6, (7, 8)))))));')
@@ -90,6 +91,7 @@ thus more information-rich, split (`ABCD|EFGH`), and so receive a
 distance score of 5.53 bits:
 
 ``` r
+
 VisualizeMatching(InfoRobinsonFoulds, tree1, tree3, 
                   Plot = TreeDistPlot, prune = 8)
 ```
@@ -103,6 +105,7 @@ the Robinson–Foulds distance is readily saturated: the maximum value can
 be obtained by moving a single leaf.
 
 ``` r
+
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
 tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
 
@@ -129,6 +132,7 @@ Let’s consider two trees that differ in the position of one wildcard
 leaf, and in the resolution of a clade:
 
 ``` r
+
 tree1 <- ape::read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- ape::read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 
@@ -142,6 +146,7 @@ distances, as the maximum possible for trees of this resolution is
 eleven. `AB|CDEFGHI` is the only split in common between the two trees:
 
 ``` r
+
 TwoTreePlot()
 VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
 ```
@@ -153,6 +158,7 @@ trees have in common; removing the single leaf ‘I’ results in two trees
 that differ only in the resolution of a single node:
 
 ``` r
+
 TwoTreePlot()
 VisualizeMatching(RobinsonFouldsMatching,
                   drop.tip(tree1, 'I'),
@@ -174,6 +180,7 @@ the discussion of [Generalized Robinson–Foulds
 distances](https://ms609.github.io/TreeDist/dev/articles/Generalized-RF.md).)
 
 ``` r
+
 TwoTreePlot()
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2)
 ```
@@ -206,6 +213,7 @@ We can view the splits in each tree, named according to the number of
 their associated node:
 
 ``` r
+
 summary(TreeTools::as.Splits(tree1, LETTERS[1:9]))
 ```
 
@@ -222,6 +230,7 @@ summary(TreeTools::as.Splits(tree1, LETTERS[1:9]))
     ##  Tip 6: F     Tip 7: G    Tip 8: H    Tip 9: I   
 
 ``` r
+
 summary(TreeTools::as.Splits(tree2, LETTERS[1:9]))
 ```
 
@@ -240,6 +249,7 @@ We can then see the similarity scores for each pair of splits, along
 with the optimal matching:
 
 ``` r
+
 attributes(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
 ```
 

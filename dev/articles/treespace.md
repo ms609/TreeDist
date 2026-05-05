@@ -14,6 +14,7 @@ included in the “TreeDist” R package. Simply install
 copy the code below into the R command line:
 
 ``` r
+
 install.packages("TreeDist")
 TreeDist::MapTrees()
 ```
@@ -38,6 +39,7 @@ First we’ll generate the trees, and load some colours with which we
 might identify them.
 
 ``` r
+
 library("TreeTools", quietly = TRUE)
 treeNumbers <- c(1:220)
 trees <- as.phylo(treeNumbers, 8)
@@ -54,6 +56,7 @@ for tree space analysis. The clustering information distance (M. R.
 Smith, 2020) is a reliable alternative that is fast to calculate:
 
 ``` r
+
 library("TreeDist")
 distances <- ClusteringInfoDistance(trees)
 ```
@@ -61,6 +64,7 @@ distances <- ClusteringInfoDistance(trees)
 The reader is encouraged to repeat the exercise with other distances:
 
 ``` r
+
 distances <- RobinsonFoulds(trees)
 distances <- PhylogeneticInfoDistance(trees)
 distances <- as.dist(Quartet::QuartetDivergence(
@@ -76,6 +80,7 @@ higher dimensions.
 Principal coordinates analysis is quick and performs very well:
 
 ``` r
+
 mapping <- cmdscale(distances, k = 12)
 ```
 
@@ -84,6 +89,7 @@ mappings. `isoMDS()` performs non-metric multidimensional scaling (MDS)
 with the Kruskal-1 stress function (Kruskal, 1964):
 
 ``` r
+
 kruskal <- MASS::isoMDS(distances, k = 12)
 mapping <- kruskal$points
 ```
@@ -98,6 +104,7 @@ That’s a good start. It is tempting to plot the first two dimensions
 arising from this mapping and be done:
 
 ``` r
+
 par(mar = rep(0, 4))
 plot(mapping,
      asp = 1, # Preserve aspect ratio - do not distort distances
@@ -120,6 +127,7 @@ Smith, 2022); if suitably initialized, k-means++ clustering (Arthur &
 Vassilvitskii, 2007) can also be worthwhile.
 
 ``` r
+
 possibleClusters <- 2:10
 
 # Partitioning around medoids
@@ -171,6 +179,7 @@ visually apparent clustering is not as strong as it first appears. Let’s
 explore our two-cluster hierarchical clustering solution anyway.
 
 ``` r
+
 nClusters <- 2
 whichResult <- match(nClusters, possibleClusters)
 cluster <- hClusters[[whichResult]]
@@ -179,6 +188,7 @@ cluster <- hClusters[[whichResult]]
 We can visualize the clustering solution as a tree:
 
 ``` r
+
 class(hTree) <- "hclust"
 par(mar = c(0, 0, 0, 0))
 plot(hTree, labels = FALSE, main = "")
@@ -192,6 +202,7 @@ Another thing we may wish to do is to take the consensus of each
 cluster:
 
 ``` r
+
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
 col1 <- spectrum[mean(treeNumbers[cluster == 1])]
 col2 <- spectrum[mean(treeNumbers[cluster == 2])]
@@ -214,6 +225,7 @@ from all trees on another by at least a certain distance (Silva &
 Wilkinson, 2021).
 
 ``` r
+
 par(mar = rep(0, 4))
 # set a threshold corresponding to the width of the "moat" between islands
 threshold <- 1.8
@@ -230,6 +242,7 @@ table(island)
     ##  3  3  1  1  1  1  2  3  1  1
 
 ``` r
+
 # Let's ignore the small islands for now
 largeIsle <- Islands(distances, threshold, smallest = 5)
 
@@ -247,6 +260,7 @@ plot(mapping,
 Let’s view the consensus of each large island cluster:
 
 ``` r
+
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
 plot(consensus(trees[!is.na(largeIsle) & largeIsle == 1], p = 0.5),
      edge.color = 2, edge.width = 2, tip.color = 2)
@@ -265,6 +279,7 @@ trustworthiness × continuity score of \> 0.9 for a usable mapping, or \>
 0.95 for a good one.
 
 ``` r
+
 txc <- vapply(seq_len(ncol(mapping)), function(k) {
   newDist <- dist(mapping[, seq_len(k)])
   MappingQuality(distances, newDist, 10)["TxC"]
@@ -282,6 +297,7 @@ To help establish visually what structures are more likely to be
 genuine, we might also choose to calculate a minimum spanning tree:
 
 ``` r
+
 mstEnds <- MSTEdges(distances)
 ```
 
@@ -289,6 +305,7 @@ Let’s plot the first five dimensions of our tree space, highlighting the
 convex hulls of our clusters:
 
 ``` r
+
 nDim <- which.max(txc > 0.9)
 plotSeq <- matrix(0, nDim, nDim)
 plotSeq[upper.tri(plotSeq)] <- seq_len(nDim * (nDim - 1) / 2)
@@ -358,6 +375,7 @@ package, though the same considerations apply (Blonder et al., 2018).
 Interpretation of overlap statistics is detailed in Mammola (2019).
 
 ``` r
+
 hypervolumeInstalled <- requireNamespace("hypervolume", quietly = TRUE)
 if (hypervolumeInstalled) {
   library("hypervolume")
@@ -389,6 +407,7 @@ The divergence of outlying points can be measures using the sum of
 ranges:
 
 ``` r
+
 SumOfRanges(pid_mapping, pid_cluster)
 ```
 
@@ -398,18 +417,21 @@ The overall size of a cluster can be measured using the sum of
 variances, or the mean distance from the centroid or median:
 
 ``` r
+
 SumOfVariances(pid_mapping, pid_cluster)
 ```
 
     ## [1] 173.0981 176.8212
 
 ``` r
+
 MeanCentroidDistance(pid_mapping, pid_cluster)
 ```
 
     ## [1] 12.58064 12.80727
 
 ``` r
+
 DistanceFromMedian(pid_mapping, pid_cluster)
 ```
 
@@ -420,12 +442,14 @@ nearest-neighbour distance or the mean minimum spanning tree edge
 length:
 
 ``` r
+
 MeanNN(pid_mapping, pid_cluster)
 ```
 
     ## [1] 4.676416 5.274230
 
 ``` r
+
 MeanMSTEdge(pid_mapping, pid_cluster)
 ```
 
@@ -440,6 +464,7 @@ dimension to indicate distance between data points: nearby points occur
 in valleys, and are separated by ridges from more distant data points.
 
 ``` r
+
 umatrixInstalled <- requireNamespace("Umatrix", quietly = TRUE)
 if (umatrixInstalled) {
   map <- Umatrix::esomTrain(as.matrix(distances), Key = seq_along(trees),

@@ -13,6 +13,7 @@ vignette](https://ms609.github.io/TreeTools/articles/load-trees.html).
 For these examples, we’ll enter two simple trees by hand:
 
 ``` r
+
 tree1 <- ape::read.tree(text = '(A, ((B, (C, (D, E))), ((F, G), (H, I))));')
 tree2 <- ape::read.tree(text = '(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
 ```
@@ -26,6 +27,7 @@ First we’ll install the package. We can either install the stable
 version from the CRAN repository:
 
 ``` r
+
 install.packages('TreeDist')
 ```
 
@@ -33,12 +35,14 @@ or the development version, from GitHub – which will contain the latest
 features but may not be as extensively tested:
 
 ``` r
+
 devtools::install_github('ms609/TreeDist')
 ```
 
 Then we’ll load the package in to R’s working environment:
 
 ``` r
+
 library('TreeDist')
 ```
 
@@ -50,6 +54,7 @@ calculate some tree distances.
 Calculating the distance between two trees is as simple as:
 
 ``` r
+
 distance <- TreeDistance(tree1, tree2)
 ```
 
@@ -67,6 +72,7 @@ function will then calculate the distance between each tree in the first
 list and each tree in the second.
 
 ``` r
+
 oneTree <- ape::rtree(11)
 twoTrees <- structure(list(one = ape::rtree(11), two = ape::rtree(11)),
                       class = 'multiPhylo')
@@ -79,6 +85,7 @@ TreeDistance(oneTree, twoTrees)
     ## 0.7826864 0.6856279
 
 ``` r
+
 TreeDistance(twoTrees, threeTrees)
 ```
 
@@ -95,6 +102,7 @@ split within a tree with another split in the other tree.
 We can view an optimal matching:
 
 ``` r
+
 VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
 ```
 
@@ -111,6 +119,7 @@ We can view this information in a format accessible for further
 examination in R with:
 
 ``` r
+
 ClusteringInfoDistance(tree1, tree2, reportMatching = TRUE)
 ```
 
@@ -141,6 +150,7 @@ matching of splits.
 We can identify the splits with:
 
 ``` r
+
 splits <- as.character(TreeTools::as.Splits(tree2))
 splits
 ```
@@ -154,6 +164,7 @@ The names of the splits correspond to the number of an associated node
 in the original tree:
 
 ``` r
+
 oldPar <- par(mar = rep(0, 4))
 plot(tree2)
 ape::nodelabels()

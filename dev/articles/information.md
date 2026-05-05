@@ -34,55 +34,52 @@ coin toss, I must record either a `H` or a `T`, and with each of the two
 symbols equally likely, there is no way to compress the results of
 multiple tosses.
 
-The Shannon (1948) information content of an outcome $x$ is defined to
-be $h(x) = - \log_{2}{P(x)}$, which simplifies to $\log_{2}n$ when all
-$n$ outcomes are equally likely. Thus, the outcome of a fair coin toss
-delivers $\log_{2}2 = 1{\mspace{6mu}\text{bit}}$ of information; the
-outcome of rolling a fair six-sided die contains
-$\log_{2}6 \approx 2.58{\mspace{6mu}\text{bits}}$ of information; and
-the outcome of selecting at random one of the 105 unrooted binary
-six-leaf trees is $\log_{2}105 \approx 6.71{\mspace{6mu}\text{bits}}$.
+The Shannon (1948) information content of an outcome $`x`$ is defined to
+be $`h(x) = -\log_2{P(x)}`$, which simplifies to $`\log_2{n}`$ when all
+$`n`$ outcomes are equally likely. Thus, the outcome of a fair coin toss
+delivers $`\log_2{2} = 1\textrm{ bit}`$ of information; the outcome of
+rolling a fair six-sided die contains
+$`\log_2{6} \approx 2.58\textrm{ bits}`$ of information; and the outcome
+of selecting at random one of the 105 unrooted binary six-leaf trees is
+$`\log_2{105} \approx 6.71\textrm{ bits}`$.
 
 Unlikely outcomes are more surprising, and thus contain more information
 than likely outcomes. The information content of rolling a twelve on two
 fair six-sided dice is
-$- \log_{2}\frac{1}{36} \approx 5.16{\mspace{6mu}\text{bits}}$, whereas
-a seven, which could be produced by six of the 36 possible rolls
-(`1 & 6`, `2 & 5`, …), is less surprising, and thus contains less
-information:
-$- \log_{2}\frac{6}{36} \approx 2.58{\mspace{6mu}\text{bits}}$. An
-additional 2.58 bits of information would be required to establish which
-of the six possible rolls produced the seven.
+$`-\log_2{\frac{1}{36}} \approx 5.16\textrm{ bits}`$, whereas a seven,
+which could be produced by six of the 36 possible rolls (`1 & 6`,
+`2 & 5`, …), is less surprising, and thus contains less information:
+$`-\log_2{\frac{6}{36}} \approx 2.58\textrm{ bits}`$. An additional 2.58
+bits of information would be required to establish which of the six
+possible rolls produced the seven.
 
 ### Application to splits
 
-The split $S_{1} =$`AB|CDEF` is found in 15 of the 105 six-leaf trees;
-as such, the probability that a randomly drawn tree contains $S_{1}$ is
-$P\left( S_{1} \right) = \frac{15}{105}$, and the information content
-$h\left( S_{1} \right) = - \log_{2}\frac{15}{105} \approx 2.81{\mspace{6mu}\text{bits}}$.
-Steel & Penny (2006) dub this quantity the **phylogenetic information
-content**.
+The split $`S_1 =`$`AB|CDEF` is found in 15 of the 105 six-leaf trees;
+as such, the probability that a randomly drawn tree contains $`S_1`$ is
+$`P(S_1) = \frac{15}{105}`$, and the information content $`h(S_1) =
+-\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}`$. Steel & Penny
+(2006) dub this quantity the **phylogenetic information content**.
 
-Likewise, the split $S_{2} =$`ABC|DEF` occurs in nine of the 105
+Likewise, the split $`S_2 =`$`ABC|DEF` occurs in nine of the 105
 six-leaf trees, so
-$h\left( S_{2} \right) = - \log_{2}\frac{9}{105} \approx 3.54{\mspace{6mu}\text{bits}}$.
-Three six-leaf trees contain both splits, so in combination the splits
-deliver
-$h\left( S_{1},S_{2} \right) = - \log_{2}\frac{3}{105} \approx 5.13{\mspace{6mu}\text{bits}}$
-of information.
+$`h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}`$. Three
+six-leaf trees contain both splits, so in combination the splits deliver
+$`h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}`$ of
+information.
 
-Because
-$h\left( S_{1},S_{2} \right) < h\left( S_{1} \right) + h\left( S_{2} \right)$,
-some of the information in $S_{1}$ is also present in $S_{2}$. The
-information in common between $S_{1}$ and $S_{2}$ is
-$h_{shared}\left( S_{1},S_{2} \right) = h\left( S_{1} \right) + h\left( S_{2} \right) - h\left( S_{1},S_{2} \right) \approx 1.22{\mspace{6mu}\text{bits}}$.
-The information unique to $S_{1}$ and $S_{2}$ is
-$h_{different}\left( S_{1},S_{2} \right) = 2h\left( S_{1},S_{2} \right) - h\left( S_{1} \right) - h\left( S_{2} \right) \approx 3.91{\mspace{6mu}\text{bits}}$.
+Because $`h(S_1,S_2) < h(S_1) + h(S_2)`$, some of the information in
+$`S_1`$ is also present in $`S_2`$. The information in common between
+$`S_1`$ and $`S_2`$ is $`h_{shared}(S_1, S_2) =
+h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}`$. The
+information unique to $`S_1`$ and $`S_2`$ is $`h_{different}(S_1,S_2) =
+2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}`$.
 
 These quantities can be calculated using functions in the
 ‘[TreeTools](https://ms609.github.io/TreeTools/)’ package.
 
 ``` r
+
 library("TreeTools", quietly = TRUE)
 library("TreeDist")
 treesMatchingSplit <- c(
@@ -96,6 +93,7 @@ treesMatchingSplit
     ##      15       9
 
 ``` r
+
 proportionMatchingSplit <- treesMatchingSplit / NUnrooted(6)
 proportionMatchingSplit
 ```
@@ -104,6 +102,7 @@ proportionMatchingSplit
     ## 0.14285714 0.08571429
 
 ``` r
+
 splitInformation <- -log2(proportionMatchingSplit)
 splitInformation
 ```
@@ -112,6 +111,7 @@ splitInformation
     ## 2.807355 3.544321
 
 ``` r
+
 treesMatchingBoth <- TreesConsistentWithTwoSplits(6, 2, 3)
 combinedInformation <- -log2(treesMatchingBoth / NUnrooted(6))
 
@@ -122,6 +122,7 @@ sharedInformation
     ## [1] 1.222392
 
 ``` r
+
 # Or more concisely:
 SplitSharedInformation(n = 6, 2, 3)
 ```
@@ -131,65 +132,68 @@ SplitSharedInformation(n = 6, 2, 3)
 ## Entropy
 
 Entropy is the average information content of each outcome, weighted by
-its probability: $\sum{- p\log_{2}(p)}$. Where all $n$ outcomes are
-equiprobable, this simplifies to $\log_{2}n$.
+its probability: $`\sum{-p \log_2(p)}`$. Where all $`n`$ outcomes are
+equiprobable, this simplifies to $`\log_2{n}`$.
 
 Consider a case in which Jane rolls a dice, and makes two true
-statements about the outcome $x$:
+statements about the outcome $`x`$:
 
-$S_{1}$: “Is the roll even?”.
-
-- Two equally-possible outcomes: yes or no
-- Entropy:
-  $H\left( S_{1} \right) = \log_{2}2 = 1{\mspace{6mu}\text{bit}}$.
-
-$S_{2}$: “Is the roll greater than 3?”
+$`S_1`$: “Is the roll even?”.
 
 - Two equally-possible outcomes: yes or no
-- Entropy:
-  $H\left( S_{2} \right) = \log_{2}2 = 1{\mspace{6mu}\text{bit}}$.
+- Entropy: $`H(S_1) = \log_2{2} = 1\textrm{ bit}`$.
 
-The joint entropy of $S_{1}$ and $S_{2}$ is the entropy of the
+$`S_2`$: “Is the roll greater than 3?”
+
+- Two equally-possible outcomes: yes or no
+- Entropy: $`H(S_2) = \log_2{2} = 1\textrm{ bit}`$.
+
+The joint entropy of $`S_1`$ and $`S_2`$ is the entropy of the
 association matrix that considers each possible outcome:
 
-|                  | $S_{1}:x$ odd                 | $S_{1}:x$ even                |
-|------------------|-------------------------------|-------------------------------|
-| $S_{2}:x \leq 3$ | $x \in {1,3};p = \frac{2}{6}$ | $x = 2;p = \frac{1}{6}$       |
-| $S_{2}:x > 3$    | $x = 5;p = \frac{1}{6}$       | $x \in {4,6};p = \frac{2}{6}$ |
+|   | $`S_1: x`$ odd | $`S_1: x`$ even |
+|----|----|----|
+| $`S_2: x \le 3`$ | $`x \in {1, 3}; p = \frac{2}{6}`$ | $`x = 2; p = \frac{1}{6}`$ |
+| $`S_2: x > 3`$ | $`x = 5; p = \frac{1}{6}`$ | $`x \in {4, 6}; p = \frac{2}{6}`$ |
 
-$\begin{array}{r}
-{H\left( S_{1},S_{2} \right) = \frac{2}{3}\log_{2}\frac{2}{3} + \frac{1}{3}\log_{2}\frac{1}{3} + \frac{1}{3}\log_{2}\frac{1}{3} + \frac{2}{3}\log_{2}\frac{2}{3} \approx 1.84{\mspace{6mu}\text{bits}}}
-\end{array}$
+$`\begin{aligned}
+H(S_1, S_2) = \frac{2}{3}\log_2{\frac{2}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{2}{3}\log_2{\frac{2}{3}} \approx
+1.84 \textrm{ bits}
+\end{aligned}`$
 
-Note that this less than the
-$\log_{2}6 \approx 2.58{\mspace{6mu}\text{bits}}$ we require to
-determine the exact value of the roll: knowledge of $S_{1}$ and $S_{2}$
-is not guaranteed to be sufficient to unambiguously identify $x$.
+Note that this less than the $`\log_2{6} \approx 2.58\textrm{ bits}`$ we
+require to determine the exact value of the roll: knowledge of $`S_1`$
+and $`S_2`$ is not guaranteed to be sufficient to unambiguously identify
+$`x`$.
 
-The mutual information between $S_{1}$ and $S_{2}$ describes how much
-knowledge of $S_{1}$ reduces our uncertainty in $S_{2}$ (or *vice
-versa*). So if we learn that $S_{1}$ is ‘even’, we become a little more
-confident that $S_{2}$ is ‘greater than three’.
+The mutual information between $`S_1`$ and $`S_2`$ describes how much
+knowledge of $`S_1`$ reduces our uncertainty in $`S_2`$ (or *vice
+versa*). So if we learn that $`S_1`$ is ‘even’, we become a little more
+confident that $`S_2`$ is ‘greater than three’.
 
-The mutual information $I\left( S_{1};S_{2} \right)$, denoted in blue
-below, corresponds to the sum of the individual entropies, minus the
-joint entropy:
+The mutual information $`I(S_1;S_2)`$, denoted in blue below,
+corresponds to the sum of the individual entropies, minus the joint
+entropy:
 
-$$\begin{array}{r}
-{I\left( S_{1};S_{2} \right) = H\left( S_{1} \right) + H\left( S_{2} \right) - H\left( S_{1},S_{2} \right)}
-\end{array}$$
+``` math
+\begin{aligned}
+I(S_1;S_2) = H(S_1) + H(S_2) - H(S_1, S_2)
+\end{aligned}
+```
 
 If two statements have high mutual information, then once you have heard
 one statement, you already have a good idea what the outcome of the
 other statement will be, and thus learn little new on hearing it.
 
 The entropy distance, also termed the variation of information (Meila,
-2007), corresponds to the information that $S_{1}$ and $S_{2}$ do *not*
+2007), corresponds to the information that $`S_1`$ and $`S_2`$ do *not*
 have in common (denoted below in yellow):
 
-$$\begin{array}{r}
-{H_{D}\left( S_{1},S_{2} \right) = H\left( S_{1},S_{2} \right) - I\left( S_{1};S_{2} \right) = 2H\left( S_{1},S_{2} \right) - H\left( S_{1} \right) - H\left( S_{2} \right)}
-\end{array}$$
+``` math
+\begin{aligned}
+H_D(S_1, S_2) = H(S_1, S_2) - I(S_1;S_2) = 2H(S_1, S_2) - H(S_1) - H(S_2)
+\end{aligned}
+```
 
 The higher the entropy distance, the harder it is to predict the outcome
 of one statement from the other; the maximum entropy distance occurs
@@ -204,13 +208,13 @@ these partitions ‘A’ and ‘B’, and select a leaf at random, we can view
 the partition label associated with the leaf. If 60/100 leaves belong to
 partition ‘A’, and 40/100 to ‘B’, then the a leaf drawn at random has a
 40% chance of bearing the label ‘A’; the split has an entropy of
-$- \frac{60}{100}\log_{2}\frac{60}{100} - \frac{40}{100}\log_{2}\frac{40}{100} \approx 0.97{\mspace{6mu}\text{bits}}$.
+$`-\frac{60}{100}\log_2{\frac{60}{100}}-\frac{40}{100}\log_2{\frac{40}{100}} \approx 0.97\textrm{ bits}`$.
 
 Now consider a different split, perhaps in a different tree, that
 assigns 50 leaves from ‘A’ to a partition ‘C’, leaving the remaining 10
 leaves from ‘A’, along with the 40 from ‘B’, in partition ‘D’. This
 split has
-$- \frac{50}{100}\log_{2}\frac{50}{100} - \frac{50}{100}\log_{2}\frac{50}{100} = 1{\mspace{6mu}\text{bit}}$
+$`-\frac{50}{100}\log_2{\frac{50}{100}}-\frac{50}{100}\log_2{\frac{50}{100}} = 1\textrm{ bit}`$
 of entropy.  
 Put these together, and a randomly selected leaf may now bear one of
 three possible labellings:
@@ -220,7 +224,9 @@ three possible labellings:
 - ‘B’ and ‘D’: 40 leaves.
 
 The two splits thus have a joint entropy of
-$- \frac{50}{100}\log_{2}\frac{50}{100} - \frac{10}{100}\log_{2}\frac{10}{100} - \frac{40}{100}\log_{2}\frac{40}{100} \approx 1.36{\mspace{6mu}\text{bits}} < 0.97 + 1$.
+$`-\frac{50}{100}\log_2{\frac{50}{100}}
+-\frac{10}{100}\log_2{\frac{10}{100}}
+-\frac{40}{100}\log_2{\frac{40}{100}} \approx 1.36\textrm{ bits} < 0.97 + 1`$.
 
 The joint entropy is less than the sum of the individual entropies
 because the two splits contain some mutual information: for instance, if
@@ -230,29 +236,35 @@ their division of leaves, the more mutual information they will exhibit.
 I term this the **clustering information**, in contradistinction to the
 concept of phylogenetic information discussed above.
 
-More formally, let split $S$ divides $n$ leaves into two partitions $A$
-and $B$. The probability that a randomly chosen leaf $x$ is in partition
-$k$ is $P(x \in k) = \frac{|k|}{n}$. $S$ thus corresponds to a random
-variable with entropy
-$H(S) = - \frac{|A|}{n}\log_{2}\frac{|A|}{n} - \frac{|B|}{n}\log_{2}\frac{|B|}{n}$(Meila,
-2007). The joint entropy of two splits, $S_{1}$ and $S_{2}$, corresponds
-to the entropy of the association matrix of probabilities that a
-randomly selected leaf belongs to each pair of partitions:
+More formally, let split $`S`$ divides $`n`$ leaves into two partitions
+$`A`$ and $`B`$. The probability that a randomly chosen leaf $`x`$ is in
+partition $`k`$ is $`P(x \in k) = \frac{|k|}{n}`$. $`S`$ thus
+corresponds to a random variable with entropy
+$`H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} -
+\frac{|B|}{n}\log_2{\frac{|B|}{n}}`$(Meila, 2007). The joint entropy of
+two splits, $`S_1`$ and $`S_2`$, corresponds to the entropy of the
+association matrix of probabilities that a randomly selected leaf
+belongs to each pair of partitions:
 
-|                     | $S_{1}:x \in A_{1}$                                                       | $S_{1}:x \in B_{1}$                                                       |
-|---------------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| $S_{2}:x \in A_{2}$ | $P\left( A_{1},A_{2} \right) = \frac{\left| A_{1} \cap A_{2} \right|}{n}$ | $P\left( B_{1},A_{2} \right) = \frac{\left| B_{1} \cap A_{2} \right|}{n}$ |
-| $S_{2}:x \in B_{2}$ | $P\left( A_{1},B_{2} \right) = \frac{\left| A_{1} \cap B_{2} \right|}{n}$ | $P\left( B_{1},B_{2} \right) = \frac{\left| B_{1} \cap B_{2} \right|}{n}$ |
+|   | $`S_1: x \in A_1`$ | $`S_1: x \in B_1`$ |
+|----|----|----|
+| $`S_2: x \in A_2`$ | $`P(A_1,A_2) =
+\frac{|A_1 \cap A_2|}{n}`$ | $`P(B_1,A_2) = \frac{|B_1 \cap A_2|}{n}`$ |
+| $`S_2: x \in B_2`$ | $`P(A_1,B_2) =
+\frac{|A_1 \cap B_2|}{n}`$ | $`P(B_1,B_2) = \frac{|B_1 \cap B_2|}{n}`$ |
 
-$H\left( S_{1},S_{2} \right) = P\left( A_{1},A_{2} \right)\log_{2}{P\left( A_{1},A_{2} \right)} + P\left( B_{1},A_{2} \right)\log_{2}{P\left( B_{1},A_{2} \right)}$
+$`H(S_1, S_2) =
+P(A_1,A_2) \log_2 {P(A_1,A_2)} +
+P(B_1,A_2) \log_2 {P(B_1,A_2)}`$
 
-$+ P\left( A_{1},B_{2} \right)\log_{2}{P\left( A_{1},B_{2} \right)} + P\left( B_{1},B_{2} \right)\log_{2}{P\left( B_{1},B_{2} \right)}$
+$`+ P(A_1,B_2)\log_2{P(A_1,B_2)} +
+P(B_1,B_2)\log_2{P(B_1,B_2)}`$
 
 These values can then be substituted into the definitions of mutual
 information and entropy distance given above.
 
-As $S_{1}$ and $S_{2}$ become more different, the disposition of $S_{1}$
-gives less information about the configuration of $S_{2}$, and the
+As $`S_1`$ and $`S_2`$ become more different, the disposition of $`S_1`$
+gives less information about the configuration of $`S_2`$, and the
 mutual information decreases accordingly.
 
 ## References

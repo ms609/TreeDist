@@ -96,6 +96,7 @@ distance, see the package
 Install and load the library from CRAN as follows:
 
 ``` r
+
 install.packages('TreeDist')
 library('TreeDist')
 ```
@@ -103,6 +104,7 @@ library('TreeDist')
 You can install the development version of the package with:
 
 ``` r
+
 if(!require("curl")) install.packages("curl")
 if(!require("remotes")) install.packages("remotes")
 remotes::install_github("ms609/TreeDist")
@@ -115,6 +117,7 @@ avoiding common analytical pitfalls (Smith, 2022), using the inbuilt
 graphical user interface (Shiny GUI):
 
 ``` r
+
 TreeDist::MapTrees()
 ```
 

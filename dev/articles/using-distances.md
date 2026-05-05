@@ -28,6 +28,7 @@ Let’s work through a simple example using the Nye *et al*. (2006)
 similarity metric to compare two imperfectly-resolved trees.
 
 ``` r
+
 library("TreeDist")
 tree1 <- ape::read.tree(text = '(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
 tree2 <- ape::read.tree(text = '(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
@@ -50,12 +51,14 @@ Normalizing against this value tells us how similar the two trees are,
 compared to two identical eleven-leaf binary trees.
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = FALSE) / 8
 ```
 
     ## [1] 0.2744048
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = 8)
 ```
 
@@ -68,6 +71,7 @@ score possible for two trees of the specified resolution. This value is
 given by the number of splits in the least resolved of the two trees:
 
 ``` r
+
 NyeSimilarity(tree1, tree2,
                   normalize = min(TreeTools::NSplits(list(tree1, tree2))))
 ```
@@ -77,6 +81,7 @@ NyeSimilarity(tree1, tree2,
 More concisely, we can provide a normalizing function:
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = min)
 ```
 
@@ -91,6 +96,7 @@ number of splits in each pair of trees. We can use the function
 resolved of each pair of trees:
 
 ``` r
+
 NyeSimilarity(list(tree1, tree2), list(tree1, tree2), normalize = pmin)
 ```
 
@@ -104,6 +110,7 @@ normalization method for
 [`NyeSimilarity()`](https://ms609.github.io/TreeDist/dev/reference/NyeSimilarity.md):
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = TRUE)
 ```
 
@@ -117,6 +124,7 @@ that tree.
 In that case, the best possible score is
 
 ``` r
+
 TreeTools::NSplits(tree1)
 ```
 
@@ -125,6 +133,7 @@ TreeTools::NSplits(tree1)
 and our normalized score will be
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 ```
 
@@ -151,6 +160,7 @@ calculated: any given quartet has a one in three chance of matching by
 chance.
 
 ``` r
+
 if (requireNamespace("Quartet", quietly = TRUE)) {
   library("Quartet", exclude = "RobinsonFoulds")
   expectedQD <- 2 / 3
@@ -167,6 +177,7 @@ distances between 10 000 pairs of random bifurcating trees with up to
 (normalized) distances for a selection of methods:
 
 ``` r
+
 if (requireNamespace("TreeDistData", quietly = TRUE)) {
   library("TreeDistData", exclude = "PairwiseDistances")
   data("randomTreeDistances", package = "TreeDistData")
@@ -205,6 +216,7 @@ if (requireNamespace("TreeDistData", quietly = TRUE)) {
 or use these calculated values to normalize our tree distance:
 
 ``` r
+
 expectedCID <- randomTreeDistances["cid", "mean", "9"]
 ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedCID
 ```
@@ -229,6 +241,7 @@ Ternary diagrams allow us to visualise the quality of a reconstructed
 tree with reference to a known “true” tree:
 
 ``` r
+
 testTrees <- list(
   trueTree = ape::read.tree(text = '(a, (b, (c, (d, (e, (f, (g, h)))))));'),
   lackRes = ape::read.tree(text = '(a, (b, c, (d, e, (f, g, h))));'),
@@ -242,6 +255,7 @@ points(4, 7.5, pch = 2, cex = 3, col = "#E69F00", xpd = NA)
 ![](using-distances_files/figure-html/unnamed-chunk-12-1.png)
 
 ``` r
+
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$smallErr)
 points(4, 7.5, pch = 3, cex = 3, col = "#56B4E9", xpd = NA)
 ```
@@ -249,6 +263,7 @@ points(4, 7.5, pch = 3, cex = 3, col = "#56B4E9", xpd = NA)
 ![](using-distances_files/figure-html/unnamed-chunk-12-2.png)
 
 ``` r
+
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
 points(4, 7.5, pch = 4, cex = 3, col = "#009E73", xpd = NA)
 ```
@@ -261,6 +276,7 @@ more resolved may be no better than less-resolved trees if the addition
 of resolution introduces error.
 
 ``` r
+
 if (requireNamespace("Ternary", quietly = TRUE)) {
   library("Ternary")
   oldPar <- par(mar = rep(0.1, 4))
@@ -293,6 +309,7 @@ First, let’s generate a starting tree, which will represent our
 reference topology:
 
 ``` r
+
 set.seed(0)
 trueTree <- TreeTools::RandomTree(20, root = TRUE)
 ```
@@ -303,6 +320,7 @@ consensus of this tree and three trees from its immediate neighbourhood
 (one NNI move away).
 
 ``` r
+
 treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE)
 if (treeSearchInstalled) {
   library("TreeSearch", quietly = TRUE) # for TBR, NNI
@@ -324,6 +342,7 @@ resolution by taking a consensus with three trees from its wider
 neighbourhood (each two NNI moves away).
 
 ``` r
+
 if (treeSearchInstalled) {
   threeAway <- structure(lapply(seq_len(200), function(x) {
     tbrTree <- TBR(TBR(TBR(trueTree)))
@@ -339,6 +358,7 @@ Now let’s calculate their tree similarity scores. We need to calculate
 the amount of information each tree has in common with the true tree:
 
 ``` r
+
 if (treeSearchInstalled) {
   correct1 <- MutualClusteringInfo(trueTree, oneAway)
   correct3 <- MutualClusteringInfo(trueTree, threeAway)
@@ -348,6 +368,7 @@ if (treeSearchInstalled) {
 The amount of information in each degraded tree:
 
 ``` r
+
 if (treeSearchInstalled) {
   infoInTree1 <- ClusteringEntropy(oneAway)
   infoInTree3 <- ClusteringEntropy(threeAway)
@@ -357,6 +378,7 @@ if (treeSearchInstalled) {
 The amount of information that could have been resolved, but was not:
 
 ``` r
+
 if (treeSearchInstalled) {
   unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
   unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
@@ -366,6 +388,7 @@ if (treeSearchInstalled) {
 And the amount of information incorrectly resolved:
 
 ``` r
+
 if (treeSearchInstalled) {
   incorrect1 <- infoInTree1 - correct1
   incorrect3 <- infoInTree3 - correct3
@@ -376,6 +399,7 @@ In preparation for our plot, let’s colour our one-away trees  orange ,
 and our three-away trees  blue :
 
 ``` r
+
 col1 <- hcl(200, alpha = 0.9)
 col3 <- hcl(40, alpha = 0.9)
 spec1 <- matrix(col2rgb(col1, alpha = TRUE), nrow = 4, ncol = 181)
@@ -389,6 +413,7 @@ spec3 <- apply(spec3, 2, ColToHex)
 Now we can plot this information on a ternary diagram.
 
 ``` r
+
 if (treeSearchInstalled && requireNamespace("Ternary", quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol = 2), widths = c(5, 2))
   oldPar <- par(mar = rep(0, 4))
