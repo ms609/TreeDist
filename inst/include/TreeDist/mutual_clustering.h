@@ -22,7 +22,9 @@ namespace TreeDist {
   // lg2_unrooted[i]       = log2((2i-5)!!) for i >= 3
   // lg2_rooted             = &lg2_unrooted[0] + 1  (so lg2_rooted[i] = lg2_unrooted[i+1])
   //
-  // These are defined in mutual_clustering_impl.h.
+  // These are fast-path caches sized to TreeTools' stack threshold.
+  // For larger trees, fall back to on-the-fly computation via the _lookup helpers.
+  // Definitions are in mutual_clustering_impl.h.
 
   extern double lg2[SL_MAX_TIPS + 1];
   extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
@@ -33,15 +35,46 @@ namespace TreeDist {
   // computation.  max_tips should be >= the largest tree size used.
   void init_lg2_tables(int max_tips);
 
+  // log2(x) — table-fast for x <= SL_MAX_TIPS, runtime otherwise.
+  [[nodiscard]] inline double lg2_lookup(split_int x) noexcept {
+    if (x <= static_cast<split_int>(SL_MAX_TIPS)) {
+      return lg2[x];
+    }
+    return std::log2(static_cast<double>(x));
+  }
+
+  // log2((2n-5)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
+  // (log2(e) = 1/log(2))
+  [[nodiscard]] inline double lg2_unrooted_lookup(split_int n_tips) noexcept {
+    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
+      return lg2_unrooted[n_tips];
+    }
+    if (n_tips < 3) return 0.0; // LCOV_EXCL_LINE
+    const double n = static_cast<double>(n_tips);
+    return (std::lgamma(2.0 * n - 3.0) - std::lgamma(n - 1.0)) / std::log(2.0)
+           - (n - 2.0);
+  }
+
+  // log2((2n-3)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
+  [[nodiscard]] inline double lg2_rooted_lookup(split_int n_tips) noexcept {
+    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
+      return lg2_rooted[n_tips];
+    }
+    if (n_tips < 2) return 0.0; // LCOV_EXCL_LINE
+    const double n = static_cast<double>(n_tips);
+    return (std::lgamma(2.0 * n - 1.0) - std::lgamma(n)) / std::log(2.0)
+           - (n - 1.0);
+  }
+
   // ---- Inline helpers ----
 
   // Information content of a perfectly-matching split pair.
   // ic_matching(a, b, n) = (a + b) * lg2[n] - a * lg2[a] - b * lg2[b]
-  [[nodiscard]] inline double ic_matching(int16 a, int16 b,
-                                          int16 n) noexcept {
-    const double lg2a = lg2[a];
-    const double lg2b = lg2[b];
-    const double lg2n = lg2[n];
+  [[nodiscard]] inline double ic_matching(split_int a, split_int b,
+                                          split_int n) noexcept {
+    const double lg2a = lg2_lookup(a);
+    const double lg2b = lg2_lookup(b);
+    const double lg2n = lg2_lookup(n);
     return (a + b) * lg2n - a * lg2a - b * lg2b;
   }
 
@@ -77,9 +110,9 @@ namespace TreeDist {
   // Implementation in mutual_clustering_impl.h.
 
   double mutual_clustering_score(
-      const splitbit* const* a_state, const int16* a_in, int16 a_n_splits,
-      const splitbit* const* b_state, const int16* b_in, int16 b_n_splits,
-      int16 n_bins, int32 n_tips,
+      const splitbit* const* a_state, const split_int* a_in, split_int a_n_splits,
+      const splitbit* const* b_state, const split_int* b_in, split_int b_n_splits,
+      split_int n_bins, int32 n_tips,
       LapScratch& scratch);
 
 } // namespace TreeDist

@@ -48,12 +48,15 @@ test_that("Tip-count guard is applied consistently", {
     "Trees with 327.. tips exceed the compiled limit of 2048"
   }
   expect_error(.CheckMaxTips(32705L), errMsg)
-  
+
+  # Direct C++ calls bypass the R guard and hit check_ntip() whose message
+  # is always "not yet supported (maximum 32767)".
+  cppErrMsg <- "Trees with 327.. tips are not yet supported \\(maximum 32767\\)"
   splits8 <- unclass(as.Splits(BalancedTree(8)))
   expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L),
-               errMsg)
+               cppErrMsg)
   expect_error(cpp_robinson_foulds_info(splits8, splits8, 32768L),
-               errMsg)
+               cppErrMsg)
 
   trees <- list(BalancedTree(8), PectinateTree(8))
   class(trees) <- "multiPhylo"
