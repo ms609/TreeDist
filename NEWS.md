@@ -23,6 +23,17 @@
   removing a hard dependency on the compile-time `SL_MAX_SPLITS` constant.
   TreeDist now supports trees of any size permitted by TreeTools.
 
+- **Large-tree support (requires TreeTools ≥ 2.3.0):** all distance
+  functions now accept trees with up to 32 767 tips (previously limited
+  to `SL_MAX_TIPS`, 2048 with TreeTools ≤ 2.2.0).  The R-level tip-count
+  guard (`.CheckMaxTips()`) detects the TreeTools version at load time and
+  unlocks the higher ceiling automatically; no code changes are needed.
+  All integer counters in the C++ hot paths have been widened from `int16`
+  to `split_int` (`int32`) to handle split counts above 32 767 without
+  overflow.  Direct `lg2[]` table accesses have been replaced with
+  `lg2_lookup()` fallback helpers so that trees with more tips than
+  `SL_MAX_TIPS` are computed correctly via `std::log2` / `std::lgamma`.
+
 ## Performance
 
 - `RobinsonFoulds()` now uses a fast C++ batch path for cross-distance
