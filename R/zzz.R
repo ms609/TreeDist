@@ -1,7 +1,10 @@
-.SL_MAX_TIPS <- NULL # populated in .onLoad
+.SL_MAX_TIPS <- NULL           # populated in .onLoad
+.TT_HAS_HEAP_FALLBACK <- FALSE # TRUE when TreeTools >= 2.3.0
 
 .onLoad <- function(libname, pkgname) {
   .SL_MAX_TIPS <<- cpp_sl_max_tips()
+  .TT_HAS_HEAP_FALLBACK <<-
+    utils::packageVersion("TreeTools") >= "2.3.0"
 }
 
 .onUnload <- function(libpath) {

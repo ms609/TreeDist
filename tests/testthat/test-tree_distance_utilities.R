@@ -38,16 +38,25 @@ test_that(".SL_MAX_TIPS is populated", {
 
 test_that("Tip-count guard is applied consistently", {
   expect_no_error(.CheckMaxTips(1000L))
-  
-  limit32704 <- TreeDist:::.SL_MAX_TIPS == 32704L
-  if (limit32704) expect_no_error(.CheckMaxTips(32704L))
-  
-  errMsg <- if (limit32704) {
-    "Trees with 327.. tips are not yet supported \\(maximum 32704\\)"
+
+  ttHasHeapFallback <- utils::packageVersion("TreeTools") >= "2.3.0"
+
+  if (ttHasHeapFallback) {
+    # TT >= 2.3.0: accept up to 32767 (heap-backed split storage)
+    expect_no_error(.CheckMaxTips(32705L))
+    expect_no_error(.CheckMaxTips(32767L))
+    rErrMsg <- "Trees with 327.. tips are not yet supported \\(maximum 32767\\)"
   } else {
-    "Trees with 327.. tips exceed the compiled limit of 2048"
+    limit32704 <- TreeDist:::.SL_MAX_TIPS == 32704L
+    if (limit32704) expect_no_error(.CheckMaxTips(32704L))
+    rErrMsg <- if (limit32704) {
+      "Trees with 327.. tips are not yet supported \\(maximum 32704\\)"
+    } else {
+      "Trees with 327.. tips exceed the compiled limit of 2048"
+    }
+    expect_error(.CheckMaxTips(32705L), rErrMsg)
   }
-  expect_error(.CheckMaxTips(32705L), errMsg)
+  expect_error(.CheckMaxTips(32768L), rErrMsg)
 
   # Direct C++ calls bypass the R guard and hit check_ntip() whose message
   # is always "not yet supported (maximum 32767)".
@@ -62,7 +71,7 @@ test_that("Tip-count guard is applied consistently", {
   class(trees) <- "multiPhylo"
   expect_error(
     .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 32768L),
-    errMsg
+    rErrMsg
   )
 })
 

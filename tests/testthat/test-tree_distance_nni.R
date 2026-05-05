@@ -9,7 +9,8 @@ test_that("NNIDist() handles exceptions", {
                             PectinateTree(as.character(1:8)))),
                "trees must bear identical labels")
   # R-level guard catches too-many-tips
-  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)), "so many tips")
+  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
+               "not yet supported")
   
   expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
   
@@ -19,7 +20,7 @@ test_that("NNIDist() at NNI_MAX_TIPS", {
   maxTips <- 32768
   more <- maxTips + 1
   expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
-               "so many tips")
+               "not yet supported")
   goingQuickly <- TRUE
   skip_if(goingQuickly)
   
