@@ -5,22 +5,32 @@ test_that("NNIDist() handles exceptions", {
                "trees must contain the same number of leaves")
   expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))),
                "trees must bear identical labels")
-  expect_error(NNIDist(list(PectinateTree(1:8), 
+  expect_error(NNIDist(list(PectinateTree(1:8),
                             PectinateTree(as.character(1:8)))),
                "trees must bear identical labels")
-  # R-level guard catches too-many-tips
+  expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
+})
+
+test_that("NNIDist() rejects too many tips (TreeTools >= 2.3.0)", {
+  skip_if(utils::packageVersion("TreeTools") < "2.3.0",
+          "TreeTools < 2.3.0 emits a different too-many-tips message")
   expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
                "not yet supported")
-  
-  expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
-  
+  expect_error(.NNIDistSingle(PectinateTree(32769), BalancedTree(32769), 32769L),
+               "not yet supported")
+})
+
+test_that("NNIDist() rejects too many tips (TreeTools < 2.3.0)", {
+  skip_if(utils::packageVersion("TreeTools") >= "2.3.0",
+          "TreeTools >= 2.3.0 emits a different too-many-tips message")
+  expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
+               "exceed the compiled limit")
+  expect_error(.NNIDistSingle(PectinateTree(32769), BalancedTree(32769), 32769L),
+               "exceed the compiled limit")
 })
 
 test_that("NNIDist() at NNI_MAX_TIPS", {
   maxTips <- 32768
-  more <- maxTips + 1
-  expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
-               "not yet supported")
   goingQuickly <- TRUE
   skip_if(goingQuickly)
   
