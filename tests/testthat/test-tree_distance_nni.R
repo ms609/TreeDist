@@ -12,8 +12,8 @@ test_that("NNIDist() handles exceptions", {
 })
 
 test_that("NNIDist() rejects too many tips (TreeTools >= 2.3.0)", {
-  skip_if(utils::packageVersion("TreeTools") < "2.3.0",
-          "TreeTools < 2.3.0 emits a different too-many-tips message")
+  skip_if(TreeDist:::cpp_sl_max_tips() <= 2048L,
+          "Compiled against TreeTools < 2.3.0 (SL_MAX_TIPS = 2048)")
   expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
                "not yet supported")
   expect_error(.NNIDistSingle(PectinateTree(32769), BalancedTree(32769), 32769L),
@@ -21,8 +21,8 @@ test_that("NNIDist() rejects too many tips (TreeTools >= 2.3.0)", {
 })
 
 test_that("NNIDist() rejects too many tips (TreeTools < 2.3.0)", {
-  skip_if(utils::packageVersion("TreeTools") >= "2.3.0",
-          "TreeTools >= 2.3.0 emits a different too-many-tips message")
+  skip_if(TreeDist:::cpp_sl_max_tips() > 2048L,
+          "Compiled against TreeTools >= 2.3.0 (SL_MAX_TIPS > 2048)")
   expect_error(NNIDist(PectinateTree(40000), BalancedTree(40000)),
                "exceed the compiled limit")
   expect_error(.NNIDistSingle(PectinateTree(32769), BalancedTree(32769), 32769L),

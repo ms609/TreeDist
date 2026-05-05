@@ -47,8 +47,8 @@ test_that("Tip-count guard is applied consistently", {
 })
 
 test_that("Tip-count guard accepts up to 32767 tips (TreeTools >= 2.3.0)", {
-  skip_if(utils::packageVersion("TreeTools") < "2.3.0",
-          "TreeTools < 2.3.0 caps at SL_MAX_TIPS, not 32767")
+  skip_if(TreeDist:::cpp_sl_max_tips() <= 2048L,
+          "Compiled against TreeTools < 2.3.0 (SL_MAX_TIPS = 2048)")
   expect_no_error(.CheckMaxTips(32705L))
   expect_no_error(.CheckMaxTips(32767L))
   rErrMsg <- "Trees with 327.. tips are not yet supported \\(maximum 32767\\)"
@@ -63,8 +63,8 @@ test_that("Tip-count guard accepts up to 32767 tips (TreeTools >= 2.3.0)", {
 })
 
 test_that("Tip-count guard caps at SL_MAX_TIPS (TreeTools < 2.3.0)", {
-  skip_if(utils::packageVersion("TreeTools") >= "2.3.0",
-          "TreeTools >= 2.3.0 uses the heap-fallback path")
+  skip_if(TreeDist:::cpp_sl_max_tips() > 2048L,
+          "Compiled against TreeTools >= 2.3.0 (SL_MAX_TIPS > 2048)")
   limit32704 <- TreeDist:::cpp_sl_max_tips() == 32704L
   if (limit32704) expect_no_error(.CheckMaxTips(32704L))
   rErrMsg <- if (limit32704) {
