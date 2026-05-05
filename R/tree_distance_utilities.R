@@ -1,25 +1,26 @@
 # Validate that nTip does not exceed the supported tip-count ceiling.
-# .SL_MAX_TIPS > 2048L iff TreeTools >= 2.3.0 raised the stack threshold and
-# provides heap-backed split storage; in that case accept up to 32767 tips
-# (TREEDIST_MAX_TIPS).  Otherwise cap at the compiled SL_MAX_TIPS.
+# cpp_sl_max_tips() > 2048L iff TreeTools >= 2.3.0 raised the stack threshold
+# and provides heap-backed split storage; accept up to 32767 tips in that case.
+# Otherwise cap at the compiled SL_MAX_TIPS.
 # Called from every distance entry point before any C++ work.
 .CheckMaxTips <- function(nTip) {
   if (is.na(nTip)) return(invisible(NULL))
-  if (.SL_MAX_TIPS > 2048L) {
+  sl_max <- cpp_sl_max_tips()
+  if (sl_max > 2048L) {
     if (nTip > 32767L) {
       stop("Trees with ", nTip,
            " tips are not yet supported (maximum 32767).")
     }
-  } else if (nTip > .SL_MAX_TIPS) {
-    if (.SL_MAX_TIPS < 32704L) {
+  } else if (nTip > sl_max) {
+    if (sl_max < 32704L) {
       stop(
         "Trees with ", nTip, " tips exceed the compiled limit of ",
-        .SL_MAX_TIPS, " tips.",
+        sl_max, " tips.",
         "\nUpdate TreeTools and reinstall TreeDist to support more tips."
       )
     }
     stop("Trees with ", nTip, " tips are not yet supported (maximum ",
-         .SL_MAX_TIPS, ")")
+         sl_max, ")")
   }
 }
 

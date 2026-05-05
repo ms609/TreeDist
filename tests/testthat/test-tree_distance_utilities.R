@@ -31,9 +31,9 @@ test_that("CalculateTreeDistance() errs appropriately", {
   expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), "Not a tree"))
 })
 
-test_that(".SL_MAX_TIPS is populated", {
-  expect_true(is.integer(TreeDist:::.SL_MAX_TIPS))
-  expect_true(TreeDist:::.SL_MAX_TIPS >= 2048L)
+test_that("cpp_sl_max_tips() returns a valid value", {
+  expect_true(is.integer(TreeDist:::cpp_sl_max_tips()))
+  expect_true(TreeDist:::cpp_sl_max_tips() >= 2048L)
 })
 
 test_that("Tip-count guard is applied consistently", {
@@ -65,7 +65,7 @@ test_that("Tip-count guard accepts up to 32767 tips (TreeTools >= 2.3.0)", {
 test_that("Tip-count guard caps at SL_MAX_TIPS (TreeTools < 2.3.0)", {
   skip_if(utils::packageVersion("TreeTools") >= "2.3.0",
           "TreeTools >= 2.3.0 uses the heap-fallback path")
-  limit32704 <- TreeDist:::.SL_MAX_TIPS == 32704L
+  limit32704 <- TreeDist:::cpp_sl_max_tips() == 32704L
   if (limit32704) expect_no_error(.CheckMaxTips(32704L))
   rErrMsg <- if (limit32704) {
     "Trees with 327.. tips are not yet supported \\(maximum 32704\\)"

@@ -1,9 +1,3 @@
-.SL_MAX_TIPS <- NULL # populated in .onLoad
-
-.onLoad <- function(libname, pkgname) {
-  .SL_MAX_TIPS <<- cpp_sl_max_tips()
-}
-
 .onUnload <- function(libpath) {
   StopParallel(quietly = TRUE)
   library.dynam.unload("TreeDist", libpath)

@@ -6,7 +6,7 @@ library("TreeTools", quietly = TRUE)
 
 test_that("RF and IRF work for 4000-tip trees", {
   skip_on_cran()
-  skip_if(TreeDist:::.SL_MAX_TIPS < 4000,
+  skip_if(TreeDist:::cpp_sl_max_tips() < 4000,
           "Requires TreeTools >= 2.3.0 (SL_MAX_TIPS >= 4000)")
 
   n <- 4000
@@ -24,7 +24,7 @@ test_that("RF and IRF work for 4000-tip trees", {
 
 test_that("RF and IRF work for 8000-tip trees", {
   skip_on_cran()
-  skip_if(TreeDist:::.SL_MAX_TIPS < 4000,
+  skip_if(TreeDist:::cpp_sl_max_tips() < 4000,
           "Requires TreeTools >= 2.3.0 (SL_MAX_TIPS >= 4000)")
   skip_if(!getOption("slowMode", FALSE), "Only runs in slow mode")
 
@@ -41,7 +41,7 @@ test_that("RF and IRF work for 8000-tip trees", {
 
 test_that("Tip-count ceiling is enforced correctly", {
   skip_on_cran()
-  skip_if(TreeDist:::.SL_MAX_TIPS < 4000,
+  skip_if(TreeDist:::cpp_sl_max_tips() < 4000,
           "Requires TreeTools >= 2.3.0")
 
   expect_no_error(.CheckMaxTips(32767L))
