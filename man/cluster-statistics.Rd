@@ -87,16 +87,16 @@ MeanNN(points, cluster)
 MeanMSTEdge(points, cluster)
 }
 \seealso{
-Other tree space functions: 
-\code{\link{Islands}()},
-\code{\link{MSTSegments}()},
-\code{\link{MapTrees}()},
-\code{\link{MappingQuality}()},
-\code{\link{SpectralEigens}()},
-\code{\link{median.multiPhylo}()}
+Other tree space functions:
+\code{\link[=Islands]{Islands()}},
+\code{\link[=MSTSegments]{MSTSegments()}},
+\code{\link[=MapTrees]{MapTrees()}},
+\code{\link[=MappingQuality]{MappingQuality()}},
+\code{\link[=SpectralEigens]{SpectralEigens()}},
+\code{\link[=median.multiPhylo]{median.multiPhylo()}}
 
-Other cluster functions: 
-\code{\link{KMeansPP}()}
+Other cluster functions:
+\code{\link[=KMeansPP]{KMeansPP()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

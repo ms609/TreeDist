@@ -84,18 +84,18 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 \insertAllCited{}
 }
 \seealso{
-Other tree distances: 
-\code{\link{HierarchicalMutualInfo}()},
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{KendallColijn}()},
-\code{\link{MASTSize}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
-\code{\link{PathDist}()},
+Other tree distances:
+\code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=KendallColijn]{KendallColijn()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
+\code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()},
-\code{\link{TransferDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=SPRDist]{SPRDist()}},
+\code{\link[=TransferDist]{TransferDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

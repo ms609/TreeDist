@@ -37,13 +37,13 @@ plot(eigens, pch = 15, col = clusts$cluster)
 plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 }
 \seealso{
-Other tree space functions: 
-\code{\link{Islands}()},
-\code{\link{MSTSegments}()},
-\code{\link{MapTrees}()},
-\code{\link{MappingQuality}()},
+Other tree space functions:
+\code{\link[=Islands]{Islands()}},
+\code{\link[=MSTSegments]{MSTSegments()}},
+\code{\link[=MapTrees]{MapTrees()}},
+\code{\link[=MappingQuality]{MappingQuality()}},
 \code{\link{cluster-statistics}},
-\code{\link{median.multiPhylo}()}
+\code{\link[=median.multiPhylo]{median.multiPhylo()}}
 }
 \author{
 Adapted by MRS from script by \href{https://rpubs.com/nurakawa/spectral-clustering}{Nura Kawa}

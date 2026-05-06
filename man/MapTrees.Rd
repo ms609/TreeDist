@@ -110,13 +110,13 @@ this application.  The application itself can be cited using
 Full detail of tree space analysis in R is provided in the accompanying
 \href{https://ms609.github.io/TreeDist/articles/treespace.html}{vignette}.
 
-Other tree space functions: 
-\code{\link{Islands}()},
-\code{\link{MSTSegments}()},
-\code{\link{MappingQuality}()},
-\code{\link{SpectralEigens}()},
+Other tree space functions:
+\code{\link[=Islands]{Islands()}},
+\code{\link[=MSTSegments]{MSTSegments()}},
+\code{\link[=MappingQuality]{MappingQuality()}},
+\code{\link[=SpectralEigens]{SpectralEigens()}},
 \code{\link{cluster-statistics}},
-\code{\link{median.multiPhylo}()}
+\code{\link[=median.multiPhylo]{median.multiPhylo()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

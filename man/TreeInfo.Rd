@@ -205,9 +205,9 @@ An introduction to the phylogenetic information content of a split is given
 in \href{https://ms609.github.io/TreeTools/reference/SplitInformation.html}{\code{SplitInformation()}}
 and in a \href{https://ms609.github.io/TreeDist/articles/information.html}{package vignette}.
 
-Other information functions: 
-\code{\link{SplitEntropy}()},
-\code{\link{SplitSharedInformation}()}
+Other information functions:
+\code{\link[=SplitEntropy]{SplitEntropy()}},
+\code{\link[=SplitSharedInformation]{SplitSharedInformation()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

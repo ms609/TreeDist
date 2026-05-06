@@ -124,17 +124,17 @@ AHMI(tree1, tree2, precision = 0.1)
 \insertAllCited{}
 }
 \seealso{
-Other tree distances: 
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{KendallColijn}()},
-\code{\link{MASTSize}()},
-\code{\link{MatchingSplitDistance}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
-\code{\link{PathDist}()},
+Other tree distances:
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=KendallColijn]{KendallColijn()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
+\code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()},
-\code{\link{TransferDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=SPRDist]{SPRDist()}},
+\code{\link[=TransferDist]{TransferDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \concept{tree distances}

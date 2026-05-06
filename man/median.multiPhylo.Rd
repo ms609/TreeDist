@@ -79,12 +79,12 @@ Consensus methods:
 \code{\link[ape:consensus]{ape::consensus()}},
 \code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
 
-Other tree space functions: 
-\code{\link{Islands}()},
-\code{\link{MSTSegments}()},
-\code{\link{MapTrees}()},
-\code{\link{MappingQuality}()},
-\code{\link{SpectralEigens}()},
+Other tree space functions:
+\code{\link[=Islands]{Islands()}},
+\code{\link[=MSTSegments]{MSTSegments()}},
+\code{\link[=MapTrees]{MapTrees()}},
+\code{\link[=MappingQuality]{MappingQuality()}},
+\code{\link[=SpectralEigens]{SpectralEigens()}},
 \code{\link{cluster-statistics}}
 }
 \author{
