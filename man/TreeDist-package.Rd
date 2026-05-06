@@ -134,6 +134,11 @@ Geodesic distance
 \author{
 \strong{Maintainer}: Martin R. Smith \email{martin.smith@durham.ac.uk} (\href{https://orcid.org/0000-0001-5660-1727}{ORCID}) [copyright holder, programmer]
 
+Authors:
+\itemize{
+  \item Martin R. Smith \email{martin.smith@durham.ac.uk} (\href{https://orcid.org/0000-0001-5660-1727}{ORCID}) [copyright holder, programmer]
+}
+
 Other contributors:
 \itemize{
   \item Roy Jonker \email{roy_jonker@magiclogic.com} (LAP algorithm) [programmer, copyright holder]

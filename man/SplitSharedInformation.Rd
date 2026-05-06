@@ -87,8 +87,8 @@ splits.
 \insertAllCited{}
 }
 \seealso{
-Other information functions: 
-\code{\link{SplitEntropy}()},
+Other information functions:
+\code{\link[=SplitEntropy]{SplitEntropy()}},
 \code{\link{TreeInfo}}
 }
 \author{

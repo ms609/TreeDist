@@ -45,7 +45,7 @@ plot(x, col = plusters$cluster, pch = rep(15:19, each = 5))
 \seealso{
 \code{\link[stats]{kmeans}}
 
-Other cluster functions: 
+Other cluster functions:
 \code{\link{cluster-statistics}}
 }
 \author{

@@ -102,17 +102,17 @@ TransferDist(as.phylo(0:5, 8))
 \insertAllCited{}
 }
 \seealso{
-Other tree distances: 
-\code{\link{HierarchicalMutualInfo}()},
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{KendallColijn}()},
-\code{\link{MASTSize}()},
-\code{\link{MatchingSplitDistance}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
-\code{\link{PathDist}()},
+Other tree distances:
+\code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=KendallColijn]{KendallColijn()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
+\code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=SPRDist]{SPRDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \concept{tree distances}

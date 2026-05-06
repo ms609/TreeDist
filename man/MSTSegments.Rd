@@ -70,13 +70,13 @@ PlotTools::SpectrumLegend(
 \insertAllCited{}
 }
 \seealso{
-Other tree space functions: 
-\code{\link{Islands}()},
-\code{\link{MapTrees}()},
-\code{\link{MappingQuality}()},
-\code{\link{SpectralEigens}()},
+Other tree space functions:
+\code{\link[=Islands]{Islands()}},
+\code{\link[=MapTrees]{MapTrees()}},
+\code{\link[=MappingQuality]{MappingQuality()}},
+\code{\link[=SpectralEigens]{SpectralEigens()}},
 \code{\link{cluster-statistics}},
-\code{\link{median.multiPhylo}()}
+\code{\link[=median.multiPhylo]{median.multiPhylo()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
