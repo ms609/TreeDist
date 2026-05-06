@@ -29,21 +29,47 @@ test_that("Distance functions handle trees exceeding TT 2.2.0 limit", {
   expect_equal(MatchingSplitInfoDistance(t1, t1)[[1]], 0)
 })
 
-test_that("ClusteringInfoDistance returns correct value for n > SL_MAX_TIPS", {
+test_that("Distance scores agree across stack/heap storage threshold", {
   skip_on_cran()
-  n <- 2049L
-  skip_if(TreeDist:::cpp_sl_max_tips() < n,
-          "Requires TreeTools >= 2.3.0 (SL_MAX_TIPS > 2048)")
+  skip_if_not_installed("TreeTools", "2.3.0")
+  # SL_STACK_SPLITS in TreeTools 2.3.0+ admits trees of n_tips <= 2048 to
+  # stack-backed split storage; n_tips == 2049 forces the heap path.  This
+  # test compares each metric on a stack-storage tree pair against the same
+  # pair after inserting a cherry next to tip 1, which both pushes them
+  # across the threshold and leaves their split structure invariant: each
+  # existing split simply gains the new tip on whichever side already
+  # contained tip 1, and one perfectly-matched cherry split is added
+  # (contributing 0 to any distance).
+  stackMax <- 2048L
+  skip_if(TreeDist:::cpp_sl_max_tips() <= stackMax,
+          "Requires TreeTools >= 2.3.0 (heap-backed storage)")
 
-  t1 <- as.phylo(1, n)
-  t2 <- as.phylo(2, n)
+  t1s <- as.phylo(1234, stackMax)
+  t2s <- PectinateTree(stackMax)
+  t1h <- AddTip(t1s, where = 1, label = "extra")
+  t2h <- AddTip(t2s, where = 1, label = "extra")
 
-  # The individual-pair path and the all-pairs OpenMP batch path are
-  # independent implementations; agreement confirms the correct value.
-  expect_equal(
-    ClusteringInfoDistance(t1, t2)[[1]],
-    as.matrix(ClusteringInfoDistance(list(t1, t2)))[1, 2]
-  )
+  # RF (count of unmatched splits) is invariant under the inserted cherry.
+  expect_equal(RobinsonFoulds(t1s, t2s)[[1]],
+               RobinsonFoulds(t1h, t2h)[[1]])
+
+  # Per-split info depends on n_tips and on side sizes, so absolute
+  # information-theoretic distances drift by a few % when n grows by 1;
+  # normalized distances are far less sensitive.
+  tol <- 0.002
+
+  expect_equal(InfoRobinsonFoulds(t1s, t2s, normalize = TRUE)[[1]],
+               InfoRobinsonFoulds(t1h, t2h, normalize = TRUE)[[1]],
+               tolerance = tol)
+  expect_equal(ClusteringInfoDistance(t1s, t2s, normalize = TRUE)[[1]],
+               ClusteringInfoDistance(t1h, t2h, normalize = TRUE)[[1]],
+               tolerance = tol)
+  expect_equal(DifferentPhylogeneticInfo(t1s, t2s, normalize = TRUE)[[1]],
+               DifferentPhylogeneticInfo(t1h, t2h, normalize = TRUE)[[1]],
+               tolerance = tol)
+  expect_equal(MatchingSplitInfoDistance(t1s, t2s, normalize = TRUE)[[1]],
+               MatchingSplitInfoDistance(t1h, t2h, normalize = TRUE)[[1]],
+               tolerance = tol)
 })
 
 test_that("RF and IRF work for 8000-tip trees", {

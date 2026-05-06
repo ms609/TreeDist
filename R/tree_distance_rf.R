@@ -75,14 +75,15 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                           cpp_splitwise_info_batch)
     if (!is.null(fast)) {
       treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
-      unnormalized <- treesIndependentInfo - fast[["info"]] - fast[["info"]]
-      unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
+      unnormalized <- .FloorNumericalNoise(
+        treesIndependentInfo - fast[["info"]] - fast[["info"]],
+        treesIndependentInfo)
       ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                            InfoInTree = SplitwiseInfo, Combine = "+")
       attributes(ret) <- attributes(fast[["info"]])
       return(ret)
     }
-    
+
     # Cross-pairs fast path
     fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
                                    cpp_rf_info_cross_pairs,
@@ -92,24 +93,23 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
       info1 <- fast_many[["info1"]]
       info2 <- fast_many[["info2"]]
       treesIndependentInfo <- outer(info1, info2, "+")
-      
-      unnormalized <- treesIndependentInfo - irf - irf
-      unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
+
+      unnormalized <- .FloorNumericalNoise(treesIndependentInfo - irf - irf,
+                                            treesIndependentInfo)
       ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                            InfoInTree = SplitwiseInfo, Combine = "+")
       return(ret)
     }
   }
-  
-  unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
+
+  unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2,
                                         reportMatching) * 2
-  
+
   if (!similarity) {
-    unnormalized <- .MaxValue(tree1, tree2, SplitwiseInfo) - unnormalized
+    treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
+    unnormalized <- .FloorNumericalNoise(treesIndependentInfo - unnormalized,
+                                          treesIndependentInfo)
   }
-  
-  # In case of floating point inaccuracy
-  unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
