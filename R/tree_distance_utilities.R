@@ -12,15 +12,12 @@
            " tips are not yet supported (maximum 32767).")
     }
   } else if (nTip > sl_max) {
-    if (sl_max < 32704L) {
-      stop(
-        "Trees with ", nTip, " tips exceed the compiled limit of ",
-        sl_max, " tips.",
-        "\nUpdate TreeTools and reinstall TreeDist to support more tips."
-      )
-    }
-    stop("Trees with ", nTip, " tips are not yet supported (maximum ",
-         sl_max, ")")
+    # else-if fires only when sl_max <= 2048 (TreeTools < 2.3.0)
+    stop(
+      "Trees with ", nTip, " tips exceed the compiled limit of ",
+      sl_max, " tips.",
+      "\nUpdate TreeTools and reinstall TreeDist to support more tips."
+    )
   }
 }
 

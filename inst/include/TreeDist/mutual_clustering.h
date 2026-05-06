@@ -40,7 +40,7 @@ namespace TreeDist {
     if (x <= static_cast<split_int>(SL_MAX_TIPS)) {
       return lg2[x];
     }
-    return std::log2(static_cast<double>(x));
+    return std::log2(static_cast<double>(x)); // LCOV_EXCL_LINE
   }
 
   // log2((2n-5)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
@@ -49,10 +49,12 @@ namespace TreeDist {
     if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
       return lg2_unrooted[n_tips];
     }
-    if (n_tips < 3) return 0.0; // LCOV_EXCL_LINE
+    // LCOV_EXCL_START
+    if (n_tips < 3) return 0.0;
     const double n = static_cast<double>(n_tips);
     return (std::lgamma(2.0 * n - 3.0) - std::lgamma(n - 1.0)) / std::log(2.0)
            - (n - 2.0);
+    // LCOV_EXCL_STOP
   }
 
   // log2((2n-3)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
@@ -60,10 +62,12 @@ namespace TreeDist {
     if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
       return lg2_rooted[n_tips];
     }
-    if (n_tips < 2) return 0.0; // LCOV_EXCL_LINE
+    // LCOV_EXCL_START
+    if (n_tips < 2) return 0.0;
     const double n = static_cast<double>(n_tips);
     return (std::lgamma(2.0 * n - 1.0) - std::lgamma(n)) / std::log(2.0)
            - (n - 1.0);
+    // LCOV_EXCL_STOP
   }
 
   // ---- Inline helpers ----
