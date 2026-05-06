@@ -1,6 +1,7 @@
 # Validate that nTip does not exceed the compiled SL_MAX_TIPS limit.
 # Called from every distance entry point before any C++ work.
 .CheckMaxTips <- function(nTip) {
+  .SL_MAX_TIPS <- cpp_sl_max_tips()
   if (!is.na(nTip) && nTip > .SL_MAX_TIPS) {
     if (.SL_MAX_TIPS < 32704L) {
       stop(
