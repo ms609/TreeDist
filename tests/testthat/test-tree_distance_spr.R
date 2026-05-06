@@ -115,6 +115,7 @@ test_that("SPR shortcuts okay - exhaustive", {
 
 test_that("SPR shortcuts okay - known answer", {
   skip_if_not(getOption("slowMode", FALSE))
+  skip_if_not_installed("TBRDist")
   library("TreeTools", quietly = TRUE)
   set.seed(0)
   trees <- lapply(1:8, function(XX) RandomTree(9, root = TRUE))
