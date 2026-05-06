@@ -15,6 +15,7 @@ cran-comments.md
 man-roxygen
 data-raw
 docs
+^.*vtune.*$
 revdep
 \.covrignore
 ^\.git$
