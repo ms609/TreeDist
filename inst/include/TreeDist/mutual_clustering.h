@@ -35,39 +35,35 @@ namespace TreeDist {
   // computation.  max_tips should be >= the largest tree size used.
   void init_lg2_tables(int max_tips);
 
+  // Out-of-line slow paths for inputs that exceed the precomputed tables
+  // (i.e. n_tips > SL_MAX_TIPS).  Defined in mutual_clustering_impl.h.
+  // Kept out-of-line so the *_lookup() inline thunks below stay tiny —
+  // table load + predicted branch, no extern function calls — which some
+  // compilers refuse to inline through, suppressing optimization in the
+  // per-cell hot loops of PID/MCI/MSI/RF info.
+  double lg2_slow(split_int x);
+  double lg2_unrooted_slow(split_int n_tips);
+  double lg2_rooted_slow(split_int n_tips);
+
   // log2(x) — table-fast for x <= SL_MAX_TIPS, runtime otherwise.
   [[nodiscard]] inline double lg2_lookup(split_int x) noexcept {
-    if (x <= static_cast<split_int>(SL_MAX_TIPS)) {
-      return lg2[x];
-    }
-    return std::log2(static_cast<double>(x)); // LCOV_EXCL_LINE
+    return (x <= static_cast<split_int>(SL_MAX_TIPS))
+      ? lg2[x]
+      : lg2_slow(x); // LCOV_EXCL_LINE
   }
 
   // log2((2n-5)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
-  // (log2(e) = 1/log(2))
   [[nodiscard]] inline double lg2_unrooted_lookup(split_int n_tips) noexcept {
-    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
-      return lg2_unrooted[n_tips];
-    }
-    // LCOV_EXCL_START
-    if (n_tips < 3) return 0.0;
-    const double n = static_cast<double>(n_tips);
-    return (std::lgamma(2.0 * n - 3.0) - std::lgamma(n - 1.0)) / std::log(2.0)
-           - (n - 2.0);
-    // LCOV_EXCL_STOP
+    return (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1))
+      ? lg2_unrooted[n_tips]
+      : lg2_unrooted_slow(n_tips); // LCOV_EXCL_LINE
   }
 
   // log2((2n-3)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
   [[nodiscard]] inline double lg2_rooted_lookup(split_int n_tips) noexcept {
-    if (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1)) {
-      return lg2_rooted[n_tips];
-    }
-    // LCOV_EXCL_START
-    if (n_tips < 2) return 0.0;
-    const double n = static_cast<double>(n_tips);
-    return (std::lgamma(2.0 * n - 1.0) - std::lgamma(n)) / std::log(2.0)
-           - (n - 1.0);
-    // LCOV_EXCL_STOP
+    return (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1))
+      ? lg2_rooted[n_tips]
+      : lg2_rooted_slow(n_tips); // LCOV_EXCL_LINE
   }
 
   // ---- Inline helpers ----

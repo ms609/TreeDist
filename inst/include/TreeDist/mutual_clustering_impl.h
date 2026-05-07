@@ -58,6 +58,30 @@ void init_lg2_tables(int max_tips) {
   }
 }
 
+// ---- Out-of-line slow paths (n_tips > SL_MAX_TIPS) ----
+// Defined out-of-line so that the *_lookup() inline thunks in
+// mutual_clustering.h stay trivial enough for any compiler to inline.
+
+// LCOV_EXCL_START
+double lg2_slow(split_int x) {
+  return std::log2(static_cast<double>(x));
+}
+
+double lg2_unrooted_slow(split_int n_tips) {
+  if (n_tips < 3) return 0.0;
+  const double n = static_cast<double>(n_tips);
+  return (std::lgamma(2.0 * n - 3.0) - std::lgamma(n - 1.0)) / std::log(2.0)
+         - (n - 2.0);
+}
+
+double lg2_rooted_slow(split_int n_tips) {
+  if (n_tips < 2) return 0.0;
+  const double n = static_cast<double>(n_tips);
+  return (std::lgamma(2.0 * n - 1.0) - std::lgamma(n)) / std::log(2.0)
+         - (n - 1.0);
+}
+// LCOV_EXCL_STOP
+
 // ---- Sort+merge exact-match detection (internal) ----
 //
 // Canonicalise each split so bit 0 is always set (flip complement if not),
