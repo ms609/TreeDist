@@ -34,12 +34,12 @@ using TreeTools::count_bits;
 // per-pair heap allocation.  Vectors grow lazily and are never shrunk.
 // ---------------------------------------------------------------------------
 struct MatchScratch {
-  std::vector<splitbit> a_canon;
-  std::vector<splitbit> b_canon;
-  std::vector<int16>    a_order;
-  std::vector<int16>    b_order;
-  std::vector<int16>    a_match;
-  std::vector<int16>    b_match;
+  std::vector<splitbit>   a_canon;
+  std::vector<splitbit>   b_canon;
+  std::vector<split_int>  a_order;
+  std::vector<split_int>  b_order;
+  std::vector<split_int>  a_match;
+  std::vector<split_int>  b_match;
 };
 
 // ---------------------------------------------------------------------------
@@ -59,19 +59,19 @@ struct MatchScratch {
 //   a_match[ai] = bi+1 if split ai matched split bi, else 0.
 //   b_match[bi] = ai+1 if split bi matched split ai, else 0.
 // ---------------------------------------------------------------------------
-static int16 find_exact_matches(
+static split_int find_exact_matches(
     const SplitList& a, const SplitList& b,
     const int32 n_tips,
     MatchScratch& scratch
 ) {
-  const int16 n_bins   = a.n_bins;
-  const int16 last_bin = n_bins - 1;
+  const split_int n_bins   = a.n_bins;
+  const split_int last_bin = n_bins - 1;
   const splitbit last_mask = (n_tips % SL_BIN_SIZE == 0)
     ? ~splitbit(0)
     : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
 
-  const int16 a_n = a.n_splits;
-  const int16 b_n = b.n_splits;
+  const split_int a_n = a.n_splits;
+  const split_int b_n = b.n_splits;
 
   // Ensure buffers are large enough (grow lazily, never shrink)
   const size_t a_canon_sz = static_cast<size_t>(a_n) * n_bins;
@@ -83,10 +83,10 @@ static int16 find_exact_matches(
   if (scratch.a_match.size() < static_cast<size_t>(a_n)) scratch.a_match.resize(a_n);
   if (scratch.b_match.size() < static_cast<size_t>(b_n)) scratch.b_match.resize(b_n);
 
-  int16* a_match = scratch.a_match.data();
-  int16* b_match = scratch.b_match.data();
-  std::fill(a_match, a_match + a_n, int16(0));
-  std::fill(b_match, b_match + b_n, int16(0));
+  split_int* a_match = scratch.a_match.data();
+  split_int* b_match = scratch.b_match.data();
+  std::fill(a_match, a_match + a_n, split_int(0));
+  std::fill(b_match, b_match + b_n, split_int(0));
 
   if (a_n == 0 || b_n == 0) return 0;
 
@@ -94,17 +94,17 @@ static int16 find_exact_matches(
   splitbit* b_canon = scratch.b_canon.data();
 
   // --- 1. Compute canonical forms into flat buffers ---
-  for (int16 i = 0; i < a_n; ++i) {
+  for (split_int i = 0; i < a_n; ++i) {
     const bool flip = !(a.state[i][0] & 1);
-    for (int16 bin = 0; bin < n_bins; ++bin) {
+    for (split_int bin = 0; bin < n_bins; ++bin) {
       splitbit val = flip ? ~a.state[i][bin] : a.state[i][bin];
       if (bin == last_bin) val &= last_mask;
       a_canon[i * n_bins + bin] = val;
     }
   }
-  for (int16 i = 0; i < b_n; ++i) {
+  for (split_int i = 0; i < b_n; ++i) {
     const bool flip = !(b.state[i][0] & 1);
-    for (int16 bin = 0; bin < n_bins; ++bin) {
+    for (split_int bin = 0; bin < n_bins; ++bin) {
       splitbit val = flip ? ~b.state[i][bin] : b.state[i][bin];
       if (bin == last_bin) val &= last_mask;
       b_canon[i * n_bins + bin] = val;
@@ -112,8 +112,8 @@ static int16 find_exact_matches(
   }
 
   // --- 2. Sort index arrays by canonical form ---
-  auto canon_less = [&](const splitbit* canon, int16 i, int16 j) {
-    for (int16 bin = 0; bin < n_bins; ++bin) {
+  auto canon_less = [&](const splitbit* canon, split_int i, split_int j) {
+    for (split_int bin = 0; bin < n_bins; ++bin) {
       const splitbit vi = canon[i * n_bins + bin];
       const splitbit vj = canon[j * n_bins + bin];
       if (vi < vj) return true;
@@ -122,29 +122,29 @@ static int16 find_exact_matches(
     return false; // #nocov
   };
 
-  int16* a_order = scratch.a_order.data();
-  int16* b_order = scratch.b_order.data();
-  std::iota(a_order, a_order + a_n, int16(0));
-  std::iota(b_order, b_order + b_n, int16(0));
+  split_int* a_order = scratch.a_order.data();
+  split_int* b_order = scratch.b_order.data();
+  std::iota(a_order, a_order + a_n, split_int(0));
+  std::iota(b_order, b_order + b_n, split_int(0));
 
   std::sort(a_order, a_order + a_n,
-            [&](int16 i, int16 j) {
+            [&](split_int i, split_int j) {
               return canon_less(a_canon, i, j);
             });
   std::sort(b_order, b_order + b_n,
-            [&](int16 i, int16 j) {
+            [&](split_int i, split_int j) {
               return canon_less(b_canon, i, j);
             });
 
   // --- 3. Merge-scan to find matches ---
-  int16 exact_n = 0;
-  int16 ai_pos = 0, bi_pos = 0;
+  split_int exact_n = 0;
+  split_int ai_pos = 0, bi_pos = 0;
   while (ai_pos < a_n && bi_pos < b_n) {
-    const int16 ai = a_order[ai_pos];
-    const int16 bi = b_order[bi_pos];
+    const split_int ai = a_order[ai_pos];
+    const split_int bi = b_order[bi_pos];
 
     int cmp = 0;
-    for (int16 bin = 0; bin < n_bins; ++bin) {
+    for (split_int bin = 0; bin < n_bins; ++bin) {
       const splitbit va = a_canon[ai * n_bins + bin];
       const splitbit vb = b_canon[bi * n_bins + bin];
       if (va < vb) { cmp = -1; break; }
@@ -178,25 +178,25 @@ static double mutual_clustering_score(
 ) {
   if (a.n_splits == 0 || b.n_splits == 0 || n_tips == 0) return 0.0;
 
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   const double n_tips_rcp = 1.0 / static_cast<double>(n_tips);
 
   constexpr cost max_score  = BIG;
   constexpr double over_max = 1.0 / static_cast<double>(BIG);
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
-  const double lg2_n = lg2[n_tips];
+  const double lg2_n = lg2_lookup(n_tips);
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
-  const int16* a_match = mscratch.a_match.data();
-  const int16* b_match = mscratch.b_match.data();
+  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int* a_match = mscratch.a_match.data();
+  const split_int* b_match = mscratch.b_match.data();
 
   // Accumulate exact-match score
   double exact_score = 0.0;
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
     if (a_match[ai]) {
-      const int16 na = a.in_split[ai];
-      const int16 nA = n_tips - na;
+      const split_int na = a.in_split[ai];
+      const split_int nA = n_tips - na;
       exact_score += TreeDist::ic_matching(na, nA, n_tips);
     }
   }
@@ -207,58 +207,58 @@ static double mutual_clustering_score(
   }
 
   // --- Phase 2: fill cost matrix for unmatched splits only (O(k²)) ---
-  const int16 lap_n = most_splits - exact_n;
+  const split_int lap_n = most_splits - exact_n;
 
   // Build index maps for unmatched splits
-  std::vector<int16> a_unmatch, b_unmatch;
+  std::vector<split_int> a_unmatch, b_unmatch;
   a_unmatch.reserve(lap_n);
   b_unmatch.reserve(lap_n);
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
     if (!a_match[ai]) a_unmatch.push_back(ai);
   }
-  for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int bi = 0; bi < b.n_splits; ++bi) {
     if (!b_match[bi]) b_unmatch.push_back(bi);
   }
 
   scratch.score_pool.resize(lap_n);
   cost_matrix& score = scratch.score_pool;
 
-  const int16 a_unmatched_n = static_cast<int16>(a_unmatch.size());
-  const int16 b_unmatched_n = static_cast<int16>(b_unmatch.size());
+  const split_int a_unmatched_n = static_cast<split_int>(a_unmatch.size());
+  const split_int b_unmatched_n = static_cast<split_int>(b_unmatch.size());
 
-  for (int16 a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
-    const int16 ai   = a_unmatch[a_pos];
-    const int16 na   = a.in_split[ai];
-    const int16 nA   = n_tips - na;
+  for (split_int a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
+    const split_int ai   = a_unmatch[a_pos];
+    const split_int na   = a.in_split[ai];
+    const split_int nA   = n_tips - na;
     const auto* a_row = a.state[ai];
 
-    const double offset_a = lg2_n - lg2[na];
-    const double offset_A = lg2_n - lg2[nA];
+    const double offset_a = lg2_n - lg2_lookup(na);
+    const double offset_A = lg2_n - lg2_lookup(nA);
 
-    for (int16 b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
-      const int16 bi   = b_unmatch[b_pos];
+    for (split_int b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
+      const split_int bi   = b_unmatch[b_pos];
       const auto* b_row = b.state[bi];
-      int16 a_and_b = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      split_int a_and_b = 0;
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a_row[bin] & b_row[bin]);
       }
 
-      const int16 nb    = b.in_split[bi];
-      const int16 nB    = n_tips - nb;
-      const int16 a_and_B = na - a_and_b;
-      const int16 A_and_b = nb - a_and_b;
-      const int16 A_and_B = nA - A_and_b;
+      const split_int nb    = b.in_split[bi];
+      const split_int nB    = n_tips - nb;
+      const split_int a_and_B = na - a_and_b;
+      const split_int A_and_b = nb - a_and_b;
+      const split_int A_and_B = nA - A_and_b;
 
       if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
         score(a_pos, b_pos) = max_score;
       } else {
-        const double lg2_nb = lg2[nb];
-        const double lg2_nB = lg2[nB];
+        const double lg2_nb = lg2_lookup(nb);
+        const double lg2_nB = lg2_lookup(nB);
         const double ic_sum =
-          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
-          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
-          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
-          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
+          a_and_b * (lg2_lookup(a_and_b) + offset_a - lg2_nb) +
+          a_and_B * (lg2_lookup(a_and_B) + offset_a - lg2_nB) +
+          A_and_b * (lg2_lookup(A_and_b) + offset_A - lg2_nb) +
+          A_and_B * (lg2_lookup(A_and_B) + offset_A - lg2_nB);
         score(a_pos, b_pos) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }
@@ -366,27 +366,27 @@ static double rf_info_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     MatchScratch& mscratch
 ) {
-  const int16 a_n = a.n_splits;
-  const int16 b_n = b.n_splits;
+  const split_int a_n = a.n_splits;
+  const split_int b_n = b.n_splits;
   if (a_n == 0 || b_n == 0) return 0;
 
   // Use sort+merge to find exact matches in O(n log n)
-  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
   if (exact_n == 0) return 0;
 
   // Sum info contribution for each matched split in a
-  const int16* a_match = mscratch.a_match.data();
-  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  const split_int* a_match = mscratch.a_match.data();
+  const double lg2_unrooted_n = lg2_unrooted_lookup(n_tips);
   double score = 0;
-  for (int16 ai = 0; ai < a_n; ++ai) {
+  for (split_int ai = 0; ai < a_n; ++ai) {
     if (a_match[ai] == 0) continue;
-    int16 leaves_in_split = 0;
-    for (int16 bin = 0; bin < a.n_bins; ++bin) {
+    split_int leaves_in_split = 0;
+    for (split_int bin = 0; bin < a.n_bins; ++bin) {
       leaves_in_split += count_bits(a.state[ai][bin]);
     }
     score += lg2_unrooted_n
-           - lg2_rooted[leaves_in_split]
-           - lg2_rooted[n_tips - leaves_in_split];
+           - lg2_rooted_lookup(leaves_in_split)
+           - lg2_rooted_lookup(n_tips - leaves_in_split);
   }
   return score;
 }
@@ -446,48 +446,48 @@ static double msd_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch, MatchScratch& mscratch
 ) {
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
-  const bool  a_has_more  = (a.n_splits > b.n_splits);
-  const int16 a_extra     = a_has_more ? most_splits - b.n_splits : 0;
-  const int16 b_extra     = a_has_more ? 0 : most_splits - a.n_splits;
-  const int16 half_tips   = n_tips / 2;
-  const cost  max_score   = BIG / most_splits;
+  const bool      a_has_more  = (a.n_splits > b.n_splits);
+  const split_int a_extra     = a_has_more ? most_splits - b.n_splits : 0;
+  const split_int b_extra     = a_has_more ? 0 : most_splits - a.n_splits;
+  const split_int half_tips   = n_tips / 2;
+  const cost      max_score   = BIG / most_splits;
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
-  const int16* a_match = mscratch.a_match.data();
-  const int16* b_match = mscratch.b_match.data();
+  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int* a_match = mscratch.a_match.data();
+  const split_int* b_match = mscratch.b_match.data();
 
   if (exact_n == b.n_splits || exact_n == a.n_splits) {
     return 0.0;
   }
 
   // --- Phase 2: fill cost matrix for unmatched splits only ---
-  const int16 lap_n = most_splits - exact_n;
+  const split_int lap_n = most_splits - exact_n;
 
-  std::vector<int16> a_unmatch, b_unmatch;
+  std::vector<split_int> a_unmatch, b_unmatch;
   a_unmatch.reserve(lap_n);
   b_unmatch.reserve(lap_n);
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
     if (!a_match[ai]) a_unmatch.push_back(ai);
   }
-  for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int bi = 0; bi < b.n_splits; ++bi) {
     if (!b_match[bi]) b_unmatch.push_back(bi);
   }
 
   scratch.score_pool.resize(lap_n);
   cost_matrix& score = scratch.score_pool;
 
-  const int16 a_unmatched_n = static_cast<int16>(a_unmatch.size());
-  const int16 b_unmatched_n = static_cast<int16>(b_unmatch.size());
+  const split_int a_unmatched_n = static_cast<split_int>(a_unmatch.size());
+  const split_int b_unmatched_n = static_cast<split_int>(b_unmatch.size());
 
-  for (int16 a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
-    const int16 ai = a_unmatch[a_pos];
-    for (int16 b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
-      const int16 bi = b_unmatch[b_pos];
+  for (split_int a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
+    const split_int ai = a_unmatch[a_pos];
+    for (split_int b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
+      const split_int bi = b_unmatch[b_pos];
       splitbit total = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       score(a_pos, b_pos) = static_cast<cost>(
@@ -574,30 +574,30 @@ static double msi_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch
 ) {
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
 
   constexpr cost max_score = BIG;
-  const double max_possible = lg2_unrooted[n_tips]
-    - lg2_rooted[int16((n_tips + 1) / 2)]
-    - lg2_rooted[int16(n_tips / 2)];
+  const double max_possible = lg2_unrooted_lookup(n_tips)
+    - lg2_rooted_lookup((n_tips + 1) / 2)
+    - lg2_rooted_lookup(n_tips / 2);
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
 
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      int16 n_a_only = 0, n_a_and_b = 0, n_different = 0;
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      split_int n_a_only = 0, n_a_and_b = 0, n_different = 0;
       splitbit different;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         different   = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different);
         n_a_only   += count_bits(a.state[ai][bin] &  different);
         n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
       }
-      const int16 n_same = n_tips - n_different;
+      const split_int n_same = n_tips - n_different;
       score(ai, bi) = cost(max_score - score_over_possible *
         TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
     }
@@ -669,32 +669,68 @@ NumericVector cpp_msi_all_pairs(
 // metric, spi_overlap(A, B) where B contains A can EXCEED spi_overlap(A, A)
 // for identical splits, so the LAP can find a better global assignment by NOT
 // matching identical splits.  The full LAP is always solved.
-static double shared_phylo_score(
+// LAP-fill body for shared_phylo_score, templated on Fast so the per-cell
+// spi_overlap call resolves at compile time to direct lg2_rooted[] access
+// (Fast=true) or the bounds-checked lookup (Fast=false).
+template<bool Fast>
+static inline void shared_phylo_fill_lap(
     const SplitList& a, const SplitList& b, const int32 n_tips,
-    LapScratch& scratch
+    const double best_overlap, const double score_over_possible,
+    const cost max_score, cost_matrix& score
 ) {
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  if (most_splits == 0) return 0.0;
-
-  const int16 overlap_a = int16(n_tips + 1) / 2;
-  constexpr cost max_score = BIG;
-  const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
-  const double max_possible = lg2_unrooted[n_tips] - best_overlap;
-  const double score_over_possible = static_cast<double>(max_score) / max_possible;
-  const double possible_over_score = max_possible / static_cast<double>(max_score);
-
-  scratch.score_pool.resize(most_splits);
-  cost_matrix& score = scratch.score_pool;
-
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      const double spi = TreeDist::spi_overlap(
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      const double spi = TreeDist::spi_overlap<Fast>(
         a.state[ai], b.state[bi], n_tips,
         a.in_split[ai], b.in_split[bi], a.n_bins);
       score(ai, bi) = (spi == 0.0) ? max_score
                                    : cost((spi - best_overlap) * score_over_possible);
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
+  }
+}
+
+static double shared_phylo_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
+) {
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  if (most_splits == 0) return 0.0;
+
+  const split_int overlap_a = (n_tips + 1) / 2;
+  constexpr cost max_score = BIG;
+  // Hot path: n_tips <= SL_MAX_TIPS, so all lg2_rooted/lg2_unrooted indices
+  // fall in the precomputed table.  Dispatch once here so the per-cell loop
+  // emits direct table loads with no bounds-check branch.
+  // The else branch is reachable only on TT 2.3 builds with n_tips > 32705,
+  // which is too large to exercise in routine tests; the equivalent slow
+  // template instantiations (one_overlap<false> etc.) are covered by the
+  // legacy single-pair entry (cpp_shared_phylo) via force_slow=true.
+  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
+  double best_overlap, max_possible;
+  if (fast) {
+    best_overlap = TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips);
+    max_possible = lg2_unrooted[n_tips] - best_overlap;
+  } else {
+    // LCOV_EXCL_START
+    best_overlap = TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
+    max_possible = lg2_unrooted_lookup(n_tips) - best_overlap;
+    // LCOV_EXCL_STOP
+  }
+  const double score_over_possible = static_cast<double>(max_score) / max_possible;
+  const double possible_over_score = max_possible / static_cast<double>(max_score);
+
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
+
+  if (fast) {
+    shared_phylo_fill_lap<true>(a, b, n_tips, best_overlap,
+                                score_over_possible, max_score, score);
+  } else {
+    // LCOV_EXCL_START
+    shared_phylo_fill_lap<false>(a, b, n_tips, best_overlap,
+                                 score_over_possible, max_score, score);
+    // LCOV_EXCL_STOP
   }
   score.padAfterRow(a.n_splits, max_score);
 
@@ -763,7 +799,7 @@ static double jaccard_score(
     const double exponent, const bool allow_conflict,
     LapScratch& scratch, MatchScratch& mscratch
 ) {
-  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
 
   constexpr cost   max_score  = BIG;
@@ -772,7 +808,7 @@ static double jaccard_score(
   // --- Phase 1: O(n log n) exact-match detection ---
   // Only used when allow_conflict=true; otherwise the full LAP may reassign
   // non-matching splits to compatible (non-exact) partners.
-  int16 exact_n = 0;
+  split_int exact_n = 0;
   if (allow_conflict) {
     exact_n = find_exact_matches(a, b, n_tips, mscratch);
   } else {
@@ -781,61 +817,61 @@ static double jaccard_score(
       mscratch.a_match.resize(a.n_splits);
     if (mscratch.b_match.size() < static_cast<size_t>(b.n_splits))
       mscratch.b_match.resize(b.n_splits);
-    std::fill(mscratch.a_match.data(), mscratch.a_match.data() + a.n_splits, int16(0));
-    std::fill(mscratch.b_match.data(), mscratch.b_match.data() + b.n_splits, int16(0));
+    std::fill(mscratch.a_match.data(), mscratch.a_match.data() + a.n_splits, split_int(0));
+    std::fill(mscratch.b_match.data(), mscratch.b_match.data() + b.n_splits, split_int(0));
   }
-  const int16* a_match = mscratch.a_match.data();
-  const int16* b_match = mscratch.b_match.data();
+  const split_int* a_match = mscratch.a_match.data();
+  const split_int* b_match = mscratch.b_match.data();
 
   if (exact_n == b.n_splits || exact_n == a.n_splits) {
     return static_cast<double>(exact_n);
   }
 
   // --- Phase 2: fill cost matrix for unmatched splits only ---
-  const int16 lap_n = most_splits - exact_n;
+  const split_int lap_n = most_splits - exact_n;
 
-  std::vector<int16> a_unmatch, b_unmatch;
+  std::vector<split_int> a_unmatch, b_unmatch;
   a_unmatch.reserve(lap_n);
   b_unmatch.reserve(lap_n);
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
     if (!a_match[ai]) a_unmatch.push_back(ai);
   }
-  for (int16 bi = 0; bi < b.n_splits; ++bi) {
+  for (split_int bi = 0; bi < b.n_splits; ++bi) {
     if (!b_match[bi]) b_unmatch.push_back(bi);
   }
 
   scratch.score_pool.resize(lap_n);
   cost_matrix& score = scratch.score_pool;
 
-  const int16 a_unmatched_n = static_cast<int16>(a_unmatch.size());
-  const int16 b_unmatched_n = static_cast<int16>(b_unmatch.size());
+  const split_int a_unmatched_n = static_cast<split_int>(a_unmatch.size());
+  const split_int b_unmatched_n = static_cast<split_int>(b_unmatch.size());
 
-  for (int16 a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
-    const int16 ai = a_unmatch[a_pos];
-    const int16 na = a.in_split[ai];
-    const int16 nA = n_tips - na;
+  for (split_int a_pos = 0; a_pos < a_unmatched_n; ++a_pos) {
+    const split_int ai = a_unmatch[a_pos];
+    const split_int na = a.in_split[ai];
+    const split_int nA = n_tips - na;
 
-    for (int16 b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
-      const int16 bi = b_unmatch[b_pos];
-      int16 a_and_b = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+    for (split_int b_pos = 0; b_pos < b_unmatched_n; ++b_pos) {
+      const split_int bi = b_unmatch[b_pos];
+      split_int a_and_b = 0;
+      for (split_int bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
-      const int16 nb    = b.in_split[bi];
-      const int16 nB    = n_tips - nb;
-      const int16 a_and_B = na - a_and_b;
-      const int16 A_and_b = nb - a_and_b;
-      const int16 A_and_B = nB - a_and_B;
+      const split_int nb    = b.in_split[bi];
+      const split_int nB    = n_tips - nb;
+      const split_int a_and_B = na - a_and_b;
+      const split_int A_and_b = nb - a_and_b;
+      const split_int A_and_B = nB - a_and_B;
 
       if (!allow_conflict && !(
             a_and_b == na || a_and_B == na ||
             A_and_b == nA || A_and_B == nA)) {
         score(a_pos, b_pos) = max_score;
       } else {
-        const int16 A_or_b = n_tips - a_and_B;
-        const int16 a_or_B = n_tips - A_and_b;
-        const int16 a_or_b = n_tips - A_and_B;
-        const int16 A_or_B = n_tips - a_and_b;
+        const split_int A_or_b = n_tips - a_and_B;
+        const split_int a_or_B = n_tips - A_and_b;
+        const split_int a_or_b = n_tips - A_and_B;
+        const split_int A_or_B = n_tips - a_and_b;
         const double ars_ab = static_cast<double>(a_and_b) / static_cast<double>(a_or_b);
         const double ars_Ab = static_cast<double>(A_and_b) / static_cast<double>(A_or_b);
         const double ars_aB = static_cast<double>(a_and_B) / static_cast<double>(a_or_B);
@@ -1229,7 +1265,7 @@ NumericVector cpp_clustering_entropy_batch(
   for (int i = 0; i < N; ++i) {
     SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
     double total = 0.0;
-    for (int16 s = 0; s < sl.n_splits; ++s) {
+    for (split_int s = 0; s < sl.n_splits; ++s) {
       const int k = sl.in_split[s];
       if (k <= 0 || k >= n_tip) continue;
       const double p = k * invN;
@@ -1271,7 +1307,7 @@ NumericVector cpp_splitwise_info_batch(
   for (int i = 0; i < N; ++i) {
     SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
     double total = 0.0;
-    for (int16 s = 0; s < sl.n_splits; ++s) {
+    for (split_int s = 0; s < sl.n_splits; ++s) {
       const int k = sl.in_split[s];
       if (k < 2 || (n_tip - k) < 2) continue;
       total += l2u_n - l2r[k] - l2r[n_tip - k];

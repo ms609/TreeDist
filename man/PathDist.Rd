@@ -68,18 +68,18 @@ PathDist(as.phylo(30:33, 8))
 \insertAllCited{}
 }
 \seealso{
-Other tree distances: 
-\code{\link{HierarchicalMutualInfo}()},
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{KendallColijn}()},
-\code{\link{MASTSize}()},
-\code{\link{MatchingSplitDistance}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
+Other tree distances:
+\code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=KendallColijn]{KendallColijn()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()},
-\code{\link{TransferDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=SPRDist]{SPRDist()}},
+\code{\link[=TransferDist]{TransferDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

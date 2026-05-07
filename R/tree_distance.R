@@ -230,6 +230,23 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   g[lower.tri(g)]
 }
 
+# Floor sub-noise distances to zero before normalization.
+# Two sources of numerical noise scale with treesIndependentInfo:
+#  (1) LAP int64 cost-matrix quantization in *Splits scoring; per-cell
+#      truncation of up to (max_possible / BIG) bits, summed over n_splits.
+#  (2) Float-accumulation drift between independently-built tables (e.g.
+#      InfoRobinsonFoulds vs cpp_splitwise_info_batch sum the same per-split
+#      info contributions, but using different lookup-table constructions).
+# Both grow with the magnitude of the answer, so an absolute sqrt(eps)
+# tolerance becomes too tight beyond a few thousand tips. Scaling by
+# treesIndependentInfo self-adjusts; pmax(1, ·) preserves the original
+# tolerance for tiny trees where these errors are negligible anyway.
+.FloorNumericalNoise <- function(ret, treesIndependentInfo) {
+  tol <- pmax(1, treesIndependentInfo) * .Machine[["double.eps"]] ^ 0.5
+  ret[ret < tol] <- 0
+  ret
+}
+
 .AllTipsSame <- function(x, y) {
   if (is.list(x)) {
     xPrime <- x[[1]]

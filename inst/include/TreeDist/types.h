@@ -16,6 +16,10 @@ namespace TreeDist {
   using int32 = int_fast32_t;
   using cost  = int_fast64_t;
 
+  // Primary type for split/tip/bin counters. int32 benchmarks faster than int16
+  // (avoids sign-extension when mixing with SplitList int32 members).
+  using split_int = int32;
+
   using lap_dim = int;
   using lap_row = lap_dim;
   using lap_col = lap_dim;

@@ -125,18 +125,18 @@ KCDiameter(trees)
 is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
-Other tree distances: 
-\code{\link{HierarchicalMutualInfo}()},
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{MASTSize}()},
-\code{\link{MatchingSplitDistance}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
-\code{\link{PathDist}()},
+Other tree distances:
+\code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
+\code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()},
-\code{\link{TransferDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=SPRDist]{SPRDist()}},
+\code{\link[=TransferDist]{TransferDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

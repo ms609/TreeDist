@@ -1,7 +1,8 @@
 ## Test environments
-* Local machine, Windows 10, R devel (2024-09-02 r87090 ucrt)
+* Local machine, Windows 11, R version 4.6.0 (2026-04-24 ucrt)
 
 * `devtools::check_win_devel()`
+* `devtools::check_mac_devel()`
 
 * [GitHub Actions](https://github.com/ms609/TreeDist/actions):
   - windows-latest, R release

@@ -47,8 +47,8 @@ SplitwiseInfo(mcc)
 
 }
 \seealso{
-Other summary trees: 
-\code{\link{TransferConsensus}()}
+Other summary trees:
+\code{\link[=TransferConsensus]{TransferConsensus()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

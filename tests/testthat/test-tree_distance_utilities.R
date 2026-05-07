@@ -31,35 +31,64 @@ test_that("CalculateTreeDistance() errs appropriately", {
   expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), "Not a tree"))
 })
 
-test_that(".SL_MAX_TIPS is populated", {
-  expect_true(is.integer(TreeDist:::.SL_MAX_TIPS))
-  expect_true(TreeDist:::.SL_MAX_TIPS >= 2048L)
+test_that("cpp_sl_max_tips() returns a valid value", {
+  expect_true(is.integer(TreeDist:::cpp_sl_max_tips()))
+  expect_true(TreeDist:::cpp_sl_max_tips() >= 2048L)
 })
 
 test_that("Tip-count guard is applied consistently", {
   expect_no_error(.CheckMaxTips(1000L))
-  
-  limit32704 <- TreeDist:::.SL_MAX_TIPS == 32704L
-  if (limit32704) expect_no_error(.CheckMaxTips(32704L))
-  
-  errMsg <- if (limit32704) {
-    "Trees with 327.. tips are not yet supported \\(maximum 32704\\)"
-  } else {
-    "Trees with 327.. tips exceed the compiled limit of 2048"
-  }
-  expect_error(.CheckMaxTips(32705L), errMsg)
-  
+
+  # Direct C++ calls bypass the R guard; check_ntip() always says "not yet supported".
+  cppErrMsg <- "Trees with 327.. tips are not yet supported \\(maximum 32767\\)"
   splits8 <- unclass(as.Splits(BalancedTree(8)))
-  expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L),
-               errMsg)
-  expect_error(cpp_robinson_foulds_info(splits8, splits8, 32768L),
-               errMsg)
+  expect_error(cpp_robinson_foulds_distance(splits8, splits8, 32768L), cppErrMsg)
+  expect_error(cpp_robinson_foulds_info(splits8, splits8, 32768L), cppErrMsg)
+})
+
+test_that("Tip-count guard accepts up to 32767 tips (TreeTools >= 2.3.0)", {
+  skip_if(TreeDist:::cpp_sl_max_tips() <= 2048L,
+          "Compiled against TreeTools < 2.3.0 (SL_MAX_TIPS = 2048)")
+  expect_no_error(.CheckMaxTips(32705L))
+  expect_no_error(.CheckMaxTips(32767L))
+  rErrMsg <- "Trees with 327.. tips are not yet supported \\(maximum 32767\\)"
+  expect_error(.CheckMaxTips(32768L), rErrMsg)
 
   trees <- list(BalancedTree(8), PectinateTree(8))
   class(trees) <- "multiPhylo"
   expect_error(
     .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 32768L),
-    errMsg
+    rErrMsg
+  )
+})
+
+test_that("Tip-count guard caps at SL_MAX_TIPS (TreeTools < 2.3.0)", {
+  skip_if(TreeDist:::cpp_sl_max_tips() > 2048L,
+          "Compiled against TreeTools >= 2.3.0 (SL_MAX_TIPS > 2048)")
+  rErrMsg <- "Trees with 327.. tips exceed the compiled limit of 2048"
+  expect_error(.CheckMaxTips(32705L), rErrMsg)
+
+  trees <- list(BalancedTree(8), PectinateTree(8))
+  class(trees) <- "multiPhylo"
+  expect_error(
+    .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 32768L),
+    rErrMsg
+  )
+})
+
+test_that("Tip-count guard: TT < 2.3.0 code path (mocked)", {
+  local_mocked_bindings(
+    cpp_sl_max_tips = function() 2048L,
+    .package = "TreeDist"
+  )
+  expect_no_error(.CheckMaxTips(100L))
+  expect_error(.CheckMaxTips(3000L),
+               "Trees with 3000 tips exceed the compiled limit of 2048")
+  trees <- list(BalancedTree(8), PectinateTree(8))
+  class(trees) <- "multiPhylo"
+  expect_error(
+    .SplitDistanceAllPairs(RobinsonFouldsSplits, trees, letters[1:8], 3000L),
+    "Trees with 3000 tips exceed the compiled limit of 2048"
   )
 })
 

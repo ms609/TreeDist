@@ -74,18 +74,18 @@ functions \code{USPRDist()} and \code{ReplugDist()}.
 the \insertCite{deOliveira2008;textual}{TreeDist} algorithm but can crash
 when sent trees of certain formats, and tends to have a longer running time.
 
-Other tree distances: 
-\code{\link{HierarchicalMutualInfo}()},
-\code{\link{JaccardRobinsonFoulds}()},
-\code{\link{KendallColijn}()},
-\code{\link{MASTSize}()},
-\code{\link{MatchingSplitDistance}()},
-\code{\link{NNIDist}()},
-\code{\link{NyeSimilarity}()},
-\code{\link{PathDist}()},
+Other tree distances:
+\code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
+\code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
+\code{\link[=KendallColijn]{KendallColijn()}},
+\code{\link[=MASTSize]{MASTSize()}},
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
+\code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NyeSimilarity]{NyeSimilarity()}},
+\code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},
-\code{\link{TransferDist}()},
-\code{\link{TreeDistance}()}
+\code{\link[=TransferDist]{TransferDist()}},
+\code{\link[=TreeDistance]{TreeDistance()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

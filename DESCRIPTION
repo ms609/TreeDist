@@ -87,10 +87,11 @@ VignetteBuilder: knitr
 Config/Needs/app/optional: uwot
 Config/Needs/check: rcmdcheck
 Config/Needs/coverage: covr
-Config/Needs/memcheck: devtools
+Config/Needs/memcheck: pkgdown, testthat
 Config/Needs/metadata: codemetar
 Config/Needs/revdeps: revdepcheck
 Config/Needs/website: openssl, pkgdown, remotes, shinylive
+Config/roxygen2/version: 8.0.0
 Config/testthat/parallel: false
 Config/testthat/edition: 3
 SystemRequirements: C++17, pandoc-citeproc
@@ -98,5 +99,4 @@ ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)

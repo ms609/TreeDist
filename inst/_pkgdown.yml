@@ -85,6 +85,7 @@ navbar:
       href: news/index.html
     github:
       icon: fa-github fa-lg
+      aria-label: View this repo on GitHub
       href: https://github.com/ms609/TreeDist
 
 articles:

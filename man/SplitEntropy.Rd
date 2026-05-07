@@ -40,8 +40,8 @@ SplitEntropy(c(A, A, A, B, B, B), c(A, A, B, B, B, B))
 \insertAllCited{}
 }
 \seealso{
-Other information functions: 
-\code{\link{SplitSharedInformation}()},
+Other information functions:
+\code{\link[=SplitSharedInformation]{SplitSharedInformation()}},
 \code{\link{TreeInfo}}
 }
 \author{
