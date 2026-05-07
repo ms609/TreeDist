@@ -572,6 +572,29 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
 }
 
+// Templated LAP-fill so the per-cell spi_overlap resolves to direct
+// lg2_rooted[] access on the hot path (n_tips <= SL_MAX_TIPS).
+template<bool Fast>
+static inline void shared_phylo_fill(const SplitList& a, const SplitList& b,
+                                     const int32 n_tips,
+                                     const double best_overlap,
+                                     const double score_over_possible,
+                                     const cost max_score,
+                                     cost_matrix& score) {
+  for (split_int ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = b.n_splits; bi--; ) {
+      const double spi_over = TreeDist::spi_overlap<Fast>(
+        a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
+                                                                    a.n_bins);
+
+      score(ai, bi) = spi_over == 0 ? max_score :
+        cost((spi_over - best_overlap) * score_over_possible);
+    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
+  }
+}
+
 inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
                           const int32 n_tips) {
   const SplitList a(x), b(y);
@@ -579,8 +602,12 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   const split_int overlap_a = (n_tips + 1) / 2;
 
   constexpr cost max_score = BIG;
-  const double lg2_unrooted_n = lg2_unrooted_lookup(n_tips);
-  const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
+  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
+  const double lg2_unrooted_n = fast ? lg2_unrooted[n_tips]
+                                     : lg2_unrooted_lookup(n_tips);
+  const double best_overlap = fast
+    ? TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips)
+    : TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
   const double max_possible = lg2_unrooted_n - best_overlap;
   const double score_over_possible = max_score / max_possible;
   const double possible_over_score = max_possible / max_score;
@@ -589,17 +616,13 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
   // In/out direction [i.e. 1/0 bit] is arbitrary.
   cost_matrix score(most_splits);
 
-  for (split_int ai = a.n_splits; ai--; ) {
-    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
-    for (split_int bi = b.n_splits; bi--; ) {
-      const double spi_over = TreeDist::spi_overlap(
-        a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
-                                                                    a.n_bins);
-
-      score(ai, bi) = spi_over == 0 ? max_score :
-        cost((spi_over - best_overlap) * score_over_possible);
-    }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+  if (fast) {
+    shared_phylo_fill<true>(a, b, n_tips, best_overlap,
+                            score_over_possible, max_score, score);
+  } else {
+    // LCOV_EXCL_LINE
+    shared_phylo_fill<false>(a, b, n_tips, best_overlap,
+                             score_over_possible, max_score, score);
   }
   score.padAfterRow(a.n_splits, max_score);
 

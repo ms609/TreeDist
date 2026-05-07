@@ -69,28 +69,50 @@ namespace TreeDist {
   }
 
 
+  // Compile-time-dispatched lg2 helpers: when Fast=true, callers guarantee
+  // x <= SL_MAX_TIPS, so the bounds-check + branch in lg2_rooted_lookup is
+  // skipped entirely and the inner kernel collapses to a bare table load.
+  // Used by spi_overlap / one_overlap below; large-tree callers pass
+  // Fast=false (default) and pay the predictable branch.
+  template<bool Fast>
+  [[nodiscard]] inline double lg2_rooted_fast(split_int x) noexcept {
+    if constexpr (Fast) return lg2_rooted[x];
+    else return lg2_rooted_lookup(x);
+  }
+
+  template<bool Fast>
+  [[nodiscard]] inline double lg2_unrooted_fast(split_int x) noexcept {
+    if constexpr (Fast) return lg2_unrooted[x];
+    else return lg2_unrooted_lookup(x);
+  }
+
+  template<bool Fast = false>
   [[nodiscard]] inline double one_overlap(const split_int a, const split_int b, const split_int n) noexcept {
     static_assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max(),
                   "int16 too narrow for SL_MAX_TIPS");
     if (a == b) {
-      return lg2_rooted_lookup(a) + lg2_rooted_lookup(n - a);
+      return lg2_rooted_fast<Fast>(a) + lg2_rooted_fast<Fast>(n - a);
     }
     // Unify a<b and a>b via lo/hi: removes an unpredictable branch.
     const split_int lo = (a < b) ? a : b;
     const split_int hi = (a < b) ? b : a;
-    return lg2_rooted_lookup(hi) + lg2_rooted_lookup(n - lo) - lg2_rooted_lookup(hi - lo + 1);
+    return lg2_rooted_fast<Fast>(hi) + lg2_rooted_fast<Fast>(n - lo)
+         - lg2_rooted_fast<Fast>(hi - lo + 1);
   }
 
+  template<bool Fast = false>
   [[nodiscard]] inline double one_overlap_notb(const split_int a, const split_int n_minus_b, const split_int n) noexcept {
     static_assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max(),
                   "int16 too narrow for SL_MAX_TIPS");
     const split_int b = n - n_minus_b;
     if (a == b) {
-      return lg2_rooted_lookup(b) + lg2_rooted_lookup(n_minus_b);
+      return lg2_rooted_fast<Fast>(b) + lg2_rooted_fast<Fast>(n_minus_b);
     } else if (a < b) {
-      return lg2_rooted_lookup(b) + lg2_rooted_lookup(n - a) - lg2_rooted_lookup(b - a + 1);
+      return lg2_rooted_fast<Fast>(b) + lg2_rooted_fast<Fast>(n - a)
+           - lg2_rooted_fast<Fast>(b - a + 1);
     } else {
-      return lg2_rooted_lookup(a) + lg2_rooted_lookup(n_minus_b) - lg2_rooted_lookup(a - b + 1);
+      return lg2_rooted_fast<Fast>(a) + lg2_rooted_fast<Fast>(n_minus_b)
+           - lg2_rooted_fast<Fast>(a - b + 1);
     }
   }
 
@@ -99,6 +121,11 @@ namespace TreeDist {
   // Counts n_ab = |A ∩ B| via hardware POPCNT, then derives all 4 Venn-diagram
   // region populations from arithmetic on n_ab, in_a, in_b, n_tips.
   // split_int used throughout so in_a + in_b does not overflow (max ~65534 for 32767-tip trees).
+  //
+  // Fast=true: caller guarantees n_tips <= SL_MAX_TIPS, so inner one_overlap*
+  // calls use direct lg2_rooted[] access.  Caller (shared_phylo_score) dispatches
+  // once on n_tips; per-cell branches are eliminated.
+  template<bool Fast = false>
   [[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
                        const split_int n_tips, const split_int in_a,
                        const split_int in_b, const split_int n_bins) noexcept {
@@ -119,15 +146,15 @@ namespace TreeDist {
     // unrelated splits).  Otherwise return the appropriate one_overlap score.
 
     if (n_ab == 0) {
-      return one_overlap_notb(in_a, in_b, n_tips);
+      return one_overlap_notb<Fast>(in_a, in_b, n_tips);
     }
     if (n_ab == in_b || n_ab == in_a) {
       // B ⊆ A (n_b_only == 0) or A ⊆ B (n_a_only == 0)
-      return one_overlap(in_a, in_b, n_tips);
+      return one_overlap<Fast>(in_a, in_b, n_tips);
     }
     if (in_a + in_b - n_ab == n_tips) {
       // A ∪ B covers all tips (n_neither == 0)
-      return one_overlap_notb(in_a, in_b, n_tips);
+      return one_overlap_notb<Fast>(in_a, in_b, n_tips);
     }
 
     return 0.0;

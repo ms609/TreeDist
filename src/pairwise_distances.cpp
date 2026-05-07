@@ -669,6 +669,27 @@ NumericVector cpp_msi_all_pairs(
 // metric, spi_overlap(A, B) where B contains A can EXCEED spi_overlap(A, A)
 // for identical splits, so the LAP can find a better global assignment by NOT
 // matching identical splits.  The full LAP is always solved.
+// LAP-fill body for shared_phylo_score, templated on Fast so the per-cell
+// spi_overlap call resolves at compile time to direct lg2_rooted[] access
+// (Fast=true) or the bounds-checked lookup (Fast=false).
+template<bool Fast>
+static inline void shared_phylo_fill_lap(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const double best_overlap, const double score_over_possible,
+    const cost max_score, cost_matrix& score
+) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      const double spi = TreeDist::spi_overlap<Fast>(
+        a.state[ai], b.state[bi], n_tips,
+        a.in_split[ai], b.in_split[bi], a.n_bins);
+      score(ai, bi) = (spi == 0.0) ? max_score
+                                   : cost((spi - best_overlap) * score_over_possible);
+    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
+  }
+}
+
 static double shared_phylo_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch
@@ -678,23 +699,28 @@ static double shared_phylo_score(
 
   const split_int overlap_a = (n_tips + 1) / 2;
   constexpr cost max_score = BIG;
-  const double best_overlap = TreeDist::one_overlap(overlap_a, n_tips / 2, n_tips);
-  const double max_possible = lg2_unrooted_lookup(n_tips) - best_overlap;
+  // Hot path: n_tips <= SL_MAX_TIPS, so all lg2_rooted/lg2_unrooted indices
+  // fall in the precomputed table.  Dispatch once here so the per-cell loop
+  // emits direct table loads with no bounds-check branch.
+  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
+  const double best_overlap = fast
+    ? TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips)
+    : TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
+  const double max_possible = (fast ? lg2_unrooted[n_tips]
+                                    : lg2_unrooted_lookup(n_tips)) - best_overlap;
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
 
-  for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    for (split_int bi = 0; bi < b.n_splits; ++bi) {
-      const double spi = TreeDist::spi_overlap(
-        a.state[ai], b.state[bi], n_tips,
-        a.in_split[ai], b.in_split[bi], a.n_bins);
-      score(ai, bi) = (spi == 0.0) ? max_score
-                                   : cost((spi - best_overlap) * score_over_possible);
-    }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+  if (fast) {
+    shared_phylo_fill_lap<true>(a, b, n_tips, best_overlap,
+                                score_over_possible, max_score, score);
+  } else {
+    // LCOV_EXCL_LINE
+    shared_phylo_fill_lap<false>(a, b, n_tips, best_overlap,
+                                 score_over_possible, max_score, score);
   }
   score.padAfterRow(a.n_splits, max_score);
 
