@@ -176,6 +176,12 @@ Other R packages implementing tree distance functions include:
 ([ORCID](https://orcid.org/0000-0001-5660-1727)) \[copyright holder,
 programmer\]
 
+Authors:
+
+- Martin R. Smith <martin.smith@durham.ac.uk>
+  ([ORCID](https://orcid.org/0000-0001-5660-1727)) \[copyright holder,
+  programmer\]
+
 Other contributors:
 
 - Roy Jonker <roy_jonker@magiclogic.com> (LAP algorithm) \[programmer,

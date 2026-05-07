@@ -45,7 +45,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist" aria-label="View this repo on GitHub"><span class="fa fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -68,7 +68,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internals-2-13-0-9003">Internals<a class="anchor" aria-label="anchor" href="#internals-2-13-0-9003"></a></h3>
-<ul><li>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</li>
+<ul><li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
+<li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0). The R-level tip-count guard (<code>.CheckMaxTips()</code>) detects the TreeTools version at load time and unlocks the higher ceiling automatically; no code changes are needed. All integer counters in the C++ hot paths have been widened from <code>int16</code> to <code>split_int</code> (<code>int32</code>) to handle split counts above 32 767 without overflow. Direct <code>lg2[]</code> table accesses have been replaced with <code>lg2_lookup()</code> fallback helpers so that trees with more tips than <code>SL_MAX_TIPS</code> are computed correctly via <code>std::log2</code> / <code>std::lgamma</code>.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-13-0-9003">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0-9003"></a></h3>
