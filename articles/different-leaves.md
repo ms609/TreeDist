@@ -9,6 +9,7 @@ resultant distances can require a little thought.
 Let’s generate some simple trees to follow this through in practice:
 
 ``` r
+
 library("TreeTools", quietly = TRUE)
 balAL <- BalancedTree(letters[1:12])
 balAJ <- DropTip(balAL, letters[11:12])
@@ -37,6 +38,7 @@ trees – except that some leaves present in one tree (here, `a` and `b`)
 are missing from the other.
 
 ``` r
+
 Plot2(balAL, balCL,
       main = "balAL", main2 = "balCL",
       font = c(rep(4, 2), rep(3, 10)) # Emphasize missing tips
@@ -51,6 +53,7 @@ information held in common between the trees is thus equal to the
 information held in common if only the common leaves are retained:
 
 ``` r
+
 library("TreeDist")
 commonTips <- intersect(TipLabels(balAL), TipLabels(balCL))
 
@@ -61,6 +64,7 @@ ClusteringEntropy(balCL)
     ## [1] 5.780608
 
 ``` r
+
 # All the information in balCL is also present in balAL
 MutualClusteringInfo(balCL, balAL)
 ```
@@ -68,6 +72,7 @@ MutualClusteringInfo(balCL, balAL)
     ## [1] 5.780608
 
 ``` r
+
 # balAL also contains information about leaves A and B,
 # so contains more information in total
 ClusteringEntropy(balAL)
@@ -87,6 +92,7 @@ common. A `NaN` result is returned when a pair of trees has no leaves in
 common.
 
 ``` r
+
 # Information in common (bits)
 raw <- MutualClusteringInfo(treeList)
 heatmap(raw, symm = TRUE)
@@ -95,6 +101,7 @@ heatmap(raw, symm = TRUE)
 ![](different-leaves_files/figure-html/full-list-1.png)
 
 ``` r
+
 # Normalized
 normalized <- MutualClusteringInfo(treeList, normalize = TRUE)
 heatmap(normalized, symm = TRUE)

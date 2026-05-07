@@ -68,6 +68,11 @@ Functions for calculating distances between pairs of trees.
 - [`SPRDist()`](https://ms609.github.io/TreeDist/reference/SPRDist.md) :
   Approximate the Subtree Prune and Regraft distance
 
+- [`TransferDist()`](https://ms609.github.io/TreeDist/reference/TransferDist.md)
+  [`TransferDistance()`](https://ms609.github.io/TreeDist/reference/TransferDist.md)
+  [`TransferDistSplits()`](https://ms609.github.io/TreeDist/reference/TransferDist.md)
+  : Transfer dissimilarity between phylogenetic trees
+
 - [`CompareAll()`](https://ms609.github.io/TreeDist/reference/CompareAll.md)
   : Distances between each pair of trees
 
@@ -116,6 +121,8 @@ Produce trees to summarize a sample.
 
 - [`MCITree()`](https://ms609.github.io/TreeDist/reference/MCITree.md) :
   Maximum Clade Information Tree
+- [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
+  : Consensus tree minimizing transfer distance
 
 ## Cluster analysis
 

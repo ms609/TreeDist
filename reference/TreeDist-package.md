@@ -116,7 +116,7 @@ a command-line interface.
   interchange distance.” In Goos G, Hartmanis J, Leeuwen J, Cai J, Wong
   CK (eds.), *Computing and Combinatorics*, volume 1090, 343–351.
   Springer, Berlin, Heidelberg. ISBN 978-3-540-61332-9
-  978-3-540-68461-9,
+  978-3-540-68461-9.
   [doi:10.1007/3-540-61332-3_168](https://doi.org/10.1007/3-540-61332-3_168)
   .
 
@@ -175,6 +175,12 @@ Other R packages implementing tree distance functions include:
 **Maintainer**: Martin R. Smith <martin.smith@durham.ac.uk>
 ([ORCID](https://orcid.org/0000-0001-5660-1727)) \[copyright holder,
 programmer\]
+
+Authors:
+
+- Martin R. Smith <martin.smith@durham.ac.uk>
+  ([ORCID](https://orcid.org/0000-0001-5660-1727)) \[copyright holder,
+  programmer\]
 
 Other contributors:
 

@@ -36,6 +36,7 @@ Tree batch styles
 More control over the mapping can be obtained at the command line:
 
 ``` r
+
 # Load trees
 library("TreeTools", quietly = TRUE)
 batch1 <- as.phylo(1:60, 8) # Generate 60 similar trees 
@@ -52,6 +53,7 @@ mapping <- cmdscale(distances, k = 2)
 ```
 
 ``` r
+
 # Plot mapping
 par(mar = rep(0, 4))
 plot(mapping,
@@ -92,6 +94,7 @@ tree space.
 One approach is to plot distances from a median tree:
 
 ``` r
+
 # Calculate median trees
 median1 <- median(batch1)
 median2 <- median(batch2)
@@ -140,6 +143,7 @@ whose position is poorly defined (Smith, 2022b). Detecting and removing
 rogue taxa can provide a more meaningful point of comparison.
 
 ``` r
+
 # Create tree set with a rogue taxon
 batch3 <- AddTipEverywhere(as.phylo(7, 7), "t8")
 

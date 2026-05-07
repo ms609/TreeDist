@@ -21,6 +21,7 @@ vignette](https://ms609.github.io/TreeDist/articles/information.md)), a
 concept introduced (though not developed) by Nelson (1979).
 
 ``` r
+
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -28,6 +29,7 @@ VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
 ![](Generalized-RF_files/figure-html/unnamed-chunk-1-1.png)
 
 ``` r
+
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
@@ -37,6 +39,7 @@ This distance is measured in bits; on this measure, the total
 information content of a tree is given by
 
 ``` r
+
 SplitwiseInfo(tree1)
 ```
 
@@ -51,6 +54,7 @@ position of two distant leaves (as with leaves ‘A’ and ‘J’ below) can
 disproportionately reduce similarity – in this example, to zero.
 
 ``` r
+
 VisualizeMatching(SharedPhylogeneticInfo, AtoJ, swapAJ,
                   Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
 ```
@@ -67,6 +71,7 @@ similarity in tree structure even when every possible pairing of splits
 conflicts:
 
 ``` r
+
 VisualizeMatching(MutualClusteringInfo, AtoJ, swapAJ,
                   Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
 ```
@@ -74,6 +79,7 @@ VisualizeMatching(MutualClusteringInfo, AtoJ, swapAJ,
 ![](Generalized-RF_files/figure-html/unnamed-chunk-3-1.png)
 
 ``` r
+
 MutualClusteringInfo(AtoJ, swapAJ)
 ```
 
@@ -85,6 +91,7 @@ information, even a dissimilar pairing (such as `HI|ABCDEFG` ⇒
 unpaired.
 
 ``` r
+
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -94,6 +101,7 @@ VisualizeMatching(MutualClusteringInfo, tree1, tree2,
 The total mutual clustering information in a single tree is given by
 
 ``` r
+
 ClusteringEntropy(tree1)
 ```
 
@@ -112,24 +120,25 @@ aligned thus:
 
 The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in
 common (`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).
-Their *subset score* is thus $\frac{5}{8}$.
+Their *subset score* is thus $`\frac{5}{8}`$.
 
 The second pair of subsets, `GHIJ` and `FGH`, have two elements (`GH`)
 in common, of the five total (`FGHIJ`), and hence receive a subset score
-of $\frac{2}{5}$.
+of $`\frac{2}{5}`$.
 
 This split alignment then receives an *alignment score* corresponding to
-the lower of the two subset scores, $\frac{2}{5}$.
+the lower of the two subset scores, $`\frac{2}{5}`$.
 
 We must now consider the other alignment of this pair of splits,
 
     ABCDEF  |     GHIJ
          FGH|ABCDE  IJ
 
-This yields subset scores of $\frac{1}{8}$ and $\frac{2}{9}$, and thus
-has an alignment score of $\frac{1}{8}$. This alignment gives a lower
-score than the other, so is disregarded. The pair of splits is allocated
-a similarity score corresponding to the better alignment: $\frac{2}{5}$.
+This yields subset scores of $`\frac{1}{8}`$ and $`\frac{2}{9}`$, and
+thus has an alignment score of $`\frac{1}{8}`$. This alignment gives a
+lower score than the other, so is disregarded. The pair of splits is
+allocated a similarity score corresponding to the better alignment:
+$`\frac{2}{5}`$.
 
 As such, splits that match exactly will receive a similarity score of 1,
 in a manner analogous to the Robinson–Foulds distance. (This is despite
@@ -137,6 +146,7 @@ the fact that some splits are more likely to match than others.) It is
 not possible for a pair of splits to receive a zero similarity score.
 
 ``` r
+
 VisualizeMatching(NyeSimilarity, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -144,6 +154,7 @@ VisualizeMatching(NyeSimilarity, tree1, tree2,
 ![](Generalized-RF_files/figure-html/unnamed-chunk-5-1.png)
 
 ``` r
+
 NyeSimilarity(tree1, tree2, normalize = FALSE)
 ```
 
@@ -159,12 +170,14 @@ the Robinson–Foulds metric as the exponent grows towards infinity, the
 resulting score is then doubled.
 
 ``` r
+
 JaccardRobinsonFoulds(tree1, tree2, k = 1)
 ```
 
     ## [1] 4
 
 ``` r
+
 VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -172,6 +185,7 @@ VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
 ![](Generalized-RF_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 JRF2 <- function(...) JaccardRobinsonFoulds(k = 2, ...)
 JRF2(tree1, tree2)
 ```
@@ -179,6 +193,7 @@ JRF2(tree1, tree2)
     ## [1] 5.638889
 
 ``` r
+
 VisualizeMatching(JRF2, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -227,12 +242,14 @@ term the Matching Split Distance. (This approach was independently
 proposed by Lin *et al.* (2012).)
 
 ``` r
+
 MatchingSplitDistance(tree1, tree2)
 ```
 
     ## [1] 5
 
 ``` r
+
 VisualizeMatching(MatchingSplitDistance, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -253,17 +270,18 @@ order to make the two splits identical. With the pair of splits
 three leaves (‘F’, ‘I’ and ‘J’) must be moved before the splits are
 identical; as such, the pair of splits are assigned a difference score
 of three.  
-Formally, where $S_{i}$ splits $n$ leaves into bipartitions $A_{i}$ and
-$B_{i}$, the difference score is calculated by
+Formally, where $`S_i`$ splits $`n`$ leaves into bipartitions $`A_i`$
+and $`B_i`$, the difference score is calculated by
 
-$n - m$
+$`n - m`$
 
-where $m$ counts the number of leaves that already match, and is defined
-as
+where $`m`$ counts the number of leaves that already match, and is
+defined as
 
-$m = \max\{\left| A_{1} \cap A_{2} \right| + \left| B_{1} \cap B_{2} \right|,\left| A_{1} \cap B_{2} \right| + \left| B_{1} \cap A_{2} \right|\}$
+$`m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}`$
 
 ``` r
+
 MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
                       read.tree(text='((a, b, c, d, e, i, j), (g, h, f));'))
 ```
@@ -275,12 +293,12 @@ its maximum value.
 
 ### Information theoretic alternative
 
-In the matching split distance, $m$ represents a simple count of the
+In the matching split distance, $`m`$ represents a simple count of the
 number of shared taxa. An alternative is to measure the phylogenetic
-information content of the largest split consistent with $S_{1}$ and
-$S_{2}$:
+information content of the largest split consistent with $`S_1`$ and
+$`S_2`$:
 
-$m = \max\{ h\left( A_{1} \cap A_{2}|B_{1} \cap B_{2} \right),h\left( A_{1} \cap B_{2}|B_{1} \cap A_{2} \right)\}$
+$`m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2), h(A_1 \cap B_2 | B_1 \cap A_2)\}`$
 
 The most information-rich split consistent with
 
@@ -290,6 +308,7 @@ The most information-rich split consistent with
 is `ABCDE | GH`, which contains
 
 ``` r
+
 TreeTools::SplitInformation(5, 2)
 ```
 
@@ -299,12 +318,14 @@ bits of phylogenetic information. This value can be used as a similarity
 score for this pairing of splits.
 
 ``` r
+
 MatchingSplitInfoDistance(tree1, tree2)
 ```
 
     ## [1] 17.27586
 
 ``` r
+
 VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```

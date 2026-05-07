@@ -31,6 +31,11 @@ MCITree(trees, info = "phylogenetic", check.tips = TRUE)
 `MCITree()` returns the tree with the highest information content,
 selected from `trees`.
 
+## See also
+
+Other summary trees:
+[`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
+
 ## Author
 
 [Martin R. Smith](https://orcid.org/0000-0001-5660-1727)

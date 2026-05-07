@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.14.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,7 +21,7 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Home"><span class="fa fa-home fa-lg"></span></a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
 <li class="nav-item dropdown">
@@ -45,7 +45,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist" aria-label="View this repo on GitHub"><span class="fa fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -59,6 +59,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.14.0" id="treedist-2140-2026-05-07">TreeDist 2.14.0 (2026-05-07)<a class="anchor" aria-label="anchor" href="#treedist-2140-2026-05-07"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-14-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-14-0"></a></h3>
+<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic. Unlike majority-rule consensus, which can be highly unresolved when phylogenetic signal is diffuse, the transfer consensus uses the finer-grained transfer distance to produce more resolved trees.</p></li>
+<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants. Supports all-pairs, cross-pairs, and single-pair computations.</p></li>
+<li><p>LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering Information) C++ implementations are now exposed via <code>inst/include/TreeDist/</code> headers, allowing downstream packages to use <code>LinkingTo: TreeDist</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="internals-2-14-0">Internals<a class="anchor" aria-label="anchor" href="#internals-2-14-0"></a></h3>
+<ul><li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
+<li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0). The R-level tip-count guard (<code>.CheckMaxTips()</code>) detects the TreeTools version at load time and unlocks the higher ceiling automatically; no code changes are needed. All integer counters in the C++ hot paths have been widened from <code>int16</code> to <code>split_int</code> (<code>int32</code>) to handle split counts above 32 767 without overflow. Direct <code>lg2[]</code> table accesses have been replaced with <code>lg2_lookup()</code> fallback helpers so that trees with more tips than <code>SL_MAX_TIPS</code> are computed correctly via <code>std::log2</code> / <code>std::lgamma</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-2-14-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-14-0"></a></h3>
+<ul><li>
+<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance. Previously, cross-distance calls fell through to per-pair R dispatch (~27× slower per pair); the new path achieves ~21× speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.13.0" id="treedist-2130-2026-03-17">TreeDist 2.13.0 (2026-03-17)<a class="anchor" aria-label="anchor" href="#treedist-2130-2026-03-17"></a></h2>
 <div class="section level3">
 <h3 id="new-features-2-13-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-13-0"></a></h3>
@@ -68,22 +87,22 @@
 <div class="section level3">
 <h3 id="performance-2-13-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0"></a></h3>
 <p>Pairwise distance computation has been substantially optimized. Typical speedups over v2.12.0 for tree sets where most splits are shared (MCMC posteriors, bootstrap replicates):</p>
-<table class="table"><thead><tr class="header"><th>Metric</th>
+<table class="table"><thead><tr><th>Metric</th>
 <th align="right">100 × 50 tips</th>
 <th align="right">40 × 200 tips</th>
-</tr></thead><tbody><tr class="odd"><td><code>ClusteringInfoDistance</code></td>
+</tr></thead><tbody><tr><td><code>ClusteringInfoDistance</code></td>
 <td align="right">~5×</td>
 <td align="right">~12×</td>
-</tr><tr class="even"><td><code>MatchingSplitDistance</code></td>
+</tr><tr><td><code>MatchingSplitDistance</code></td>
 <td align="right">~7×</td>
 <td align="right">~11×</td>
-</tr><tr class="odd"><td><code>InfoRobinsonFoulds</code></td>
+</tr><tr><td><code>InfoRobinsonFoulds</code></td>
 <td align="right">~4×</td>
 <td align="right">~5×</td>
-</tr><tr class="even"><td><code>DifferentPhylogeneticInfo</code></td>
+</tr><tr><td><code>DifferentPhylogeneticInfo</code></td>
 <td align="right">~1.3×</td>
 <td align="right">~1.1×</td>
-</tr><tr class="odd"><td><code>MatchingSplitInfoDistance</code></td>
+</tr><tr><td><code>MatchingSplitInfoDistance</code></td>
 <td align="right">~1.4×</td>
 <td align="right">~1×</td>
 </tr></tbody></table><div class="section level4">
@@ -106,7 +125,7 @@
 <li><p>Cross-pairs computations (<code>tree1</code> vs <code>tree2</code> where both are lists) now use the same optimized batch path as all-pairs computations.</p></li>
 </ul></div>
 <div class="section level4">
-<h4 id="kendallcolijn-distance-2-13-0">KendallColijn distance<a class="anchor" aria-label="anchor" href="#kendallcolijn-distance-2-13-0"></a></h4>
+<h4 id="kendall--colijn-distance-2-13-0">Kendall &amp; Colijn distance<a class="anchor" aria-label="anchor" href="#kendall--colijn-distance-2-13-0"></a></h4>
 <ul><li><p><code><a href="../reference/KendallColijn.html">KCVector()</a></code> reimplemented in C++, giving ~220× speedup per tree.</p></li>
 <li><p>All-pairs and cross-pairs <code><a href="../reference/KendallColijn.html">KendallColijn()</a></code> Euclidean distances now computed in C++ (<code>pair_diff_euclidean()</code>, <code>vec_diff_euclidean()</code>).</p></li>
 </ul></div>

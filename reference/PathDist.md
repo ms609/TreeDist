@@ -85,6 +85,7 @@ Other tree distances:
 [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/reference/Robinson-Foulds.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/reference/SPRDist.md),
+[`TransferDist()`](https://ms609.github.io/TreeDist/reference/TransferDist.md),
 [`TreeDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
 
 ## Author

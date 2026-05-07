@@ -1,5 +1,54 @@
 # Changelog
 
+## TreeDist 2.14.0 (2026-05-07)
+
+### New features
+
+- [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
+  constructs a consensus tree that minimizes the sum of transfer
+  distances to a set of input trees, using a greedy add-and-prune
+  heuristic. Unlike majority-rule consensus, which can be highly
+  unresolved when phylogenetic signal is diffuse, the transfer consensus
+  uses the finer-grained transfer distance to produce more resolved
+  trees.
+
+- [`TransferDist()`](https://ms609.github.io/TreeDist/reference/TransferDist.md)
+  computes the transfer dissimilarity between phylogenetic trees, with
+  scaled and unscaled variants. Supports all-pairs, cross-pairs, and
+  single-pair computations.
+
+- LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering
+  Information) C++ implementations are now exposed via
+  `inst/include/TreeDist/` headers, allowing downstream packages to use
+  `LinkingTo: TreeDist`.
+
+### Internals
+
+- Stack-allocated split buffers replaced with dynamically-sized vectors,
+  removing a hard dependency on the compile-time `SL_MAX_SPLITS`
+  constant. TreeDist now supports trees of any size permitted by
+  TreeTools.
+
+- **Large-tree support (requires TreeTools ≥ 2.3.0):** all distance
+  functions now accept trees with up to 32 767 tips (previously limited
+  to `SL_MAX_TIPS`, 2048 with TreeTools ≤ 2.2.0). The R-level tip-count
+  guard (`.CheckMaxTips()`) detects the TreeTools version at load time
+  and unlocks the higher ceiling automatically; no code changes are
+  needed. All integer counters in the C++ hot paths have been widened
+  from `int16` to `split_int` (`int32`) to handle split counts above 32
+  767 without overflow. Direct `lg2[]` table accesses have been replaced
+  with `lg2_lookup()` fallback helpers so that trees with more tips than
+  `SL_MAX_TIPS` are computed correctly via `std::log2` / `std::lgamma`.
+
+### Performance
+
+- [`RobinsonFoulds()`](https://ms609.github.io/TreeDist/reference/Robinson-Foulds.md)
+  now uses a fast C++ batch path for cross-distance computations (tree
+  list vs tree list), matching the existing all-pairs batch performance.
+  Previously, cross-distance calls fell through to per-pair R dispatch
+  (~27× slower per pair); the new path achieves ~21× speedup on typical
+  inputs (e.g. 50 × 250 trees, 50 tips).
+
 ## TreeDist 2.13.0 (2026-03-17)
 
 ### New features
@@ -83,7 +132,7 @@ posteriors, bootstrap replicates):
 - Cross-pairs computations (`tree1` vs `tree2` where both are lists) now
   use the same optimized batch path as all-pairs computations.
 
-#### KendallColijn distance
+#### Kendall & Colijn distance
 
 - [`KCVector()`](https://ms609.github.io/TreeDist/reference/KendallColijn.md)
   reimplemented in C++, giving ~220× speedup per tree.
