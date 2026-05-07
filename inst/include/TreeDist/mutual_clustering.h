@@ -49,21 +49,21 @@ namespace TreeDist {
   [[nodiscard]] inline double lg2_lookup(split_int x) noexcept {
     return (x <= static_cast<split_int>(SL_MAX_TIPS))
       ? lg2[x]
-      : lg2_slow(x); // LCOV_EXCL_LINE
+      : lg2_slow(x); // #nocov
   }
 
   // log2((2n-5)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
   [[nodiscard]] inline double lg2_unrooted_lookup(split_int n_tips) noexcept {
     return (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1))
       ? lg2_unrooted[n_tips]
-      : lg2_unrooted_slow(n_tips); // LCOV_EXCL_LINE
+      : lg2_unrooted_slow(n_tips); // #nocov
   }
 
   // log2((2n-3)!!) — table-fast for n <= SL_MAX_TIPS+1, lgamma otherwise.
   [[nodiscard]] inline double lg2_rooted_lookup(split_int n_tips) noexcept {
     return (n_tips <= static_cast<split_int>(SL_MAX_TIPS + 1))
       ? lg2_rooted[n_tips]
-      : lg2_rooted_slow(n_tips); // LCOV_EXCL_LINE
+      : lg2_rooted_slow(n_tips); // #nocov
   }
 
   // ---- Inline helpers ----
