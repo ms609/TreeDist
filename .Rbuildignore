@@ -24,6 +24,9 @@ revdep
 ^.*\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.AGENTS$
+^\.positai$
+^\.claude$
 \.Rdata$
 ^\.?R+prof.*$
 ^vignettes/.*_cache$
@@ -36,5 +39,3 @@ revdep
 ^\.vs.*$
 ^\.vscode.*$
 ^CRAN-SUBMISSION$
-^\.positai$
-^\.claude$
