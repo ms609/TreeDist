@@ -89,6 +89,34 @@ test_that("RF and IRF work for 8000-tip trees", {
   expect_equal(InfoRobinsonFoulds(t1, t1)[[1]], 0)
 })
 
+test_that("Slow lookup path produces identical SPI to fast path", {
+  skip_on_cran()
+  # Coverage for the n_tips > SL_MAX_TIPS branches in shared_phylo:
+  #   - lg2_*_slow fallback functions
+  #   - one_overlap<false>, one_overlap_notb<false>, spi_overlap<false>
+  # These are only triggered with > 32705 tips in production, but the
+  # cpp_shared_phylo entry accepts a force_slow flag so the same code paths
+  # can be exercised on small trees.  Both paths must produce identical
+  # values: lg2_rooted_lookup() == lg2_rooted[] within the table range.
+  t1 <- as.phylo(0, 30)
+  t2 <- as.phylo(11, 30)
+  splits1 <- as.Splits(t1)
+  splits2 <- as.Splits(t2)
+
+  fast <- TreeDist:::cpp_shared_phylo(splits1, splits2, 30L, force_slow = FALSE)
+  slow <- TreeDist:::cpp_shared_phylo(splits1, splits2, 30L, force_slow = TRUE)
+
+  expect_equal(fast$score, slow$score)
+  expect_equal(fast$matching, slow$matching)
+
+  # Identical-tree case: both paths must report the self-information score.
+  fast_self <- TreeDist:::cpp_shared_phylo(splits1, splits1, 30L,
+                                           force_slow = FALSE)
+  slow_self <- TreeDist:::cpp_shared_phylo(splits1, splits1, 30L,
+                                           force_slow = TRUE)
+  expect_equal(fast_self$score, slow_self$score)
+})
+
 test_that("Tip-count ceiling is enforced correctly", {
   skip_on_cran()
   skip_if(TreeDist:::cpp_sl_max_tips() < 2049L,

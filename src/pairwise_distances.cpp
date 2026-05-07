@@ -702,12 +702,21 @@ static double shared_phylo_score(
   // Hot path: n_tips <= SL_MAX_TIPS, so all lg2_rooted/lg2_unrooted indices
   // fall in the precomputed table.  Dispatch once here so the per-cell loop
   // emits direct table loads with no bounds-check branch.
+  // The else branch is reachable only on TT 2.3 builds with n_tips > 32705,
+  // which is too large to exercise in routine tests; the equivalent slow
+  // template instantiations (one_overlap<false> etc.) are covered by the
+  // legacy single-pair entry (cpp_shared_phylo) via force_slow=true.
   const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
-  const double best_overlap = fast
-    ? TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips)
-    : TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
-  const double max_possible = (fast ? lg2_unrooted[n_tips]
-                                    : lg2_unrooted_lookup(n_tips)) - best_overlap;
+  double best_overlap, max_possible;
+  if (fast) {
+    best_overlap = TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips);
+    max_possible = lg2_unrooted[n_tips] - best_overlap;
+  } else {
+    // LCOV_EXCL_START
+    best_overlap = TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
+    max_possible = lg2_unrooted_lookup(n_tips) - best_overlap;
+    // LCOV_EXCL_STOP
+  }
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
@@ -718,9 +727,10 @@ static double shared_phylo_score(
     shared_phylo_fill_lap<true>(a, b, n_tips, best_overlap,
                                 score_over_possible, max_score, score);
   } else {
-    // LCOV_EXCL_LINE
+    // LCOV_EXCL_START
     shared_phylo_fill_lap<false>(a, b, n_tips, best_overlap,
                                  score_over_possible, max_score, score);
+    // LCOV_EXCL_STOP
   }
   score.padAfterRow(a.n_splits, max_score);
 

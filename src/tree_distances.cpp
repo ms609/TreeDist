@@ -596,18 +596,25 @@ static inline void shared_phylo_fill(const SplitList& a, const SplitList& b,
 }
 
 inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
-                          const int32 n_tips) {
+                          const int32 n_tips,
+                          const bool force_slow = false) {
   const SplitList a(x), b(y);
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
   const split_int overlap_a = (n_tips + 1) / 2;
 
   constexpr cost max_score = BIG;
-  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
-  const double lg2_unrooted_n = fast ? lg2_unrooted[n_tips]
-                                     : lg2_unrooted_lookup(n_tips);
-  const double best_overlap = fast
-    ? TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips)
-    : TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
+  // force_slow: test-only hook so the bounds-checked lookup path can be
+  // exercised on small trees for code coverage of the template <false>
+  // instantiations and the lg2_*_slow fallbacks.
+  const bool fast = !force_slow && n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
+  double lg2_unrooted_n, best_overlap;
+  if (fast) {
+    lg2_unrooted_n = lg2_unrooted[n_tips];
+    best_overlap = TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips);
+  } else {
+    lg2_unrooted_n = lg2_unrooted_lookup(n_tips);
+    best_overlap = TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
+  }
   const double max_possible = lg2_unrooted_n - best_overlap;
   const double score_over_possible = max_score / max_possible;
   const double possible_over_score = max_possible / max_score;
@@ -620,7 +627,6 @@ inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
     shared_phylo_fill<true>(a, b, n_tips, best_overlap,
                             score_over_possible, max_score, score);
   } else {
-    // LCOV_EXCL_LINE
     shared_phylo_fill<false>(a, b, n_tips, best_overlap,
                              score_over_possible, max_score, score);
   }
@@ -707,9 +713,10 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 
 // [[Rcpp::export]]
 List cpp_shared_phylo(const RawMatrix &x, const RawMatrix &y,
-                      const IntegerVector &nTip) {
+                      const IntegerVector &nTip,
+                      const bool force_slow = false) {
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
-  return shared_phylo(x, y, n_tip);
+  return shared_phylo(x, y, n_tip, force_slow);
 }
