@@ -79,10 +79,22 @@ jobs:
               result
             }, envir = ns)
           })
+          # ── Identify all dependencies ──
+          pkg_name <- read.dcf("DESCRIPTION")[, "Package"]
+          # Get everything the app needs
+          all_deps <- tools::package_dependencies(
+            c(pkg_name, "shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
+            recursive = TRUE
+          )
+          all_deps <- unique(c(pkg_name, unlist(all_deps)))
+          
+          # ── The "Blacklist" ──
+          # Explicitly remove sass and any other problematic compiled libs
+          pkg_deps <- setdiff(all_deps, c("sass", "cachem", "fastmap")) 
+          # Note: bslib can usually survive without cachem/fastmap in WASM 
+          # if the theme is static.
 
           # ── Export ──
-          # Explicitly exclude sass, whose shared object cannot be loaded
-          pkg_deps <- c("shiny", "TreeTools", "TreeDist", "sass", "shinyjs", "bslib")
           
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app",
