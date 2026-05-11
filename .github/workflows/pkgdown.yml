@@ -129,6 +129,8 @@ jobs:
             }
           )
           file.create("docs/.nojekyll")
+          # PHYSICAL REMOVAL: Just in case shinylive ignored us
+          unlink("docs/app/shinylive/webr/packages/sass", recursive = TRUE)
 
       # ── Deploy ────────────────────────────────────────────────────
       - name: Deploy to GitHub Pages
