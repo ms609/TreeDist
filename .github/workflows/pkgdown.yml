@@ -82,7 +82,7 @@ jobs:
 
           # ── Export ──
           # Explicitly exclude sass, whose shared object cannot be loaded
-          pkg_deps <- c("shiny", "TreeTools", "TreeDist", "shinyjs", "bslib")
+          pkg_deps <- c("shiny", "TreeTools", "TreeDist", "sass", "shinyjs", "bslib")
           
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app",
