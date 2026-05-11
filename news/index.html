@@ -55,7 +55,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/ms609/TreeDist/blob/2.14.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/ms609/TreeDist/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -68,13 +68,13 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internals-2-14-0">Internals<a class="anchor" aria-label="anchor" href="#internals-2-14-0"></a></h3>
-<ul><li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
-<li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0). The R-level tip-count guard (<code>.CheckMaxTips()</code>) detects the TreeTools version at load time and unlocks the higher ceiling automatically; no code changes are needed. All integer counters in the C++ hot paths have been widened from <code>int16</code> to <code>split_int</code> (<code>int32</code>) to handle split counts above 32 767 without overflow. Direct <code>lg2[]</code> table accesses have been replaced with <code>lg2_lookup()</code> fallback helpers so that trees with more tips than <code>SL_MAX_TIPS</code> are computed correctly via <code>std::log2</code> / <code>std::lgamma</code>.</p></li>
+<ul><li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0).</p></li>
+<li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-14-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-14-0"></a></h3>
 <ul><li>
-<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance. Previously, cross-distance calls fell through to per-pair R dispatch (~27× slower per pair); the new path achieves ~21× speedup on typical inputs (e.g. 50 × 250 trees, 50 tips).</li>
+<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance and providing a ~21× speedup on typical inputs.</li>
 </ul></div>
 </div>
     <div class="section level2">
