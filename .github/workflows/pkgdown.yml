@@ -81,6 +81,9 @@ jobs:
           })
           # ── Identify all dependencies ──
           pkg_name <- read.dcf("DESCRIPTION")[, "Package"]
+          install.packages(c("shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
+                 repos = "https://cran.r-project.org")
+                 
           # Get everything the app needs
           all_deps <- tools::package_dependencies(
             c(pkg_name, "shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
@@ -95,13 +98,23 @@ jobs:
           # if the theme is static.
 
           # ── Export ──
+          # Diagnostic: Can the runner actually see 'shiny' in the WASM repos?
+          db <- available.packages(repos = c("https://ms609.r-universe.dev", "https://repo.r-wasm.org"))
+          message("Is shiny available? ", "shiny" %in% rownames(db))
+          message("Packages found in WASM repos: ", paste(rownames(db)[1:10], collapse=", "))
+          
+          # Print the final pkg_deps list to ensure it's not empty
+          message("Exporting with pkgs: ", paste(pkg_deps, collapse = ", "))
           
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app",
             wasm_packages = TRUE,
             pkgs = pkg_deps,
-            repos = c("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5",
-                      "https://repo.r-wasm.org")),
+            repos = c(
+              "https://ms609.r-universe.dev",         # Base URL only
+              "https://repo.r-wasm.org",             # Base URL only
+              "https://cran.r-project.org"           # Fallback for source if needed
+            )),
             error = function(e) {
               msg <- conditionMessage(e)
               message("\n===== shinylive::export() failed =====")
