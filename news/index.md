@@ -2,6 +2,8 @@
 
 ## TreeDist 2.14.0 (2026-05-07)
 
+CRAN release: 2026-05-09
+
 ### New features
 
 - [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
