@@ -99,7 +99,7 @@ jobs:
 
           # ── Export ──
           # Diagnostic: Can the runner actually see 'shiny' in the WASM repos?
-          db <- available.packages(repos = c("https://ms609.r-universe.dev", "https://repo.r-wasm.org"))
+          db <- available.packages(repos = c("https://repo.r-wasm.org"))
           message("Is shiny available? ", "shiny" %in% rownames(db))
           message("Packages found in WASM repos: ", paste(rownames(db)[1:10], collapse=", "))
           
@@ -131,6 +131,13 @@ jobs:
           file.create("docs/.nojekyll")
           # PHYSICAL REMOVAL: Just in case shinylive ignored us
           unlink("docs/app/shinylive/webr/packages/sass", recursive = TRUE)
+            
+            
+      - name: Rm remote repos
+        run: |
+          sed -i 's|https://ms609.r-universe.dev||g' docs/app/index.html
+          sed -i 's|https://repo.r-wasm.org||g' docs/app/index.html
+        shell: bash
 
       # ── Deploy ────────────────────────────────────────────────────
       - name: Deploy to GitHub Pages
