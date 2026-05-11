@@ -37,6 +37,14 @@ jobs:
       - name: Export Shinylive app
         shell: Rscript {0}
         run: |
+          
+          # ── Install WASM binaries on runner ──
+          options(repos = c(MS = "https://ms609.r-universe.dev",
+            WASM = "https://repo.r-wasm.org"))
+          # We install these so shinylive can find them locally to bundle them
+          install.packages(c("TreeTools", "TreeDist", "sass", "bslib"),
+                           type = "binary")
+          
           # ── Locate app ──
           pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
           app_dir   <- system.file("treespace", package = pkg_name)
@@ -84,7 +92,7 @@ jobs:
           tryCatch(
             shinylive::export(appdir = app_dir, destdir = "docs/app",
             wasm_packages = TRUE,
-            repos = c("https://ms609.r-universe.dev",
+            repos = c("https://ms609.r-universe.dev/bin/emscripten/contrib/4.5",
                       "https://repo.r-wasm.org")),
             error = function(e) {
               msg <- conditionMessage(e)

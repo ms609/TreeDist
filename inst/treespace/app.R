@@ -240,7 +240,9 @@ pages = c(131, 147)
 )
 
 
-ui <- fluidPage(theme = "treespace.css",
+ui <- fluidPage(
+  #theme = "treespace.css",
+  theme = bslib::bs_theme(version = 5, preset = "bootstrap"),
     useShinyjs(),
     column(3, 
       tabsetPanel(
