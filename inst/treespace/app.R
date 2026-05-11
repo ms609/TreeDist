@@ -1,4 +1,5 @@
 # options("TreeDist.logging" = TRUE) # Log function entry and exit
+options(shiny.sass.backend = "none")
 logging <- isTRUE(getOption("TreeDist.logging"))
 
 if (logging) {
@@ -18,13 +19,16 @@ suppressPackageStartupMessages({
 })
 
 local({
+  repos <- c(
+    "https://ms609.r-universe.dev",
+    "https://geobosh.r-universe.dev",
+    "https://repo.r-wasm.org"
+  )
   pkgs <- c("Rdpack", "TreeTools", "TreeDist")
-  for (i in seq_along(pkgs)) {
-    if (!requireNamespace(pkgs[i], quietly = TRUE)) {
-      webr::install(pkgs[i], repos = c(
-        "https://ms609.r-universe.dev",
-        "https://repo.r-wasm.org"
-      ))
+  for (pkg in pkgs) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      message(paste("Installing:", pkg))
+      webr::install(pkg, repos = repos)
     }
   }
 })
