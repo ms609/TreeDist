@@ -1,6 +1,21 @@
 # options("TreeDist.logging" = TRUE) # Log function entry and exit
-options(shiny.sass.backend = "none")
 logging <- isTRUE(getOption("TreeDist.logging"))
+
+
+options(shiny.sass.backend = "none")
+
+if (isTRUE(getOption("webr.initialized"))) {
+  # This stops bslib from even attempting to load the sass namespace
+  # which triggers the download/load of sass.so
+  observe({
+    try({
+      unlockBinding("is_installed", asNamespace("bslib"))
+      assignInNamespace("is_installed", function(...) FALSE, ns = "bslib")
+      lockBinding("is_installed", asNamespace("bslib"))
+    }, silent = TRUE)
+  })
+}
+
 
 if (logging) {
   .DateTime <- function(time = Sys.time()) { # Copy, because not exported
