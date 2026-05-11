@@ -33,7 +33,8 @@ Description: Implements measures of tree similarity, including
   <doi:10.1093/sysbio/syab100>,
   for identifying islands of trees (Silva and Wilkinson 2021)
   <doi:10.1093/sysbio/syab015>,
-  for calculating the median of sets of trees,
+  for calculating the median of sets of trees, including the transfer
+  consensus (Takazawa et al. 2026) <doi:10.64898/2026.03.16.712085>,
   and for computing the information content of trees and splits.
 Copyright: Jonker-Volgenant Linear Assignment Problem implementation
   by Roy Jonker modified by Yong Yang and Yi Cao.
