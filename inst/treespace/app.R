@@ -18,21 +18,6 @@ suppressPackageStartupMessages({
   library("shinyjs", exclude = "runExample")
 })
 
-local({
-  repos <- c(
-    "https://ms609.r-universe.dev",
-    "https://geobosh.r-universe.dev",
-    "https://repo.r-wasm.org"
-  )
-  pkgs <- c("Rdpack", "TreeTools", "TreeDist")
-  for (pkg in pkgs) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      message(paste("Installing:", pkg))
-      webr::install(pkg, repos = repos)
-    }
-  }
-})
-
 # Load packages - character.only=TRUE defeats the shinylive static scanner
 for (PlotTools in c("shiny", "TreeTools", "TreeDist")) {
   library(PlotTools, character.only = TRUE)
