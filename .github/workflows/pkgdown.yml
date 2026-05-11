@@ -84,9 +84,9 @@ jobs:
           # Get everything the app needs
           all_deps <- tools::package_dependencies(
             c(pkg_name, "shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
-            recursive = TRUE
+            recursive = TRUE, which = c("Depends", "Imports", "LinkingTo")
           )
-          all_deps <- unique(c(pkg_name, unlist(all_deps)))
+          all_deps <- unique(c(pkg_name, "shiny", "htmltools", unlist(all_deps)))
           
           # ── The "Blacklist" ──
           # Explicitly remove sass and any other problematic compiled libs
