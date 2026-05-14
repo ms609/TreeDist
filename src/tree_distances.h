@@ -157,7 +157,11 @@ namespace TreeDist {
       return one_overlap_notb<Fast>(in_a, in_b, n_tips);
     }
 
-    return 0.0;
+    // All four Venn regions populated: splits conflict.  Return a negative
+    // sentinel so callers can distinguish this from consistent splits whose
+    // one_overlap value happens to be exactly 0.0 (e.g. 2|2 in a 4-tip tree,
+    // where lg2_rooted[2] + lg2_rooted[2] = 0).
+    return -1.0;
   }
 }
 

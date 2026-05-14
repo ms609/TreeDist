@@ -1,5 +1,8 @@
 # TreeDist 2.14.0.9000 (development)
 
+- Fixed `PhylogeneticInformationDistance()` miscalculating score for identical
+  4-leaf trees.
+  
 - Tinkering to get web app working
 
 

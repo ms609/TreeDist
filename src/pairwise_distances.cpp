@@ -683,8 +683,8 @@ static inline void shared_phylo_fill_lap(
       const double spi = TreeDist::spi_overlap<Fast>(
         a.state[ai], b.state[bi], n_tips,
         a.in_split[ai], b.in_split[bi], a.n_bins);
-      score(ai, bi) = (spi == 0.0) ? max_score
-                                   : cost((spi - best_overlap) * score_over_possible);
+      score(ai, bi) = (spi < 0.0) ? max_score
+                                  : cost((spi - best_overlap) * score_over_possible);
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
   }

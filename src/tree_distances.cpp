@@ -588,7 +588,7 @@ static inline void shared_phylo_fill(const SplitList& a, const SplitList& b,
         a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
                                                                     a.n_bins);
 
-      score(ai, bi) = spi_over == 0 ? max_score :
+      score(ai, bi) = spi_over < 0.0 ? max_score :
         cost((spi_over - best_overlap) * score_over_possible);
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
