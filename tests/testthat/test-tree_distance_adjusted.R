@@ -11,7 +11,7 @@ suppressPackageStartupMessages({
   library("TreeTools", quietly = TRUE)
 })
 
-test_that("ACID/APhID return 1 for identical trees", {
+test_that("ACID/APhID return 0 for identical trees", {
   for (n in c(6L, 20L, 50L)) {
     trees <- list(
       balanced = BalancedTree(n),
@@ -20,8 +20,8 @@ test_that("ACID/APhID return 1 for identical trees", {
     set.seed(n)
     trees[["random"]] <- RandomTree(n, root = TRUE)
     for (tr in trees) {
-      expect_equal(AdjustedClusteringInfoDistance(tr, tr), 1)
-      expect_equal(AdjustedPhylogeneticInfoDistance(tr, tr), 1)
+      expect_equal(AdjustedClusteringInfoDistance(tr, tr), 0)
+      expect_equal(AdjustedPhylogeneticInfoDistance(tr, tr), 0)
     }
   }
 })
@@ -97,8 +97,10 @@ test_that("ACID/APhID handle mixed-n tree lists", {
   expect_length(m_pid, 3L)
   expect_true(all(is.finite(m_cid)))
   expect_true(all(is.finite(m_pid)))
-  expect_true(all(m_cid <= 1))
-  expect_true(all(m_pid <= 1))
+  # Distance convention: 0 = identity, ~1 = random.  Worse-than-random
+  # pairs can exceed 1, so we only sanity-check the lower bound here.
+  expect_true(all(m_cid >= 0))
+  expect_true(all(m_pid >= 0))
 })
 
 test_that("ExpectedRandomDistance rejects n < 4", {
@@ -115,8 +117,8 @@ test_that("`method = \"enumerate\"` is capped at n <= 7", {
                "capped at n <= 7")
 })
 
-test_that("Random tree pairs at n = 20 average close to 0 under adjustment", {
-  # A back-of-envelope sanity check: random pairs should score ~0 on
+test_that("Random tree pairs at n = 20 average close to 1 under adjustment", {
+  # A back-of-envelope sanity check: random pairs should score ~1 on
   # average, since E[D | random pair, n = 20] is exactly what we divide by.
   set.seed(2025)
   n <- 20L
@@ -129,12 +131,12 @@ test_that("Random tree pairs at n = 20 average close to 0 under adjustment", {
     AdjustedPhylogeneticInfoDistance(RandomTree(n, root = TRUE),
                                      RandomTree(n, root = TRUE))
   }, numeric(1))
-  # Mean within ~3 SE of zero (cid_sd / E / sqrt(nReps)).
+  # Mean within ~3 SE of one (cid_sd / E / sqrt(nReps)).
   ref <- randomTreeDistances[randomTreeDistances[["n"]] == n, , drop = FALSE]
   se_cid <- (ref[["cid_sd"]] / ref[["cid_mean"]]) / sqrt(nReps)
   se_pid <- (ref[["pid_sd"]] / ref[["pid_mean"]]) / sqrt(nReps)
-  expect_lt(abs(mean(acid)), 3 * se_cid)
-  expect_lt(abs(mean(aphid)), 3 * se_pid)
+  expect_lt(abs(mean(acid)  - 1), 3 * se_cid)
+  expect_lt(abs(mean(aphid) - 1), 3 * se_pid)
 })
 
 test_that("ACID/APhID handle non-overlapping tip sets", {
@@ -220,19 +222,19 @@ test_that("shape null with shape-mc returns finite numeric at n=20 (beyond looku
   expect_true(is.finite(val_cid_mc))
 })
 
-test_that("ACID(t, t, null = 'shape') == 1 (identity under shape null)", {
+test_that("ACID(t, t, null = 'shape') == 0 (identity under shape null)", {
   for (n in c(6L, 8L, 12L)) {
     t1 <- PectinateTree(n)
     set.seed(n)
     val <- AdjustedClusteringInfoDistance(t1, t1, null = "shape",
                                           method = "shape-mc", nSim = 500L)
-    expect_equal(val, 1,
+    expect_equal(val, 0,
                  label = paste0("ACID(pectinate(", n, "), same, shape)"))
 
     t2 <- BalancedTree(n)
     val2 <- AdjustedClusteringInfoDistance(t2, t2, null = "shape",
                                            method = "shape-mc", nSim = 500L)
-    expect_equal(val2, 1,
+    expect_equal(val2, 0,
                  label = paste0("ACID(balanced(", n, "), same, shape)"))
   }
 })

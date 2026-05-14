@@ -3,18 +3,18 @@
 #' Chance-adjusted variant of [`ClusteringInfoDistance()`]
 #' \insertCite{SmithDist}{TreeDist} that rescales the normalized distance
 #' relative to the expected distance between a random pair of `n`-leaf binary
-#' trees, so that 1 denotes identical trees and 0 denotes "no more
+#' trees, so that 0 denotes identical trees and 1 denotes "no more
 #' information in common than a random pair".
 #'
 #' For the normalized clustering information distance `D_norm` (in `[0, 1]`)
 #' with expected value `E[D_norm | n]` over random `n`-leaf binary tree pairs,
 #' the adjusted score is
 #'
-#'   `D_adj = 1 - D_norm / E[D_norm | n]`,
+#'   `D_adj = D_norm / E[D_norm | n]`,
 #'
-#' so that identical trees score 1, a pair drawn from the random distribution
-#' scores ~0 on average, and pairs that are more different than expected by
-#' chance score below 0.
+#' so that identical trees score 0, a pair drawn from the random distribution
+#' scores ~1 on average, and pairs that are more different than expected by
+#' chance score above 1.
 #'
 #' `E[D_norm | n]` is read from the shipped reference table
 #' [`randomTreeDistances`] via [`ExpectedClusteringInfoDistance()`]; for tip
@@ -39,18 +39,19 @@
 #'   [`ExpectedClusteringInfoDistance()`] (e.g. `method`, `nSim`).
 #'
 #' @returns A numeric vector, `dist` object, or matrix of adjusted clustering
-#'   information similarities, matching the structure returned by
-#'   [`ClusteringInfoDistance()`].  Values near 1 indicate identical trees;
-#'   values near 0 indicate pairs no more similar than two random binary
-#'   trees with the same number of tips; negative values indicate pairs more
-#'   different than chance.  When `E[D_norm | n] == 0` (a degenerate case
-#'   that should not arise in practice), the result is `NA` with a warning.
+#'   information distances, matching the structure returned by
+#'   [`ClusteringInfoDistance()`].  Values near 0 indicate identical trees;
+#'   values near 1 indicate pairs no more similar than two random binary
+#'   trees with the same number of tips; values greater than 1 indicate
+#'   pairs more different than chance (an informative tail, not an error).
+#'   When `E[D_norm | n] == 0` (a degenerate case that should not arise in
+#'   practice), the result is `NA` with a warning.
 #'
 #' @examples
 #' library("TreeTools", quietly = TRUE)
 #' t1 <- BalancedTree(8)
 #' t2 <- PectinateTree(8)
-#' AdjustedClusteringInfoDistance(t1, t1) # 1
+#' AdjustedClusteringInfoDistance(t1, t1) # 0
 #' AdjustedClusteringInfoDistance(t1, t2)
 #'
 #' # Shape-conditioned null (requires shipped lookup or shape-mc)

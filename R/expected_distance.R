@@ -332,11 +332,11 @@ ExpectedPhylogeneticInfoDistance <- function(n,
     .ExpectedFor(tree1, tree2, expected_fun, ...)
   }
 
-  # Chance-adjusted similarity:
-  #   identity (D = 0)      -> 1
-  #   random pair (D ~= E)  -> ~0
-  #   more different than random (D > E) -> negative (a real signal)
-  adj <- 1 - d / e
+  # Chance-adjusted distance (D/E[D|n] convention):
+  #   identity (D = 0)               -> 0
+  #   random pair (D ~= E)           -> ~1
+  #   more different than random     -> >1  (informative tail, not a bug)
+  adj <- d / e
   degenerate <- e == 0
   if (any(degenerate)) {
     warning("Expected distance == 0 for some pair; returning NA there.")
