@@ -69,15 +69,15 @@ test_that("Lookup agrees with on-the-fly MC at n = 20", {
 })
 
 test_that("Lookup falls back to MC outside the shipped range", {
-  # n = 300 is beyond the shipped table's max (n = 200); the lookup path
-  # should silently fall back to MC with an informative message.
+  # n = 500 is beyond the shipped table's max (n = 400 post-extension); the
+  # lookup path should silently fall back to MC with an informative message.
   expect_message(
-    val <- ExpectedClusteringInfoDistance(300L, nSim = 5L),
+    val <- ExpectedClusteringInfoDistance(500L, nSim = 5L),
     "outside the shipped lookup range"
   )
   expect_true(is.finite(val) && val > 0 && val < 1)
   expect_message(
-    ExpectedPhylogeneticInfoDistance(300L, nSim = 5L),
+    ExpectedPhylogeneticInfoDistance(500L, nSim = 5L),
     "outside the shipped lookup range"
   )
 })
