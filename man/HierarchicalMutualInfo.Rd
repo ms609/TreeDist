@@ -125,6 +125,9 @@ AHMI(tree1, tree2, precision = 0.1)
 }
 \seealso{
 Other tree distances:
+\code{\link[=AdjustedClusteringInfoDistance]{AdjustedClusteringInfoDistance()}},
+\code{\link[=AdjustedPhylogeneticInfoDistance]{AdjustedPhylogeneticInfoDistance()}},
+\code{\link[=ExpectedClusteringInfoDistance]{ExpectedClusteringInfoDistance()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},
 \code{\link[=MASTSize]{MASTSize()}},

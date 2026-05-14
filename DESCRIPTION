@@ -101,3 +101,4 @@ Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
 Roxygen: list(markdown = TRUE)
+LazyData: true

@@ -85,6 +85,9 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 }
 \seealso{
 Other tree distances:
+\code{\link[=AdjustedClusteringInfoDistance]{AdjustedClusteringInfoDistance()}},
+\code{\link[=AdjustedPhylogeneticInfoDistance]{AdjustedPhylogeneticInfoDistance()}},
+\code{\link[=ExpectedClusteringInfoDistance]{ExpectedClusteringInfoDistance()}},
 \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},

@@ -63,6 +63,9 @@ CompareAll(as.phylo(0:4, 8), MASTInfo)
 leaves contained within the subtree.
 
 Other tree distances:
+\code{\link[=AdjustedClusteringInfoDistance]{AdjustedClusteringInfoDistance()}},
+\code{\link[=AdjustedPhylogeneticInfoDistance]{AdjustedPhylogeneticInfoDistance()}},
+\code{\link[=ExpectedClusteringInfoDistance]{ExpectedClusteringInfoDistance()}},
 \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},
