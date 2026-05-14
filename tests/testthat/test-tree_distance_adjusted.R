@@ -148,3 +148,104 @@ test_that("ACID/APhID handle non-overlapping tip sets", {
   expect_true(is.numeric(res_cid))
   expect_true(is.numeric(res_pid))
 })
+
+# -------------------------------------------------------------------------
+# Shape-conditioned null tests (F4)
+# -------------------------------------------------------------------------
+
+test_that("shape null differs from size null at n=8 (pectinate vs balanced)", {
+  t1 <- PectinateTree(8)
+  t2 <- BalancedTree(8)
+  acid_size  <- AdjustedClusteringInfoDistance(t1, t2, null = "size")
+  set.seed(1)
+  acid_shape <- AdjustedClusteringInfoDistance(t1, t2, null = "shape",
+                                               method = "shape-mc",
+                                               nSim = 1000L)
+  # Shape null conditions on the specific shapes, so the expected distance
+  # is different from the size null.  The two scores should not be equal.
+  expect_false(isTRUE(all.equal(acid_size, acid_shape, tolerance = 1e-3)))
+
+  aphid_size  <- AdjustedPhylogeneticInfoDistance(t1, t2, null = "size")
+  set.seed(1)
+  aphid_shape <- AdjustedPhylogeneticInfoDistance(t1, t2, null = "shape",
+                                                  method = "shape-mc",
+                                                  nSim = 1000L)
+  expect_false(isTRUE(all.equal(aphid_size, aphid_shape, tolerance = 1e-3)))
+})
+
+test_that("shape-mc at n=6 converges to lookup within 4 SE", {
+  # Shipped lookup currently covers n=4..7 (see data-raw/build_shape_lookup.R).
+  # Use n=6 to exercise both shape-mc and shape-lookup paths.
+  skip_if_not(
+    nzchar(system.file("extdata", "shapeExpectedDistances.rds",
+                       package = "TreeDist")),
+    "shapeExpectedDistances.rds not built yet"
+  )
+  t1 <- PectinateTree(6)
+  t2 <- BalancedTree(6)
+  nSim <- 1e4L
+  set.seed(8)
+  mc_cid  <- ExpectedClusteringInfoDistance(null = "shape", method = "shape-mc",
+                                            tree1 = t1, tree2 = t2, nSim = nSim)
+  lk_cid  <- ExpectedClusteringInfoDistance(null = "shape", method = "shape-lookup",
+                                            tree1 = t1, tree2 = t2)
+  se_cid  <- attr(mc_cid, "sd") / sqrt(nSim)
+  expect_equal(as.numeric(mc_cid), as.numeric(lk_cid),
+               tolerance = 4 * se_cid)
+
+  set.seed(8)
+  mc_pid  <- ExpectedPhylogeneticInfoDistance(null = "shape", method = "shape-mc",
+                                              tree1 = t1, tree2 = t2, nSim = nSim)
+  lk_pid  <- ExpectedPhylogeneticInfoDistance(null = "shape", method = "shape-lookup",
+                                              tree1 = t1, tree2 = t2)
+  se_pid  <- attr(mc_pid, "sd") / sqrt(nSim)
+  expect_equal(as.numeric(mc_pid), as.numeric(lk_pid),
+               tolerance = 3 * se_pid)
+})
+
+test_that("shape null with shape-mc returns finite numeric at n=20 (beyond lookup)", {
+  t1 <- PectinateTree(20)
+  t2 <- BalancedTree(20)
+  set.seed(20)
+  # n=20 is beyond shipped lookup; should fall back to shape-mc gracefully
+  val_cid <- suppressMessages(
+    AdjustedClusteringInfoDistance(t1, t2, null = "shape",
+                                   method = "shape-lookup", nSim = 200L)
+  )
+  expect_true(is.finite(val_cid))
+
+  set.seed(20)
+  val_cid_mc <- AdjustedClusteringInfoDistance(t1, t2, null = "shape",
+                                               method = "shape-mc", nSim = 200L)
+  expect_true(is.finite(val_cid_mc))
+})
+
+test_that("ACID(t, t, null = 'shape') == 1 (identity under shape null)", {
+  for (n in c(6L, 8L, 12L)) {
+    t1 <- PectinateTree(n)
+    set.seed(n)
+    val <- AdjustedClusteringInfoDistance(t1, t1, null = "shape",
+                                          method = "shape-mc", nSim = 500L)
+    expect_equal(val, 1,
+                 label = paste0("ACID(pectinate(", n, "), same, shape)"))
+
+    t2 <- BalancedTree(n)
+    val2 <- AdjustedClusteringInfoDistance(t2, t2, null = "shape",
+                                           method = "shape-mc", nSim = 500L)
+    expect_equal(val2, 1,
+                 label = paste0("ACID(balanced(", n, "), same, shape)"))
+  }
+})
+
+test_that("shape null errors when trees are missing or have different n", {
+  t1 <- PectinateTree(8)
+  t2 <- BalancedTree(10)
+  expect_error(
+    ExpectedClusteringInfoDistance(null = "shape"),
+    "must be supplied"
+  )
+  expect_error(
+    ExpectedClusteringInfoDistance(null = "shape", tree1 = t1, tree2 = t2),
+    "same number of tips"
+  )
+})

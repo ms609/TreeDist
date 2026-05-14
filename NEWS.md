@@ -5,6 +5,13 @@
   
 - Tinkering to get web app working
 
+- `AdjustedClusteringInfoDistance()`, `AdjustedPhylogeneticInfoDistance()`,
+  `ExpectedClusteringInfoDistance()`, and `ExpectedPhylogeneticInfoDistance()`
+  gain a `null = "shape"` argument that conditions the expected distance on the
+  unlabelled shape of both trees, rather than only on tip count.  Two backends
+  are supported: `method = "shape-lookup"` (shipped table for `n = 4:10`) and
+  `method = "shape-mc"` (label-shuffle Monte Carlo for any `n`).
+
 
 # TreeDist 2.14.0 (2026-05-07)
 

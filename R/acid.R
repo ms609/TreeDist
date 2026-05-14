@@ -29,6 +29,12 @@
 #'   `E[D_norm | n]` directly; if `NULL` (the default) it is looked up via
 #'   [`ExpectedClusteringInfoDistance()`].  Useful for benchmarking against
 #'   alternative null models.
+#' @param null Character; null model used to compute the expected distance.
+#'   `"size"` (default) conditions only on the number of tips.  `"shape"`
+#'   additionally fixes the unlabelled tree shape, randomising only the tip
+#'   labels; see [`ExpectedClusteringInfoDistance()`] for details.  When
+#'   `null = "shape"`, both `tree1` and `tree2` must be single `phylo`
+#'   objects.
 #' @param \dots Additional arguments passed to
 #'   [`ExpectedClusteringInfoDistance()`] (e.g. `method`, `nSim`).
 #'
@@ -47,6 +53,11 @@
 #' AdjustedClusteringInfoDistance(t1, t1) # 1
 #' AdjustedClusteringInfoDistance(t1, t2)
 #'
+#' # Shape-conditioned null (requires shipped lookup or shape-mc)
+#' \dontrun{
+#' AdjustedClusteringInfoDistance(t1, t2, null = "shape")
+#' }
+#'
 #' @template MRS
 #' @references
 #' \insertAllCited{}
@@ -55,8 +66,12 @@
 #' @seealso [`ClusteringInfoDistance()`], [`ExpectedClusteringInfoDistance()`]
 #' @export
 AdjustedClusteringInfoDistance <- function(tree1, tree2 = NULL,
-                                           expected = NULL, ...) {
+                                           expected = NULL,
+                                           null = c("size", "shape"),
+                                           ...) {
+  null <- match.arg(null)
   .AdjustInfoDistance(tree1, tree2, expected = expected,
                       dist_fun = ClusteringInfoDistance,
-                      expected_fun = ExpectedClusteringInfoDistance, ...)
+                      expected_fun = ExpectedClusteringInfoDistance,
+                      null = null, ...)
 }

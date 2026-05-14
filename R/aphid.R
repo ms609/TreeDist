@@ -29,6 +29,12 @@
 #'   `E[D_norm | n]` directly; if `NULL` (the default) it is looked up via
 #'   [`ExpectedPhylogeneticInfoDistance()`].  Useful for benchmarking against
 #'   alternative null models.
+#' @param null Character; null model used to compute the expected distance.
+#'   `"size"` (default) conditions only on the number of tips.  `"shape"`
+#'   additionally fixes the unlabelled tree shape, randomising only the tip
+#'   labels; see [`ExpectedPhylogeneticInfoDistance()`] for details.  When
+#'   `null = "shape"`, both `tree1` and `tree2` must be single `phylo`
+#'   objects.
 #' @param \dots Additional arguments passed to
 #'   [`ExpectedPhylogeneticInfoDistance()`] (e.g. `method`, `nSim`).
 #'
@@ -47,6 +53,11 @@
 #' AdjustedPhylogeneticInfoDistance(t1, t1) # 1
 #' AdjustedPhylogeneticInfoDistance(t1, t2)
 #'
+#' # Shape-conditioned null (requires shipped lookup or shape-mc)
+#' \dontrun{
+#' AdjustedPhylogeneticInfoDistance(t1, t2, null = "shape")
+#' }
+#'
 #' @template MRS
 #' @references
 #' \insertAllCited{}
@@ -56,8 +67,12 @@
 #'   [`ExpectedPhylogeneticInfoDistance()`]
 #' @export
 AdjustedPhylogeneticInfoDistance <- function(tree1, tree2 = NULL,
-                                             expected = NULL, ...) {
+                                             expected = NULL,
+                                             null = c("size", "shape"),
+                                             ...) {
+  null <- match.arg(null)
   .AdjustInfoDistance(tree1, tree2, expected = expected,
                       dist_fun = PhylogeneticInfoDistance,
-                      expected_fun = ExpectedPhylogeneticInfoDistance, ...)
+                      expected_fun = ExpectedPhylogeneticInfoDistance,
+                      null = null, ...)
 }
