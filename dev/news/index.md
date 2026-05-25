@@ -5,7 +5,7 @@
 - Fixed `PhylogeneticInformationDistance()` miscalculating score for
   identical 4-leaf trees.
 
-- Imporve
+- Improve
   [`KMeansPP()`](https://ms609.github.io/TreeDist/dev/reference/KMeansPP.md)
   performance: O(k²×n) → O(k×n).
 
