@@ -13,7 +13,17 @@
 // Original algorithm:
 //   R. Jonker and A. Volgenant, "A Shortest Augmenting Path Algorithm
 //   for Dense and Sparse Linear Assignment Problems," Computing 38,
-//   325-340, 1987.
+//   325-340, 1987.  Reference code lap.cpp v1.0 (4 Sept 1996) by
+//   Roy Jonker, MagicLogic Optimization Inc.
+//
+// Provenance:
+//   CHANGED 2025-08-01 by Martin Smith <martin.smith@durham.ac.uk> to
+//     optimize performance.
+//   CHANGED 2020-01-01 by Martin Smith for integration with R.
+//   CHANGED 2016-05-13 by Yong Yang <yongyanglink@gmail.com> in the column
+//     reduction part, per the MATLAB LAPJV implementation
+//     (Copyright (c) 2010, Yi Cao, all rights reserved).
+
 
 #ifdef TREEDIST_LAP_IMPLEMENTATION
 
@@ -105,7 +115,6 @@ cost lap(const lap_row dim,
   }
 
   // AUGMENTING ROW REDUCTION
-  auto& col_list = scratch.col_list;
   int loopcnt = 0;
 
   do {
