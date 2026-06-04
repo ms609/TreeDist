@@ -13,7 +13,7 @@
 #
 # Run against an installed build, e.g.:
 #   R CMD INSTALL --library=.dev-kmpp .
-#   Rscript -e ".libPaths(c('.dev-kmpp', .libPaths())); source('tests/benchmark/kmeanspp_matrix_scaling.R')"
+#   Rscript -e ".libPaths(c('.dev-kmpp', .libPaths())); source('dev/kmeanspp_matrix_scaling.R')"
 
 library(TreeDist)
 
