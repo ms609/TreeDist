@@ -5,6 +5,15 @@
   
 - Improve `KMeansPP()` performance: O(k²×n) → O(k×n).
 
+- `KMeansPP()` no longer builds the full _n_ × _n_ distance matrix to seed the
+  `matrix` / `numeric` methods.  k-means++ seeding now computes each centre's
+  distance row on the fly in O(_n_ × dim), reducing the `matrix` method from
+  O(_n_²) to O(_n_ × dim) memory and time and letting it cluster large point
+  sets (_n_ ≫ 10000) that previously exhausted memory.  The RNG draw sequence is
+  preserved, so clusterings are unchanged.  The `dist` method is O(_n_²) by
+  construction (it clusters distance-space rows) and is unaffected, beyond
+  avoiding one redundant matrix coercion.
+
 - Tinkering to get web app working
 
 
