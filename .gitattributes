@@ -15,3 +15,6 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+*.R   text eol=lf
+*.cpp text eol=lf
+*.h   text eol=lf
