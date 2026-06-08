@@ -7,7 +7,7 @@
 
 - Improve
   [`KMeansPP()`](https://ms609.github.io/TreeDist/dev/reference/KMeansPP.md)
-  performance: O(k²×n) → O(k×n).
+  performance: O(k²n) → O(kn).
 
 - Tinkering to get web app working
 

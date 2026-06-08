@@ -27,7 +27,8 @@ The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
 The Jonker & Volgenant approach is a faster alternative to the Hungarian
-algorithm (Munkres 1957) , which is implemented in `clue::solve_LSAP()`.
+algorithm (Munkres 1957) , which is implemented in
+[`clue::solve_LSAP()`](https://rdrr.io/pkg/clue/man/solve_LSAP.html).
 
 Note: the JV algorithm expects integers. In order to apply the function
 to a non-integer *n*, as in the tree distance calculations in this
