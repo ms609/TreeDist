@@ -34,6 +34,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # pak/pkgdepends query the GitHub API while building its metadata DB; without
+    # a token it falls back to a shared, rate-limited "bundled PAT", which can
+    # return empty metadata and crash resolution with
+    #   res_one_row_df(entries) : `nrow(out)` must equal `1`
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     container:
       # `inputs.*` are empty on the push trigger, so fall back to the defaults.
       image: ghcr.io/r-wasm/webr:${{ inputs.webr_version || 'v0.6.0' }}
