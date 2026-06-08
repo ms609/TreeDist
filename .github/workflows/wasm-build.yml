@@ -1,0 +1,70 @@
+# Build webR/WASM package binaries against a PINNED webR toolchain, so they are
+# binary-compatible with the webR runtime that shinylive bundles.
+#
+# WHY THIS EXISTS
+# webR 0.6.0 bumped Emscripten to 4.0.8 (r-wasm/webr#603), an ABI break: any
+# package built for a different webR version fails to load with
+#   LinkError: Import ... "R_registerRoutines": imported function does not match
+# repo.r-wasm.org rebuilds against webR `main`, which drifts ahead of the webR
+# *release* that shinylive pins.  When they desync, compiled deps (e.g.
+# fastmatch, pulled in by TreeTools) can't load in the deployed app.
+#
+# This workflow rebuilds the needed packages with the EXACT webR release that
+# shinylive bundles (default v0.6.0), producing a CRAN-like wasm repo.  The
+# pkgdown export step then splices these binaries over the broken ones.
+#
+# Re-use on the next desync: bump `webr_version` to match shinylive's webR.
+name: wasm-build
+
+on:
+  # TEMPORARY (gate phase): run on pushes to the build branch so the toolchain
+  # match can be validated without landing on main. Remove before merging.
+  push:
+    branches:
+      - wasm-build
+  workflow_dispatch:
+    inputs:
+      webr_version:
+        description: "webR toolchain tag (must match shinylive's bundled webR)"
+        default: "v0.6.0"
+      packages:
+        description: "Comma-separated packages to build (deps resolved automatically)"
+        default: "fastmatch"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/r-wasm/webr:${{ inputs.webr_version }}
+    steps:
+      - name: Show toolchain
+        run: |
+          echo "WEBR_ROOT=$WEBR_ROOT"
+          echo "EMSCRIPTEN/EMSDK=$EMSDK"
+          R --version | head -1 || true
+
+      - name: Install rwasm
+        run: |
+          R -q -e 'install.packages("pak", repos = "https://cloud.r-project.org")'
+          R -q -e 'pak::pak("r-wasm/rwasm")'
+
+      - name: Build wasm binaries against pinned toolchain
+        env:
+          PKGS: ${{ inputs.packages }}
+        run: |
+          R -q -e 'pkgs <- strsplit(Sys.getenv("PKGS"), ",")[[1]]; pkgs <- trimws(pkgs); cat("Building:", paste(pkgs, collapse=", "), "\n"); rwasm::add_pkg(pkgs)'
+
+      - name: List built repo
+        run: |
+          echo "=== repo tree ==="
+          find repo -name '*.tgz' -printf '%p\n' | sort || true
+          echo "=== fastmatch Built line (if present) ==="
+          fm=$(find repo -name 'fastmatch_*.tgz' | head -1)
+          if [ -n "$fm" ]; then tar -xzf "$fm" -O fastmatch/DESCRIPTION | grep -i '^Built' || true; fi
+
+      - name: Upload wasm repo artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-repo-${{ inputs.webr_version }}
+          path: repo/
+          if-no-files-found: error
