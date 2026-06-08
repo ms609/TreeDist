@@ -12,7 +12,7 @@ on:
       - 'inst/treespace/app.R'
       - 'man/**.Rd'
       - 'vignettes/**.Rmd'
-      
+
   release:
     types: [published]
   workflow_dispatch:
@@ -27,126 +27,16 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # ── Build pkgdown site (no shinylive, no deploy) ──────────────
+      # Build the pkgdown site, export the treespace Shinylive app, and deploy.
+      # The action runs `shinylive::export()` with its defaults, resolving
+      # WebAssembly binaries from repo.r-wasm.org (which mirrors CRAN). This is
+      # the same configuration as the working Ternary app. The app uses only
+      # released-CRAN TreeDist/TreeTools API, so no custom WASM repo is needed;
+      # adding one previously shipped a broken sass binary ("bad export type
+      # for 'hs'") that crashed the app at load. `extra-repositories` /
+      # DESCRIPTION's Additional_repositories cover dev deps for the *site*
+      # build only, not the WASM bundle.
       - uses: ms609/actions/pkgdown@main
-        with: 
-          extra-repositories: https://ms609.github.io/packages/
-          deploy: 'false'
-
-      # ── Export Shinylive app ──────────────────────────────────────
-      - name: Export Shinylive app
-        shell: Rscript {0}
-        run: |
-          # ── Locate app ──
-          pkg_name  <- read.dcf("DESCRIPTION")[, "Package"]
-          app_dir   <- system.file("treespace", package = pkg_name)
-          if (!dir.exists(app_dir)) app_dir <- "inst/treespace"
-          stopifnot(
-            "app.R not found" = file.exists(file.path(app_dir, "app.R"))
-          )
-          
-          # ── Work around shinylive bug (coatless/quarto-webr#228) ──
-          # shinylive resolves deps from the WASM repo's PACKAGES
-          # database, which may reference packages not installed
-          # locally (e.g. R.cache).  packageDescription() returns NA
-          # for these, and shinylive crashes on desc$Repository.
-          # Patch packageDescription to return a stub instead of NA.
-          #
-          # TODO: Remove once shinylive handles missing packages.
-          # TODO: Also remove remotes from DESCRIPTION/suggests/website
-          local({
-            real_pd <- utils::packageDescription
-            ns <- asNamespace("utils")
-            unlockBinding("packageDescription", ns)
-            assign("packageDescription", function(pkg, lib.loc = NULL,
-                  fields = NULL, drop = TRUE, encoding = "") {
-              result <- real_pd(pkg, lib.loc = lib.loc, fields = fields,
-                                drop = drop, encoding = encoding)
-              if (identical(result, NA)) {
-                message("  [shinylive patch] '", pkg,
-                        "' not installed locally; stub description used")
-                result <- structure(
-                  list(Package = pkg, Version = "0.0.0",
-                       Repository = "CRAN"),
-                  class = "packageDescription"
-                )
-                if (!is.null(fields)) {
-                  result <- result[fields]
-                  if (drop && length(fields) == 1L)
-                    return(result[[1L]])
-                }
-              }
-              result
-            }, envir = ns)
-          })
-          # ── Identify all dependencies ──
-          pkg_name <- read.dcf("DESCRIPTION")[, "Package"]
-          install.packages(c("shiny", "shinyjs", "TreeTools", "TreeDist"),
-                 repos = "https://cran.r-project.org")
-
-          # Get everything the app needs
-          all_deps <- tools::package_dependencies(
-            c(pkg_name, "shiny", "shinyjs", "TreeTools", "TreeDist"),
-            recursive = TRUE, which = c("Depends", "Imports", "LinkingTo")
-          )
-          all_deps <- unique(c(pkg_name, "shiny", "htmltools", unlist(all_deps)))
-
-          # ── The "Blacklist" ──
-          # bslib/sass are excluded: sass has a compiled .so that cannot run in
-          # WebAssembly. The app uses shiny's default Bootstrap theme instead.
-          pkg_deps <- setdiff(all_deps, c("bslib", "sass", "cachem", "fastmap"))
-
-          # ── Export ──
-          # Diagnostic: Can the runner actually see 'shiny' in the WASM repos?
-          db <- available.packages(repos = c("https://repo.r-wasm.org"))
-          message("Is shiny available? ", "shiny" %in% rownames(db))
-          message("Packages found in WASM repos: ", paste(rownames(db)[1:10], collapse=", "))
-          
-          # Print the final pkg_deps list to ensure it's not empty
-          message("Exporting with pkgs: ", paste(pkg_deps, collapse = ", "))
-          
-          tryCatch(
-            shinylive::export(
-              appdir = app_dir,
-              destdir = "docs/app",
-              wasm_packages = TRUE,
-              pkgs = pkg_deps,
-              repos = c(
-                "https://ms609.r-universe.dev",
-                "https://repo.r-wasm.org"
-              )
-            ),
-            error = function(e) {
-              msg <- conditionMessage(e)
-              message("\n===== shinylive::export() failed =====")
-              message(msg)
-              message("This is often caused by a dependency not available")
-              message("as a WebAssembly binary.  Check both:")
-              message("  https://repo.r-wasm.org/bin/emscripten/contrib/4.5/PACKAGES")
-              message("  https://ms609.r-universe.dev/bin/emscripten/contrib/4.5/PACKAGES")
-              stop(e)
-            }
-          )
-
-          # ── Post-export: strip packages with compiled .so files ──────
-          # sass bundles LibSass as a native .so that WebAssembly cannot
-          # load.  It re-enters the export via shiny→bslib→sass even
-          # though app.R no longer uses bslib.  Delete from the output
-          # directly rather than relying solely on the pkgs blacklist.
-          for (.bad in c("sass", "bslib")) {
-            .bad_dir <- file.path("docs/app/library", .bad)
-            if (dir.exists(.bad_dir)) {
-              message("Removing WebAssembly-incompatible package: ", .bad)
-              unlink(.bad_dir, recursive = TRUE)
-            }
-          }
-
-          file.create("docs/.nojekyll")
-
-      # ── Deploy ────────────────────────────────────────────────────
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs
-          branch: gh-pages
-          clean: false
+          extra-repositories: https://ms609.github.io/packages/
+          shinylive-app: "inst/treespace"
