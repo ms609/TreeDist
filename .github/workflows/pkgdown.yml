@@ -105,6 +105,50 @@ jobs:
           shinylive::export(appdir = app_dir, destdir = "docs/app")
           file.create("docs/.nojekyll")
 
+          # ── Splice webR-compatible fastmatch ──────────────────────────
+          # repo.r-wasm.org ships fastmatch built from stock CRAN source,
+          # whose src/dummy.c declares R_registerRoutines with a `void`
+          # signature (a hack to silence a CRAN check; fastmatch really
+          # registers via useDynLib).  In WebAssembly that emits a wrongly
+          # typed import that fails to link against webR's runtime, so
+          # TreeTools (which depends on fastmatch) cannot load and the whole
+          # app dies with "R_registerRoutines: imported function does not
+          # match the expected type".  Overwrite the bundled binary with one
+          # rebuilt from patched source against the matching webR toolchain
+          # (.github/workflows/wasm-build.yml; committed at .github/wasm/).
+          #
+          # The splice is version-guarded: if repo.r-wasm.org moves to a
+          # fastmatch version other than the patched one, it warns instead of
+          # shipping a mismatched binary — rebuild via the wasm-build workflow.
+          #
+          # TODO: remove once TreeTools moves fastmatch to Suggests with a
+          #       base match() fallback (the durable fix).
+          local({
+            patched <- ".github/wasm/fastmatch_1.1-8.tgz"
+            pkgdir  <- "docs/app/shinylive/webr/packages/fastmatch"
+            bundled <- list.files(pkgdir, pattern = "^fastmatch_.*\\.tgz$",
+                                   full.names = TRUE)
+            if (!file.exists(patched)) {
+              warning("fastmatch splice: patched binary missing at ", patched)
+            } else if (length(bundled) != 1L) {
+              warning("fastmatch splice: expected 1 bundled tgz, found ",
+                      length(bundled), " in ", pkgdir)
+            } else if (basename(bundled) != basename(patched)) {
+              warning("fastmatch splice SKIPPED: bundled ", basename(bundled),
+                      " != patched ", basename(patched),
+                      " — rebuild the patch via the wasm-build workflow.")
+            } else {
+              file.copy(patched, bundled, overwrite = TRUE)
+              message("Spliced webR-compatible fastmatch over ",
+                      basename(bundled))
+            }
+          })
+
+          # Build provenance marker: lets a deployment check confirm which
+          # commit GitHub Pages is actually serving.
+          writeLines(Sys.getenv("GITHUB_SHA", "unknown"),
+                     file.path("docs", "app", "BUILD_SHA.txt"))
+
       # ── Deploy ────────────────────────────────────────────────────
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

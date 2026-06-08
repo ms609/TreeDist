@@ -26,12 +26,35 @@ suppressPackageStartupMessages({
 
 .Install <- if (isTRUE(getOption("webr.initialized"))) webr::install else install.packages
 
+# Reliable webR/WebAssembly detector. getOption("webr.initialized") is not
+# dependable at server runtime, but the wasm32 architecture always is.
+.runningWebR <- identical(R.version[["arch"]], "wasm32")
+
+# Shinylive/webR resolves neither the "app" nor "session" bindCache scope (nor
+# an explicit cachem object), so every bindCache(cache = "app") reactive in the
+# server would error with
+#   resolve_cache_object: `cache` must be "app", "session", or a cache object
+# Caching is only a speed optimisation, so under webR run the reactive uncached
+# (webR is compute-bound anyway). Server deployments keep Shiny's app cache.
+bindCache <- function(x, ...) {
+  if (.runningWebR) x else shiny::bindCache(x, ...)
+}
+
 for (.pkg in c("cluster", "protoclust", "MASS", "Quartet", "readxl")) {
   if (!requireNamespace(.pkg, quietly = TRUE)) .Install(.pkg)
 }
 
 # Indirect reference to hide from shinylive's static package scanner
 .uwot_pkg <- paste0("uw", "ot")
+
+# uwot is optional (Suggests) and absent from the webR binary repo. Under webR,
+# requireNamespace() for a missing package emits an install warning and can
+# return a non-logical, so `!requireNamespace(...)` errored ("invalid argument
+# type"). Resolve availability once, defensively, and reuse it.
+.uwotAvailable <- isTRUE(suppressWarnings(tryCatch(
+  requireNamespace(.uwot_pkg, quietly = TRUE),
+  error = function(e) FALSE
+)))
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -590,7 +613,7 @@ server <- function(input, output, session) {
   nNeighb <- debounce(reactive(input$nNeighb), 300)
   
   observe({
-    if (!requireNamespace(.uwot_pkg, quietly = TRUE)) {
+    if (!.uwotAvailable) {
       updateSelectInput(session, "mapping",
                         choices = c("Principal Components (PCA)" = "pca", 
                                     "Kruskal's non-metric MDS" = "k", 
@@ -607,7 +630,7 @@ server <- function(input, output, session) {
           message = "Mapping distances",
           value = 0.99,
           {
-            uwot <- requireNamespace(.uwot_pkg, quietly = TRUE)
+            uwot <- .uwotAvailable
             switch(
               input$mapping,
               "pca" = cmdscale(distances(), k = maxProjDim()),

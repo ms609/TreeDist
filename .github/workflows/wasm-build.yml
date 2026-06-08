@@ -1,0 +1,136 @@
+# Build webR/WASM package binaries against a PINNED webR toolchain, so they are
+# binary-compatible with the webR runtime that shinylive bundles.
+#
+# WHY THIS EXISTS
+# webR 0.6.0 bumped Emscripten to 4.0.8 (r-wasm/webr#603), an ABI break: any
+# package built for a different webR version fails to load with
+#   LinkError: Import ... "R_registerRoutines": imported function does not match
+# repo.r-wasm.org rebuilds against webR `main`, which drifts ahead of the webR
+# *release* that shinylive pins.  When they desync, compiled deps (e.g.
+# fastmatch, pulled in by TreeTools) can't load in the deployed app.
+#
+# This workflow rebuilds the needed packages with the EXACT webR release that
+# shinylive bundles (default v0.6.0), producing a CRAN-like wasm repo.  The
+# pkgdown export step then splices these binaries over the broken ones.
+#
+# Re-use on the next desync: bump `webr_version` to match shinylive's webR.
+name: wasm-build
+
+on:
+  workflow_dispatch:
+    inputs:
+      webr_version:
+        description: "webR toolchain tag (must match shinylive's bundled webR)"
+        default: "v0.6.0"
+      emscripten_version:
+        description: "Emscripten version the target webR was built with (e.g. 4.0.8 for webR 0.6.0)"
+        default: "4.0.8"
+      packages:
+        description: "Comma-separated packages to build (deps resolved automatically)"
+        default: "fastmatch"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # pak/pkgdepends query the GitHub API while building its metadata DB; without
+    # a token it falls back to a shared, rate-limited "bundled PAT", which can
+    # return empty metadata and crash resolution with
+    #   res_one_row_df(entries) : `nrow(out)` must equal `1`
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    container:
+      # `inputs.*` are empty on the push trigger, so fall back to the defaults.
+      image: ghcr.io/r-wasm/webr:${{ inputs.webr_version || 'v0.6.0' }}
+    steps:
+      - name: Show toolchain
+        run: |
+          echo "WEBR_ROOT=$WEBR_ROOT"
+          echo "EMSCRIPTEN/EMSDK=$EMSDK"
+          R --version | head -1 || true
+
+      - name: Install rwasm
+        run: |
+          R -q -e 'install.packages("pak", repos = "https://cloud.r-project.org")'
+          R -q -e 'pak::pak("r-wasm/rwasm")'
+
+      - name: Build wasm binaries against pinned toolchain
+        env:
+          PKGS: ${{ inputs.packages || 'fastmatch' }}
+          # webR 0.6.0 was built with Emscripten 4.0.8 (r-wasm/webr release
+          # notes). The container's /opt/emsdk has drifted to a newer emcc, and
+          # building with the wrong Emscripten yields an ABI-incompatible
+          # R_registerRoutines import that won't load in shinylive's webR 0.6.0.
+          EMSCRIPTEN_VERSION: ${{ inputs.emscripten_version || '4.0.8' }}
+        run: |
+          # Pin Emscripten to the version webR's runtime was built with.
+          cd /opt/emsdk
+          ./emsdk install "$EMSCRIPTEN_VERSION"
+          ./emsdk activate "$EMSCRIPTEN_VERSION"
+          . /opt/emsdk/emsdk_env.sh
+          echo "Active emcc:"; emcc --version | head -1
+          cd "$GITHUB_WORKSPACE"
+          # rwasm::add_pkg() resolves CRAN refs through pkgdepends, which syncs
+          # repo metadata and hits the open bug rwasm#56
+          #   res_one_row_df(entries): nrow(out) must equal 1
+          # even for CRAN-only builds. webr-repo (the canonical builder) avoids
+          # this by fetching sources via base-R available.packages() rather than
+          # pkgdepends. We do the same: download each source tarball and hand
+          # rwasm a `local::` ref, which resolves from the tarball's DESCRIPTION
+          # with no repo-metadata sync. Versions are taken from the same PPM
+          # snapshot shinylive uses, so filenames match for the splice.
+          cat > /tmp/build.R <<'RSCRIPT'
+          pkgs <- trimws(strsplit(Sys.getenv("PKGS"), ",")[[1]])
+          cat("Requested:", paste(pkgs, collapse = ", "), "\n")
+          cran <- "https://packagemanager.posit.co/cran/latest"
+          info <- available.packages(repos = cran)
+          refs <- character(0)
+          for (p in pkgs) {
+            ver <- info[p, "Version"]
+            url <- sprintf("%s/src/contrib/%s_%s.tar.gz", cran, p, ver)
+            dest <- file.path(tempdir(), sprintf("%s_%s.tar.gz", p, ver))
+            download.file(url, dest, mode = "wb", quiet = TRUE)
+            cat("  downloaded", p, ver, "\n")
+            if (p == "fastmatch") {
+              # fastmatch/src/dummy.c declares R_registerRoutines as
+              # `void R_registerRoutines(void)` (wrong signature) solely to
+              # silence a CRAN check; fastmatch really registers via useDynLib
+              # in NAMESPACE. In WebAssembly that bogus declaration produces an
+              # import with type () -> () that fails to link against webR's real
+              # R_registerRoutines (i32 x5 -> i32). dummy() is never called, so
+              # neutralise the file. (webR patches such packages similarly.)
+              ex <- file.path(tempdir(), "patch_fastmatch")
+              unlink(ex, recursive = TRUE); dir.create(ex)
+              untar(dest, exdir = ex)
+              writeLines(
+                c("/* webR build patch: neutralised CRAN-check dummy symbols",
+                  "   whose wrong R_registerRoutines signature broke wasm linking. */",
+                  "void dummy(void) {}"),
+                file.path(ex, "fastmatch", "src", "dummy.c"))
+              owd <- setwd(ex)
+              utils::tar(dest, files = "fastmatch", compression = "gzip")
+              setwd(owd)
+              cat("  patched fastmatch/src/dummy.c\n")
+            }
+            refs <- c(refs, paste0("local::", dest))
+          }
+          cat("Building (local refs):", paste(refs, collapse = " "), "\n")
+          dir.create("repo", showWarnings = FALSE, recursive = TRUE)
+          rwasm::build(refs, out_dir = "repo")
+          cat("Built tgz files:\n"); print(list.files("repo", recursive = TRUE))
+          RSCRIPT
+          R -q -f /tmp/build.R
+
+      - name: List built repo
+        run: |
+          echo "=== repo tree ==="
+          find repo -name '*.tgz' -printf '%p\n' | sort || true
+          echo "=== fastmatch Built line (if present) ==="
+          fm=$(find repo -name 'fastmatch_*.tgz' | head -1)
+          if [ -n "$fm" ]; then tar -xzf "$fm" -O fastmatch/DESCRIPTION | grep -i '^Built' || true; fi
+
+      - name: Upload wasm repo artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-repo-${{ inputs.webr_version }}
+          path: repo/
+          if-no-files-found: error
