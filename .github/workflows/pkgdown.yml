@@ -27,16 +27,81 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # Build the pkgdown site, export the treespace Shinylive app, and deploy.
-      # The action runs `shinylive::export()` with its defaults, resolving
-      # WebAssembly binaries from repo.r-wasm.org (which mirrors CRAN). This is
-      # the same configuration as the working Ternary app. The app uses only
-      # released-CRAN TreeDist/TreeTools API, so no custom WASM repo is needed;
-      # adding one previously shipped a broken sass binary ("bad export type
-      # for 'hs'") that crashed the app at load. `extra-repositories` /
-      # DESCRIPTION's Additional_repositories cover dev deps for the *site*
-      # build only, not the WASM bundle.
+      # ── Build pkgdown site (no shinylive, no deploy) ──────────────
       - uses: ms609/actions/pkgdown@main
         with:
           extra-repositories: https://ms609.github.io/packages/
-          shinylive-app: "inst/treespace"
+          deploy: 'false'
+
+      # ── Export Shinylive app ──────────────────────────────────────
+      # This replicates the action's own `shinylive::export()` defaults
+      # exactly — appdir + destdir only, so WebAssembly binaries come from
+      # repo.r-wasm.org (which mirrors CRAN and ships a *working* sass
+      # build). We run it as our own step solely to inject the
+      # packageDescription patch below, which the bare action can't do.
+      #
+      # Do NOT pass `repos`, `pkgs`, or a package blacklist here: listing a
+      # custom WASM repo (ms609.r-universe.dev) previously shipped a broken
+      # sass binary that crashed the app at load with "bad export type for
+      # 'hs'".  The treespace app uses only released-CRAN TreeDist/TreeTools
+      # API, so the default repo suffices.
+      - name: Export Shinylive app
+        shell: Rscript {0}
+        run: |
+          if (!requireNamespace("shinylive", quietly = TRUE)) {
+            install.packages("shinylive")
+          }
+
+          # ── Work around shinylive metadata bug ──
+          # prepare_wasm_metadata() calls packageDescription() on every
+          # package in the WebAssembly dependency closure, but the runner
+          # only has packages installed by setup-r-dependencies.  For
+          # closure members absent locally (e.g. bitops), packageDescription
+          # returns NA, and `desc$Repository` then errors with
+          # "$ operator is invalid for atomic vectors".  Stub the
+          # description so metadata can be built.
+          #
+          # TODO: Remove once shinylive tolerates uninstalled closure members.
+          local({
+            real_pd <- utils::packageDescription
+            ns <- asNamespace("utils")
+            unlockBinding("packageDescription", ns)
+            assign("packageDescription", function(pkg, lib.loc = NULL,
+                  fields = NULL, drop = TRUE, encoding = "") {
+              result <- real_pd(pkg, lib.loc = lib.loc, fields = fields,
+                                drop = drop, encoding = encoding)
+              if (identical(result, NA)) {
+                message("  [shinylive patch] '", pkg,
+                        "' not installed locally; stub description used")
+                result <- structure(
+                  list(Package = pkg, Version = "0.0.0",
+                       Repository = "CRAN"),
+                  class = "packageDescription"
+                )
+                if (!is.null(fields)) {
+                  result <- result[fields]
+                  if (drop && length(fields) == 1L)
+                    return(result[[1L]])
+                }
+              }
+              result
+            }, envir = ns)
+          })
+
+          # ── Export (action defaults: binaries from repo.r-wasm.org) ──
+          pkg_name <- read.dcf("DESCRIPTION")[, "Package"]
+          app_dir  <- if (dir.exists("inst/treespace")) "inst/treespace" else
+            system.file("treespace", package = pkg_name)
+          stopifnot("app.R not found" =
+                      file.exists(file.path(app_dir, "app.R")))
+
+          shinylive::export(appdir = app_dir, destdir = "docs/app")
+          file.create("docs/.nojekyll")
+
+      # ── Deploy ────────────────────────────────────────────────────
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs
+          branch: gh-pages
+          clean: false
