@@ -11,17 +11,20 @@ export declare class SharedBufferChannelMain extends ChannelMain {
     emit(msg: Message): void;
     interrupt(): void;
 }
-import { WebSocketProxy } from './websocket';
+import { WebSocketProxy } from './proxy-websocket';
+import { WorkerProxy } from './proxy-worker';
 export declare class SharedBufferChannelWorker implements ChannelWorker {
     #private;
     WebSocketProxy: typeof WebSocket;
-    proxies: Map<string, WebSocketProxy>;
+    WorkerProxy: typeof Worker;
+    ws: Map<string, WebSocketProxy>;
+    workers: Map<string, WorkerProxy>;
     resolveRequest: (msg: Message) => void;
     constructor();
     resolve(): void;
-    write(msg: Message, transfer?: [Transferable]): void;
-    writeSystem(msg: Message, transfer?: [Transferable]): void;
-    syncRequest(msg: Message, transfer?: [Transferable]): Message;
+    write(msg: Message, transfer?: Transferable[]): void;
+    writeSystem(msg: Message, transfer?: Transferable[]): void;
+    syncRequest(msg: Message, transfer?: Transferable[]): Message;
     read(): Message;
     inputOrDispatch(): number;
     run(args: string[]): void;

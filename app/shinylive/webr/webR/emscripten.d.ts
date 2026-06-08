@@ -1,4 +1,3 @@
-/// <reference types="emscripten" />
 import type { RPtr, RTypeNumber } from './robj';
 import type { RObject, RList } from './robj-worker';
 import type { EvalROptions } from './webr-chan';
@@ -24,6 +23,11 @@ export interface Module extends EmscriptenModule {
     };
     createLazyFilesystem: () => void;
     monitorRunDependencies: (n: number) => void;
+    websocket?: {
+        url?: string;
+        WebSocket?: typeof WebSocket;
+        subprotocol?: string;
+    };
     noImageDecoding: boolean;
     noAudioDecoding: boolean;
     noWasmDecoding: boolean;

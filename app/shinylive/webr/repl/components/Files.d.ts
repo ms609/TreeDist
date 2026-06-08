@@ -1,8 +1,8 @@
-import React from 'react';
-import { WebR } from '../../webR/webr-main';
-import type { FSNode } from '../../webR/webr-main';
-import { FilesInterface } from '../App';
-import './Files.css';
+import React from "react";
+import { WebR } from "../../webR/webr-main";
+import type { FSNode } from "../../webR/webr-main";
+import { FilesInterface } from "../App";
+import "./Files.css";
 interface ITreeNode {
     id: number;
     name: string;

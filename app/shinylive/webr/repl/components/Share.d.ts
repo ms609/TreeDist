@@ -1,5 +1,5 @@
-import React from 'react';
-import './Share.css';
+import React from "react";
+import "./Share.css";
 export type ShareItem = {
     name: string;
     path: string;

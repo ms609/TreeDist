@@ -13,6 +13,18 @@ export declare class PostMessageChannelMain extends ChannelMain {
 }
 export declare class PostMessageChannelWorker {
     #private;
+    WebSocketProxy: {
+        new (url: string | URL, protocols?: string | string[]): WebSocket;
+        prototype: WebSocket;
+        readonly CONNECTING: 0;
+        readonly OPEN: 1;
+        readonly CLOSING: 2;
+        readonly CLOSED: 3;
+    } | undefined;
+    WorkerProxy: {
+        new (scriptURL: string | URL, options?: WorkerOptions): Worker;
+        prototype: Worker;
+    } | undefined;
     constructor();
     resolve(): void;
     write(msg: Message, transfer?: [Transferable]): void;

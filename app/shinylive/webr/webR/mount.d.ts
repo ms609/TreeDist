@@ -2,7 +2,6 @@
  * Internal virtual filesystem image mounting functionality.
  * @module Mount
  */
-/// <reference types="emscripten" />
 import type { FSMountOptions } from './webr-main';
 /**
  * Hooked FS.mount() for using WORKERFS under Node.js or with `Blob` objects

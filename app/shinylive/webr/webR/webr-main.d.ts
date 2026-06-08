@@ -88,12 +88,12 @@ export type FSMountOptions<T extends FSType = FSType> = T extends 'DRIVEFS' ? {
 } : {
     blobs?: Array<{
         name: string;
-        data: Blob | ArrayBufferLike;
+        data: Blob | Buffer | ArrayBufferLike | Uint8Array;
     }>;
     files?: Array<File | FileList>;
     packages?: Array<{
         metadata: FSMetaData;
-        blob: Blob | ArrayBufferLike;
+        blob: Blob | Buffer | ArrayBufferLike | Uint8Array;
     }>;
 };
 /**
@@ -183,6 +183,7 @@ export declare class WebR {
     #private;
     globalShelter: Shelter;
     version: string;
+    versionR: string;
     RObject: ReturnType<typeof newRClassProxy<typeof RWorker.RObject, RObject>>;
     RLogical: ReturnType<typeof newRClassProxy<typeof RWorker.RLogical, RLogical>>;
     RInteger: ReturnType<typeof newRClassProxy<typeof RWorker.RInteger, RInteger>>;
@@ -269,9 +270,33 @@ export declare class WebR {
      * @returns {Promise<RObject>} The result of the computation.
      */
     evalR(code: string, options?: EvalROptions): Promise<RObject>;
+    /**
+     * Evaluate the given R code, returning a promise for no return data.
+     * @param {string} code The R code to evaluate.
+     * @param {EvalROptions} [options] Options for the execution environment.
+     * @returns {Promise<void>} A promise which fires when the R code completes, but returns no data.
+     */
     evalRVoid(code: string, options?: EvalROptions): Promise<void>;
+    /**
+     * Evaluate the given R code, returning a promise for a boolean value. If the returned R value is not a boolean, an error will be thrown.
+     * @param {string} code The R code to evaluate.
+     * @param {EvalROptions} [options] Options for the execution environment.
+     * @returns {Promise<boolean>} The result of the computation.
+     */
     evalRBoolean(code: string, options?: EvalROptions): Promise<boolean>;
+    /**
+     * Evaluate the given R code, returning a promise for a number. If the returned R value is not a number, an error will be thrown.
+     * @param {string} code The R code to evaluate.
+     * @param {EvalROptions} [options] Options for the execution environment.
+     * @returns {Promise<number>} The result of the computation.
+     */
     evalRNumber(code: string, options?: EvalROptions): Promise<number>;
+    /**
+     * Evaluate the given R code, returning a promise for a string. If the returned R value is not a string, an error will be thrown.
+     * @param {string} code The R code to evaluate.
+     * @param {EvalROptions} [options] Options for the execution environment.
+     * @returns {Promise<string>} The result of the computation.
+     */
     evalRString(code: string, options?: EvalROptions): Promise<string>;
     /**
      * Evaluate the given R code, returning the result as a raw JavaScript object.

@@ -1,10 +1,10 @@
-import { Readline } from 'xterm-readline';
-import './App.css';
-import { NamedObject, WebRDataJsAtomic } from '../webR/robj';
+import { Readline } from "xterm-readline";
+import "./App.css";
+import { NamedObject, WebRDataJsAtomic } from "../webR/robj";
 export interface TerminalInterface {
-    println: Readline['println'];
-    read: Readline['read'];
-    write: Readline['write'];
+    println: Readline["println"];
+    read: Readline["read"];
+    write: Readline["write"];
 }
 export interface FilesInterface {
     refreshFilesystem: () => Promise<void>;

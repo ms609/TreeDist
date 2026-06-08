@@ -24,6 +24,8 @@ export declare abstract class ChannelMain {
     protected resolveResponse(msg: Response): void;
 }
 export interface ChannelWorker {
+    WebSocketProxy: typeof WebSocket | undefined;
+    WorkerProxy: typeof Worker | undefined;
     resolve(): void;
     write(msg: Message, transfer?: [Transferable]): void;
     writeSystem(msg: Message, transfer?: [Transferable]): void;
@@ -35,7 +37,6 @@ export interface ChannelWorker {
     inputOrDispatch: () => number;
     setDispatchHandler: (dispatch: (msg: Message) => void) => void;
     resolveRequest: (msg: Message) => void;
-    WebSocketProxy?: typeof WebSocket;
 }
 /**
  * Handler functions dealing with setup and communication over a Service Worker.
