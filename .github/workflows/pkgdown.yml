@@ -127,6 +127,20 @@ jobs:
               stop(e)
             }
           )
+
+          # ── Post-export: strip packages with compiled .so files ──────
+          # sass bundles LibSass as a native .so that WebAssembly cannot
+          # load.  It re-enters the export via shiny→bslib→sass even
+          # though app.R no longer uses bslib.  Delete from the output
+          # directly rather than relying solely on the pkgs blacklist.
+          for (.bad in c("sass", "bslib")) {
+            .bad_dir <- file.path("docs/app/library", .bad)
+            if (dir.exists(.bad_dir)) {
+              message("Removing WebAssembly-incompatible package: ", .bad)
+              unlink(.bad_dir, recursive = TRUE)
+            }
+          }
+
           file.create("docs/.nojekyll")
 
       # ── Deploy ────────────────────────────────────────────────────
