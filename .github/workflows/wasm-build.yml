@@ -35,7 +35,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/r-wasm/webr:${{ inputs.webr_version }}
+      # `inputs.*` are empty on the push trigger, so fall back to the defaults.
+      image: ghcr.io/r-wasm/webr:${{ inputs.webr_version || 'v0.6.0' }}
     steps:
       - name: Show toolchain
         run: |
@@ -50,7 +51,7 @@ jobs:
 
       - name: Build wasm binaries against pinned toolchain
         env:
-          PKGS: ${{ inputs.packages }}
+          PKGS: ${{ inputs.packages || 'fastmatch' }}
         run: |
           R -q -e 'pkgs <- strsplit(Sys.getenv("PKGS"), ",")[[1]]; pkgs <- trimws(pkgs); cat("Building:", paste(pkgs, collapse=", "), "\n"); rwasm::add_pkg(pkgs)'
 
