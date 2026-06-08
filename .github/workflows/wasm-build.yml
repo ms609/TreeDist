@@ -60,7 +60,7 @@ jobs:
 
       - name: Build wasm binaries against pinned toolchain
         env:
-          PKGS: ${{ inputs.packages || 'fastmatch' }}
+          PKGS: ${{ inputs.packages || 'fastmatch,stringi' }}
           # webR 0.6.0 was built with Emscripten 4.0.8 (r-wasm/webr release
           # notes). The container's /opt/emsdk has drifted to a newer emcc, and
           # building with the wrong Emscripten yields an ABI-incompatible
