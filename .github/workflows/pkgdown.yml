@@ -81,21 +81,20 @@ jobs:
           })
           # ── Identify all dependencies ──
           pkg_name <- read.dcf("DESCRIPTION")[, "Package"]
-          install.packages(c("shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
+          install.packages(c("shiny", "shinyjs", "TreeTools", "TreeDist"),
                  repos = "https://cran.r-project.org")
-                 
+
           # Get everything the app needs
           all_deps <- tools::package_dependencies(
-            c(pkg_name, "shiny", "shinyjs", "bslib", "TreeTools", "TreeDist"), 
+            c(pkg_name, "shiny", "shinyjs", "TreeTools", "TreeDist"),
             recursive = TRUE, which = c("Depends", "Imports", "LinkingTo")
           )
           all_deps <- unique(c(pkg_name, "shiny", "htmltools", unlist(all_deps)))
-          
+
           # ── The "Blacklist" ──
-          # Explicitly remove sass and any other problematic compiled libs
-          pkg_deps <- setdiff(all_deps, c("sass", "cachem", "fastmap")) 
-          # Note: bslib can usually survive without cachem/fastmap in WASM 
-          # if the theme is static.
+          # bslib/sass are excluded: sass has a compiled .so that cannot run in
+          # WebAssembly. The app uses shiny's default Bootstrap theme instead.
+          pkg_deps <- setdiff(all_deps, c("bslib", "sass", "cachem", "fastmap"))
 
           # ── Export ──
           # Diagnostic: Can the runner actually see 'shiny' in the WASM repos?

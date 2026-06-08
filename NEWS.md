@@ -3,7 +3,7 @@
 - Fixed `PhylogeneticInformationDistance()` miscalculating score for identical
   4-leaf trees.
   
-- Improve `KMeansPP()` performance: O(k²×n) → O(k×n).
+- Improve `KMeansPP()` performance: O(k²n) → O(kn).
 
 - Tinkering to get web app working
 

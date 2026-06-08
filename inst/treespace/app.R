@@ -1,28 +1,6 @@
 # options("TreeDist.logging" = TRUE) # Log function entry and exit
 logging <- isTRUE(getOption("TreeDist.logging"))
 
-
-options(shiny.sass.backend = "none")
-
-# Force a fake sass namespace so R thinks it's already loaded and doesn't fetch it
-if (isTRUE(getOption("webr.initialized"))) {
-  # Create a dummy environment for sass
-  e <- new.env(parent = emptyenv())
-  # bslib checks for sass::sass_partial_bundle or sass::sass
-  e$sass <- function(...) ""
-  e$sass_partial_bundle <- function(...) ""
-  # Register it so library(sass) or sass::... returns our dummy
-  setNamespace("sass", e)
-  
-  # Now apply your bslib override immediately
-  try({
-    ns <- asNamespace("bslib")
-    unlockBinding("is_installed", ns)
-    assignInNamespace("is_installed", function(pkg, ...) if(pkg=="sass") FALSE else TRUE, ns = ns)
-    lockBinding("is_installed", ns)
-  }, silent = TRUE)
-}
-
 if (logging) {
   .DateTime <- function(time = Sys.time()) { # Copy, because not exported
     format(time, "%Y-%m-%d %T")
@@ -262,9 +240,7 @@ pages = c(131, 147)
 
 
 ui <- fluidPage(
-  #theme = "treespace.css",
-  theme = bslib::bs_theme(version = 5, preset = "bootstrap"),
-    useShinyjs(),
+  useShinyjs(),
     column(3, 
       tabsetPanel(
         tabPanel("Input",
