@@ -27,6 +27,9 @@ on:
       webr_version:
         description: "webR toolchain tag (must match shinylive's bundled webR)"
         default: "v0.6.0"
+      emscripten_version:
+        description: "Emscripten version the target webR was built with (e.g. 4.0.8 for webR 0.6.0)"
+        default: "4.0.8"
       packages:
         description: "Comma-separated packages to build (deps resolved automatically)"
         default: "fastmatch"
@@ -58,7 +61,19 @@ jobs:
       - name: Build wasm binaries against pinned toolchain
         env:
           PKGS: ${{ inputs.packages || 'fastmatch' }}
+          # webR 0.6.0 was built with Emscripten 4.0.8 (r-wasm/webr release
+          # notes). The container's /opt/emsdk has drifted to a newer emcc, and
+          # building with the wrong Emscripten yields an ABI-incompatible
+          # R_registerRoutines import that won't load in shinylive's webR 0.6.0.
+          EMSCRIPTEN_VERSION: ${{ inputs.emscripten_version || '4.0.8' }}
         run: |
+          # Pin Emscripten to the version webR's runtime was built with.
+          cd /opt/emsdk
+          ./emsdk install "$EMSCRIPTEN_VERSION"
+          ./emsdk activate "$EMSCRIPTEN_VERSION"
+          . /opt/emsdk/emsdk_env.sh
+          echo "Active emcc:"; emcc --version | head -1
+          cd "$GITHUB_WORKSPACE"
           # rwasm::add_pkg() resolves CRAN refs through pkgdepends, which syncs
           # repo metadata and hits the open bug rwasm#56
           #   res_one_row_df(entries): nrow(out) must equal 1
