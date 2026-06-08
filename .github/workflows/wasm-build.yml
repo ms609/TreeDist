@@ -60,7 +60,7 @@ jobs:
 
       - name: Build wasm binaries against pinned toolchain
         env:
-          PKGS: ${{ inputs.packages || 'fastmatch,stringi' }}
+          PKGS: ${{ inputs.packages || 'fastmatch' }}
           # webR 0.6.0 was built with Emscripten 4.0.8 (r-wasm/webr release
           # notes). The container's /opt/emsdk has drifted to a newer emcc, and
           # building with the wrong Emscripten yields an ABI-incompatible
@@ -95,6 +95,27 @@ jobs:
             dest <- file.path(tempdir(), sprintf("%s_%s.tar.gz", p, ver))
             download.file(url, dest, mode = "wb", quiet = TRUE)
             cat("  downloaded", p, ver, "\n")
+            if (p == "fastmatch") {
+              # fastmatch/src/dummy.c declares R_registerRoutines as
+              # `void R_registerRoutines(void)` (wrong signature) solely to
+              # silence a CRAN check; fastmatch really registers via useDynLib
+              # in NAMESPACE. In WebAssembly that bogus declaration produces an
+              # import with type () -> () that fails to link against webR's real
+              # R_registerRoutines (i32 x5 -> i32). dummy() is never called, so
+              # neutralise the file. (webR patches such packages similarly.)
+              ex <- file.path(tempdir(), "patch_fastmatch")
+              unlink(ex, recursive = TRUE); dir.create(ex)
+              untar(dest, exdir = ex)
+              writeLines(
+                c("/* webR build patch: neutralised CRAN-check dummy symbols",
+                  "   whose wrong R_registerRoutines signature broke wasm linking. */",
+                  "void dummy(void) {}"),
+                file.path(ex, "fastmatch", "src", "dummy.c"))
+              owd <- setwd(ex)
+              utils::tar(dest, files = "fastmatch", compression = "gzip")
+              setwd(owd)
+              cat("  patched fastmatch/src/dummy.c\n")
+            }
             refs <- c(refs, paste0("local::", dest))
           }
           cat("Building (local refs):", paste(refs, collapse = " "), "\n")
