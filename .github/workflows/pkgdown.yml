@@ -48,9 +48,16 @@ jobs:
       - name: Export Shinylive app
         shell: Rscript {0}
         run: |
-          if (!requireNamespace("shinylive", quietly = TRUE)) {
-            install.packages("shinylive")
+          # shinylive 0.4.1 (CRAN) bundles webR with R 4.5.1.  repo.r-wasm.org
+          # now ships WASM binaries compiled for R 4.6.0 (post webR 0.6.0, May
+          # 2026).  Pre-bundling fastmatch with the mismatched runtime produces:
+          #   LinkError: Import "R_registerRoutines" does not match expected type
+          # The dev branch bundles webR 0.6.0/R 4.6.0, matching the current repo.
+          # TODO: revert to install.packages("shinylive") once ≥0.4.2 is on CRAN.
+          if (!requireNamespace("remotes", quietly = TRUE)) {
+            install.packages("remotes")
           }
+          remotes::install_github("posit-dev/r-shinylive", dependencies = FALSE)
 
           # ── Work around shinylive metadata bug ──
           # prepare_wasm_metadata() calls packageDescription() on every
