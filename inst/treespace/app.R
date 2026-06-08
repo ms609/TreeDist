@@ -13,19 +13,16 @@ if (logging) {
 }
 
 suppressPackageStartupMessages({
-  library("shiny", exclude = "runExample")
-  library("shinyjs", exclude = "runExample")
+  library("shiny",     exclude = "runExample")
+  library("shinyjs",   exclude = "runExample")
+  library("TreeTools")
+  library("TreeDist")
+  # ape is a hard dep of TreeTools/TreeDist; library() is needed because
+  # TreeTools imports as.phylo via importFrom(ape, as.phylo) for internal use
+  # only (no re-export), so the generic is not on the search path after
+  # library(TreeTools) alone.
+  library("ape")
 })
-
-# Load packages - character.only=TRUE defeats the shinylive static scanner
-for (PlotTools in c("shiny", "TreeTools", "TreeDist")) {
-  library(PlotTools, character.only = TRUE)
-}
-# ape is a hard dep of TreeTools/TreeDist (always installed).
-# library() is needed because TreeTools does not re-export the as.phylo generic:
-# it imports it via importFrom(ape, as.phylo) for internal use only, so the
-# generic is not on the search path after library(TreeTools) alone.
-library("ape")
 
 .Install <- if (isTRUE(getOption("webr.initialized"))) webr::install else install.packages
 
