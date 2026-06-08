@@ -59,13 +59,33 @@ jobs:
         env:
           PKGS: ${{ inputs.packages || 'fastmatch' }}
         run: |
-          # rwasm's config (ppm_config) doesn't set use_bioconductor, so
-          # pkgdepends defaults it to TRUE and tries to sync Bioconductor
-          # metadata during resolve(). That hits an open pkgcache/rwasm bug
-          # (rwasm#56): "res_one_row_df(entries): nrow(out) must equal 1",
-          # failing even for CRAN-only builds. We don't need Bioc here, so
-          # disable it via the documented pkgdepends option.
-          R -q -e 'options(pkg.use_bioconductor = FALSE); pkgs <- trimws(strsplit(Sys.getenv("PKGS"), ",")[[1]]); cat("Building:", paste(pkgs, collapse=", "), "\n"); rwasm::add_pkg(pkgs)'
+          # rwasm::add_pkg() resolves CRAN refs through pkgdepends, which syncs
+          # repo metadata and hits the open bug rwasm#56
+          #   res_one_row_df(entries): nrow(out) must equal 1
+          # even for CRAN-only builds. webr-repo (the canonical builder) avoids
+          # this by fetching sources via base-R available.packages() rather than
+          # pkgdepends. We do the same: download each source tarball and hand
+          # rwasm a `local::` ref, which resolves from the tarball's DESCRIPTION
+          # with no repo-metadata sync. Versions are taken from the same PPM
+          # snapshot shinylive uses, so filenames match for the splice.
+          cat > /tmp/build.R <<'RSCRIPT'
+          pkgs <- trimws(strsplit(Sys.getenv("PKGS"), ",")[[1]])
+          cat("Requested:", paste(pkgs, collapse = ", "), "\n")
+          cran <- "https://packagemanager.posit.co/cran/latest"
+          info <- available.packages(repos = cran)
+          refs <- character(0)
+          for (p in pkgs) {
+            ver <- info[p, "Version"]
+            url <- sprintf("%s/src/contrib/%s_%s.tar.gz", cran, p, ver)
+            dest <- file.path(tempdir(), sprintf("%s_%s.tar.gz", p, ver))
+            download.file(url, dest, mode = "wb", quiet = TRUE)
+            cat("  downloaded", p, ver, "\n")
+            refs <- c(refs, paste0("local::", dest))
+          }
+          cat("Building (local refs):", paste(refs, collapse = " "), "\n")
+          rwasm::build(refs, out_dir = "repo")
+          RSCRIPT
+          R -q -f /tmp/build.R
 
       - name: List built repo
         run: |
