@@ -59,7 +59,13 @@ jobs:
         env:
           PKGS: ${{ inputs.packages || 'fastmatch' }}
         run: |
-          R -q -e 'pkgs <- strsplit(Sys.getenv("PKGS"), ",")[[1]]; pkgs <- trimws(pkgs); cat("Building:", paste(pkgs, collapse=", "), "\n"); rwasm::add_pkg(pkgs)'
+          # rwasm's config (ppm_config) doesn't set use_bioconductor, so
+          # pkgdepends defaults it to TRUE and tries to sync Bioconductor
+          # metadata during resolve(). That hits an open pkgcache/rwasm bug
+          # (rwasm#56): "res_one_row_df(entries): nrow(out) must equal 1",
+          # failing even for CRAN-only builds. We don't need Bioc here, so
+          # disable it via the documented pkgdepends option.
+          R -q -e 'options(pkg.use_bioconductor = FALSE); pkgs <- trimws(strsplit(Sys.getenv("PKGS"), ",")[[1]]); cat("Building:", paste(pkgs, collapse=", "), "\n"); rwasm::add_pkg(pkgs)'
 
       - name: List built repo
         run: |
