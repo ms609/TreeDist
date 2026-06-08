@@ -83,7 +83,9 @@ jobs:
             refs <- c(refs, paste0("local::", dest))
           }
           cat("Building (local refs):", paste(refs, collapse = " "), "\n")
+          dir.create("repo", showWarnings = FALSE, recursive = TRUE)
           rwasm::build(refs, out_dir = "repo")
+          cat("Built tgz files:\n"); print(list.files("repo", recursive = TRUE))
           RSCRIPT
           R -q -f /tmp/build.R
 
