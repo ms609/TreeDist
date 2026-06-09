@@ -1,5 +1,7 @@
 # TreeDist 2.14.1 (2026-06-09)
 
+- `TransferConsensus()` is **deprecated**, moving to `ConsTree::Transfer()`.
+
 - Fixed `PhylogeneticInformationDistance()` miscalculating score for identical
   4-leaf trees.
   

@@ -53,6 +53,7 @@ TransferConsensus <- function(trees,
                               scale = TRUE,
                               greedy = c("best", "first"),
                               init = c("empty", "majority")) {
+  .Deprecated("ConsTree::Transfer")
   greedy <- match.arg(greedy)
   init <- match.arg(init)
 
