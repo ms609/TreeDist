@@ -43,65 +43,19 @@
 
 ## Performance
 
-Pairwise distance computation has been substantially optimized.
-Typical speedups over v2.12.0 for tree sets where most splits are shared
-(MCMC posteriors, bootstrap replicates):
+Pairwise distance computation has been optimized.
+Typical speedups over v2.12.0 for tree sets where many splits are shared:
 
 | Metric                      | 100 × 50 tips | 40 × 200 tips |
 |-----------------------------|--------------:|--------------:|
 | `ClusteringInfoDistance`    |          ~5×  |        ~12×   |
 | `MatchingSplitDistance`     |          ~7×  |        ~11×   |
 | `InfoRobinsonFoulds`        |          ~4×  |         ~5×   |
-| `DifferentPhylogeneticInfo` |         ~1.3× |         ~1.1× |
-| `MatchingSplitInfoDistance` |         ~1.4× |         ~1×   |
 
 ### OpenMP parallelism
 
-- All pairwise distance functions now use an OpenMP multi-threaded batch
-  path when the package is compiled with OpenMP support, for both all-pairs
-  and cross-pairs (tree1 vs tree2) computations.
-
-- The number of OpenMP threads is controlled by `options(mc.cores = N)`;
-  the default is `1` (single-threaded).  Set `mc.cores` to
-  `parallel::detectCores()` or a fixed integer to enable multi-threading.
-  `StartParallel()` / `StopParallel()` are no longer needed when OpenMP
-  is available.
-
-### Algorithmic improvements
-
-- Exact split matches between trees are now detected via an O(_n_ log _n_)
-  sort-and-merge pre-scan, reducing the linear assignment problem to
-  only the unmatched splits.  For tree sets with high split overlap,
-  this yields the largest portion of the speedups above.
-
-- Internal lookup table for log₂ values shrunk from 32 MB to 16 KB,
-  improving L1 cache locality for information-based distance metrics.
-
-- Information content accumulation in `MutualClusteringInfo()` rewritten
-  as a branchless expression, reducing per-split-pair table lookups from
-  16 to 4 and eliminating 8 branches.
-
-- `spi_overlap()` (used by `SharedPhylogeneticInfo()`,
-  `MatchingSplitInfoDistance()`, and `JaccardRobinsonFoulds()`) rewritten
-  to use a single-pass hardware POPCNT approach, replacing the previous
-  four-pass boolean scan.
-
-- Hardware POPCNT instruction now used on x86-64 via inline assembly
-  (requires TreeTools ≥ 2.2).
-
-- Internal cost-matrix storage is now pooled across tree pairs within each
-  thread, eliminating per-pair heap allocation overhead.
-
-### R-level fast paths
-
-- `ClusteringInfoDistance()`, `DifferentPhylogeneticInfo()`,
-  `MatchingSplitInfoDistance()`, and `InfoRobinsonFoulds()` now avoid
-  duplicate `as.Splits()` conversions and use C++ batch functions for
-  per-tree entropy/information computation.  This reduces R-level
-  overhead by ~8–17% for typical analyses.
-
-- Cross-pairs computations (`tree1` vs `tree2` where both are lists) now
-  use the same optimized batch path as all-pairs computations.
+- Pairwise distance functions now use OpenMP parallelism when supported and
+  enabled with `options(mc.cores = N)`, superseding `StartParallel()`.
 
 ### Kendall & Colijn distance
 
