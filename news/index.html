@@ -61,26 +61,26 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.14.1" id="treedist-2141-2026-06-09">TreeDist 2.14.1 (2026-06-09)<a class="anchor" aria-label="anchor" href="#treedist-2141-2026-06-09"></a></h2>
 <ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> is <strong>deprecated</strong>, moving to <code>ConsTree::Transfer()</code>.</p></li>
-<li><p>Fixed <code>PhylogeneticInformationDistance()</code> miscalculating score for identical 4-leaf trees.</p></li>
+<li><p>Fixed: <code>PhylogeneticInformationDistance()</code> now calculates correct score for identical 4-leaf trees.</p></li>
 <li><p>Improve <code><a href="../reference/KMeansPP.html">KMeansPP()</a></code> performance: O(k²n) → O(kn).</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.14.0" id="treedist-2140-2026-05-07">TreeDist 2.14.0 (2026-05-07)<a class="anchor" aria-label="anchor" href="#treedist-2140-2026-05-07"></a></h2><p class="text-muted">CRAN release: 2026-05-09</p>
 <div class="section level3">
 <h3 id="new-features-2-14-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-14-0"></a></h3>
-<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic. Unlike majority-rule consensus, which can be highly unresolved when phylogenetic signal is diffuse, the transfer consensus uses the finer-grained transfer distance to produce more resolved trees.</p></li>
-<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants. Supports all-pairs, cross-pairs, and single-pair computations.</p></li>
-<li><p>LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering Information) C++ implementations are now exposed via <code>inst/include/TreeDist/</code> headers, allowing downstream packages to use <code>LinkingTo: TreeDist</code>.</p></li>
+<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic.</p></li>
+<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants.</p></li>
+<li><p>LAP (Jonker–Volgenant linear assignment) and Mutual Clustering Information C++ implementations exposed via <code>LinkingTo: TreeDist</code>.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="internals-2-14-0">Internals<a class="anchor" aria-label="anchor" href="#internals-2-14-0"></a></h3>
-<ul><li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0).</p></li>
-<li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
+<ul><li>
+<strong>Large-tree support</strong>: all distance functions now accept trees with up to 32 767 tips. Requires TreeTools ≥ 2.3.0.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-14-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-14-0"></a></h3>
 <ul><li>
-<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance and providing a ~21× speedup on typical inputs.</li>
+<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path when comparing lists of trees, providing a ~20× speedup on typical inputs.</li>
 </ul></div>
 </div>
     <div class="section level2">

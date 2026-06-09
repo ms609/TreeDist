@@ -4,7 +4,7 @@ Compute the transfer dissimilarity between phylogenetic trees, as
 defined by Takazawa et al. (2026) . The transfer dissimilarity uses the
 transfer distance (Lemoine et al. 2018) to compare bipartitions,
 providing a finer-grained measure than the Robinson–Foulds distance.
-Each branch in each tree is scored by how many taxa must be moved to
+Each split in each tree is scored by how many taxa must be moved to
 match its closest counterpart in the other tree, and these scores are
 summed.
 
@@ -84,10 +84,10 @@ return value carries `matching` and `pairScores` attributes.
 
 ## Details
 
-The `scaled` variant divides each branch's contribution by its depth
-minus one, giving equal weight to all branches regardless of their depth
+The `scaled` variant divides each split's contribution by its depth
+minus one, giving equal weight to all splits regardless of their depth
 (analogous to the Robinson–Foulds distance). The `unscaled` variant uses
-raw transfer distances, giving more weight to deep branches. Neither
+raw transfer distances, giving more weight to deep splits. Neither
 variant satisfies the triangle inequality for trees with six or more
 tips.
 
