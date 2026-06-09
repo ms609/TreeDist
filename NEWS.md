@@ -2,8 +2,8 @@
 
 - `TransferConsensus()` is **deprecated**, moving to `ConsTree::Transfer()`.
 
-- Fixed `PhylogeneticInformationDistance()` miscalculating score for identical
-  4-leaf trees.
+- Fixed: `PhylogeneticInformationDistance()` now calculates correct score for
+  identical 4-leaf trees.
   
 - Improve `KMeansPP()` performance: O(k²n) → O(kn).
 
@@ -14,35 +14,23 @@
 
 - `TransferConsensus()` constructs a consensus tree that minimizes the sum
   of transfer distances to a set of input trees, using a greedy
-  add-and-prune heuristic.  Unlike majority-rule consensus, which can be
-  highly unresolved when phylogenetic signal is diffuse, the transfer
-  consensus uses the finer-grained transfer distance to produce more
-  resolved trees.
+  add-and-prune heuristic.
 
 - `TransferDist()` computes the transfer dissimilarity between phylogenetic
-  trees, with scaled and unscaled variants.  Supports all-pairs, cross-pairs,
-  and single-pair computations.
+  trees, with scaled and unscaled variants.
 
-- LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering
-  Information) C++ implementations are now exposed via `inst/include/TreeDist/`
-  headers, allowing downstream packages to use `LinkingTo: TreeDist`.
+- LAP (Jonker–Volgenant linear assignment) and Mutual Clustering Information
+  C++ implementations exposed via `LinkingTo: TreeDist`.
 
 ## Internals
 
-- **Large-tree support (requires TreeTools ≥ 2.3.0):** all distance
-  functions now accept trees with up to 32 767 tips (previously limited
-  to `SL_MAX_TIPS`, 2048 with TreeTools ≤ 2.2.0).
-  
-- Stack-allocated split buffers replaced with dynamically-sized vectors,
-  removing a hard dependency on the compile-time `SL_MAX_SPLITS` constant.
-  TreeDist now supports trees of any size permitted by TreeTools.
-
+- **Large-tree support**: all distance functions now accept trees with up to
+  32 767 tips. Requires TreeTools ≥ 2.3.0.
 
 ## Performance
 
-- `RobinsonFoulds()` now uses a fast C++ batch path for cross-distance
-  computations (tree list vs tree list), matching the existing all-pairs
-  batch performance and providing a ~21× speedup on typical inputs.
+- `RobinsonFoulds()` now uses a fast C++ batch path when comparing lists of
+  trees, providing a ~20× speedup on typical inputs.
 
 
 # TreeDist 2.13.0 (2026-03-17)
