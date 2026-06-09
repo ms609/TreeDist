@@ -1,5 +1,17 @@
 # Changelog
 
+## TreeDist 2.14.1 (2026-06-09)
+
+- [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
+  is **deprecated**, moving to `ConsTree::Transfer()`.
+
+- Fixed `PhylogeneticInformationDistance()` miscalculating score for
+  identical 4-leaf trees.
+
+- Improve
+  [`KMeansPP()`](https://ms609.github.io/TreeDist/reference/KMeansPP.md)
+  performance: O(k²n) → O(kn).
+
 ## TreeDist 2.14.0 (2026-05-07)
 
 CRAN release: 2026-05-09
