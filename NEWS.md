@@ -1,11 +1,9 @@
-# TreeDist 2.14.0.9001 (development)
+# TreeDist 2.14.1 (2026-06-09)
 
 - Fixed `PhylogeneticInformationDistance()` miscalculating score for identical
   4-leaf trees.
   
 - Improve `KMeansPP()` performance: O(k²n) → O(kn).
-
-- Tinkering to get web app working
 
 
 # TreeDist 2.14.0 (2026-05-07)
