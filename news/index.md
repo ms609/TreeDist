@@ -1,6 +1,6 @@
 # Changelog
 
-## TreeDist 2.14.1 (2026-06-09)
+## TreeDist 2.14.1 (2026-06-10)
 
 - [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
   is **deprecated**, moving to `ConsTree::Transfer()`.
