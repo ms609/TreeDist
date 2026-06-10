@@ -59,7 +59,7 @@ common.
 
 ```{R, echo=FALSE, fig.width = 6, fig.align = 'center'}
 startPar <- TwoTreePlot()
-palette <- colorspace::qualitative_hcl(5, c=42, l=88)
+palette <- .QualitativeHCL(5, c = 42, l = 88)
 TreeDistPlot(balancedTree <- 
                read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"))
 edgelabels(1:5, c(1, 2, 5, 9, 12), adj = c(1.5, 0.5), bg = palette[1]) # Splits

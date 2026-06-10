@@ -1,6 +1,6 @@
 Package: TreeDist
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.14.1
+Version: 2.14.1.9000
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
@@ -46,7 +46,6 @@ Depends:
 Imports: 
   ape (>= 5.0),
   cli (>= 3.0),
-  colorspace,
   Rdpack (>= 0.7),
   shiny,
   shinyjs,

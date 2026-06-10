@@ -1,3 +1,7 @@
+# TreeDist 2.14.1.9000 (development)
+
+- Drop \pkg{colorspace} dependency.
+
 # TreeDist 2.14.1 (2026-06-10)
 
 - `TransferConsensus()` is **deprecated**, moving to `ConsTree::Transfer()`.

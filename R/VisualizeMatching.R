@@ -47,19 +47,19 @@
 #' @template MRS
 #' @encoding UTF-8
 #' @importFrom ape nodelabels edgelabels plot.phylo
-#' @importFrom colorspace qualitative_hcl sequential_hcl
+#' @importFrom grDevices hcl hcl.colors
 #' @importFrom graphics par
 #' @importFrom TreeTools as.Splits
 #' @aliases VisualiseMatching PlotMatching DisplayMatching
 #' @export
-VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
-                               precision = 3L, Plot = plot.phylo,
-                               matchZeros = TRUE, plainEdges = FALSE,
-                               edge.cex = par("cex"),
-                               value.cex = edge.cex * 0.8,
-                               edge.frame = "rect",
-                               edge.width = 1, edge.color = "black",
-                               ...) 
+VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
+                              precision = 3L, Plot = plot.phylo,
+                              matchZeros = TRUE, plainEdges = FALSE,
+                              edge.cex = par("cex"),
+                              value.cex = edge.cex * 0.8,
+                              edge.frame = "rect",
+                              edge.width = 1, edge.color = "black",
+                              ...) 
 {
   splits1 <- as.Splits(tree1)
   edge1 <- tree1[["edge"]]
@@ -155,7 +155,7 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
         c(score = NA_integer_, edge = NA_integer_)
       }
     }
-    edgeColPalette <- sequential_hcl(n = 256L, palette = "Viridis")
+    edgeColPalette <- hcl.colors(n = 256L, palette = "Viridis")
     
     EdgyPlot <- function(tree, splits, edge, splitEdges,
                          normalizedScores, ...) {
@@ -184,7 +184,7 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
   } else {
     !is.na(pairings) & pairScores > 0
   }
-  palette <- qualitative_hcl(sum(paired1), c = 42, l = 88)
+  palette <- .QualitativeHCL(sum(paired1), c = 42, l = 88)
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
   if (any(pairLabels)) {
@@ -215,6 +215,14 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
   
   # Return:
   invisible(matching)
+}
+
+#' @keywords internal
+#' @export
+.QualitativeHCL <- function(n, c = 42, l = 88) {
+  if (n < 1) return(character(0))
+  hues <- seq(0, 360 * (n - 1) / n, length.out = n)
+  hcl(h = hues, c = c, l = l)
 }
 
 #' @export

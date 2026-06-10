@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.14.1",
+  "version": "2.14.1.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.6.0 (2026-04-24)",
+  "runtimePlatform": "R version 4.6.0 (2026-04-24 ucrt)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -442,18 +442,6 @@
     },
     "5": {
       "@type": "SoftwareApplication",
-      "identifier": "colorspace",
-      "name": "colorspace",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=colorspace"
-    },
-    "6": {
-      "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
       "version": ">= 0.7",
@@ -465,7 +453,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "7": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -477,7 +465,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "8": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -489,7 +477,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
@@ -505,7 +493,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "2100.042KB",
+  "fileSize": "2138.944KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -572,7 +560,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.14.1",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.14.1.9000",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
