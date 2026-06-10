@@ -2,9 +2,11 @@
 
 ## TreeDist 2.14.1.9000 (development)
 
-- Drop dependency.
+- Use `grDevices` palettes to drop `colorspace` dependency.
 
 ## TreeDist 2.14.1 (2026-06-10)
+
+CRAN release: 2026-06-10
 
 - [`TransferConsensus()`](https://ms609.github.io/TreeDist/dev/reference/TransferConsensus.md)
   is **deprecated**, moving to `ConsTree::Transfer()`.
