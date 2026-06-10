@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +90,7 @@
 </li>
 <li>
 <p>Install TreeDist dependencies:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">sudo</span> R <span class="at">-e</span> <span class="st">"install.packages(c('ape', 'bit64', 'lifecycle', 'colorspace', 'fastmatch', 'RCurl', 'R.cache', 'Rdpack', 'stringi', 'PlotTools', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">sudo</span> R <span class="at">-e</span> <span class="st">"install.packages(c('ape', 'bit64', 'lifecycle', 'fastmatch', 'RCurl', 'R.cache', 'Rdpack', 'stringi', 'PlotTools', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"</span></span></code></pre></div>
 </li>
 </ul></div>
 <div class="section level3">
@@ -149,7 +149,7 @@
 <div class="section level3">
 <h3 id="key-dependencies">Key Dependencies<a class="anchor" aria-label="anchor" href="#key-dependencies"></a></h3>
 <p><strong>Critical</strong>: TreeDist requires these packages to build successfully: - <code>ape</code> (&gt;= 5.0) - Phylogenetic analysis package - <code>Rcpp</code> (&gt;= 1.0.8) - C++ integration (must install before TreeTools) - <code>TreeTools</code> (&gt;= 1.16) - Core tree manipulation (large dependency) - <code>Rdpack</code> (&gt;= 0.7) - Bibliography and citation support<br>
-- <code>shinyjs</code> - Interactive web applications - <code>colorspace</code> - Color space manipulation</p>
+- <code>shinyjs</code> - Interactive web applications</p>
 </div>
 </div>
 <div class="section level2">
@@ -179,7 +179,7 @@
 <h3 id="essential-pre-commit-validation-steps">Essential Pre-commit Validation Steps<a class="anchor" aria-label="anchor" href="#essential-pre-commit-validation-steps"></a></h3>
 <ol style="list-style-type: decimal"><li>
 <p><strong>Install core dependencies first</strong>:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">sudo</span> R <span class="at">-e</span> <span class="st">"install.packages(c('ape', 'colorspace', 'Rdpack', 'shinyjs', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">sudo</span> R <span class="at">-e</span> <span class="st">"install.packages(c('ape', 'Rdpack', 'shinyjs', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"</span></span></code></pre></div>
 </li>
 <li>
 <p><strong>Basic build test</strong> (quick validation):</p>
@@ -315,7 +315,7 @@
 <li>
 <strong>Rdpack warnings</strong>: These are normal when <code>Rdpack</code> isn’t installed but don’t prevent building</li>
 <li>
-<strong>Package won’t build</strong>: Install core dependencies: <code>ape</code>, <code>colorspace</code>, <code>Rdpack</code>, <code>shinyjs</code>, <code>TreeTools</code>
+<strong>Package won’t build</strong>: Install core dependencies: <code>ape</code>, <code>Rdpack</code>, <code>shinyjs</code>, <code>TreeTools</code>
 </li>
 <li>
 <strong>TreeTools installation fails</strong>: This is a large dependency - allow 10+ minutes for compilation</li>

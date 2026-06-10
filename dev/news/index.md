@@ -1,15 +1,20 @@
 # Changelog
 
-## TreeDist 2.14.0.9001 (development)
+## TreeDist 2.14.1.9000 (development)
 
-- Fixed `PhylogeneticInformationDistance()` miscalculating score for
-  identical 4-leaf trees.
+- Drop dependency.
+
+## TreeDist 2.14.1 (2026-06-10)
+
+- [`TransferConsensus()`](https://ms609.github.io/TreeDist/dev/reference/TransferConsensus.md)
+  is **deprecated**, moving to `ConsTree::Transfer()`.
+
+- Fixed: `PhylogeneticInformationDistance()` now calculates correct
+  score for identical 4-leaf trees.
 
 - Improve
   [`KMeansPP()`](https://ms609.github.io/TreeDist/dev/reference/KMeansPP.md)
   performance: O(k²n) → O(kn).
-
-- Tinkering to get web app working
 
 ## TreeDist 2.14.0 (2026-05-07)
 
@@ -20,38 +25,25 @@ CRAN release: 2026-05-09
 - [`TransferConsensus()`](https://ms609.github.io/TreeDist/dev/reference/TransferConsensus.md)
   constructs a consensus tree that minimizes the sum of transfer
   distances to a set of input trees, using a greedy add-and-prune
-  heuristic. Unlike majority-rule consensus, which can be highly
-  unresolved when phylogenetic signal is diffuse, the transfer consensus
-  uses the finer-grained transfer distance to produce more resolved
-  trees.
+  heuristic.
 
 - [`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md)
   computes the transfer dissimilarity between phylogenetic trees, with
-  scaled and unscaled variants. Supports all-pairs, cross-pairs, and
-  single-pair computations.
+  scaled and unscaled variants.
 
-- LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering
-  Information) C++ implementations are now exposed via
-  `inst/include/TreeDist/` headers, allowing downstream packages to use
-  `LinkingTo: TreeDist`.
+- LAP (Jonker–Volgenant linear assignment) and Mutual Clustering
+  Information C++ implementations exposed via `LinkingTo: TreeDist`.
 
 ### Internals
 
-- **Large-tree support (requires TreeTools ≥ 2.3.0):** all distance
-  functions now accept trees with up to 32 767 tips (previously limited
-  to `SL_MAX_TIPS`, 2048 with TreeTools ≤ 2.2.0).
-
-- Stack-allocated split buffers replaced with dynamically-sized vectors,
-  removing a hard dependency on the compile-time `SL_MAX_SPLITS`
-  constant. TreeDist now supports trees of any size permitted by
-  TreeTools.
+- **Large-tree support**: all distance functions now accept trees with
+  up to 32 767 tips. Requires TreeTools ≥ 2.3.0.
 
 ### Performance
 
 - [`RobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md)
-  now uses a fast C++ batch path for cross-distance computations (tree
-  list vs tree list), matching the existing all-pairs batch performance
-  and providing a ~21× speedup on typical inputs.
+  now uses a fast C++ batch path when comparing lists of trees,
+  providing a ~20× speedup on typical inputs.
 
 ## TreeDist 2.13.0 (2026-03-17)
 
@@ -64,77 +56,20 @@ CRAN release: 2026-05-09
 
 ### Performance
 
-Pairwise distance computation has been substantially optimized. Typical
-speedups over v2.12.0 for tree sets where most splits are shared (MCMC
-posteriors, bootstrap replicates):
+Pairwise distance computation has been optimized. Typical speedups over
+v2.12.0 for tree sets where many splits are shared:
 
-| Metric                      | 100 × 50 tips | 40 × 200 tips |
-|-----------------------------|--------------:|--------------:|
-| `ClusteringInfoDistance`    |           ~5× |          ~12× |
-| `MatchingSplitDistance`     |           ~7× |          ~11× |
-| `InfoRobinsonFoulds`        |           ~4× |           ~5× |
-| `DifferentPhylogeneticInfo` |         ~1.3× |         ~1.1× |
-| `MatchingSplitInfoDistance` |         ~1.4× |           ~1× |
+| Metric                   | 100 × 50 tips | 40 × 200 tips |
+|--------------------------|--------------:|--------------:|
+| `ClusteringInfoDistance` |           ~5× |          ~12× |
+| `MatchingSplitDistance`  |           ~7× |          ~11× |
+| `InfoRobinsonFoulds`     |           ~4× |           ~5× |
 
 #### OpenMP parallelism
 
-- All pairwise distance functions now use an OpenMP multi-threaded batch
-  path when the package is compiled with OpenMP support, for both
-  all-pairs and cross-pairs (tree1 vs tree2) computations.
-
-- The number of OpenMP threads is controlled by `options(mc.cores = N)`;
-  the default is `1` (single-threaded). Set `mc.cores` to
-  [`parallel::detectCores()`](https://rdrr.io/r/parallel/detectCores.html)
-  or a fixed integer to enable multi-threading.
-  [`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)
-  /
-  [`StopParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)
-  are no longer needed when OpenMP is available.
-
-#### Algorithmic improvements
-
-- Exact split matches between trees are now detected via an O(*n* log
-  *n*) sort-and-merge pre-scan, reducing the linear assignment problem
-  to only the unmatched splits. For tree sets with high split overlap,
-  this yields the largest portion of the speedups above.
-
-- Internal lookup table for log₂ values shrunk from 32 MB to 16 KB,
-  improving L1 cache locality for information-based distance metrics.
-
-- Information content accumulation in
-  [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
-  rewritten as a branchless expression, reducing per-split-pair table
-  lookups from 16 to 4 and eliminating 8 branches.
-
-- `spi_overlap()` (used by
-  [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
-  [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
-  and
-  [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md))
-  rewritten to use a single-pass hardware POPCNT approach, replacing the
-  previous four-pass boolean scan.
-
-- Hardware POPCNT instruction now used on x86-64 via inline assembly
-  (requires TreeTools ≥ 2.2).
-
-- Internal cost-matrix storage is now pooled across tree pairs within
-  each thread, eliminating per-pair heap allocation overhead.
-
-#### R-level fast paths
-
-- [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
-  [`DifferentPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
-  [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
-  and
-  [`InfoRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md)
-  now avoid duplicate
-  [`as.Splits()`](https://ms609.github.io/TreeTools/reference/Splits.html)
-  conversions and use C++ batch functions for per-tree
-  entropy/information computation. This reduces R-level overhead by
-  ~8–17% for typical analyses.
-
-- Cross-pairs computations (`tree1` vs `tree2` where both are lists) now
-  use the same optimized batch path as all-pairs computations.
+- Pairwise distance functions now use OpenMP parallelism when supported
+  and enabled with `options(mc.cores = N)`, superseding
+  [`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md).
 
 #### Kendall & Colijn distance
 

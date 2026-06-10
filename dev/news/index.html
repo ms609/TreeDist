@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,28 +59,32 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.14.0.9001" id="treedist-21409001-development">TreeDist 2.14.0.9001 (development)<a class="anchor" aria-label="anchor" href="#treedist-21409001-development"></a></h2>
-<ul><li><p>Fixed <code>PhylogeneticInformationDistance()</code> miscalculating score for identical 4-leaf trees.</p></li>
+<h2 class="pkg-version" data-toc-text="2.14.1.9000" id="treedist-21419000-development">TreeDist 2.14.1.9000 (development)<a class="anchor" aria-label="anchor" href="#treedist-21419000-development"></a></h2>
+<ul><li>Drop  dependency.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.14.1" id="treedist-2141-2026-06-10">TreeDist 2.14.1 (2026-06-10)<a class="anchor" aria-label="anchor" href="#treedist-2141-2026-06-10"></a></h2>
+<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> is <strong>deprecated</strong>, moving to <code>ConsTree::Transfer()</code>.</p></li>
+<li><p>Fixed: <code>PhylogeneticInformationDistance()</code> now calculates correct score for identical 4-leaf trees.</p></li>
 <li><p>Improve <code><a href="../reference/KMeansPP.html">KMeansPP()</a></code> performance: O(k²n) → O(kn).</p></li>
-<li><p>Tinkering to get web app working</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.14.0" id="treedist-2140-2026-05-07">TreeDist 2.14.0 (2026-05-07)<a class="anchor" aria-label="anchor" href="#treedist-2140-2026-05-07"></a></h2><p class="text-muted">CRAN release: 2026-05-09</p>
 <div class="section level3">
 <h3 id="new-features-2-14-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-14-0"></a></h3>
-<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic. Unlike majority-rule consensus, which can be highly unresolved when phylogenetic signal is diffuse, the transfer consensus uses the finer-grained transfer distance to produce more resolved trees.</p></li>
-<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants. Supports all-pairs, cross-pairs, and single-pair computations.</p></li>
-<li><p>LAP (Jonker–Volgenant linear assignment) and MCI (Mutual Clustering Information) C++ implementations are now exposed via <code>inst/include/TreeDist/</code> headers, allowing downstream packages to use <code>LinkingTo: TreeDist</code>.</p></li>
+<ul><li><p><code><a href="../reference/TransferConsensus.html">TransferConsensus()</a></code> constructs a consensus tree that minimizes the sum of transfer distances to a set of input trees, using a greedy add-and-prune heuristic.</p></li>
+<li><p><code><a href="../reference/TransferDist.html">TransferDist()</a></code> computes the transfer dissimilarity between phylogenetic trees, with scaled and unscaled variants.</p></li>
+<li><p>LAP (Jonker–Volgenant linear assignment) and Mutual Clustering Information C++ implementations exposed via <code>LinkingTo: TreeDist</code>.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="internals-2-14-0">Internals<a class="anchor" aria-label="anchor" href="#internals-2-14-0"></a></h3>
-<ul><li><p><strong>Large-tree support (requires TreeTools ≥ 2.3.0):</strong> all distance functions now accept trees with up to 32 767 tips (previously limited to <code>SL_MAX_TIPS</code>, 2048 with TreeTools ≤ 2.2.0).</p></li>
-<li><p>Stack-allocated split buffers replaced with dynamically-sized vectors, removing a hard dependency on the compile-time <code>SL_MAX_SPLITS</code> constant. TreeDist now supports trees of any size permitted by TreeTools.</p></li>
+<ul><li>
+<strong>Large-tree support</strong>: all distance functions now accept trees with up to 32 767 tips. Requires TreeTools ≥ 2.3.0.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-14-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-14-0"></a></h3>
 <ul><li>
-<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path for cross-distance computations (tree list vs tree list), matching the existing all-pairs batch performance and providing a ~21× speedup on typical inputs.</li>
+<code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now uses a fast C++ batch path when comparing lists of trees, providing a ~20× speedup on typical inputs.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -92,7 +96,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-13-0">Performance<a class="anchor" aria-label="anchor" href="#performance-2-13-0"></a></h3>
-<p>Pairwise distance computation has been substantially optimized. Typical speedups over v2.12.0 for tree sets where most splits are shared (MCMC posteriors, bootstrap replicates):</p>
+<p>Pairwise distance computation has been optimized. Typical speedups over v2.12.0 for tree sets where many splits are shared:</p>
 <table class="table"><thead><tr><th>Metric</th>
 <th align="right">100 × 50 tips</th>
 <th align="right">40 × 200 tips</th>
@@ -105,30 +109,9 @@
 </tr><tr><td><code>InfoRobinsonFoulds</code></td>
 <td align="right">~4×</td>
 <td align="right">~5×</td>
-</tr><tr><td><code>DifferentPhylogeneticInfo</code></td>
-<td align="right">~1.3×</td>
-<td align="right">~1.1×</td>
-</tr><tr><td><code>MatchingSplitInfoDistance</code></td>
-<td align="right">~1.4×</td>
-<td align="right">~1×</td>
 </tr></tbody></table><div class="section level4">
 <h4 id="openmp-parallelism-2-13-0">OpenMP parallelism<a class="anchor" aria-label="anchor" href="#openmp-parallelism-2-13-0"></a></h4>
-<ul><li><p>All pairwise distance functions now use an OpenMP multi-threaded batch path when the package is compiled with OpenMP support, for both all-pairs and cross-pairs (tree1 vs tree2) computations.</p></li>
-<li><p>The number of OpenMP threads is controlled by <code>options(mc.cores = N)</code>; the default is <code>1</code> (single-threaded). Set <code>mc.cores</code> to <code><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">parallel::detectCores()</a></code> or a fixed integer to enable multi-threading. <code><a href="../reference/StartParallel.html">StartParallel()</a></code> / <code><a href="../reference/StartParallel.html">StopParallel()</a></code> are no longer needed when OpenMP is available.</p></li>
-</ul></div>
-<div class="section level4">
-<h4 id="algorithmic-improvements-2-13-0">Algorithmic improvements<a class="anchor" aria-label="anchor" href="#algorithmic-improvements-2-13-0"></a></h4>
-<ul><li><p>Exact split matches between trees are now detected via an O(<em>n</em> log <em>n</em>) sort-and-merge pre-scan, reducing the linear assignment problem to only the unmatched splits. For tree sets with high split overlap, this yields the largest portion of the speedups above.</p></li>
-<li><p>Internal lookup table for log₂ values shrunk from 32 MB to 16 KB, improving L1 cache locality for information-based distance metrics.</p></li>
-<li><p>Information content accumulation in <code><a href="../reference/TreeDistance.html">MutualClusteringInfo()</a></code> rewritten as a branchless expression, reducing per-split-pair table lookups from 16 to 4 and eliminating 8 branches.</p></li>
-<li><p><code>spi_overlap()</code> (used by <code><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code>, <code><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code>, and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>) rewritten to use a single-pass hardware POPCNT approach, replacing the previous four-pass boolean scan.</p></li>
-<li><p>Hardware POPCNT instruction now used on x86-64 via inline assembly (requires TreeTools ≥ 2.2).</p></li>
-<li><p>Internal cost-matrix storage is now pooled across tree pairs within each thread, eliminating per-pair heap allocation overhead.</p></li>
-</ul></div>
-<div class="section level4">
-<h4 id="r-level-fast-paths-2-13-0">R-level fast paths<a class="anchor" aria-label="anchor" href="#r-level-fast-paths-2-13-0"></a></h4>
-<ul><li><p><code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/TreeDistance.html">DifferentPhylogeneticInfo()</a></code>, <code><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code>, and <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> now avoid duplicate <code><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits()</a></code> conversions and use C++ batch functions for per-tree entropy/information computation. This reduces R-level overhead by ~8–17% for typical analyses.</p></li>
-<li><p>Cross-pairs computations (<code>tree1</code> vs <code>tree2</code> where both are lists) now use the same optimized batch path as all-pairs computations.</p></li>
+<ul><li>Pairwise distance functions now use OpenMP parallelism when supported and enabled with <code>options(mc.cores = N)</code>, superseding <code><a href="../reference/StartParallel.html">StartParallel()</a></code>.</li>
 </ul></div>
 <div class="section level4">
 <h4 id="kendall--colijn-distance-2-13-0">Kendall &amp; Colijn distance<a class="anchor" aria-label="anchor" href="#kendall--colijn-distance-2-13-0"></a></h4>

@@ -61,7 +61,7 @@ manipulation, designed to be compatible with TreeDist.
 - Install TreeDist dependencies:
 
   ``` bash
-  sudo R -e "install.packages(c('ape', 'bit64', 'lifecycle', 'colorspace', 'fastmatch', 'RCurl', 'R.cache', 'Rdpack', 'stringi', 'PlotTools', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"
+  sudo R -e "install.packages(c('ape', 'bit64', 'lifecycle', 'fastmatch', 'RCurl', 'R.cache', 'Rdpack', 'stringi', 'PlotTools', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"
   ```
 
 ### Building and Checking
@@ -149,8 +149,7 @@ manipulation, designed to be compatible with TreeDist.
 C++ integration (must install before TreeTools) - `TreeTools` (\>=
 1.16) - Core tree manipulation (large dependency) - `Rdpack` (\>= 0.7) -
 Bibliography and citation support  
-- `shinyjs` - Interactive web applications - `colorspace` - Color space
-manipulation
+- `shinyjs` - Interactive web applications
 
 ## Validation
 
@@ -194,7 +193,7 @@ phylogenetic tree operations:
 1.  **Install core dependencies first**:
 
     ``` bash
-    sudo R -e "install.packages(c('ape', 'colorspace', 'Rdpack', 'shinyjs', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"
+    sudo R -e "install.packages(c('ape', 'Rdpack', 'shinyjs', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"
     ```
 
 2.  **Basic build test** (quick validation):
@@ -322,8 +321,8 @@ phylogenetic tree operations:
   `sudo apt install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev`
 - **Rdpack warnings**: These are normal when `Rdpack` isn’t installed
   but don’t prevent building
-- **Package won’t build**: Install core dependencies: `ape`,
-  `colorspace`, `Rdpack`, `shinyjs`, `TreeTools`
+- **Package won’t build**: Install core dependencies: `ape`, `Rdpack`,
+  `shinyjs`, `TreeTools`
 - **TreeTools installation fails**: This is a large dependency - allow
   10+ minutes for compilation
 - **Tests fail after C++ changes**: rebuild package completely with

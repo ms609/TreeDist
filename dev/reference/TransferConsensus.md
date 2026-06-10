@@ -1,7 +1,9 @@
 # Consensus tree minimizing transfer distance
 
 Construct a consensus tree that minimizes the sum of transfer distances
-to a set of input trees, using a greedy add-and-prune heuristic.
+to a set of input trees, using a greedy add-and-prune heuristic. This
+function is moving to `ConsTree::Transfer()` and will soon be removed. A
+copy is retained here temporarily.
 
 ## Usage
 
@@ -75,5 +77,3 @@ majority-rule consensus tree using fine-grained dissimilarity measures.”
 
 Other summary trees:
 [`MCITree()`](https://ms609.github.io/TreeDist/dev/reference/MCITree.md)
-
-## Examples

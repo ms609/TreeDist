@@ -5,7 +5,7 @@ by Takazawa et al. (2026)
 The transfer dissimilarity uses the transfer distance
 (Lemoine et al. 2018)
  to compare bipartitions, providing a
-finer-grained measure than the Robinson–Foulds distance.  Each branch in
+finer-grained measure than the Robinson–Foulds distance.  Each split in
 each tree is scored by how many taxa must be moved to match its closest
 counterpart in the other tree, and these scores are summed."><meta property="og:description" content="Compute the transfer dissimilarity between phylogenetic trees, as defined
 by Takazawa et al. (2026)
@@ -13,7 +13,7 @@ by Takazawa et al. (2026)
 The transfer dissimilarity uses the transfer distance
 (Lemoine et al. 2018)
  to compare bipartitions, providing a
-finer-grained measure than the Robinson–Foulds distance.  Each branch in
+finer-grained measure than the Robinson–Foulds distance.  Each split in
 each tree is scored by how many taxa must be moved to match its closest
 counterpart in the other tree, and these scores are summed."><meta name="robots" content="noindex"><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKEG66D3F"></script><script>
   window.dataLayer = window.dataLayer || [];
@@ -29,7 +29,7 @@ counterpart in the other tree, and these scores are summed."><meta name="robots"
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.14.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@ by Takazawa et al. (2026)
 The transfer dissimilarity uses the transfer distance
 (Lemoine et al. 2018)
  to compare bipartitions, providing a
-finer-grained measure than the Robinson–Foulds distance.  Each branch in
+finer-grained measure than the Robinson–Foulds distance.  Each split in
 each tree is scored by how many taxa must be moved to match its closest
 counterpart in the other tree, and these scores are summed.</p>
     </div>
@@ -167,10 +167,10 @@ return value carries <code>matching</code> and <code>pairScores</code> attribute
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <code>scaled</code> variant divides each branch's contribution by its depth minus
-one, giving equal weight to all branches regardless of their depth (analogous
+    <p>The <code>scaled</code> variant divides each split's contribution by its depth minus
+one, giving equal weight to all splits regardless of their depth (analogous
 to the Robinson–Foulds distance).  The <code>unscaled</code> variant uses raw transfer
-distances, giving more weight to deep branches.  Neither variant satisfies
+distances, giving more weight to deep splits.  Neither variant satisfies
 the triangle inequality for trees with six or more tips.</p>
     </div>
     <div class="section level2">
