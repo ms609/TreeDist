@@ -8,6 +8,12 @@ on:
     branches: ["*"]
     paths-ignore:
       - "Meta**"
+      - "AGENT**"
+      - "codemeta.json"
+      - "cran-comments.md"
+      - ".covr**"
+      - ".git**"
+      - ".lint**"
       - "memcheck**"
       - "docs**"
       - "**.git"
@@ -22,6 +28,12 @@ on:
     branches: ["*"]
     paths-ignore:
       - "Meta**"
+      - "AGENT**"
+      - "codemeta.json"
+      - "cran-comments.md"
+      - ".covr**"
+      - ".git**"
+      - ".lint**"
       - "memcheck**"
       - "docs**"
       - "**.git"
