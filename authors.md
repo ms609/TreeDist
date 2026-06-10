@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/ms609/TreeDist/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/ms609/TreeDist/blob/2.14.1/inst/CITATION)
 
 Smith, M.R. (2020a). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. Bioinformatics 36: 5007–5013.
