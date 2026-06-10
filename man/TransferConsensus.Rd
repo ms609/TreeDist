@@ -34,6 +34,8 @@ A tree of class \code{phylo}.
 \description{
 Construct a consensus tree that minimizes the sum of transfer distances
 to a set of input trees, using a greedy add-and-prune heuristic.
+This function is moving to \code{ConsTree::Transfer()} and will soon be removed.
+A copy is retained here temporarily.
 }
 \details{
 Unlike the majority-rule consensus, which minimizes Robinson-Foulds
@@ -47,20 +49,6 @@ pairwise transfer distances between them, and greedily adds or removes
 splits to minimize total transfer dissimilarity cost.  The approach
 follows \insertCite{Takazawa2026;textual}{TreeDist}, reimplemented for
 'TreeDist' infrastructure.
-}
-\examples{
-library(TreeTools)
-trees <- as.phylo(50:69, nTip = 12)
-
-tc <- TransferConsensus(trees)
-mr <- UnrootTree(Consensus(trees, p = 0.5)) # As root position is arbitrary
-\dontshow{oPar <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 2, 0.4)) # Set up plotting area}
-plot(tc, main = "Transfer consensus")
-plot(mr, main = "Majority rule", direction = "left")
-# Compare resolution
-cat("Majority-rule splits:", NSplits(mr), "\n")
-cat("Transfer consensus splits:", NSplits(tc), "\n")
-\dontshow{par(oPar) # Restore plotting defaults}
 }
 \references{
 \insertAllCited{}

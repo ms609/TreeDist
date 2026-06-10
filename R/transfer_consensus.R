@@ -2,6 +2,10 @@
 #'
 #' Construct a consensus tree that minimizes the sum of transfer distances
 #' to a set of input trees, using a greedy add-and-prune heuristic.
+# Note added 2026-06-10; function was only available for 1 release so need
+# not stick around too long
+#' This function is moving to `ConsTree::Transfer()` and will soon be removed.
+#' A copy is retained here temporarily.
 #'
 #' Unlike the majority-rule consensus, which minimizes Robinson-Foulds
 #' distance and can be highly unresolved when phylogenetic signal is low,
@@ -32,20 +36,6 @@
 #'
 #' @references
 #' \insertAllCited{}
-#'
-#' @examples
-#' library(TreeTools)
-#' trees <- as.phylo(50:69, nTip = 12)
-#'
-#' tc <- TransferConsensus(trees)
-#' mr <- UnrootTree(Consensus(trees, p = 0.5)) # As root position is arbitrary
-#' \dontshow{oPar <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 2, 0.4)) # Set up plotting area}
-#' plot(tc, main = "Transfer consensus")
-#' plot(mr, main = "Majority rule", direction = "left")
-#' # Compare resolution
-#' cat("Majority-rule splits:", NSplits(mr), "\n")
-#' cat("Transfer consensus splits:", NSplits(tc), "\n")
-#' \dontshow{par(oPar) # Restore plotting defaults}
 #' @family summary trees
 #' @importFrom TreeTools as.Splits TipLabels NSplits Consensus StarTree
 #' @export
