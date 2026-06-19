@@ -26,7 +26,7 @@ name: gcc-ASAN
 
 jobs:
   mem-check:
-    runs-on: ubuntu-24.04 # Update RSPM when increasing
+    runs-on: ubuntu-24.04-arm # Update RSPM when increasing
 
     name: AddressSanitizer ${{ matrix.config.test }}
 
