@@ -434,8 +434,216 @@ MutualClusteringInfoSplits <- function(splits1, splits2,
 }
 
 #' Mean of two numbers
-#' 
+#'
 #' Used for normalization and range calculation
-#' 
+#'
 #' @keywords internal
 .PairMean <- function(x, y) (x + y) / 2L
+
+#' Largest clustering information distance reachable by one NNI move
+#'
+#' `NNIMaxStep()` returns the largest
+#' [Clustering Information Distance][ClusteringInfoDistance] that can separate an
+#' _n_-leaf tree from any tree that differs from it by a single nearest neighbour
+#' interchange (NNI) move.
+#'
+#' A single NNI move around an internal edge exchanges two of the four subtrees
+#' that meet at that edge, changing exactly one split.  Because
+#' `ClusteringInfoDistance()` \insertCite{SmithDist}{TreeDist} scores trees by an
+#' optimal matching of their splits, every _unchanged_ split matches its
+#' counterpart perfectly and contributes nothing to the distance.  The distance of
+#' an NNI move therefore depends only on the old split _S_ and the new split _S'_,
+#' and hence only on the leaf counts \eqn{a, b, c, d} of the four subtrees
+#' \eqn{(a + b + c + d = n)}.  Writing \eqn{H} for entropy in bits, it equals
+#' their entropy distance (variation of
+#' [clustering information][ClusteringEntropy], \insertCite{Meila2007}{TreeDist}):
+#' \deqn{d(a, b, c, d) = 2 H(a, b, c, d) - H(a + b) - H(a + c).}
+#' The maximum can thus be found deterministically, by optimizing over the four
+#' subtree sizes, rather than by sampling random trees.  At the optimum the four
+#' subtrees are as equal as possible (each \eqn{\lfloor n/4 \rfloor} or
+#' \eqn{\lceil n/4 \rceil}), so the maximizing topology is a _local_ property of a
+#' single edge, realized by _any_ tree that contains such an edge &ndash; not by a
+#' globally pectinate or balanced tree.  The value is exactly two bits when four
+#' divides _n_ (four equal subtrees, whose splits are then balanced and
+#' independent), and slightly less otherwise.  The exchanged splits themselves
+#' need not be balanced: at \eqn{n = 6} the optimal subtrees are
+#' \eqn{\{2, 2, 1, 1\}} but the move runs between a \eqn{4 | 2} split and a
+#' \eqn{3 | 3} split.
+#'
+#' @section The normalized maximum is also local:
+#' With `normalize = TRUE` the distance is divided by the combined clustering
+#' entropy of the two trees, \eqn{CE(T) + CE(T')}, which _does_ depend on the wider
+#' topology.  The largest normalized move can nevertheless be found without
+#' searching tree space, as follows.
+#'
+#' \eqn{T} and \eqn{T'} share every split except the one the move changes, so
+#' \deqn{CE(T) + CE(T') = 2 E + H(S) + H(S'),}
+#' where \eqn{E} is the summed entropy of the \eqn{n - 4} shared splits and
+#' \eqn{H(S), H(S')} &ndash; the entropies of the exchanged splits &ndash; are
+#' fixed by \eqn{a, b, c, d}.  Each shared split is cut by an edge lying _inside_
+#' one of the four subtrees, so \eqn{E} decomposes into four independent terms,
+#' \deqn{E = c(a) + c(b) + c(c) + c(d),}
+#' where \eqn{c(s)} is the clustering entropy contributed by a subtree of \eqn{s}
+#' leaves.  The numerator \eqn{d(a, b, c, d)} is independent of the subtree
+#' _shapes_, so for fixed sizes the ratio is largest when each \eqn{c(s)} is as
+#' _small_ as possible &ndash; and each subtree is minimized independently.  The
+#' minimum \eqn{c(s)} satisfies the recursion
+#' \deqn{c(1) = 0, \qquad c(s) = H(s) + \min_{1 \le i \le s/2}\{c(i) + c(s - i)\},}
+#' computed once by dynamic programming.  The largest normalized NNI move is then
+#' \deqn{\max_{a, b, c, d} \frac{d(a, b, c, d)}{2[c(a) + c(b) + c(c) + c(d)] +
+#' H(S) + H(S')},}
+#' a purely local optimization over the four subtree sizes.  (The minimizing
+#' subtree shape is not in general balanced; for \eqn{s = 6}, for instance, it
+#' splits \eqn{2 + 4} rather than \eqn{3 + 3}.)
+#'
+#' @param tree Object of supported class representing a tree or list of trees,
+#' or an integer specifying the number of leaves in a tree/trees.
+#' @param normalize Logical specifying whether to normalize the distance against
+#' the summed clustering information of the two trees, giving the largest
+#' _normalized_ Clustering Information Distance attainable by one NNI move.
+#'
+#' @return `NNIMaxStep()` returns a numeric vector, one entry per tree (or leaf
+#' count), giving the largest attainable distance &ndash; in bits when
+#' `normalize = FALSE`, or as a fraction in the range \[0, 1] when
+#' `normalize = TRUE`.  Entries are `NA` where _n_ &lt; 4, as no NNI move exists.
+#' Two attributes record the maximizing configuration: `"subtrees"`, the sizes of
+#' the four subtrees around the moved edge, and `"splits"`, the sizes of the two
+#' splits that the move exchanges.  Where more than one tree is supplied, each
+#' attribute is a list with one entry per tree.
+#'
+#' @examples
+#' # Largest clustering information distance from a single NNI move
+#' NNIMaxStep(8)  # exactly two bits: eight is a multiple of four
+#' NNIMaxStep(6)  # a little less
+#'
+#' # Read off the maximizing local topology
+#' m6 <- NNIMaxStep(6)
+#' attr(m6, "subtrees")
+#' attr(m6, "splits")
+#'
+#' # Vectorized over leaf counts, and accepting a tree
+#' NNIMaxStep(4:12)
+#' library("TreeTools", quietly = TRUE)
+#' NNIMaxStep(BalancedTree(19))
+#'
+#' # Normalized: solved locally, without searching tree space
+#' NNIMaxStep(12, normalize = TRUE)
+#'
+#' @template MRS
+#' @family tree distances
+#' @seealso
+#' The distance itself: [`ClusteringInfoDistance()`]
+#'
+#' Diameter of the NNI metric: [`NNIDiameter()`]
+#' @references \insertAllCited{}
+#' @export
+NNIMaxStep <- function(tree, normalize = FALSE) {
+  UseMethod("NNIMaxStep")
+}
+
+#' @export
+NNIMaxStep.numeric <- function(tree, normalize = FALSE) {
+  res <- lapply(tree, .NNIMaxStep1, normalize = normalize)
+  value <- vapply(res, `[[`, double(1), "value")
+  subtrees <- lapply(res, `[[`, "subtrees")
+  splits <- lapply(res, `[[`, "splits")
+  if (length(tree) == 1L) {
+    attr(value, "subtrees") <- subtrees[[1]]
+    attr(value, "splits") <- splits[[1]]
+  } else {
+    attr(value, "subtrees") <- subtrees
+    attr(value, "splits") <- splits
+  }
+  value
+}
+
+#' @importFrom TreeTools NTip
+#' @export
+NNIMaxStep.phylo <- function(tree, normalize = FALSE) {
+  NNIMaxStep(NTip(tree), normalize = normalize)
+}
+
+#' @export
+NNIMaxStep.multiPhylo <- NNIMaxStep.phylo
+
+#' @export
+NNIMaxStep.list <- function(tree, normalize = FALSE) {
+  lapply(tree, NNIMaxStep, normalize = normalize)
+}
+
+# Binary split entropy of a k | (n - k) split, in bits (vectorized over k).
+.BinaryEntropyBits <- function(k, n) {
+  p <- k / n
+  ifelse(p <= 0 | p >= 1, 0, -(p * log2(p) + (1 - p) * log2(1 - p)))
+}
+
+# Minimum clustering-entropy contribution (bits) of a rooted subtree of each
+# size 1..n, splits measured against the whole tree's n leaves. A subtree of
+# size `s` contributes its attaching split H(s, n) plus, recursively, its two
+# daughters; the daughter split is chosen to minimize the total. `split[s]`
+# records the smaller daughter's size, so the subtree shape is recoverable.
+.MinSubtreeEntropy <- function(n) {
+  cost <- numeric(n)
+  split <- integer(n)
+  if (n >= 2L) {
+    cost[2] <- .BinaryEntropyBits(2L, n)
+    split[2] <- 1L
+  }
+  for (s in seq_len(n)[-(1:2)]) {
+    i <- seq_len(s %/% 2L)
+    daughters <- cost[i] + cost[s - i]
+    best <- which.min(daughters)
+    cost[s] <- .BinaryEntropyBits(s, n) + daughters[best]
+    split[s] <- i[best]
+  }
+  list(cost = cost, split = split)
+}
+
+# Largest NNI clustering information distance for a single leaf count.
+.NNIMaxStep1 <- function(n, normalize) {
+  n <- as.integer(round(n))
+  if (is.na(n) || n < 4L) {
+    return(list(value = NA_real_, subtrees = NULL, splits = NULL))
+  }
+  cost <- if (normalize) .MinSubtreeEntropy(n)[["cost"]] else NULL
+  gLog <- function(x) (x / n) * log2(x / n)  # -contribution to joint entropy
+
+  best <- -Inf
+  bestParts <- NULL
+  bestSplits <- NULL
+  # Enumerate every partition of n into four parts p <= q <= r <= s: each is the
+  # multiset of subtree sizes around some edge, and every such multiset is
+  # realizable, so this is exhaustive over all (tree, NNI move) pairs.
+  for (p in seq_len(n %/% 4L)) {
+    for (q in p:((n - p) %/% 3L)) {
+      # q <= (n - p) %/% 3 guarantees rMax >= q, so r <- q:rMax is non-empty.
+      r <- q:((n - p - q) %/% 2L)
+      s <- n - p - q - r
+      # The four subtrees define three possible splits, with one side p + q,
+      # p + r, p + s. An NNI move exchanges two of them; the largest distance
+      # keeps the two least balanced (smallest entropy), i.e. drops the largest.
+      h1 <- .BinaryEntropyBits(p + q, n)
+      h2 <- .BinaryEntropyBits(p + r, n)
+      h3 <- .BinaryEntropyBits(p + s, n)
+      keptEntropy <- h1 + h2 + h3 - pmax(h1, h2, h3)
+      joint <- -(gLog(p) + gLog(q) + gLog(r) + gLog(s))
+      vi <- 2 * joint - keptEntropy
+      value <- if (normalize) {
+        vi / (2 * (cost[p] + cost[q] + cost[r] + cost[s]) + keptEntropy)
+      } else {
+        vi
+      }
+      winner <- which.max(value)
+      if (value[winner] > best) {
+        best <- value[winner]
+        rw <- r[winner]
+        sw <- s[winner]
+        bestParts <- c(p, q, rw, sw)
+        sizes <- c(p + q, p + rw, p + sw)
+        entropies <- c(h1, h2[winner], h3[winner])
+        bestSplits <- sort(sizes[-which.max(entropies)])
+      }
+    }
+  }
+  list(value = best, subtrees = bestParts, splits = bestSplits)
+}

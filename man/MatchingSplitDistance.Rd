@@ -90,6 +90,7 @@ Other tree distances:
 \code{\link[=KendallColijn]{KendallColijn()}},
 \code{\link[=MASTSize]{MASTSize()}},
 \code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NNIMaxStep]{NNIMaxStep()}},
 \code{\link[=NyeSimilarity]{NyeSimilarity()}},
 \code{\link[=PathDist]{PathDist()}},
 \code{\link{Robinson-Foulds}},

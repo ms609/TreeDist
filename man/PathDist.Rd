@@ -75,6 +75,7 @@ Other tree distances:
 \code{\link[=MASTSize]{MASTSize()}},
 \code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}},
 \code{\link[=NNIDist]{NNIDist()}},
+\code{\link[=NNIMaxStep]{NNIMaxStep()}},
 \code{\link[=NyeSimilarity]{NyeSimilarity()}},
 \code{\link{Robinson-Foulds}},
 \code{\link[=SPRDist]{SPRDist()}},
