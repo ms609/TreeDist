@@ -142,6 +142,7 @@ Other tree distances:
 [`MASTSize()`](https://ms609.github.io/TreeDist/dev/reference/MASTSize.md),
 [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/dev/reference/MatchingSplitDistance.md),
 [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md),
+[`NNIMaxStep()`](https://ms609.github.io/TreeDist/dev/reference/NNIMaxStep.md),
 [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md),
 [`SPRDist()`](https://ms609.github.io/TreeDist/dev/reference/SPRDist.md),
