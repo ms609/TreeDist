@@ -1,4 +1,4 @@
-# TreeDist 2.14.1.9000 (development)
+# TreeDist 2.14.1.9001 (development)
 
 - Add `NNIMaxStep()`: the largest clustering information distance attainable by a
   single nearest neighbour interchange on an _n_-leaf tree, derived analytically
