@@ -43,14 +43,14 @@ test_that("MAST supports funnily-ordered edges", {
 test_that("MAST size calculated correctly on small trees", {
   library("TreeTools")
   #expect_equal(4L, MASTSize(as.phylo(0, 5), as.phylo(1, 5)))
-  t1 <- structure(list(edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L, 
+  t1 <- structure(list(edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L,
                                           9L, 1L, 7L, 2L, 8L, 3L, 9L, 4L, 5L),
-                                        .Dim = c(8L, 2L)), Nnode = 4L, 
+                                        dim = c(8L, 2L)), Nnode = 4L,
                        tip.label = c("t3", "t5", "t4", "t1", "t2")),
                   class = "phylo", order = "cladewise")
-  t2 <- structure(list(edge = structure(c(6L, 9L, 9L, 7L, 7L, 8L, 8L, 
-                                          6L, 9L, 2L, 7L, 3L, 8L, 4L, 5L, 1L), 
-                                        .Dim = c(8L, 2L)), 
+  t2 <- structure(list(edge = structure(c(6L, 9L, 9L, 7L, 7L, 8L, 8L,
+                                          6L, 9L, 2L, 7L, 3L, 8L, 4L, 5L, 1L),
+                                        dim = c(8L, 2L)), 
                        tip.label = c("t3", "t4", "t1", "t2", "t5"), Nnode = 4L), 
                   class = "phylo", order = "cladewise")
   t1 <- RenumberTips(t1, paste0("t", 1:5))
