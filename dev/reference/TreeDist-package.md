@@ -37,8 +37,8 @@ Different ways of calculating the the similarity between a pair of
 splits lead to different tree distance metrics, implemented in the
 functions below:
 
-- [[`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
-  [[`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
+- [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
+  [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
 
   - Smith (2020) scores matchings based on the amount of information
     that one partition contains about the other. The Mutual Phylogenetic
@@ -46,35 +46,35 @@ functions below:
     exist on a single tree; The Mutual Clustering Information metric is
     more forgiving, and exhibits more desirable behaviour; it is the
     recommended metric for tree comparison. (Its complement,
-    [[`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
+    [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
     returns a tree distance.)
 
-- [[`NyeSimilarity()`](https://ms609.github.io/TreeDist/dev/reference/NyeSimilarity.md)](https://ms609.github.io/TreeDist/reference/NyeSimilarity.html)
+- [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.html)
 
   - Nye *et al.* (2006) score matchings according to the size of the
     largest split that is consistent with both of them, normalized
     against the Jaccard index. This approach is extended by Böcker *et
     al*. (2013) with the Jaccard–Robinson–Foulds metric (function
-    [[`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md)](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html)).
+    [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html)).
 
-- [[`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/dev/reference/MatchingSplitDistance.md)](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
+- [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
 
   - Bogdanowicz and Giaro (2012) and Lin *et al.* (2012) independently
     proposed counting the number of "mismatched" leaves in a pair of
     splits.
-    [[`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
+    [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
     provides an information-based equivalent (Smith 2020).
 
 The package also implements the variation of the path distance proposed
 by Kendal and Colijn (2016) (function
-[[`KendallColijn()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md)](https://ms609.github.io/TreeDist/reference/KendallColijn.html)),
+[`KendallColijn()`](https://ms609.github.io/TreeDist/reference/KendallColijn.html)),
 approximations of the Nearest-Neighbour Interchange (NNI) distance
 (function
-[[`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md)](https://ms609.github.io/TreeDist/reference/NNIDist.html);
+[`NNIDist()`](https://ms609.github.io/TreeDist/reference/NNIDist.html);
 following Li *et al.* (1996)), and calculates the size (function
-[[`MASTSize()`](https://ms609.github.io/TreeDist/dev/reference/MASTSize.md)](https://ms609.github.io/TreeDist/reference/MASTSize.html))
+[`MASTSize()`](https://ms609.github.io/TreeDist/reference/MASTSize.html))
 and information content (function
-[[`MASTInfo()`](https://ms609.github.io/TreeDist/dev/reference/MASTSize.md)](https://ms609.github.io/TreeDist/reference/MASTSize.html))
+[`MASTInfo()`](https://ms609.github.io/TreeDist/reference/MASTSize.html))
 of the Maximum Agreement Subtree.
 
 For an implementation of the Tree Bisection and Reconnection (TBR)

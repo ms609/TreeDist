@@ -2,10 +2,7 @@
 
 `Islands()` assigns a set of objects to islands, such that all elements
 within an island can form a connected graph in which each edge is no
-longer than `threshold` distance units Silva AS, Wilkinson M (2021). “On
-Defining and Finding Islands of Trees and Mitigating Large Island Bias.”
-*Systematic Biology*, **70**(6), 1282–1294.
-[doi:10.1093/sysbio/syab015](https://doi.org/10.1093/sysbio/syab015) . .
+longer than `threshold` distance units (Silva and Wilkinson 2021) .
 
 ## Usage
 
@@ -44,8 +41,10 @@ assigned.
 
 ## References
 
-There are no references for Rd macro `\insertAllCites` on this help
-page.
+Silva AS, Wilkinson M (2021). “On Defining and Finding Islands of Trees
+and Mitigating Large Island Bias.” *Systematic Biology*, **70**(6),
+1282–1294.
+[doi:10.1093/sysbio/syab015](https://doi.org/10.1093/sysbio/syab015) .
 
 ## See also
 
