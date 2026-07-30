@@ -2,7 +2,7 @@
 #' 
 #' `Islands()` assigns a set of objects to islands, such that all elements
 #' within an island can form a connected graph in which each edge is no longer
-#' than `threshold` distance units \insertRef{Silva2021}{TreeDist}.
+#' than `threshold` distance units \insertCite{Silva2021}{TreeDist}.
 #' 
 #' @inheritParams SpectralEigens
 #' @param threshold Elements greater than `threshold` distance units will not be

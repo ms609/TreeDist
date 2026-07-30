@@ -27,7 +27,7 @@ each element is assigned.
 \description{
 \code{Islands()} assigns a set of objects to islands, such that all elements
 within an island can form a connected graph in which each edge is no longer
-than \code{threshold} distance units \insertRef{Silva2021}{TreeDist}.
+than \code{threshold} distance units \insertCite{Silva2021}{TreeDist}.
 }
 \examples{
 library("TreeTools", quietly = TRUE)
