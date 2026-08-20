@@ -330,29 +330,58 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const benchmarkIdentifier = '<!-- benchmark-comment -->';
-            const outdatedPrefix = '> **⚠️ This benchmark result is outdated. See the latest comment below.**\n\n';
 
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
-
-            const previousBenchmarkComments = comments.data.filter(comment =>
-              comment.user.type === 'Bot' &&
-              comment.body.includes(benchmarkIdentifier) &&
-              !comment.body.startsWith('> **⚠️ This benchmark result is outdated.')
-            );
-
-            for (const comment of previousBenchmarkComments) {
-              await github.rest.issues.updateComment({
+            // Nothing below may throw: this step exists to post the new result,
+            // and losing that to a hiccup in the tidy-up of the old ones would
+            // be a poor trade. Both halves warn instead.
+            let previousBenchmarkComments = [];
+            try {
+              // The listing has to come from GraphQL: REST's comment payload
+              // omits isMinimized, so it cannot tell a comment this step has
+              // already collapsed from a live one, and each run would re-
+              // minimize the whole history.
+              const { repository } = await github.graphql(`
+                query($owner: String!, $repo: String!, $number: Int!) {
+                  repository(owner: $owner, name: $repo) {
+                    pullRequest(number: $number) {
+                      comments(last: 100) {
+                        nodes { id body isMinimized author { __typename } }
+                      }
+                    }
+                  }
+                }`, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: comment.id,
-                body: outdatedPrefix + comment.body
+                number: context.issue.number
               });
+              previousBenchmarkComments =
+                repository.pullRequest.comments.nodes.filter(comment =>
+                  comment.author?.__typename === 'Bot' &&
+                  comment.body.includes(benchmarkIdentifier) &&
+                  !comment.isMinimized
+                );
+            } catch (error) {
+              core.warning(`Could not list benchmark comments: ${error.message}`);
             }
 
+            // Collapse each as outdated. The likeliest failure is a token
+            // without the scope minimizeComment needs.
+            for (const comment of previousBenchmarkComments) {
+              try {
+                await github.graphql(`
+                  mutation($id: ID!) {
+                    minimizeComment(input: { subjectId: $id, classifier: OUTDATED }) {
+                      minimizedComment { isMinimized }
+                    }
+                  }`, { id: comment.id });
+              } catch (error) {
+                core.warning(
+                  `Could not collapse benchmark comment ${comment.id}: ${error.message}`
+                );
+              }
+            }
+
+            // Create new comment with identifier
             const newCommentBody = benchmarkIdentifier + '\n' + process.env.BENCHMARK_MESSAGE;
 
             await github.rest.issues.createComment({
