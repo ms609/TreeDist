@@ -293,7 +293,7 @@ plotSeq <- matrix(0, nDim, nDim)
 plotSeq[upper.tri(plotSeq)] <- seq_len(nDim * (nDim - 1) / 2)
 plotSeq <- t(plotSeq[-nDim, -1])
 plotSeq[nDim * 1:3] <- (nDim * (nDim - 1) / 2) + 1:3
-layout(plotSeq)
+graphics::layout(plotSeq)
 par(mar = rep(0.1, 4))
 
 for (i in 2:nDim) for (j in seq_len(i - 1)) {
