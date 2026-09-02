@@ -113,10 +113,7 @@ A variety of R add-on packages facilitate three-dimensional plots.
 ``` r
 
 if (requireNamespace("plotly", quietly = TRUE)) {
-  library("plotly", quietly = TRUE)
-  fig <- plot_ly(x = x, y = y, z = z)
-  fig <- fig %>% add_surface()
-  fig
+  plotly::add_surface(plotly::plot_ly(x = x, y = y, z = z))
 } else {
   print("Run `install.packages('plotly')` to view this output")
 }
