@@ -100,7 +100,8 @@ remotes::install_github("ms609/TreeDist")
 
 Construct tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, 2022),
-using the inbuilt graphical user interface (Shiny GUI):
+using the [web interface](https://ms609.github.io/TreeDist/app/) (no R installation required),
+or the inbuilt graphical user interface (Shiny GUI):
 
 ```r
 TreeDist::MapTrees()
