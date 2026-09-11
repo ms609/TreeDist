@@ -85,4 +85,4 @@ jobs:
 
       - name: ASAN - memcheck ${{ matrix.config.test }}
         run: |
-          Rscript memcheck/${{ matrix.config.test }}.R
+          setarch $(uname -m) -R Rscript memcheck/${{ matrix.config.test }}.R
