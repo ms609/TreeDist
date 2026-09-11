@@ -1,4 +1,4 @@
-# R-hub's generic GitHub Actions workflow file. It's canonical location is at
+# R-hub's generic GitHub Actions workflow file. Its canonical location is at
 # https://github.com/r-hub/actions/blob/v1/workflows/rhub.yaml
 # You can update this file to a newer version using the rhub2 package:
 #
@@ -7,26 +7,28 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
+run-name: >-
+  ${{ github.event.inputs.name }}
+  | ${{ github.event.inputs.config }}
+  | ${{ format('Triggered by @{0}', github.triggering_actor) }}
 
 on:
   workflow_dispatch:
     inputs:
       config:
-        description: 'A comma separated list of R-hub platforms to use.'
+        description: >-
+          Comma-separated list of R-hub platforms to use.
+          Full list: summary(rhub::rhub_platforms())
         type: string
         default: 'linux,macos,macos-arm64,windows,atlas,mkl,clang-asan,valgrind'
       name:
         description: 'Run name (optional)'
         type: string
-      id:
-        description: 'Unique ID (optional)'
-        type: string
 
 jobs:
 
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     outputs:
       containers: ${{ steps.rhub-setup.outputs.containers }}
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
@@ -61,6 +63,10 @@ jobs:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
           extra-packages: TreeDistData=?ignore-before-r=99.0.0
+      - uses: ms609/actions/rhub-quarto@main
+        with:
+          linux: 'true'
+          token: ${{ secrets.RHUB_TOKEN }}
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -91,6 +97,9 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
           extra-packages: TreeDistData=?ignore-before-r=99.0.0
+      - uses: ms609/actions/rhub-quarto@main
+        with:
+          linux: 'false'
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
