@@ -46,7 +46,7 @@ jobs:
       STRINGI_DISABLE_PKG_CONFIG: true
       BIOCONDUCTOR_USE_CONTAINER_REPOSITORY: FALSE # For stringi
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      ASAN_OPTIONS: detect_container_overflow=1:verify_asan_link_order=0
+      ASAN_OPTIONS: detect_container_overflow=1:verify_asan_link_order=0:protect_shadow_gap=0
 
     steps:
       - uses: actions/checkout@v6
@@ -85,5 +85,4 @@ jobs:
 
       - name: ASAN - memcheck ${{ matrix.config.test }}
         run: |
-          sudo sysctl -w vm.mmap_rnd_bits=18
           Rscript memcheck/${{ matrix.config.test }}.R
