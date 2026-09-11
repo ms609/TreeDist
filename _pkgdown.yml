@@ -112,6 +112,7 @@ template:
   bootstrap: 5
   bslib:
     danger: "#A6081A" # Accessibility suggestion
+  math-rendering: katex # Faster but less capable than mathjax
   params:
     bootswatch: simplex
     ganalytics: G-BTKEG66D3F
