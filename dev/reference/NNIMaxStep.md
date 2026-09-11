@@ -36,11 +36,6 @@ subtrees around the moved edge, and `"splits"`, the sizes of the two
 splits that the move exchanges. Where more than one tree is supplied,
 each attribute is a list with one entry per tree.
 
-## References
-
-There are no references for Rd macro `\insertAllCites` on this help
-page.
-
 ## See also
 
 The distance itself:

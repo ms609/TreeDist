@@ -2,8 +2,7 @@
 
 Construct a consensus tree that minimizes the sum of transfer distances
 to a set of input trees, using a greedy add-and-prune heuristic. This
-function is moving to `ConsTree::Transfer()` and will soon be removed. A
-copy is retained here temporarily.
+function has moved to `ConsTree::Transfer()` and will soon be removed.
 
 ## Usage
 
