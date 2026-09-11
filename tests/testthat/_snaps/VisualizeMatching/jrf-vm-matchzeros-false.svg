@@ -73,12 +73,12 @@
 <text x='310.13' y='494.36' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>t8</text>
 <text x='310.13' y='321.02' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>t9</text>
 <text x='310.13' y='32.13' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>t10</text>
-<rect x='95.09' y='398.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FFCBD7;' />
-<rect x='207.92' y='463.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #F6D9AB;' />
-<rect x='224.04' y='333.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BEE8B1;' />
-<rect x='207.92' y='174.82' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #92EDE2;' />
-<rect x='256.28' y='218.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BAE1FF;' />
-<rect x='224.04' y='44.82' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FACEFF;' />
+<rect x='95.09' y='398.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FFC5D0;' />
+<rect x='207.92' y='463.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #EAD1AB;' />
+<rect x='224.04' y='333.71' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BBDEB1;' />
+<rect x='207.92' y='174.82' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #99E2D8;' />
+<rect x='256.28' y='218.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #B8D8F8;' />
+<rect x='224.04' y='44.82' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #EDC8F5;' />
 <text x='100.59' y='409.13' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>1</text>
 <text x='213.42' y='474.13' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
 <text x='229.54' y='344.13' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>3</text>
@@ -150,12 +150,12 @@
 <text x='670.13' y='32.13' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>t8</text>
 <text x='670.13' y='205.47' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>t9</text>
 <text x='670.13' y='378.80' style='font-size: 12.00px; font-style: italic; font-family: sans;' textLength='16.68px' lengthAdjust='spacingAndGlyphs'>t10</text>
-<rect x='616.28' y='391.49' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FFCBD7;' />
-<rect x='584.04' y='218.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #F6D9AB;' />
-<rect x='616.28' y='102.60' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BEE8B1;' />
-<rect x='567.92' y='59.26' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #92EDE2;' />
-<rect x='519.57' y='348.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BAE1FF;' />
-<rect x='503.45' y='507.04' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FACEFF;' />
+<rect x='616.28' y='391.49' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #FFC5D0;' />
+<rect x='584.04' y='218.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #EAD1AB;' />
+<rect x='616.28' y='102.60' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #BBDEB1;' />
+<rect x='567.92' y='59.26' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #99E2D8;' />
+<rect x='519.57' y='348.15' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #B8D8F8;' />
+<rect x='503.45' y='507.04' width='8.83' height='11.86' style='stroke-width: 0.75; fill: #EDC8F5;' />
 <text x='621.78' y='401.90' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>1</text>
 <text x='589.54' y='228.57' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>2</text>
 <text x='621.78' y='113.01' text-anchor='middle' style='font-size: 12.00px; font-family: sans;' textLength='6.67px' lengthAdjust='spacingAndGlyphs'>3</text>

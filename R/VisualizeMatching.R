@@ -184,7 +184,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   } else {
     !is.na(pairings) & pairScores > 0
   }
-  palette <- .QualitativeHCL(sum(paired1), c = 42, l = 88)
+  palette <- hcl.colors(sum(paired1), palette = "Pastel 1")
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
   if (any(pairLabels)) {
@@ -215,14 +215,6 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   # Return:
   invisible(matching)
-}
-
-#' @keywords internal
-#' @export
-.QualitativeHCL <- function(n, c = 42, l = 88) {
-  if (n < 1) return(character(0))
-  hues <- seq(0, 360 * (n - 1) / n, length.out = n)
-  hcl(h = hues, c = c, l = l)
 }
 
 #' @export
