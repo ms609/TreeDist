@@ -1,8 +1,8 @@
-# TreeDist 2.14.1.9001 (development)
+# TreeDist 2.15.0 (2026-09-11)
 
-- Add `NNIMaxStep()`: the largest clustering information distance attainable by a
-  single nearest neighbour interchange on an _n_-leaf tree, derived analytically
-  (normalized or not) rather than by sampling.
+- New function `NNIMaxStep()` computes the largest clustering information
+  distance attainable by a single nearest neighbour interchange on an _n_-leaf
+  tree.
 
 - Use `grDevices` palettes to drop `colorspace` dependency.
 

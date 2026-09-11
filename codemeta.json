@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.14.1.9001",
+  "version": "2.15.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
+  "runtimePlatform": "R Under development (unstable) (2026-06-29 r90199 ucrt)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -493,7 +493,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "2086.722KB",
+  "fileSize": "7056.199KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -560,7 +560,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.14.1.9001",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.15.0",
       "identifier": "10.32614/CRAN.package.TreeDist",
       "@id": "https://doi.org/10.32614/CRAN.package.TreeDist",
       "sameAs": "https://doi.org/10.32614/CRAN.package.TreeDist",
