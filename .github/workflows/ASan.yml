@@ -56,17 +56,11 @@ jobs:
       - name: Install R package dependencies
         run: |
           Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org", ms609 = "https://ms609.github.io/packages/"))' \
-                  -e 'install.packages(c("remotes", "testthat"))' \
+                  -e 'install.packages(c("remotes", "testthat", "sass", "shinyjs"))' \
                   -e 'remotes::install_github("ms609/TreeDistData")' \
                   -e 'remotes::install_deps(dependencies = TRUE)' \
+                  -e 'remotes::install_local(build_opts = c("--no-build-vignettes", "--no-manual", "--no-resave-data"))'
                   -e 'remotes::install_local()'
-
-      - name: Install package
-        run: |
-          cd ..
-          R CMD build --no-build-vignettes --no-manual --no-resave-data TreeDist
-          R CMD INSTALL TreeDist*.tar.gz
-          cd TreeDist
 
       - name: ASAN - memcheck ${{ matrix.config.test }}
         run: |
