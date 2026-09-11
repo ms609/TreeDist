@@ -54,6 +54,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       
+      - name: Install system dependencies
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends \
+            libxml2-dev \
+            libssl-dev \
+            libcurl4-openssl-dev
+      
       - name: Install R package dependencies
         run: |
           Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org", ms609 = "https://ms609.github.io/packages/"))' \
