@@ -85,4 +85,5 @@ jobs:
 
       - name: ASAN - memcheck ${{ matrix.config.test }}
         run: |
+          sudo sysctl -w vm.mmap_rnd_bits=16
           Rscript memcheck/${{ matrix.config.test }}.R
