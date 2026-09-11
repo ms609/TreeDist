@@ -118,6 +118,7 @@ Other tree distances:
 [`KendallColijn()`](https://ms609.github.io/TreeDist/reference/KendallColijn.md),
 [`MASTSize()`](https://ms609.github.io/TreeDist/reference/MASTSize.md),
 [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.md),
+[`NNIMaxStep()`](https://ms609.github.io/TreeDist/reference/NNIMaxStep.md),
 [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.md),
 [`PathDist()`](https://ms609.github.io/TreeDist/reference/PathDist.md),
 [`Robinson-Foulds`](https://ms609.github.io/TreeDist/reference/Robinson-Foulds.md),

@@ -54,6 +54,10 @@ Functions for calculating distances between pairs of trees.
   [`NNIDiameter()`](https://ms609.github.io/TreeDist/reference/NNIDist.md)
   : Approximate Nearest Neighbour Interchange distance
 
+- [`NNIMaxStep()`](https://ms609.github.io/TreeDist/reference/NNIMaxStep.md)
+  : Largest clustering information distance reachable by one nearest
+  neighbour interchange
+
 - [`PathDist()`](https://ms609.github.io/TreeDist/reference/PathDist.md)
   : Path distance
 

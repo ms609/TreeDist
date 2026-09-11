@@ -113,8 +113,9 @@ remotes::install_github("ms609/TreeDist")
 # Tree space analysis
 
 Construct tree spaces and readily visualize projected landscapes,
-avoiding common analytical pitfalls (Smith, 2022), using the inbuilt
-graphical user interface (Shiny GUI):
+avoiding common analytical pitfalls (Smith, 2022), using the [web
+interface](https://ms609.github.io/TreeDist/app/) (no R installation
+required), or the inbuilt graphical user interface (Shiny GUI):
 
 ``` r
 
@@ -257,6 +258,10 @@ Functions for calculating distances between pairs of trees.
 - [`NNIDist()`](https://ms609.github.io/TreeDist/reference/NNIDist.md)
   [`NNIDiameter()`](https://ms609.github.io/TreeDist/reference/NNIDist.md)
   : Approximate Nearest Neighbour Interchange distance
+
+- [`NNIMaxStep()`](https://ms609.github.io/TreeDist/reference/NNIMaxStep.md)
+  : Largest clustering information distance reachable by one nearest
+  neighbour interchange
 
 - [`PathDist()`](https://ms609.github.io/TreeDist/reference/PathDist.md)
   : Path distance

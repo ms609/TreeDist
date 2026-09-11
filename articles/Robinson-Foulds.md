@@ -22,10 +22,10 @@ The simplicity of counting splits is appealing, but limited by the
 underlying assumption that all splits are equivalent.
 
 As an example, a split that separates eight leaves into two sets of four
-(as in the right-hand tree above) has a $`\frac{1}{35}`$ chance of being
+(as in the right-hand tree above) has a \frac{1}{35} chance of being
 compatible with the reference tree. In contrast, a split that separates
-two leaves from the other six has a $`\frac{1}{7}`$ chance of matching
-the reference tree: the similarity observed is five times more likely to
+two leaves from the other six has a \frac{1}{7} chance of matching the
+reference tree: the similarity observed is five times more likely to
 have arisen by chance. In other words, failure to match an even split is
 less noteworthy than failure to match an uneven one.
 
@@ -41,7 +41,7 @@ content](https://ms609.github.io/TreeDist/articles/information.md) of a
 split is a function of the probability that the split will match a
 uniformly chosen random tree, i.e. the proportion of eight-leaf binary
 trees that contain the split in question. (Information content, in bits,
-is defined as $`-\log_2(\textrm{probability})`$.) This, in turn, is a
+is defined as -\log_2(\textrm{probability}).) This, in turn, is a
 function of the evenness of the split:
 
 |  | Matching trees | *P*(Match in random tree) | Phylogenetic information content |

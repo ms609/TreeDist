@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/ms609/TreeDist/blob/2.14.1/inst/CITATION)
+[`inst/CITATION`](https://github.com/ms609/TreeDist/blob/main/inst/CITATION)
 
 Smith, M.R. (2020a). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. Bioinformatics 36: 5007–5013.
@@ -53,13 +53,14 @@ Systematic Biology 71: 1255–1270. doi: 10.1093/sysbio/syab100
     }
 
 Smith, M.R. (2020b). TreeDist: Distances between Phylogenetic Trees. R
-package version 2.14.1. Comprehensive R Archive Network.
-doi:10.5281/zenodo.3528124
+package version 2.15.0. Comprehensive R Archive Network, Vienna. doi:
+10.32614/CRAN.package.TreeDist
 
     @Manual{TreeDist,
-      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.14.1},
+      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.15.0},
       author = {Martin R. Smith},
-      doi = {10.5281/zenodo.3528124},
+      doi = {10.32614/CRAN.package.TreeDist},
       journal = {Comprehensive R Archive Network},
+      address = {Vienna},
       year = {2020},
     }

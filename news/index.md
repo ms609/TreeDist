@@ -1,6 +1,17 @@
 # Changelog
 
+## TreeDist 2.15.0 (2026-09-11)
+
+- New function
+  [`NNIMaxStep()`](https://ms609.github.io/TreeDist/reference/NNIMaxStep.md)
+  computes the largest clustering information distance attainable by a
+  single nearest neighbour interchange on an *n*-leaf tree.
+
+- Use `grDevices` palettes to drop `colorspace` dependency.
+
 ## TreeDist 2.14.1 (2026-06-10)
+
+CRAN release: 2026-06-10
 
 - [`TransferConsensus()`](https://ms609.github.io/TreeDist/reference/TransferConsensus.md)
   is **deprecated**, moving to `ConsTree::Transfer()`.

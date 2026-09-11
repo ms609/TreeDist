@@ -180,7 +180,7 @@ correction for chance.” *Journal of Machine Learning Research*, **11**,
 
 An introduction to the phylogenetic information content of a split is
 given in
-[[`SplitInformation()`](https://ms609.github.io/TreeTools/reference/SplitInformation.html)](https://ms609.github.io/TreeTools/reference/SplitInformation.html)
+[`SplitInformation()`](https://ms609.github.io/TreeTools/reference/SplitInformation.html)
 and in a [package
 vignette](https://ms609.github.io/TreeDist/articles/information.html).
 

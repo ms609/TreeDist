@@ -113,10 +113,7 @@ A variety of R add-on packages facilitate three-dimensional plots.
 ``` r
 
 if (requireNamespace("plotly", quietly = TRUE)) {
-  library("plotly", quietly = TRUE)
-  fig <- plot_ly(x = x, y = y, z = z)
-  fig <- fig %>% add_surface()
-  fig
+  plotly::add_surface(plotly::plot_ly(x = x, y = y, z = z))
 } else {
   print("Run `install.packages('plotly')` to view this output")
 }
@@ -131,7 +128,7 @@ Landscapes on spaces of trees. *Applied Mathematics and Computation*,
 *131*(2-3), 439–459. <https://doi.org/10.1016/S0096-3003(01)00164-3>
 
 Khodaei, M., Owen, M., & Beerli, P. (2022). Geodesics to characterize
-the phylogenetic landscape. *bioR$`\chi`$iv*.
+the phylogenetic landscape. *bioR\chiiv*.
 <https://doi.org/10.1101/2022.05.11.491507>
 
 Maddison, D. R. (1991). The discovery and importance of multiple islands

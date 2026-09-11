@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Generalized Robinson-Foulds distances • TreeDist</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -27,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.14.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +84,7 @@
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.14.1/vignettes/Generalized-RF.Rmd" class="external-link"><code>vignettes/Generalized-RF.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/main/vignettes/Generalized-RF.Rmd" class="external-link"><code>vignettes/Generalized-RF.Rmd</code></a></small>
       <div class="d-none name"><code>Generalized-RF.Rmd</code></div>
     </div>
 
@@ -170,28 +171,20 @@ ABCDE IJ|FGH</code></pre>
 <p>The first pair of subsets, <code>ABCDEF</code> and
 <code>ABCDEIJ</code>, have five elements in common (<code>ABCDE</code>),
 and together encompass eight elements (<code>ABCDEFIJ</code>). Their
-<em>subset score</em> is thus
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>5</mn><mn>8</mn></mfrac><annotation encoding="application/x-tex">\frac{5}{8}</annotation></semantics></math>.</p>
+<em>subset score</em> is thus <span class="math inline">\frac{5}{8}</span>.</p>
 <p>The second pair of subsets, <code>GHIJ</code> and <code>FGH</code>,
 have two elements (<code>GH</code>) in common, of the five total
-(<code>FGHIJ</code>), and hence receive a subset score of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>2</mn><mn>5</mn></mfrac><annotation encoding="application/x-tex">\frac{2}{5}</annotation></semantics></math>.</p>
+(<code>FGHIJ</code>), and hence receive a subset score of <span class="math inline">\frac{2}{5}</span>.</p>
 <p>This split alignment then receives an <em>alignment score</em>
-corresponding to the lower of the two subset scores,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>2</mn><mn>5</mn></mfrac><annotation encoding="application/x-tex">\frac{2}{5}</annotation></semantics></math>.</p>
+corresponding to the lower of the two subset scores, <span class="math inline">\frac{2}{5}</span>.</p>
 <p>We must now consider the other alignment of this pair of splits,</p>
 <pre><code>ABCDEF  |     GHIJ
      FGH|ABCDE  IJ</code></pre>
-<p>This yields subset scores of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>1</mn><mn>8</mn></mfrac><annotation encoding="application/x-tex">\frac{1}{8}</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>2</mn><mn>9</mn></mfrac><annotation encoding="application/x-tex">\frac{2}{9}</annotation></semantics></math>,
-and thus has an alignment score of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>1</mn><mn>8</mn></mfrac><annotation encoding="application/x-tex">\frac{1}{8}</annotation></semantics></math>.
-This alignment gives a lower score than the other, so is disregarded.
-The pair of splits is allocated a similarity score corresponding to the
-better alignment:
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>2</mn><mn>5</mn></mfrac><annotation encoding="application/x-tex">\frac{2}{5}</annotation></semantics></math>.</p>
+<p>This yields subset scores of <span class="math inline">\frac{1}{8}</span> and <span class="math inline">\frac{2}{9}</span>, and thus has an alignment score
+of <span class="math inline">\frac{1}{8}</span>. This alignment gives a
+lower score than the other, so is disregarded. The pair of splits is
+allocated a similarity score corresponding to the better alignment:
+<span class="math inline">\frac{2}{5}</span>.</p>
 <p>As such, splits that match exactly will receive a similarity score of
 1, in a manner analogous to the Robinson–Foulds distance. (This is
 despite the fact that some splits are more likely to match than others.)
@@ -287,20 +280,13 @@ ABCDE IJ|FGH</code></pre>
 <p>three leaves (‘F’, ‘I’ and ‘J’) must be moved before the splits are
 identical; as such, the pair of splits are assigned a difference score
 of three.<br>
-Formally, where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>i</mi></msub><annotation encoding="application/x-tex">S_i</annotation></semantics></math>
-splits
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
-leaves into bipartitions
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>i</mi></msub><annotation encoding="application/x-tex">A_i</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>B</mi><mi>i</mi></msub><annotation encoding="application/x-tex">B_i</annotation></semantics></math>,
+Formally, where <span class="math inline">S_i</span> splits <span class="math inline">n</span> leaves into bipartitions <span class="math inline">A_i</span> and <span class="math inline">B_i</span>,
 the difference score is calculated by</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n - m</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-counts the number of leaves that already match, and is defined as</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">{</mo><mo stretchy="false" form="prefix">|</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><mi>+</mi><mo stretchy="false" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><mo>,</mo><mo stretchy="false" form="prefix">|</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><mi>+</mi><mo stretchy="false" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}</annotation></semantics></math></p>
+<p><span class="math inline">n - m</span></p>
+<p>where <span class="math inline">m</span> counts the number of leaves
+that already match, and is defined as</p>
+<p><span class="math inline">m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|,
+|A_1 \cap B_2| + |B_1 \cap A_2|\}</span></p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((a, b, c, d, e, f), (g, h, i, j));'</span><span class="op">)</span>,</span>
 <span>                      <span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((a, b, c, d, e, i, j), (g, h, f));'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -310,15 +296,12 @@ calculate its maximum value.</p>
 <div class="section level3">
 <h3 id="information-theoretic-alternative">Information theoretic alternative<a class="anchor" aria-label="anchor" href="#information-theoretic-alternative"></a>
 </h3>
-<p>In the matching split distance,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
+<p>In the matching split distance, <span class="math inline">m</span>
 represents a simple count of the number of shared taxa. An alternative
 is to measure the phylogenetic information content of the largest split
-consistent with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>:</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">{</mo><mi>h</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>h</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2), h(A_1 \cap B_2 | B_1 \cap A_2)\}</annotation></semantics></math></p>
+consistent with <span class="math inline">S_1</span> and <span class="math inline">S_2</span>:</p>
+<p><span class="math inline">m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2),
+h(A_1 \cap B_2 | B_1 \cap A_2)\}</span></p>
 <p>The most information-rich split consistent with</p>
 <pre><code>ABCDEF  | GHIJ
 ABCDE IJ|FGH  </code></pre>
@@ -396,7 +379,7 @@ University Press.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
