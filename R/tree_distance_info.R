@@ -440,93 +440,47 @@ MutualClusteringInfoSplits <- function(splits1, splits2,
 #' @keywords internal
 .PairMean <- function(x, y) (x + y) / 2L
 
-#' Largest clustering information distance reachable by one NNI move
+#' Largest clustering information distance reachable by one nearest neighbour
+#' interchange
 #'
 #' `NNIMaxStep()` returns the largest
 #' [Clustering Information Distance][ClusteringInfoDistance] that can separate an
 #' _n_-leaf tree from any tree that differs from it by a single nearest neighbour
 #' interchange (NNI) move.
 #'
-#' A single NNI move around an internal edge exchanges two of the four subtrees
-#' that meet at that edge, changing exactly one split.  Because
-#' `ClusteringInfoDistance()` \insertCite{SmithDist}{TreeDist} scores trees by an
-#' optimal matching of their splits, every _unchanged_ split matches its
-#' counterpart perfectly and contributes nothing to the distance.  The distance of
-#' an NNI move therefore depends only on the old split _S_ and the new split _S'_,
-#' and hence only on the leaf counts \eqn{a, b, c, d} of the four subtrees
-#' \eqn{(a + b + c + d = n)}.  Writing \eqn{H} for entropy in bits, it equals
-#' their entropy distance (variation of
-#' [clustering information][ClusteringEntropy], \insertCite{Meila2007}{TreeDist}):
-#' \deqn{d(a, b, c, d) = 2 H(a, b, c, d) - H(a + b) - H(a + c).}
-#' The maximum can thus be found deterministically, by optimizing over the four
-#' subtree sizes, rather than by sampling random trees.  At the optimum the four
-#' subtrees are as equal as possible (each \eqn{\lfloor n/4 \rfloor} or
-#' \eqn{\lceil n/4 \rceil}), so the maximizing topology is a _local_ property of a
-#' single edge, realized by _any_ tree that contains such an edge &ndash; not by a
-#' globally pectinate or balanced tree.  The value is exactly two bits when four
-#' divides _n_ (four equal subtrees, whose splits are then balanced and
-#' independent), and slightly less otherwise.  The exchanged splits themselves
-#' need not be balanced: at \eqn{n = 6} the optimal subtrees are
-#' \eqn{\{2, 2, 1, 1\}} but the move runs between a \eqn{4 | 2} split and a
-#' \eqn{3 | 3} split.
-#'
-#' @section The normalized maximum is also local:
-#' With `normalize = TRUE` the distance is divided by the combined clustering
-#' entropy of the two trees, \eqn{CE(T) + CE(T')}, which _does_ depend on the wider
-#' topology.  The largest normalized move can nevertheless be found without
-#' searching tree space, as follows.
-#'
-#' \eqn{T} and \eqn{T'} share every split except the one the move changes, so
-#' \deqn{CE(T) + CE(T') = 2 E + H(S) + H(S'),}
-#' where \eqn{E} is the summed entropy of the \eqn{n - 4} shared splits and
-#' \eqn{H(S), H(S')} &ndash; the entropies of the exchanged splits &ndash; are
-#' fixed by \eqn{a, b, c, d}.  Each shared split is cut by an edge lying _inside_
-#' one of the four subtrees, so \eqn{E} decomposes into four independent terms,
-#' \deqn{E = c(a) + c(b) + c(c) + c(d),}
-#' where \eqn{c(s)} is the clustering entropy contributed by a subtree of \eqn{s}
-#' leaves.  The numerator \eqn{d(a, b, c, d)} is independent of the subtree
-#' _shapes_, so for fixed sizes the ratio is largest when each \eqn{c(s)} is as
-#' _small_ as possible &ndash; and each subtree is minimized independently.  The
-#' minimum \eqn{c(s)} satisfies the recursion
-#' \deqn{c(1) = 0, \qquad c(s) = H(s) + \min_{1 \le i \le s/2}\{c(i) + c(s - i)\},}
-#' computed once by dynamic programming.  The largest normalized NNI move is then
-#' \deqn{\max_{a, b, c, d} \frac{d(a, b, c, d)}{2[c(a) + c(b) + c(c) + c(d)] +
-#' H(S) + H(S')},}
-#' a purely local optimization over the four subtree sizes.  (The minimizing
-#' subtree shape is not in general balanced; for \eqn{s = 6}, for instance, it
-#' splits \eqn{2 + 4} rather than \eqn{3 + 3}.)
-#'
-#' @param tree Object of supported class representing a tree or list of trees,
-#' or an integer specifying the number of leaves in a tree/trees.
+#' @param tree Tree of class `phylo`, or list of trees of class `list` or
+#' `multiPhylo`, or an integer specifying the number of leaves in a tree.
 #' @param normalize Logical specifying whether to normalize the distance against
-#' the summed clustering information of the two trees, giving the largest
-#' _normalized_ Clustering Information Distance attainable by one NNI move.
+#' the summed clustering information of the two trees.
 #'
 #' @return `NNIMaxStep()` returns a numeric vector, one entry per tree (or leaf
-#' count), giving the largest attainable distance &ndash; in bits when
-#' `normalize = FALSE`, or as a fraction in the range \[0, 1] when
-#' `normalize = TRUE`.  Entries are `NA` where _n_ &lt; 4, as no NNI move exists.
-#' Two attributes record the maximizing configuration: `"subtrees"`, the sizes of
-#' the four subtrees around the moved edge, and `"splits"`, the sizes of the two
+#' count), giving the largest attainable distance, in bits when
+#' `normalize = FALSE`, or as a fraction in the range \[0, 1\] when
+#' `normalize = TRUE`.  `NA` is returned where _n_ &lt; 4, as no NNI move exists.
+#' 
+#' The vector bears attributes `"subtrees"`, giving the sizes of the four
+#' subtrees around the moved edge, and `"splits"`, the sizes of the two
 #' splits that the move exchanges.  Where more than one tree is supplied, each
 #' attribute is a list with one entry per tree.
 #'
 #' @examples
 #' # Largest clustering information distance from a single NNI move
-#' NNIMaxStep(8)  # exactly two bits: eight is a multiple of four
-#' NNIMaxStep(6)  # a little less
+#' NNIMaxStep(8)  # exactly two bits for any multiple of four
+#' NNIMaxStep(6)  # a little less otherwise
 #'
 #' # Read off the maximizing local topology
 #' m6 <- NNIMaxStep(6)
 #' attr(m6, "subtrees")
 #' attr(m6, "splits")
 #'
-#' # Vectorized over leaf counts, and accepting a tree
-#' NNIMaxStep(4:12)
+#' # Vectorized over leaf counts
+#' NNIMaxStep(4:8)
+#' 
+#' # Computed for a given tree
 #' library("TreeTools", quietly = TRUE)
 #' NNIMaxStep(BalancedTree(19))
 #'
-#' # Normalized: solved locally, without searching tree space
+#' # Normalized
 #' NNIMaxStep(12, normalize = TRUE)
 #'
 #' @template MRS
