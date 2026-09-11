@@ -489,7 +489,6 @@ MutualClusteringInfoSplits <- function(splits1, splits2,
 #' The distance itself: [`ClusteringInfoDistance()`]
 #'
 #' Diameter of the NNI metric: [`NNIDiameter()`]
-#' @references \insertAllCited{}
 #' @export
 NNIMaxStep <- function(tree, normalize = FALSE) {
   UseMethod("NNIMaxStep")
@@ -527,8 +526,7 @@ NNIMaxStep.list <- function(tree, normalize = FALSE) {
 
 # Binary split entropy of a k | (n - k) split, in bits (vectorized over k).
 .BinaryEntropyBits <- function(k, n) {
-  p <- k / n
-  ifelse(p <= 0 | p >= 1, 0, -(p * log2(p) + (1 - p) * log2(1 - p)))
+  vapply(k, function(k) Ntropy(k, n - k), double(1))
 }
 
 # Minimum clustering-entropy contribution (bits) of a rooted subtree of each
@@ -540,8 +538,8 @@ NNIMaxStep.list <- function(tree, normalize = FALSE) {
   cost <- numeric(n)
   split <- integer(n)
   if (n >= 2L) {
-    cost[2] <- .BinaryEntropyBits(2L, n)
-    split[2] <- 1L
+    cost[[2]] <- .BinaryEntropyBits(2L, n)
+    split[[2]] <- 1L
   }
   for (s in seq_len(n)[-(1:2)]) {
     i <- seq_len(s %/% 2L)
@@ -560,7 +558,6 @@ NNIMaxStep.list <- function(tree, normalize = FALSE) {
     return(list(value = NA_real_, subtrees = NULL, splits = NULL))
   }
   cost <- if (normalize) .MinSubtreeEntropy(n)[["cost"]] else NULL
-  gLog <- function(x) (x / n) * log2(x / n)  # -contribution to joint entropy
 
   best <- -Inf
   bestParts <- NULL
@@ -580,21 +577,22 @@ NNIMaxStep.list <- function(tree, normalize = FALSE) {
       h2 <- .BinaryEntropyBits(p + r, n)
       h3 <- .BinaryEntropyBits(p + s, n)
       keptEntropy <- h1 + h2 + h3 - pmax(h1, h2, h3)
-      joint <- -(gLog(p) + gLog(q) + gLog(r) + gLog(s))
+      joint <- vapply(seq_along(r), function(i) Ntropy(p, q, r[[i]], s[[i]]),
+                      double(1))
       vi <- 2 * joint - keptEntropy
       value <- if (normalize) {
-        vi / (2 * (cost[p] + cost[q] + cost[r] + cost[s]) + keptEntropy)
+        vi / (2 * (cost[[p]] + cost[[q]] + cost[r] + cost[s]) + keptEntropy)
       } else {
         vi
       }
       winner <- which.max(value)
-      if (value[winner] > best) {
-        best <- value[winner]
-        rw <- r[winner]
-        sw <- s[winner]
+      if (value[[winner]] > best) {
+        best <- value[[winner]]
+        rw <- r[[winner]]
+        sw <- s[[winner]]
         bestParts <- c(p, q, rw, sw)
         sizes <- c(p + q, p + rw, p + sw)
-        entropies <- c(h1, h2[winner], h3[winner])
+        entropies <- c(h1, h2[[winner]], h3[[winner]])
         bestSplits <- sort(sizes[-which.max(entropies)])
       }
     }
