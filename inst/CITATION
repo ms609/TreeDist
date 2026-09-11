@@ -60,15 +60,16 @@ bibentry(
     " R package version ", vers
   ),
   author = mrs,
-  doi = "10.5281/zenodo.3528124",
+  doi = "10.32614/CRAN.package.TreeDist",
   journal = "Comprehensive R Archive Network",
+  address = "Vienna",
   year = "2020",
 
   textVersion = paste0(
     "Smith, M.R. (2020b).",
     " TreeDist: Distances between Phylogenetic Trees.", 
     " R package version ", vers, ".",
-    " Comprehensive R Archive Network.",
-    " doi:10.5281/zenodo.3528124"
+    " Comprehensive R Archive Network, Vienna.",
+    " doi:	10.32614/CRAN.package.TreeDist"
   )
 )
