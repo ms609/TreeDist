@@ -34,8 +34,7 @@ A tree of class \code{phylo}.
 \description{
 Construct a consensus tree that minimizes the sum of transfer distances
 to a set of input trees, using a greedy add-and-prune heuristic.
-This function is moving to \code{ConsTree::Transfer()} and will soon be removed.
-A copy is retained here temporarily.
+This function has moved to \code{ConsTree::Transfer()} and will soon be removed.
 }
 \details{
 Unlike the majority-rule consensus, which minimizes Robinson-Foulds

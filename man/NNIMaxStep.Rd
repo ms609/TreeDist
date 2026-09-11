@@ -52,9 +52,6 @@ NNIMaxStep(BalancedTree(19))
 NNIMaxStep(12, normalize = TRUE)
 
 }
-\references{
-\insertAllCited{}
-}
 \seealso{
 The distance itself: \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}}
 

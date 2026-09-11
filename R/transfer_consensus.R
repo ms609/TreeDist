@@ -4,8 +4,7 @@
 #' to a set of input trees, using a greedy add-and-prune heuristic.
 # Note added 2026-06-10; function was only available for 1 release so need
 # not stick around too long
-#' This function is moving to `ConsTree::Transfer()` and will soon be removed.
-#' A copy is retained here temporarily.
+#' This function has moved to `ConsTree::Transfer()` and will soon be removed.
 #'
 #' Unlike the majority-rule consensus, which minimizes Robinson-Foulds
 #' distance and can be highly unresolved when phylogenetic signal is low,
