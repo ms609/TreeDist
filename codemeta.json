@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R Under development (unstable) (2026-06-29 r90199 ucrt)",
+  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -167,11 +167,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=MASS"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "parallel",
-      "name": "parallel"
     },
     {
       "@type": "SoftwareApplication",
@@ -493,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "7056.199KB",
+  "fileSize": "2086.252KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
