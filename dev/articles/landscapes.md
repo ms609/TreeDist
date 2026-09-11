@@ -128,7 +128,7 @@ Landscapes on spaces of trees. *Applied Mathematics and Computation*,
 *131*(2-3), 439–459. <https://doi.org/10.1016/S0096-3003(01)00164-3>
 
 Khodaei, M., Owen, M., & Beerli, P. (2022). Geodesics to characterize
-the phylogenetic landscape. *bioR$`\chi`$iv*.
+the phylogenetic landscape. *bioR\chiiv*.
 <https://doi.org/10.1101/2022.05.11.491507>
 
 Maddison, D. R. (1991). The discovery and importance of multiple islands

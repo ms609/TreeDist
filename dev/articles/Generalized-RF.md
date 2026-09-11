@@ -120,25 +120,24 @@ aligned thus:
 
 The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in
 common (`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).
-Their *subset score* is thus $`\frac{5}{8}`$.
+Their *subset score* is thus \frac{5}{8}.
 
 The second pair of subsets, `GHIJ` and `FGH`, have two elements (`GH`)
 in common, of the five total (`FGHIJ`), and hence receive a subset score
-of $`\frac{2}{5}`$.
+of \frac{2}{5}.
 
 This split alignment then receives an *alignment score* corresponding to
-the lower of the two subset scores, $`\frac{2}{5}`$.
+the lower of the two subset scores, \frac{2}{5}.
 
 We must now consider the other alignment of this pair of splits,
 
     ABCDEF  |     GHIJ
          FGH|ABCDE  IJ
 
-This yields subset scores of $`\frac{1}{8}`$ and $`\frac{2}{9}`$, and
-thus has an alignment score of $`\frac{1}{8}`$. This alignment gives a
-lower score than the other, so is disregarded. The pair of splits is
-allocated a similarity score corresponding to the better alignment:
-$`\frac{2}{5}`$.
+This yields subset scores of \frac{1}{8} and \frac{2}{9}, and thus has
+an alignment score of \frac{1}{8}. This alignment gives a lower score
+than the other, so is disregarded. The pair of splits is allocated a
+similarity score corresponding to the better alignment: \frac{2}{5}.
 
 As such, splits that match exactly will receive a similarity score of 1,
 in a manner analogous to the Robinson–Foulds distance. (This is despite
@@ -270,15 +269,16 @@ order to make the two splits identical. With the pair of splits
 three leaves (‘F’, ‘I’ and ‘J’) must be moved before the splits are
 identical; as such, the pair of splits are assigned a difference score
 of three.  
-Formally, where $`S_i`$ splits $`n`$ leaves into bipartitions $`A_i`$
-and $`B_i`$, the difference score is calculated by
+Formally, where S_i splits n leaves into bipartitions A_i and B_i, the
+difference score is calculated by
 
-$`n - m`$
+n - m
 
-where $`m`$ counts the number of leaves that already match, and is
-defined as
+where m counts the number of leaves that already match, and is defined
+as
 
-$`m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}`$
+m = \max\\\|A_1 \cap A_2\| + \|B_1 \cap B_2\|, \|A_1 \cap B_2\| + \|B_1
+\cap A_2\|\\
 
 ``` r
 
@@ -293,12 +293,12 @@ its maximum value.
 
 ### Information theoretic alternative
 
-In the matching split distance, $`m`$ represents a simple count of the
+In the matching split distance, m represents a simple count of the
 number of shared taxa. An alternative is to measure the phylogenetic
-information content of the largest split consistent with $`S_1`$ and
-$`S_2`$:
+information content of the largest split consistent with S_1 and S_2:
 
-$`m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2), h(A_1 \cap B_2 | B_1 \cap A_2)\}`$
+m = \max\\h(A_1 \cap A_2 \| B_1 \cap B_2), h(A_1 \cap B_2 \| B_1 \cap
+A_2)\\
 
 The most information-rich split consistent with
 
