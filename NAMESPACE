@@ -161,77 +161,93 @@ export(clone)
 export(entropy_int)
 export(is.HPart)
 importFrom(Rdpack,reprompt)
-importFrom(TreeTools,AllAncestors)
-importFrom(TreeTools,Consensus)
-importFrom(TreeTools,DropTip)
-importFrom(TreeTools,FirstMatchingSplit)
-importFrom(TreeTools,KeepTip)
-importFrom(TreeTools,KeepTipPostorder)
-importFrom(TreeTools,LnRooted.int)
-importFrom(TreeTools,LnTreesMatchingSplit)
-importFrom(TreeTools,Log2Rooted.int)
-importFrom(TreeTools,Log2TreesMatchingSplit)
-importFrom(TreeTools,Log2Unrooted)
-importFrom(TreeTools,Log2Unrooted.int)
-importFrom(TreeTools,MSTEdges)
-importFrom(TreeTools,MSTLength)
-importFrom(TreeTools,MatchStrings)
-importFrom(TreeTools,NRooted)
-importFrom(TreeTools,NSplits)
-importFrom(TreeTools,NTip)
-importFrom(TreeTools,PairwiseDistances)
-importFrom(TreeTools,PectinateTree)
-importFrom(TreeTools,Postorder)
-importFrom(TreeTools,PostorderOrder)
-importFrom(TreeTools,Preorder)
-importFrom(TreeTools,RenumberTips)
-importFrom(TreeTools,RootOnNode)
-importFrom(TreeTools,RootTree)
-importFrom(TreeTools,SplitFrequency)
-importFrom(TreeTools,SplitInformation)
-importFrom(TreeTools,SplitsInBinaryTree)
-importFrom(TreeTools,StarTree)
-importFrom(TreeTools,TipLabels)
-importFrom(TreeTools,TipsInSplits)
-importFrom(TreeTools,TreeIsRooted)
-importFrom(TreeTools,TreesMatchingSplit)
-importFrom(TreeTools,as.ClusterTable)
-importFrom(TreeTools,as.Splits)
-importFrom(TreeTools,edge_to_splits)
-importFrom(ape,Nnode.phylo)
-importFrom(ape,as.phylo)
-importFrom(ape,drop.tip)
-importFrom(ape,edgelabels)
-importFrom(ape,nodelabels)
-importFrom(ape,plot.phylo)
-importFrom(cli,cli_alert_danger)
-importFrom(cli,cli_alert_info)
-importFrom(cli,cli_alert_success)
-importFrom(cli,cli_progress_along)
-importFrom(cli,cli_progress_bar)
-importFrom(cli,cli_progress_update)
-importFrom(grDevices,colorRamp)
-importFrom(grDevices,hcl)
-importFrom(grDevices,hcl.colors)
-importFrom(grDevices,rgb)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,points)
-importFrom(graphics,rect)
-importFrom(graphics,segments)
-importFrom(parallel,makeCluster)
-importFrom(parallel,parCapply)
-importFrom(parallel,parLapply)
-importFrom(parallel,stopCluster)
+importFrom(TreeTools,
+  AllAncestors,
+  Consensus,
+  DropTip,
+  FirstMatchingSplit,
+  KeepTip,
+  KeepTipPostorder,
+  LnRooted.int,
+  LnTreesMatchingSplit,
+  Log2Rooted.int,
+  Log2TreesMatchingSplit,
+  Log2Unrooted,
+  Log2Unrooted.int,
+  MSTEdges,
+  MSTLength,
+  MatchStrings,
+  NRooted,
+  NSplits,
+  NTip,
+  PairwiseDistances,
+  PectinateTree,
+  Postorder,
+  PostorderOrder,
+  Preorder,
+  RenumberTips,
+  RootOnNode,
+  RootTree,
+  SplitFrequency,
+  SplitInformation,
+  SplitsInBinaryTree,
+  StarTree,
+  TipLabels,
+  TipsInSplits,
+  TreeIsRooted,
+  TreesMatchingSplit,
+  as.ClusterTable,
+  as.Splits,
+  edge_to_splits
+)
+importFrom(ape,
+  Nnode.phylo,
+  as.phylo,
+  drop.tip,
+  edgelabels,
+  nodelabels,
+  plot.phylo
+)
+importFrom(cli,
+  cli_alert_danger,
+  cli_alert_info,
+  cli_alert_success,
+  cli_progress_along,
+  cli_progress_bar,
+  cli_progress_update
+)
+importFrom(grDevices,
+  colorRamp,
+  hcl,
+  hcl.colors,
+  rgb
+)
+importFrom(graphics,
+  par,
+  plot,
+  points,
+  rect,
+  segments
+)
+importFrom(parallel,
+  makeCluster,
+  parCapply,
+  parLapply,
+  stopCluster
+)
 importFrom(shiny,runApp)
 importFrom(shinyjs,useShinyjs)
-importFrom(stats,as.dist)
-importFrom(stats,dist)
-importFrom(stats,kmeans)
-importFrom(stats,median)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,var)
-importFrom(utils,combn)
-importFrom(utils,install.packages)
+importFrom(stats,
+  as.dist,
+  dist,
+  kmeans,
+  median,
+  sd,
+  setNames,
+  var
+)
+importFrom(utils,
+  combn,
+  install.packages
+)
 useDynLib(TreeDist, .registration = TRUE)
