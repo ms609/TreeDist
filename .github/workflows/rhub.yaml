@@ -20,7 +20,7 @@ on:
           Comma-separated list of R-hub platforms to use.
           Full list: summary(rhub::rhub_platforms())
         type: string
-        default: 'linux,macos,macos-arm64,windows,atlas,mkl,clang-asan,valgrind,nosuggests'
+        default: 'linux,macos,macos-arm64,windows,atlas,mkl,clang-asan,valgrind'
       name:
         description: 'Run name (optional)'
         type: string
