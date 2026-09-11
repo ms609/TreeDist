@@ -52,16 +52,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-
-      - name: Set up R dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          sysreqs: false
-          extra-packages: |
-            ms609/TreeDistData
-          dependencies: "'soft'"
-          needs: |
-            memcheck
+      
+      - name: Install R package dependencies
+        run: |
+          Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org", ms609 = "https://ms609.github.io/packages/"))' \
+                  -e 'install.packages(c("remotes", "testthat"))' \
+                  -e 'remotes::install_github("ms609/TreeDistData")' \
+                  -e 'remotes::install_deps(dependencies = TRUE)' \
+                  -e 'remotes::install_local()'
 
       - name: Install package
         run: |
