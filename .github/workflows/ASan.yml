@@ -40,6 +40,11 @@ jobs:
 
     name: AddressSanitizer ${{ matrix.config.test }}
 
+    # Each leg runs for up to an hour: a superseding push cancels the stale one.
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.config.test }}-${{ github.ref }}
+      cancel-in-progress: true
+
     strategy:
       fail-fast: false
       matrix:
@@ -52,7 +57,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: ms609/actions/asan@asan-persist-repos
+      - uses: ms609/actions/asan@main
         with:
           test: ${{ matrix.config.test }}
           token: ${{ secrets.GITHUB_TOKEN }}
