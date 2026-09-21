@@ -595,6 +595,7 @@ jobs:
           extra-repositories: https://ms609.github.io/packages/
 
       - name: Set up R dependencies
+        if: runner.os != 'macOS'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2-${{ runner.arch }}
@@ -602,6 +603,36 @@ jobs:
             ms609/TreeDistData
           needs: |
             check
+
+      # Temporary: CRAN's macOS binaries are now partly zstd-compressed, which
+      # pak cannot extract ("unknown archive type"; r-lib/pkgdepends#485,
+      # r-lib/pak#915). Base R's untar() reads zstd, so install through
+      # install.packages() on macOS, and set up the pandoc that
+      # setup-r-dependencies would otherwise provide. Once pak supports zstd,
+      # delete both macOS steps and the `if` on the pak step above.
+      - name: Set up pandoc (macOS, without pak)
+        if: runner.os == 'macOS'
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Set up R dependencies (macOS, without pak)
+        if: runner.os == 'macOS'
+        run: |
+          lib <- Sys.getenv("R_LIBS_USER")
+          dir.create(lib, recursive = TRUE, showWarnings = FALSE)
+          .libPaths(c(lib, .libPaths()))
+
+          install.packages(c("remotes", "rcmdcheck"))
+          remotes::install_deps(dependencies = TRUE, upgrade = "never")
+          remotes::install_github("ms609/TreeDistData", upgrade = "never")
+
+          # install.packages() only warns on failure: fail the step instead.
+          deps <- remotes::local_package_deps(dependencies = TRUE)
+          wanted <- c(deps, "rcmdcheck", "TreeDistData")
+          missing <- setdiff(wanted, rownames(installed.packages()))
+          if (length(missing)) {
+            stop("Failed to install: ", paste(missing, collapse = ", "))
+          }
+        shell: Rscript {0}
 
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
