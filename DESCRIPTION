@@ -83,6 +83,7 @@ LinkingTo:
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/app/optional: uwot
+Config/Needs/benchmark: bench, phangorn, testthat
 Config/Needs/check: rcmdcheck
 Config/Needs/coverage: covr
 Config/Needs/memcheck: pkgdown, testthat
