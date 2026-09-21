@@ -1,3 +1,9 @@
+# TreeDist 2.15.0.9000 (development)
+
+- `PathVector()`, and thus `PathDist()`, runs in O(n²) time regardless of
+  tree shape, and around five times faster on 182-leaf trees.
+
+
 # TreeDist 2.15.0 (2026-09-11)
 
 - New function `NNIMaxStep()` computes the largest clustering information

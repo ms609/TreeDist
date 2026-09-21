@@ -35,6 +35,35 @@ test_that("KC vector calculations", {
                                       2))
 })
 
+test_that("PathVector() matches unit-length cophenetic distances", {
+  Expected <- function(tree) {
+    tree[["edge.length"]] <- rep(1, dim(tree[["edge"]])[1])
+    as.dist(ape::cophenetic.phylo(tree)[tree[["tip.label"]],
+                                        tree[["tip.label"]]])
+  }
+  Check <- function(tree) {
+    expect_equal(as.numeric(PathVector(tree)), as.numeric(Expected(tree)))
+  }
+
+  set.seed(1)
+  Check(BalancedTree(2))
+  Check(StarTree(5)) # polytomy at the root
+  Check(PectinateTree(40))
+  Check(BalancedTree(33))
+  Check(UnrootTree(BalancedTree(9)))
+  Check(CollapseNode(BalancedTree(24), 30:34)) # internal polytomies
+  Check(Postorder(as.phylo(0:5, 182)[[4]]))
+  for (i in 1:5) {
+    tree <- RandomTree(60, root = TRUE)
+    Check(tree)
+    Check(Preorder(tree))
+    Check(Postorder(tree))
+    shuffled <- tree
+    shuffled[["edge"]] <- tree[["edge"]][sample(dim(tree[["edge"]])[1]), ]
+    Check(shuffled)
+  }
+})
+
 test_that("KC distances with special vectors", {
   trees <- as.phylo(1:20, 12)
   expect_equal(PathDist(trees), KendallColijn(trees, Vector = PathVector),
