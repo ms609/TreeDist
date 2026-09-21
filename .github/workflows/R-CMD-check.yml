@@ -625,6 +625,13 @@ jobs:
           dir.create(lib, recursive = TRUE, showWarnings = FALSE)
           .libPaths(c(lib, .libPaths()))
 
+          # CRAN's own binaries, not P3M's: P3M's macOS build of TreeDist
+          # (needed here by TreeDistData) references libomp's __kmpc_*
+          # symbols without linking libomp, so it fails to load ("symbol not
+          # found in flat namespace '___kmpc_dispatch_init_4'").
+          options(repos = c(CRAN = "https://cloud.r-project.org",
+                            ms609 = "https://ms609.github.io/packages/"))
+
           install.packages(c("remotes", "rcmdcheck"))
           remotes::install_deps(dependencies = TRUE, upgrade = "never")
           remotes::install_github("ms609/TreeDistData", upgrade = "never")
