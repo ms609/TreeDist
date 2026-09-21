@@ -66,6 +66,10 @@ name: R-CMD-check
 #                  on pull_request / workflow_dispatch.
 #   full        -> macOS x2 + ubuntu-24.04 (release) backstop; only once core is green.
 #   revdepcheck -> reverse-dependency checks; also gated on core being green.
+permissions:
+  contents: read
+  issues: write  # scheduled-failure notifier comments on and reopens #164
+
 jobs:
   # ---------------------------------------------------------------------------
   # Wave 0 (PRs only): is codemeta.json current? If stale, pushes the

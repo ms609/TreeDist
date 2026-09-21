@@ -9,6 +9,9 @@ on:
     paths:
       - '.github/workflows/update-csl.yml'
 
+permissions:
+  contents: write  # pushes the refreshed CSL file
+
 jobs:
   update-csl:
     runs-on: ubuntu-24.04-arm

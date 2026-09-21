@@ -4,6 +4,9 @@ name: rev-dep-check
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   mem-check:
     runs-on: ubuntu-latest
