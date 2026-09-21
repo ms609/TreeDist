@@ -28,9 +28,13 @@ on:
 
 name: mem-check
 
+permissions:
+  contents: read
+
 jobs:
   mem-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 180
 
     name: valgrind ${{ matrix.config.test }}
 

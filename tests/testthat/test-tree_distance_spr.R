@@ -177,7 +177,13 @@ test_that("SPR shortcuts okay - larger trees", {
 test_that("SPR calculated correctly", {
   library("TreeTools", quietly = TRUE)
   
+  # Compares against TBRDist's exact uSPR distance, when available (Suggests);
+  # the fixed-value expectations below run regardless.
+  haveTBRDist <- requireNamespace("TBRDist", quietly = TRUE)
   expect_exact <- function(x, y, method = "rogue") {
+    if (!haveTBRDist) {
+      return(invisible())
+    }
     if (is.character(x)) x <- Tree(x)
     if (is.character(y)) y <- Tree(y)
     expect_equal(
@@ -204,9 +210,11 @@ test_that("SPR calculated correctly", {
   expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "rogue") # distance = 1
   
   expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "rogue")
-  expect_failure(
-    expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
-  )
+  if (haveTBRDist) {
+    expect_failure(
+      expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
+    )
+  }
   
   # Passes with ami, joint, vi
   # Fails with viNorm - should tiebreaker be non-normalized?

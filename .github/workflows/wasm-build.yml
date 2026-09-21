@@ -29,6 +29,9 @@ on:
         description: "Comma-separated packages to build (deps resolved automatically)"
         default: "fastmatch"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest

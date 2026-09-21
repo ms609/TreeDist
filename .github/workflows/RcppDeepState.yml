@@ -11,8 +11,23 @@ on:
       - 'memcheck/**'
       - 'tests/testthat/**.R'
       - 'vignettes/**.Rmd'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/workflows/RcppDeepState.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
       
 name: 'RcppDeepState analysis'
+permissions:
+  contents: read
+  pull-requests: write  # comment: true posts results to the PR
+
 jobs:
   RcppDeepState:
     runs-on: ubuntu-latest
@@ -21,7 +36,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - uses: FabrizioSandri/RcppDeepState-action@main
         with:
