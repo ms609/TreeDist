@@ -1,4 +1,4 @@
-// Shinylive 0.10.14
+// Shinylive 0.10.15
 // Copyright 2026 Posit, PBC
 import {
   FCJSONtoFC,
@@ -16,7 +16,7 @@ import {
   sleep,
   stringToUint8Array,
   uint8ArrayToString
-} from "./chunk-R5J36A7I.js";
+} from "./chunk-IVHHOOEQ.js";
 import {
   __commonJS,
   __privateAdd,
@@ -25,7 +25,7 @@ import {
   __privateSet,
   __require,
   __toESM
-} from "./chunk-PCA63ASY.js";
+} from "./chunk-LYVYCXL6.js";
 
 // node_modules/scheduler/cjs/scheduler.development.js
 var require_scheduler_development = __commonJS({
@@ -499,9 +499,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React11 = require_react();
+        var React12 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React11.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React12.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -2108,7 +2108,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React11.Children.forEach(props.children, function(child) {
+                React12.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -10581,7 +10581,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React11.Component().refs;
+        var emptyRefsObject = new React12.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -12633,11 +12633,11 @@ var require_react_dom_development = __commonJS({
             currentlyRenderingFiber$1.updateQueue = componentUpdateQueue;
             componentUpdateQueue.stores = [check];
           } else {
-            var stores = componentUpdateQueue.stores;
-            if (stores === null) {
+            var stores2 = componentUpdateQueue.stores;
+            if (stores2 === null) {
               componentUpdateQueue.stores = [check];
             } else {
-              stores.push(check);
+              stores2.push(check);
             }
           }
         }
@@ -28905,7 +28905,7 @@ var require_readline = __commonJS({
 
 // src/Components/App.tsx
 var import_lz_string = __toESM(require_lz_string());
-var React10 = __toESM(require_react());
+var React11 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // src/examples.ts
@@ -28959,6 +28959,97 @@ function exampleItemJsonToExampleItem(x3) {
 
 // src/hooks/usePyodide.tsx
 var import_react = __toESM(require_react());
+
+// src/load-status.ts
+var ENGINE_LABEL = {
+  python: "Python",
+  r: "R"
+};
+var IDLE = { stage: "idle", error: null };
+function createLoadStatusStore() {
+  let status = IDLE;
+  const listeners = /* @__PURE__ */ new Set();
+  return {
+    // Stable reference: useSyncExternalStore loops forever if this returns a
+    // fresh object on every call.
+    get: () => status,
+    set: (stage, error) => {
+      if (status.stage === "failed") return;
+      const nextError = error ?? null;
+      if (status.stage === stage && status.error === nextError) return;
+      status = { stage, error: nextError };
+      listeners.forEach((listener) => listener());
+    },
+    subscribe: (onChange) => {
+      listeners.add(onChange);
+      return () => {
+        listeners.delete(onChange);
+      };
+    }
+  };
+}
+var stores = /* @__PURE__ */ new Map();
+function loadStatusStore(engine) {
+  let store = stores.get(engine);
+  if (!store) {
+    store = createLoadStatusStore();
+    stores.set(engine, store);
+  }
+  return store;
+}
+
+// src/engine-load-guard.ts
+var CORE_WASM = {
+  python: "pyodide.asm.wasm",
+  r: "R.wasm"
+};
+var WASM_MAGIC = [0, 97, 115, 109];
+async function readHead(response, n) {
+  const body = response.body;
+  if (!body || typeof body.getReader !== "function") return null;
+  const reader = body.getReader();
+  const head = new Uint8Array(n);
+  let filled = 0;
+  try {
+    while (filled < n) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+      const take = Math.min(value.length, n - filled);
+      head.set(value.subarray(0, take), filled);
+      filled += take;
+    }
+  } catch {
+    return null;
+  } finally {
+    await reader.cancel().catch(() => void 0);
+  }
+  return head.subarray(0, filled);
+}
+async function checkEngineAssetReachable(engine, baseUrl) {
+  const url = baseUrl + CORE_WASM[engine];
+  const prefix = `The ${ENGINE_LABEL[engine]} engine could not be downloaded.`;
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (e) {
+    return `${prefix} ${url} is unreachable (${e instanceof Error ? e.message : String(e)}).`;
+  }
+  if (!response.ok) {
+    try {
+      await response.body?.cancel();
+    } catch {
+    }
+    return `${prefix} ${url} returned HTTP ${response.status}.`;
+  }
+  const head = await readHead(response, WASM_MAGIC.length);
+  if (head === null) return null;
+  const isWasm = head.length === WASM_MAGIC.length && WASM_MAGIC.every((byte, i) => head[i] === byte);
+  if (!isWasm) {
+    return `${prefix} The file at ${url} appears to be corrupted.`;
+  }
+  return null;
+}
 
 // src/awaitable-queue.ts
 var AwaitableQueue = class {
@@ -31817,7 +31908,7 @@ async function openChannelHttpuv(path, appName, clientPort, webRProxy) {
 
 // src/postable-error.ts
 function postableErrorObjectToError(errObj) {
-  if ("message" in errObj && "name" in errObj) {
+  if (typeof errObj === "object" && errObj !== null && "message" in errObj && "name" in errObj) {
     const err = new Error(errObj.message);
     err.name = errObj.name;
     if (errObj.stack !== void 0) {
@@ -31953,7 +32044,7 @@ var H2;
 var L2;
 async function T2() {
   if (!g2 || (z2 = (await import("node:url")).default, H2 = await import("node:fs"), L2 = await import("node:fs/promises"), V2 = (await import("node:vm")).default, D2 = await import("node:path"), U2 = D2.sep, typeof R < "u")) return;
-  let e = H2, t = await import("node:crypto"), o = await import("./browser-ZCLMNDWS.js"), r5 = await import("node:child_process"), a = { fs: e, crypto: t, ws: o, child_process: r5 };
+  let e = H2, t = await import("node:crypto"), o = await import("./browser-ZHDD5GEV.js"), r5 = await import("node:child_process"), a = { fs: e, crypto: t, ws: o, child_process: r5 };
   globalThis.require = function(n) {
     return a[n];
   };
@@ -32418,10 +32509,15 @@ var WebWorkerPyodideProxy = class _WebWorkerPyodideProxy {
     };
   }
   async init(config) {
-    await this.postMessageAsync({
+    const response = await this.postMessageAsync({
       type: "init",
       config
     });
+    if (response.error) {
+      const err = postableErrorObjectToError(response.error);
+      this.stderrCallback(err.message);
+      throw err;
+    }
   }
   proxyType() {
     return "webworker";
@@ -32552,20 +32648,21 @@ function processReturnValue(value, returnResult = "none", pyodide, repr) {
       return repr(value);
     },
     get to_html() {
-      let toHtml;
+      let toHtml = null;
       try {
         toHtml = pyodide.globals.get("_to_html");
       } catch (e) {
         console.error("Couldn't find _to_html function: ", e);
-        toHtml = (x3) => ({
-          type: "text",
-          value: "Couldn't finding _to_html function."
-        });
       }
-      const val = toHtml(value).toJs({
+      if (toHtml === null) {
+        return {
+          type: "text",
+          value: "Couldn't find _to_html function."
+        };
+      }
+      return toHtml(value).toJs({
         dict_converter: Object.fromEntries
       });
-      return val;
     },
     get none() {
       return void 0;
@@ -32582,19 +32679,24 @@ async function initPyodide({
 }) {
   if (!stdout) stdout = async (x3) => console.log("pyodide echo:" + x3);
   if (!stderr) stderr = (x3) => console.error("pyodide error:" + x3);
+  const status = loadStatusStore("python");
+  const baseUrl = currentScriptDir() + "/pyodide/";
+  status.set("engine-download");
+  const unreachable = await checkEngineAssetReachable("python", baseUrl);
+  if (unreachable) throw new Error(unreachable);
   const pyodideProxy = await loadPyodideProxy(
-    {
-      type: proxyType,
-      indexURL: currentScriptDir() + "/pyodide/"
-    },
+    { type: proxyType, indexURL: baseUrl },
     stdout,
     stderr
   );
   let initError = false;
   try {
+    status.set("engine-start");
     await pyodideProxy.runPyAsync(load_python_pre);
+    status.set("ready");
   } catch (e) {
     initError = true;
+    status.set("failed", e instanceof Error ? e.message : String(e));
     console.error(e);
   }
   async function runCode(command) {
@@ -32646,7 +32748,9 @@ function usePyodide({
     (async () => {
       const pyodideProxyHandle2 = await pyodideProxyHandlePromise2;
       setPyodideProxyHandle(pyodideProxyHandle2);
-    })();
+    })().catch((e) => {
+      console.error(e);
+    });
   }, [pyodideProxyHandlePromise2]);
   return pyodideProxyHandle;
 }
@@ -33072,23 +33176,27 @@ async function initWebR({
   if (!stderr) stderr = (x3) => console.error("webR error:" + x3);
   const channelType = crossOriginIsolated ? U.Automatic : U.PostMessage;
   const baseUrl = currentScriptDir() + "/webr/";
+  const status = loadStatusStore("r");
+  status.set("engine-download");
+  const unreachable = await checkEngineAssetReachable("r", baseUrl);
+  if (unreachable) throw new Error(unreachable);
   const webRProxy = await loadWebRProxy(
-    {
-      baseUrl,
-      channelType
-    },
+    { baseUrl, channelType },
     stdout,
     stderr
   );
   let initError = false;
   try {
+    status.set("engine-start");
     await webRProxy.webR.objs.globalEnv.bind(".base_url", baseUrl);
     await webRProxy.runRAsync(
       `webr::mount("/shinylive/library", "${baseUrl}library.data.gz")`
     );
     await webRProxy.runRAsync(load_r_pre);
+    status.set("ready");
   } catch (e) {
     initError = true;
+    status.set("failed", e instanceof Error ? e.message : String(e));
     console.error(e);
   }
   async function runCode(command) {
@@ -33139,7 +33247,9 @@ function useWebR({
     (async () => {
       const webRProxyHandle2 = await webRProxyHandlePromise2;
       setwebRProxyHandle(webRProxyHandle2);
-    })();
+    })().catch((e) => {
+      console.error(e);
+    });
   }, [webRProxyHandlePromise2]);
   return webRProxyHandle;
 }
@@ -33337,31 +33447,87 @@ webr::shim_install()
   lapply(rownames(installed.packages()), function(p) { .webr_pkg_cache[[p]] <<- TRUE })
 }
 
+# Returns list(status = "ok"), or list(status = "error", message, class, call).
+#
+# The caller evaluates this with captureConditions = FALSE, so an error raised
+# here would go to the terminal and never reach JavaScript: the viewer would go
+# on to display an app that never started. Returning the failure as a value is
+# what makes a failed startup visible.
+#
+# The status field carries the explicit outcome rather than leaving it to be inferred: a
+# condition can carry an empty message, which on its own would read as success.
+# The class and call fields are what conditionMessage() would drop, and the call
+# is how the dialog can name which call failed, not just what went wrong.
 .start_app <- function(appName, appDir, devMode = FALSE) {
-  # Mount VFS images provided in Shinylive app assets
-  .mount_vfs_images()
+  tryCatch(
+    {
+      # Perform a basic parse of top-level R scripts to highlight any syntax
+      # errors. Runs first so a typo fails before spending time on package installs.
+      for (f in list.files(appDir, pattern = "[.][Rr]$", full.names = TRUE)) {
+        # call. = FALSE because the call this condition would otherwise carry is
+        # this loop's own parse(file = f), whose f names nothing an app author
+        # would recognise.
+        tryCatch(
+          parse(file = f),
+          error = function(cnd) stop(conditionMessage(cnd), call. = FALSE)
+        )
+      }
 
-  # Uniquely install packages with webr
-  unique_pkgs <- unique(renv::dependencies(appDir, quiet = TRUE)$Package)
-  lapply(unique_pkgs, function(pkg_name) {
-    if (isTRUE(.webr_pkg_cache[[pkg_name]])) return()
+      # Mount VFS images provided in Shinylive app assets
+      .mount_vfs_images()
 
-    has_pkg <- nzchar(system.file(package = pkg_name))
-    .webr_pkg_cache[[pkg_name]] <<- has_pkg
+      # Uniquely install packages with webr
+      unique_pkgs <- unique(renv::dependencies(appDir, quiet = TRUE)$Package)
+      lapply(unique_pkgs, function(pkg_name) {
+        if (isTRUE(.webr_pkg_cache[[pkg_name]])) return()
 
-    if (!has_pkg) {
-      webr::install(pkg_name)
+        has_pkg <- nzchar(system.file(package = pkg_name))
+        .webr_pkg_cache[[pkg_name]] <<- has_pkg
+
+        if (!has_pkg) {
+          # Deliberately not fatal: renv::dependencies() also reports packages
+          # that are named but never actually used, and those apps run fine
+          # today. A package that really is needed fails later, when the app
+          # source is evaluated.
+          webr::install(pkg_name)
+        }
+      })
+
+      if (isTRUE(devMode)) {
+        # Enable client-side dev mode features, namely the error console
+        options(shiny.client_devmode = TRUE)
+      }
+
+      app <- .shiny_to_httpuv(appDir)
+      assign(appName, app, envir = .shiny_app_registry)
+      list(status = "ok")
+    },
+    error = function(cnd) {
+      msg <- paste(conditionMessage(cnd), collapse = "
+")
+      if (!nzchar(msg)) msg <- "The app failed to start, with no error message."
+      # conditionCall() is NULL when the condition was signalled without a call,
+      # and deparse() returns one element per line of source. Keep only the first
+      # line, marking that there was more, so that a long but meaningful call is
+      # trimmed rather than dumped.
+      cnd_call <- conditionCall(cnd)
+      call_txt <- ""
+      if (!is.null(cnd_call)) {
+        lines <- deparse(cnd_call)
+        call_txt <- if (length(lines) > 1) paste0(lines[[1]], " ...") else lines[[1]]
+        # shiny wraps every app body in ..stacktraceon..(), so for any top-level
+        # failure the condition's call is the whole app source -- no use to anyone
+        # reading the dialog. Report a call only when it names something the
+        # author would recognize, and fall back to the bare message otherwise.
+        #
+        # A prefix rather than a list of names: the shiny shipped here exports
+        # ..stacktraceon.. and ..stacktraceoff.., and the prefix covers both
+        # without naming internals that may not exist in a given shiny.
+        if (startsWith(call_txt, "..stacktrace")) call_txt <- ""
+      }
+      list(status = "error", message = msg, class = class(cnd), call = call_txt)
     }
-  })
-
-  if (isTRUE(devMode)) {
-    # Enable client-side dev mode features, namely the error console
-    options(shiny.client_devmode = TRUE)
-  }
-
-  app <- .shiny_to_httpuv(appDir)
-  assign(appName, app, envir = .shiny_app_registry)
-  invisible(0)
+  )
 }
 
 invisible(0)
@@ -34156,6 +34322,29 @@ function Terminal({
 }
 
 // src/Components/Viewer.tsx
+var React10 = __toESM(require_react());
+
+// src/r-status.ts
+function rCharacterField(js, name) {
+  if (!("names" in js) || js.names === null || !("values" in js)) return [];
+  const index = js.names.indexOf(name);
+  if (index === -1) return [];
+  const element = js.values[index];
+  if (typeof element === "string") return [element];
+  if (element === null || typeof element !== "object") return [];
+  const values = element.values;
+  if (!Array.isArray(values)) return [];
+  return values.filter((value) => typeof value === "string");
+}
+
+// src/hooks/useLoadStatus.ts
+var import_react5 = __toESM(require_react());
+function useLoadStatus(engine) {
+  const store = loadStatusStore(engine);
+  return (0, import_react5.useSyncExternalStore)(store.subscribe, store.get, store.get);
+}
+
+// src/Components/LoadingStatus.tsx
 var React9 = __toESM(require_react());
 
 // src/Components/LoadingAnimation.tsx
@@ -34188,11 +34377,38 @@ function LoadingAnimation() {
   ] });
 }
 
+// src/Components/LoadingStatus.tsx
+var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var STATUS_DELAY_MS = 3e3;
+function LoadingStatus({ engine }) {
+  const { stage } = useLoadStatus(engine);
+  const [showStatus, setShowStatus] = React9.useState(false);
+  React9.useEffect(() => {
+    const timer = window.setTimeout(() => setShowStatus(true), STATUS_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
+  const language = ENGINE_LABEL[engine];
+  let stageText;
+  if (stage === "idle" || stage === "engine-download") {
+    stageText = `Downloading ${language}\u2026`;
+  } else if (stage === "engine-start") {
+    stageText = `Starting ${language}\u2026`;
+  } else if (stage === "ready") {
+    stageText = "Loading packages and starting app\u2026";
+  } else {
+    stageText = "Loading\u2026";
+  }
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "loading-status", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "loading-content", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(LoadingAnimation, {}),
+    showStatus ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("p", { className: "loading-stage", role: "status", "aria-live": "polite", children: stageText }) : null
+  ] }) });
+}
+
 // src/Components/skull.svg
 var skull_default = 'data:image/svg+xml,<?xml version="1.0" encoding="utf-8"?>%0A<!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->%0A<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"%0A%09 viewBox="0 0 838.3 838.7" style="enable-background:new 0 0 838.3 838.7;" xml:space="preserve">%0A<style type="text/css">%0A%09.head {%0A%09%09fill: %23ccc;%0A%09}%0A%09.open, .blink {%0A%09%09fill: %23fff;%0A%09}%0A%09.open{%0A%09%09animation: hideshow 12s ease infinite;%0A%09}%0A%09@keyframes hideshow {%0A%09%090% { opacity: 1; }%0A%09%0949% { opacity: 1; }%0A%09%0950% { opacity: 0; }%0A%09%0951% { opacity: 1; }%0A%09%0989% { opacity: 1; }%0A%09%0990% { opacity: 0; }%0A%09%0991% { opacity: 1; }%0A%09%0992% { opacity: 0; }%0A%09%0993% { opacity: 1; }%0A%09}%0A</style>%0A<!-- Head -->%0A<path class="head" d="M830.7,321c-7.6-53.1-27.2-101.4-57.9-145.2c-24.4-34.7-53.5-64.6-87.9-89.3c-23.3-16.7-48-30.9-73.9-43%0A%09c-42.8-19.9-87.7-32.3-134.5-38c-31.3-3.8-62.7-4.8-94.2-2.1c-25.5,2.2-50.7,5.9-75.5,12.1c-33,8.2-64.9,19.9-95.2,35.6%0A%09c-31,16-60.4,34.6-86.6,57.9c-36.3,32.1-65.6,69.7-87.1,113.3C19.2,259.9,8.7,299.9,5.2,341.8c-2.4,28.6-0.3,56.9,5,85%0A%09c8.8,46.5,25.9,89.4,53,128.4c25.4,36.7,56.3,67.8,92.3,93.9c3,2.2,4.2,4.4,4.2,8.1c-0.2,32.8-0.4,65.6,0,98.5%0A%09c0.2,19,5.5,36.7,17.4,51.8c16.1,20.2,38,28.5,62.9,29.2c23.2,0.6,46.5,0.1,69.7,0.1c1.6,0,3.2,0,5.2,0c0-2.6,0-4.6,0-6.6%0A%09c0-22,0-44.1,0-66.1c0-3.5,0.3-7,0.8-10.4c3-18.4,25.1-27.4,40.3-16.7c8.3,5.8,11,14.2,11.1,23.7c0.2,23.5,0.1,47.1,0.1,70.6%0A%09c0,1.7,0,3.5,0,5.3c34.8,0,68.9,0,103.6,0c0-2.4,0-4.2,0-6c0-23.5-0.2-47.1,0.1-70.6c0.1-10.5,3.7-19.6,13.8-24.5%0A%09c10.5-5,20.6-3.9,29.6,3.5c7.3,6,8.7,14.6,8.8,23.3c0.2,22.7,0.1,45.4,0.1,68.1c0,1.9,0,3.9,0,5.5c0.9,0.4,1.2,0.7,1.5,0.7%0A%09c28.3-0.3,56.7,0.5,85-1.3c20-1.2,37.2-10.7,50.3-26.5c12.6-15.3,18.1-33.3,18.5-52.9c0.4-17.4,0.1-34.8,0.1-52.2%0A%09c0-15.7,0.2-31.5-0.1-47.2c-0.1-4,1.1-6.2,4.1-8.6c15.1-12.1,30.5-23.8,44.6-36.9c32.1-29.7,57.6-64.7,76.2-104.4%0A%09C831,447.6,839.9,385.6,830.7,321z"/>%0A%09<!-- Open Eyes -->%0A<path class="open" d="M574.8,513c-58.3,0-103.9-46.6-103.7-104.5c0.2-58.7,46.5-104.1,103.8-103.9c57.7,0.1,102.3,46.1,103.8,104.3%0A%09C677.2,466.7,632.9,513,574.8,513z"/>%0A<path class="open" d="M263.4,513.3c-57.6-1.3-103.6-45.8-103.9-104.2c-0.2-58.2,45.7-104.6,103.7-104.6%0A%09c57.5,0,103.5,45.7,103.6,104.1C366.9,466.4,321.7,511.7,263.4,513.3z"/>%0A%09<!-- Blinks -->%0A<path class="blink" d="M263.4,438.4c-55-0.1-99-4-99.2-9c-0.2-5,43.6-9.1,99-9.1c54.9,0,98.9,4,99,9%0A%09C362.2,434.3,319.1,438.2,263.4,438.4z"/>%0A<path class="blink" d="M574.8,438.3c-55.6,0-99.1-4-98.9-9.1c0.2-5.1,44.3-9,99-9c55,0,97.6,4,99,9%0A%09C672.5,434.3,630.2,438.3,574.8,438.3z"/>%0A</svg>%0A';
 
 // src/Components/Viewer.tsx
-var import_jsx_runtime7 = __toESM(require_jsx_runtime());
+var import_jsx_runtime8 = __toESM(require_jsx_runtime());
 function setupAppProxyPath(proxy) {
   const appName = `app_${makeRandomKey(20)}`;
   const urlPath = appName + "/";
@@ -34228,6 +34444,31 @@ function createHttpRequestChannel(proxy, appName, urlPath) {
   );
   return httpRequestChannel;
 }
+function RecoveryHint() {
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "error-recovery", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("p", { className: "error-recovery-lead", children: [
+      "First, try a hard refresh: ",
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("kbd", { children: "Cmd+Shift+R" }),
+      " on macOS, or",
+      " ",
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("kbd", { children: "Ctrl+Shift+R" }),
+      " on Windows and Linux."
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { children: "If that doesn\u2019t help, clear this site\u2019s cookies and cached data, then reload. Stale cached files are a common cause of loading failures." })
+  ] });
+}
+function ViewerError({
+  kind,
+  engine,
+  message
+}) {
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "loading-wrapper loading-wrapper-error", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "error-alert", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "error-icon", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("img", { src: skull_default, alt: "skull" }) }),
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "error-message", children: kind === "engine" ? `Error loading ${ENGINE_LABEL[engine]}!` : "Error starting app!" }),
+    kind === "engine" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(RecoveryHint, {}) : null,
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "error-log", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("pre", { children: message }) })
+  ] }) });
+}
 async function resetPyAppFrame(pyodide, appName, appFrame) {
   appFrame.src = "";
   const stoppedPreviousApp = await pyodide.runPyAsync(
@@ -34247,15 +34488,17 @@ function Viewer({
   proxyHandle,
   setViewerMethods,
   devMode = false,
-  setWindowTitle = false
+  setWindowTitle = false,
+  engine
 }) {
-  const viewerFrameRef = React9.useRef(null);
-  const [appRunningState, setAppRunningState] = React9.useState("loading");
-  const shinyIntervalRef = React9.useRef(0);
-  const [lastErrorMessage, setLastErrorMessage] = React9.useState(
+  const viewerFrameRef = React10.useRef(null);
+  const [appRunningState, setAppRunningState] = React10.useState("loading");
+  const shinyIntervalRef = React10.useRef(0);
+  const [lastErrorMessage, setLastErrorMessage] = React10.useState(
     null
   );
-  React9.useEffect(() => {
+  const engineStatus = useLoadStatus(engine);
+  React10.useEffect(() => {
     if (!setWindowTitle || !viewerFrameRef.current) return;
     const iframe = viewerFrameRef.current;
     const observer = new MutationObserver(() => {
@@ -34280,7 +34523,7 @@ function Viewer({
       iframe.removeEventListener("load", onLoad);
     };
   }, [setWindowTitle]);
-  React9.useEffect(() => {
+  React10.useEffect(() => {
     if (!proxyHandle.shinyReady) return;
     if (proxyHandle.engine !== "webr") return;
     const webRProxy = proxyHandle.webRProxy;
@@ -34319,11 +34562,27 @@ function Viewer({
             env: { files, appDir },
             captureStreams: false
           });
-          await webRProxy.runRAsync(".start_app(appName, appDir, devMode)", {
-            env: { appName, appDir, devMode },
-            captureConditions: false,
-            captureStreams: false
-          });
+          const startResult = await shelter.evalR(
+            ".start_app(appName, appDir, devMode)",
+            {
+              env: { appName, appDir, devMode },
+              captureConditions: false,
+              captureStreams: false
+            }
+          );
+          const start = await startResult.toJs();
+          if (rCharacterField(start, "status")[0] !== "ok") {
+            const message = rCharacterField(start, "message")[0] || // Distinct from .start_app's own no-message fallback to distinguish
+            // between R raising an empty condition and no readable status coming
+            // back at all.
+            "The app failed to start, and R reported no status.";
+            const call = rCharacterField(start, "call")[0];
+            const error = new Error(
+              call ? `Error in ${call}: ${message}` : message
+            );
+            console.error("R startup failure", rCharacterField(start, "class"));
+            throw error;
+          }
         } finally {
           await shelter.purge();
         }
@@ -34355,7 +34614,7 @@ function Viewer({
       stopApp
     });
   }, [proxyHandle.shinyReady]);
-  React9.useEffect(() => {
+  React10.useEffect(() => {
     if (!proxyHandle.shinyReady) return;
     if (proxyHandle.engine !== "pyodide") return;
     const pyodideproxy = proxyHandle.pyodide;
@@ -34411,13 +34670,17 @@ function Viewer({
       stopApp
     });
   }, [proxyHandle.shinyReady]);
-  return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "shinylive-viewer", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("iframe", { ref: viewerFrameRef, className: "app-frame" }),
-    appRunningState === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "loading-wrapper", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(LoadingAnimation, {}) }) : appRunningState === "errored" ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "loading-wrapper loading-wrapper-error", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { className: "error-alert", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "error-icon", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("img", { src: skull_default, alt: "skull" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "error-message", children: "Error starting app!" }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("div", { className: "error-log", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("pre", { children: lastErrorMessage }) })
-    ] }) }) : null
+  const engineFailed = engineStatus.stage === "failed";
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "shinylive-viewer", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("iframe", { ref: viewerFrameRef, className: "app-frame" }),
+    engineFailed || appRunningState === "errored" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      ViewerError,
+      {
+        kind: engineFailed ? "engine" : "app",
+        engine,
+        message: engineFailed ? engineStatus.error : lastErrorMessage
+      }
+    ) : appRunningState === "loading" ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { className: "loading-wrapper", children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(LoadingStatus, { engine }) }) : null
   ] });
 }
 
@@ -34503,8 +34766,8 @@ function minCssLengthUnit(x3, y2, ignoreAuto = true) {
 }
 
 // src/Components/App.tsx
-var import_jsx_runtime8 = __toESM(require_jsx_runtime());
-var Editor = React10.lazy(() => import("./Editor.js"));
+var import_jsx_runtime9 = __toESM(require_jsx_runtime());
+var Editor = React11.lazy(() => import("./Editor.js"));
 var terminalInterface = /* @__PURE__ */ (() => {
   let _exec = async (x3) => console.log("preload exec:" + x3);
   let _echo = async (x3) => console.log("preload echo:" + x3);
@@ -34548,22 +34811,35 @@ function ensurePyodideProxyHandlePromise({
 }) {
   if (!pyodideProxyHandlePromise) {
     pyodideProxyHandlePromise = (async () => {
-      let pyodideProxyHandle = await initPyodide({
-        proxyType,
-        stdout: terminalInterface.echo,
-        stderr: terminalInterface.error
-      });
-      if (shiny) {
-        pyodideProxyHandle = await initShiny({ pyodideProxyHandle });
+      let pyodideProxyHandle;
+      try {
+        pyodideProxyHandle = await initPyodide({
+          proxyType,
+          stdout: terminalInterface.echo,
+          stderr: terminalInterface.error
+        });
+        if (shiny) {
+          pyodideProxyHandle = await initShiny({ pyodideProxyHandle });
+        }
+      } catch (e) {
+        loadStatusStore("python").set(
+          "failed",
+          e instanceof Error ? e.message : String(e)
+        );
+        throw e;
       }
       if (!pyodideProxyHandle.initError) {
-        terminalInterface.clear();
-        if (showStartBanner) {
-          if (pyodideProxyHandle.ready) {
-            await pyodideProxyHandle.pyodide.runPyAsync(
-              `print(pyodide.console.BANNER); print(" ")`
-            );
+        try {
+          terminalInterface.clear();
+          if (showStartBanner) {
+            if (pyodideProxyHandle.ready) {
+              await pyodideProxyHandle.pyodide.runPyAsync(
+                `print(pyodide.console.BANNER); print(" ")`
+              );
+            }
           }
+        } catch (e) {
+          console.error(e);
         }
       }
       return pyodideProxyHandle;
@@ -34576,15 +34852,28 @@ function ensureWebRProxyHandlePromise({
 }) {
   if (!webRProxyHandlePromise) {
     webRProxyHandlePromise = (async () => {
-      let webRProxyHandle = await initWebR({
-        stdout: terminalInterface.echo,
-        stderr: terminalInterface.error
-      });
-      if (shiny) {
-        webRProxyHandle = await initRShiny({ webRProxyHandle });
+      let webRProxyHandle;
+      try {
+        webRProxyHandle = await initWebR({
+          stdout: terminalInterface.echo,
+          stderr: terminalInterface.error
+        });
+        if (shiny) {
+          webRProxyHandle = await initRShiny({ webRProxyHandle });
+        }
+      } catch (e) {
+        loadStatusStore("r").set(
+          "failed",
+          e instanceof Error ? e.message : String(e)
+        );
+        throw e;
       }
       if (!webRProxyHandle.initError) {
-        terminalInterface.clear();
+        try {
+          terminalInterface.clear();
+        } catch (e) {
+          console.error(e);
+        }
       }
       return webRProxyHandle;
     })();
@@ -34640,26 +34929,26 @@ function App({
       throw new Error(`Unrecognised Wasm engine: "${appEngine}".`);
   }
   const proxyHandle = useWasmEngine();
-  const [editorMethods, setEditorMethods] = React10.useState({
+  const [editorMethods, setEditorMethods] = React11.useState({
     getActiveFileContents: null
   });
-  const [viewerMethods, setViewerMethods] = React10.useState({
+  const [viewerMethods, setViewerMethods] = React11.useState({
     ready: false
   });
-  const [terminalMethods, setTerminalMethods] = React10.useState(
+  const [terminalMethods, setTerminalMethods] = React11.useState(
     {
       ready: false
     }
   );
-  const [currentFiles, setCurrentFiles] = React10.useState(startFiles);
-  const [filesHaveChanged, setFilesHaveChanged] = React10.useState(false);
-  const [headerBarCallbacks, setHeaderBarCallbacks] = React10.useState({});
-  React10.useEffect(() => {
+  const [currentFiles, setCurrentFiles] = React11.useState(startFiles);
+  const [filesHaveChanged, setFilesHaveChanged] = React11.useState(false);
+  const [headerBarCallbacks, setHeaderBarCallbacks] = React11.useState({});
+  React11.useEffect(() => {
     if (appMode === "viewer" && viewerMethods.ready) {
       viewerMethods.runApp(currentFiles);
     }
   }, [appMode, currentFiles, viewerMethods]);
-  React10.useEffect(() => {
+  React11.useEffect(() => {
     (async () => {
       if (!proxyHandle.ready) return;
       if (proxyHandle.engine !== "pyodide") return;
@@ -34674,7 +34963,7 @@ function App({
       });
     })();
   }, [proxyHandle.ready, currentFiles]);
-  React10.useEffect(() => {
+  React11.useEffect(() => {
     const listener = (event) => {
       if (event.source !== window.parent) {
         return;
@@ -34698,12 +34987,12 @@ function App({
     if (window.parent === window) return;
     window.parent.postMessage({ type: "shinyliveReady" }, "*");
   });
-  const [utilityMethods, setUtilityMethods] = React10.useState({
+  const [utilityMethods, setUtilityMethods] = React11.useState({
     formatCode: async (code) => {
       return code;
     }
   });
-  React10.useEffect(() => {
+  React11.useEffect(() => {
     if (!proxyHandle.ready) return;
     if (proxyHandle.engine !== "pyodide") return;
     setUtilityMethods({
@@ -34718,7 +35007,7 @@ function App({
     });
     if (currentFiles.some((file) => file.name === "app.py")) return;
   }, [proxyHandle.ready, currentFiles]);
-  React10.useEffect(() => {
+  React11.useEffect(() => {
     if (appMode !== "viewer") return;
     setHeaderBarCallbacks({
       openEditorWindowFromViewer: () => {
@@ -34730,15 +35019,15 @@ function App({
     });
   }, [appMode, startFiles]);
   if (appMode === "examples-editor-terminal-viewer") {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         HeaderBar,
         {
           headerBarCallbacks,
           appEngine
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
         ResizableGrid,
         {
           className: "shinylive-container",
@@ -34749,7 +35038,7 @@ function App({
           rowSizes: ["2fr", "1fr"],
           colSizes: ["180px", "1fr", "1fr"],
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               ExampleSelector,
               {
                 setCurrentFiles,
@@ -34758,7 +35047,7 @@ function App({
                 appEngine
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Editor,
               {
                 currentFilesFromApp: currentFiles,
@@ -34774,7 +35063,7 @@ function App({
                 appEngine
               }
             ) }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Terminal,
               {
                 proxyHandle,
@@ -34782,13 +35071,14 @@ function App({
                 terminalInterface
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Viewer,
               {
                 proxyHandle,
                 setViewerMethods,
                 devMode: true,
-                setWindowTitle: appOptions.setWindowTitle
+                setWindowTitle: appOptions.setWindowTitle,
+                engine: appEngine
               }
             )
           ]
@@ -34796,15 +35086,15 @@ function App({
       )
     ] });
   } else if (appMode === "editor-terminal-viewer") {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         HeaderBar,
         {
           headerBarCallbacks,
           appEngine
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
         ResizableGrid,
         {
           className: "shinylive-container",
@@ -34821,7 +35111,7 @@ function App({
           rowSizes: ["2fr", "1fr"],
           colSizes: ["1fr", "1fr"],
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Editor,
               {
                 currentFilesFromApp: currentFiles,
@@ -34837,7 +35127,7 @@ function App({
                 appEngine
               }
             ) }),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Terminal,
               {
                 proxyHandle,
@@ -34845,13 +35135,14 @@ function App({
                 terminalInterface
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
               Viewer,
               {
                 proxyHandle,
                 setViewerMethods,
                 devMode: true,
-                setWindowTitle: appOptions.setWindowTitle
+                setWindowTitle: appOptions.setWindowTitle,
+                engine: appEngine
               }
             )
           ]
@@ -34859,7 +35150,7 @@ function App({
       )
     ] });
   } else if (appMode === "editor-terminal") {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
       ResizableGrid,
       {
         className: "shinylive-container",
@@ -34867,7 +35158,7 @@ function App({
         rowSizes: [asCssLengthUnit(appOptions.editorHeight) || "1fr"],
         colSizes: ["1fr", "1fr"],
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Editor,
             {
               currentFilesFromApp: currentFiles,
@@ -34882,7 +35173,7 @@ function App({
               appEngine
             }
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Terminal,
             {
               proxyHandle,
@@ -34894,8 +35185,8 @@ function App({
       }
     );
   } else if (appMode === "editor-cell") {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { className: "shinylive-container editor-cell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { className: "shinylive-container editor-cell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         Editor,
         {
           currentFilesFromApp: currentFiles,
@@ -34914,7 +35205,7 @@ function App({
           style: { height: asCssLengthUnit(appOptions.editorHeight) }
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         OutputCell,
         {
           proxyHandle,
@@ -34940,13 +35231,13 @@ function App({
         colSizes: ["1fr", "1fr"]
       };
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
       ResizableGrid,
       {
         className: `shinylive-container editor-viewer layout-${layout}`,
         ...gridDef,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.Suspense, { fallback: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: "Loading..." }), children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Editor,
             {
               currentFilesFromApp: currentFiles,
@@ -34961,41 +35252,43 @@ function App({
               appEngine
             }
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Viewer,
             {
               proxyHandle,
               setViewerMethods,
               devMode: true,
-              setWindowTitle: appOptions.setWindowTitle
+              setWindowTitle: appOptions.setWindowTitle,
+              engine: appEngine
             }
           )
         ]
       }
     );
   } else if (appMode === "viewer") {
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
-      appOptions.showHeaderBar ? /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      appOptions.showHeaderBar ? /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         HeaderBar,
         {
           headerBarCallbacks,
           appEngine
         }
       ) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         "div",
         {
           className: "shinylive-container viewer",
           style: {
             height: asCssLengthUnit(appOptions.viewerHeight)
           },
-          children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             Viewer,
             {
               proxyHandle,
               setViewerMethods,
               devMode: false,
-              setWindowTitle: appOptions.setWindowTitle
+              setWindowTitle: appOptions.setWindowTitle,
+              engine: appEngine
             }
           )
         }
@@ -35097,7 +35390,7 @@ function runApp(domTarget, mode, opts = {}, appEngine) {
     }
     const root = (0, import_client.createRoot)(domTarget);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React10.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(React11.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
         App,
         {
           appMode: mode,

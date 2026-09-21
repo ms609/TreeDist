@@ -2,6 +2,8 @@
 
 ## TreeDist 2.15.0 (2026-09-11)
 
+CRAN release: 2026-09-11
+
 - New function
   [`NNIMaxStep()`](https://ms609.github.io/TreeDist/reference/NNIMaxStep.md)
   computes the largest clustering information distance attainable by a

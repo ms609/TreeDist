@@ -1,4 +1,4 @@
-// Shinylive 0.10.14
+// Shinylive 0.10.15
 // Copyright 2026 Posit, PBC
 
 // node_modules/js-yaml/dist/js-yaml.mjs
@@ -2645,9 +2645,7 @@ function processQuartoArgs(lines) {
     i++;
   }
   const argCommentLines = lines.slice(0, i).map((line) => line.replace(rgxQuartoComment, ""));
-  const quartoArgs = load(
-    argCommentLines.join("\n")
-  );
+  const quartoArgs = load(argCommentLines.join("\n")) ?? {};
   return {
     lines: lines.slice(i),
     quartoArgs

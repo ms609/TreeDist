@@ -1,4 +1,4 @@
-// Shinylive 0.10.14
+// Shinylive 0.10.15
 // Copyright 2026 Posit, PBC
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -2009,13 +2009,16 @@ async function connect2(path, conn, asgiFunc) {
 
 // src/postable-error.ts
 function errorToPostableErrorObject(e) {
+  if (!(e instanceof Error)) {
+    return {
+      message: "An unknown error occured",
+      name: e?.name ?? "Error"
+    };
+  }
   const errObj = {
     message: "An unknown error occured",
     name: e.name
   };
-  if (!(e instanceof Error)) {
-    return errObj;
-  }
   errObj.message = e.message;
   if (e.stack) {
     errObj.stack = e.stack;
@@ -2486,20 +2489,21 @@ function processReturnValue(value, returnResult = "none", pyodide2, repr) {
       return repr(value);
     },
     get to_html() {
-      let toHtml;
+      let toHtml = null;
       try {
         toHtml = pyodide2.globals.get("_to_html");
       } catch (e) {
         console.error("Couldn't find _to_html function: ", e);
-        toHtml = (x3) => ({
-          type: "text",
-          value: "Couldn't finding _to_html function."
-        });
       }
-      const val = toHtml(value).toJs({
+      if (toHtml === null) {
+        return {
+          type: "text",
+          value: "Couldn't find _to_html function."
+        };
+      }
+      return toHtml(value).toJs({
         dict_converter: Object.fromEntries
       });
-      return val;
     },
     get none() {
       return void 0;
@@ -2542,13 +2546,18 @@ self.onmessage = async function(e) {
     if (msg.type === "init") {
       if (pyodideStatus === "none") {
         pyodideStatus = "loading";
-        pyodide = await $e2({
-          ...msg.config,
-          stdout: self.stdout_callback,
-          stderr: self.stderr_callback
-        });
-        pyUtils = await setupPythonEnv(pyodide, callJS);
-        pyodideStatus = "loaded";
+        try {
+          pyodide = await $e2({
+            ...msg.config,
+            stdout: self.stdout_callback,
+            stderr: self.stderr_callback
+          });
+          pyUtils = await setupPythonEnv(pyodide, callJS);
+          pyodideStatus = "loaded";
+        } catch (e2) {
+          pyodideStatus = "none";
+          throw e2;
+        }
       }
       messagePort.postMessage({ type: "reply", subtype: "done" });
     } else if (msg.type === "loadPackagesFromImports") {
@@ -2624,7 +2633,7 @@ self.onmessage = async function(e) {
       });
     }
   } catch (e2) {
-    if (e2 instanceof pyodide.ffi.PythonError) {
+    if (typeof pyodide !== "undefined" && typeof pyUtils !== "undefined" && e2 instanceof pyodide.ffi.PythonError) {
       e2.message = pyUtils.shortFormatLastTraceback();
     }
     messagePort.postMessage({

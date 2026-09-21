@@ -1,4 +1,4 @@
-/* Shinylive 0.10.14
+/* Shinylive 0.10.15
 // Copyright 2026 Posit, PBC */
 /* src/Components/App.css */
 @font-face {
@@ -656,6 +656,51 @@ div#size-detection-cell {
   }
 }
 
+/* src/Components/LoadingStatus.css */
+.loading-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  background-color: inherit;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+.loading-status .loading-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  margin: auto;
+}
+.loading-status .loading-stage {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  margin: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #9a9a9a;
+  animation: loading-animation-fade-in 0.5s;
+}
+
 /* src/Components/Viewer.css */
 .shinylive-viewer {
   height: 100%;
@@ -685,10 +730,15 @@ div#size-detection-cell {
   align-items: center;
 }
 .shinylive-viewer .loading-wrapper.loading-wrapper-error {
-  justify-content: left;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 .shinylive-viewer .loading-wrapper .error-alert {
   text-align: center;
+  --error-column: 34rem;
+  width: var(--error-column);
+  max-width: 100%;
+  margin: auto;
   font-size: 1.4rem;
   font-family: var(--font-face);
   -webkit-animation: loading-animation-fade-in 0.5s;
@@ -700,10 +750,44 @@ div#size-detection-cell {
   width: 85px;
   margin-bottom: 0.5rem;
 }
+.shinylive-viewer .loading-wrapper .error-alert .error-recovery {
+  margin: 0.9rem 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--panel-roundness, 5px);
+  background-color: #fadfdf;
+  color: #5e3737;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  text-align: left;
+}
+.shinylive-viewer .loading-wrapper .error-alert .error-recovery p {
+  margin: 0;
+}
+.shinylive-viewer .loading-wrapper .error-alert .error-recovery p + p {
+  margin-top: 0.45rem;
+}
+.shinylive-viewer .loading-wrapper .error-alert .error-recovery-lead {
+  color: #912828;
+  font-weight: 600;
+}
+.shinylive-viewer .loading-wrapper .error-alert .error-recovery kbd {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--button-roundness, 5px);
+  background-color: var(--colors-white, white);
+  color: #912828;
+  font-family: var(--font-mono-face, monospace);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
 .shinylive-viewer .loading-wrapper .error-alert .error-log {
   font-size: 0.7rem;
   text-align: left;
   padding: 0.3rem;
+}
+.shinylive-viewer .loading-wrapper .error-alert .error-log pre {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 @keyframes loading-animation-fade-in {
   0% {

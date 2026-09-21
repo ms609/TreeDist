@@ -1,4 +1,4 @@
-// Shinylive 0.10.14
+// Shinylive 0.10.15
 // Copyright 2026 Posit, PBC
 
 // src/utils.ts
