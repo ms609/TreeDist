@@ -15,6 +15,7 @@
 #include <cmath>
 #include <limits>
 #include <memory>
+#include <cstring>
 #include <numeric>
 #include <vector>
 #include <Rcpp/Lightest>
@@ -34,25 +35,106 @@ using TreeTools::count_bits;
 // per-pair heap allocation.  Vectors grow lazily and are never shrunk.
 // ---------------------------------------------------------------------------
 struct MatchScratch {
-  std::vector<splitbit>   a_canon;
-  std::vector<splitbit>   b_canon;
-  std::vector<split_int>  a_order;
-  std::vector<split_int>  b_order;
   std::vector<split_int>  a_match;
   std::vector<split_int>  b_match;
 };
 
 // ---------------------------------------------------------------------------
-// O(n log n) exact-match detection for identical bipartitions.
+// CanonSplits — per-tree canonical split forms, held in sorted order.
 //
 // Two splits represent the same bipartition when one equals the other or its
-// complement.  We canonicalise each split so that bit 0 (tip 0) is always set;
-// then identical bipartitions have identical canonical forms.
+// complement.  Canonicalising each split so that bit 0 (tip 0) is always set
+// makes identical bipartitions compare equal.
 //
-// Procedure:
-//   1. Compute canonical form for every split in a and b  → O(n × n_bins)
-//   2. Sort index arrays by canonical form                → O(n log n)
-//   3. Merge-scan to find matching pairs                  → O(n)
+// The canonical form and its sort order depend on one tree only, so they are
+// computed once per tree (build_canon_all) rather than once per pair: a set of
+// N trees needs N such builds, not the N(N-1) implied by building them inside
+// find_exact_matches().
+//
+// `canon` stores the canonical forms already permuted into sorted order, so the
+// merge scan reads two contiguous arrays instead of gathering through an index
+// vector.  `idx[pos]` recovers the original split number at sorted position
+// `pos`.
+//
+// Memory: n_splits × n_bins × sizeof(splitbit) per tree — the same footprint as
+// the SplitList `state` the caller already holds, so retaining these for a whole
+// tree set doubles split storage.
+// ---------------------------------------------------------------------------
+struct CanonSplits {
+  std::vector<splitbit>  canon;  // n_splits × n_bins, in sorted order
+  std::vector<split_int> idx;    // idx[pos] = original split index
+};
+
+static void build_canon(const SplitList& s, const int32 n_tips,
+                        CanonSplits& out) {
+  const split_int n        = s.n_splits;
+  const split_int n_bins   = s.n_bins;
+  const split_int last_bin = n_bins - 1;
+  const splitbit last_mask = (n_tips % SL_BIN_SIZE == 0)
+    ? ~splitbit(0)
+    : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
+
+  out.canon.resize(static_cast<size_t>(n) * n_bins);
+  out.idx.resize(n);
+  if (n == 0) return;
+
+  // --- 1. Canonical form, indexed by original split number ---
+  std::vector<splitbit> tmp(static_cast<size_t>(n) * n_bins);
+  for (split_int i = 0; i < n; ++i) {
+    const bool flip = !(s.state[i][0] & 1);
+    for (split_int bin = 0; bin < n_bins; ++bin) {
+      splitbit val = flip ? ~s.state[i][bin] : s.state[i][bin];
+      if (bin == last_bin) val &= last_mask;
+      tmp[static_cast<size_t>(i) * n_bins + bin] = val;
+    }
+  }
+
+  // --- 2. Sort split indices by canonical form ---
+  const splitbit* t = tmp.data();
+  std::iota(out.idx.begin(), out.idx.end(), split_int(0));
+  std::sort(out.idx.begin(), out.idx.end(),
+            [t, n_bins](split_int i, split_int j) {
+              const splitbit* pi = t + static_cast<size_t>(i) * n_bins;
+              const splitbit* pj = t + static_cast<size_t>(j) * n_bins;
+              for (split_int bin = 0; bin < n_bins; ++bin) {
+                if (pi[bin] < pj[bin]) return true;
+                if (pi[bin] > pj[bin]) return false;
+              }
+              return false; // #nocov
+            });
+
+  // --- 3. Materialise canonical forms in sorted order ---
+  for (split_int pos = 0; pos < n; ++pos) {
+    std::memcpy(&out.canon[static_cast<size_t>(pos) * n_bins],
+                t + static_cast<size_t>(out.idx[pos]) * n_bins,
+                static_cast<size_t>(n_bins) * sizeof(splitbit));
+  }
+}
+
+// Build canonical forms for a whole tree set.  Pure C++ (no R SEXP access), so
+// safe to parallelise over trees.
+static void build_canon_all(
+    const std::vector<std::unique_ptr<SplitList>>& splits,
+    const int32 n_tips,
+    const int n_threads,
+    std::vector<CanonSplits>& out
+) {
+  const int N = static_cast<int>(splits.size());
+  out.resize(N);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) num_threads(n_threads)
+#else
+  (void) n_threads;
+#endif
+  for (int k = 0; k < N; ++k) {
+    build_canon(*splits[k], n_tips, out[k]);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// O(n) exact-match detection for identical bipartitions.
+//
+// Merge-scans the two pre-sorted canonical split arrays built by build_canon().
 //
 // Returns the number of exact matches found.
 // Writes results into scratch.a_match / scratch.b_match:
@@ -60,26 +142,14 @@ struct MatchScratch {
 //   b_match[bi] = ai+1 if split bi matched split ai, else 0.
 // ---------------------------------------------------------------------------
 static split_int find_exact_matches(
-    const SplitList& a, const SplitList& b,
-    const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    const split_int n_bins,
     MatchScratch& scratch
 ) {
-  const split_int n_bins   = a.n_bins;
-  const split_int last_bin = n_bins - 1;
-  const splitbit last_mask = (n_tips % SL_BIN_SIZE == 0)
-    ? ~splitbit(0)
-    : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
-
-  const split_int a_n = a.n_splits;
-  const split_int b_n = b.n_splits;
+  const split_int a_n = static_cast<split_int>(ca.idx.size());
+  const split_int b_n = static_cast<split_int>(cb.idx.size());
 
   // Ensure buffers are large enough (grow lazily, never shrink)
-  const size_t a_canon_sz = static_cast<size_t>(a_n) * n_bins;
-  const size_t b_canon_sz = static_cast<size_t>(b_n) * n_bins;
-  if (scratch.a_canon.size() < a_canon_sz) scratch.a_canon.resize(a_canon_sz);
-  if (scratch.b_canon.size() < b_canon_sz) scratch.b_canon.resize(b_canon_sz);
-  if (scratch.a_order.size() < static_cast<size_t>(a_n)) scratch.a_order.resize(a_n);
-  if (scratch.b_order.size() < static_cast<size_t>(b_n)) scratch.b_order.resize(b_n);
   if (scratch.a_match.size() < static_cast<size_t>(a_n)) scratch.a_match.resize(a_n);
   if (scratch.b_match.size() < static_cast<size_t>(b_n)) scratch.b_match.resize(b_n);
 
@@ -90,65 +160,21 @@ static split_int find_exact_matches(
 
   if (a_n == 0 || b_n == 0) return 0;
 
-  splitbit* a_canon = scratch.a_canon.data();
-  splitbit* b_canon = scratch.b_canon.data();
+  const splitbit* ac = ca.canon.data();
+  const splitbit* bc = cb.canon.data();
+  const split_int* ai_of = ca.idx.data();
+  const split_int* bi_of = cb.idx.data();
 
-  // --- 1. Compute canonical forms into flat buffers ---
-  for (split_int i = 0; i < a_n; ++i) {
-    const bool flip = !(a.state[i][0] & 1);
-    for (split_int bin = 0; bin < n_bins; ++bin) {
-      splitbit val = flip ? ~a.state[i][bin] : a.state[i][bin];
-      if (bin == last_bin) val &= last_mask;
-      a_canon[i * n_bins + bin] = val;
-    }
-  }
-  for (split_int i = 0; i < b_n; ++i) {
-    const bool flip = !(b.state[i][0] & 1);
-    for (split_int bin = 0; bin < n_bins; ++bin) {
-      splitbit val = flip ? ~b.state[i][bin] : b.state[i][bin];
-      if (bin == last_bin) val &= last_mask;
-      b_canon[i * n_bins + bin] = val;
-    }
-  }
-
-  // --- 2. Sort index arrays by canonical form ---
-  auto canon_less = [&](const splitbit* canon, split_int i, split_int j) {
-    for (split_int bin = 0; bin < n_bins; ++bin) {
-      const splitbit vi = canon[i * n_bins + bin];
-      const splitbit vj = canon[j * n_bins + bin];
-      if (vi < vj) return true;
-      if (vi > vj) return false;
-    }
-    return false; // #nocov
-  };
-
-  split_int* a_order = scratch.a_order.data();
-  split_int* b_order = scratch.b_order.data();
-  std::iota(a_order, a_order + a_n, split_int(0));
-  std::iota(b_order, b_order + b_n, split_int(0));
-
-  std::sort(a_order, a_order + a_n,
-            [&](split_int i, split_int j) {
-              return canon_less(a_canon, i, j);
-            });
-  std::sort(b_order, b_order + b_n,
-            [&](split_int i, split_int j) {
-              return canon_less(b_canon, i, j);
-            });
-
-  // --- 3. Merge-scan to find matches ---
   split_int exact_n = 0;
   split_int ai_pos = 0, bi_pos = 0;
   while (ai_pos < a_n && bi_pos < b_n) {
-    const split_int ai = a_order[ai_pos];
-    const split_int bi = b_order[bi_pos];
+    const splitbit* pa = ac + static_cast<size_t>(ai_pos) * n_bins;
+    const splitbit* pb = bc + static_cast<size_t>(bi_pos) * n_bins;
 
     int cmp = 0;
     for (split_int bin = 0; bin < n_bins; ++bin) {
-      const splitbit va = a_canon[ai * n_bins + bin];
-      const splitbit vb = b_canon[bi * n_bins + bin];
-      if (va < vb) { cmp = -1; break; }
-      if (va > vb) { cmp =  1; break; }
+      if (pa[bin] < pb[bin]) { cmp = -1; break; }
+      if (pa[bin] > pb[bin]) { cmp =  1; break; }
     }
 
     if (cmp < 0) {
@@ -156,6 +182,8 @@ static split_int find_exact_matches(
     } else if (cmp > 0) {
       ++bi_pos;
     } else {
+      const split_int ai = ai_of[ai_pos];
+      const split_int bi = bi_of[bi_pos];
       a_match[ai] = bi + 1;
       b_match[bi] = ai + 1;
       ++exact_n;
@@ -174,6 +202,7 @@ static split_int find_exact_matches(
 // OpenMP parallel region.
 static double mutual_clustering_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
     LapScratch& scratch, MatchScratch& mscratch
 ) {
   if (a.n_splits == 0 || b.n_splits == 0 || n_tips == 0) return 0.0;
@@ -187,7 +216,7 @@ static double mutual_clustering_score(
   const double lg2_n = lg2_lookup(n_tips);
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
   const split_int* a_match = mscratch.a_match.data();
   const split_int* b_match = mscratch.b_match.data();
 
@@ -322,6 +351,11 @@ NumericVector cpp_mutual_clustering_all_pairs(
     );
   }
 
+  // Canonical forms depend on a single tree, so build them once per tree here
+  // rather than once per pair inside find_exact_matches().
+  std::vector<CanonSplits> canon;
+  build_canon_all(splits, n_tip, n_threads, canon);
+
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
@@ -350,7 +384,8 @@ NumericVector cpp_mutual_clustering_all_pairs(
     MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip, scratch, mscratch);
+      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip,
+                                       canon[col], canon[row], scratch, mscratch);
     }
   }
 
@@ -364,6 +399,7 @@ NumericVector cpp_mutual_clustering_all_pairs(
 
 static double rf_info_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
     MatchScratch& mscratch
 ) {
   const split_int a_n = a.n_splits;
@@ -371,7 +407,7 @@ static double rf_info_score(
   if (a_n == 0 || b_n == 0) return 0;
 
   // Use sort+merge to find exact matches in O(n log n)
-  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
   if (exact_n == 0) return 0;
 
   // Sum info contribution for each matched split in a
@@ -411,6 +447,9 @@ NumericVector cpp_rf_info_all_pairs(
     );
   }
 
+  std::vector<CanonSplits> canon;
+  build_canon_all(splits, n_tip, n_threads, canon);
+
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
@@ -431,7 +470,8 @@ NumericVector cpp_rf_info_all_pairs(
 #endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = rf_info_score(*splits[col], *splits[row], n_tip, mscratch);
+      res[p] = rf_info_score(*splits[col], *splits[row], n_tip,
+                             canon[col], canon[row], mscratch);
     }
   }
   return result;
@@ -444,6 +484,7 @@ NumericVector cpp_rf_info_all_pairs(
 
 static double msd_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
     LapScratch& scratch, MatchScratch& mscratch
 ) {
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
@@ -455,7 +496,7 @@ static double msd_score(
   const cost      max_score   = BIG / most_splits;
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  const split_int exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const split_int exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
   const split_int* a_match = mscratch.a_match.data();
   const split_int* b_match = mscratch.b_match.data();
 
@@ -531,6 +572,9 @@ NumericVector cpp_msd_all_pairs(
     );
   }
 
+  std::vector<CanonSplits> canon;
+  build_canon_all(splits, n_tip, n_threads, canon);
+
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
@@ -554,7 +598,8 @@ NumericVector cpp_msd_all_pairs(
     MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = msd_score(*splits[col], *splits[row], n_tip, scratch, mscratch);
+      res[p] = msd_score(*splits[col], *splits[row], n_tip,
+                         canon[col], canon[row], scratch, mscratch);
     }
   }
   return result;
@@ -796,6 +841,7 @@ NumericVector cpp_shared_phylo_all_pairs(
 
 static double jaccard_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
     const double exponent, const bool allow_conflict,
     LapScratch& scratch, MatchScratch& mscratch
 ) {
@@ -810,7 +856,7 @@ static double jaccard_score(
   // non-matching splits to compatible (non-exact) partners.
   split_int exact_n = 0;
   if (allow_conflict) {
-    exact_n = find_exact_matches(a, b, n_tips, mscratch);
+    exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
   } else {
     // Ensure match arrays are sized and zeroed
     if (mscratch.a_match.size() < static_cast<size_t>(a.n_splits))
@@ -929,6 +975,9 @@ NumericVector cpp_jaccard_all_pairs(
     );
   }
 
+  std::vector<CanonSplits> canon;
+  build_canon_all(splits, n_tip, n_threads, canon);
+
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
@@ -952,7 +1001,9 @@ NumericVector cpp_jaccard_all_pairs(
     MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict, scratch, mscratch);
+      res[p] = jaccard_score(*splits[col], *splits[row], n_tip,
+                             canon[col], canon[row], k, allow_conflict,
+                             scratch, mscratch);
     }
   }
   return result;
@@ -995,6 +1046,10 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
   parse_split_list(splits_a, sa);
   parse_split_list(splits_b, sb);
 
+  std::vector<CanonSplits> canon_a, canon_b;
+  build_canon_all(sa, n_tip, n_threads, canon_a);
+  build_canon_all(sb, n_tip, n_threads, canon_b);
+
   NumericMatrix result(nA, nB);
   double* res = result.begin();
 
@@ -1019,7 +1074,8 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
     MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip, scratch, mscratch);
+    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip,
+                                       canon_a[i], canon_b[j], scratch, mscratch);
   }
   return result;
 }
@@ -1038,6 +1094,10 @@ NumericMatrix cpp_rf_info_cross_pairs(
   std::vector<std::unique_ptr<SplitList>> sa, sb;
   parse_split_list(splits_a, sa);
   parse_split_list(splits_b, sb);
+
+  std::vector<CanonSplits> canon_a, canon_b;
+  build_canon_all(sa, n_tip, n_threads, canon_a);
+  build_canon_all(sb, n_tip, n_threads, canon_b);
 
   NumericMatrix result(nA, nB);
   double* res = result.begin();
@@ -1060,7 +1120,8 @@ NumericMatrix cpp_rf_info_cross_pairs(
 #endif
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip, mscratch);
+    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip,
+                             canon_a[i], canon_b[j], mscratch);
   }
   return result;
 }
@@ -1079,6 +1140,10 @@ NumericMatrix cpp_msd_cross_pairs(
   std::vector<std::unique_ptr<SplitList>> sa, sb;
   parse_split_list(splits_a, sa);
   parse_split_list(splits_b, sb);
+
+  std::vector<CanonSplits> canon_a, canon_b;
+  build_canon_all(sa, n_tip, n_threads, canon_a);
+  build_canon_all(sb, n_tip, n_threads, canon_b);
 
   NumericMatrix result(nA, nB);
   double* res = result.begin();
@@ -1104,7 +1169,8 @@ NumericMatrix cpp_msd_cross_pairs(
     MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = msd_score(*sa[i], *sb[j], n_tip, scratch, mscratch);
+    res[idx] = msd_score(*sa[i], *sb[j], n_tip,
+                         canon_a[i], canon_b[j], scratch, mscratch);
   }
   return result;
 }
@@ -1209,6 +1275,10 @@ NumericMatrix cpp_jaccard_cross_pairs(
   parse_split_list(splits_a, sa);
   parse_split_list(splits_b, sb);
 
+  std::vector<CanonSplits> canon_a, canon_b;
+  build_canon_all(sa, n_tip, n_threads, canon_a);
+  build_canon_all(sb, n_tip, n_threads, canon_b);
+
   NumericMatrix result(nA, nB);
   double* res = result.begin();
 
@@ -1233,7 +1303,9 @@ NumericMatrix cpp_jaccard_cross_pairs(
     MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip, k, allow_conflict, scratch, mscratch);
+    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip,
+                             canon_a[i], canon_b[j], k, allow_conflict,
+                             scratch, mscratch);
   }
   return result;
 }

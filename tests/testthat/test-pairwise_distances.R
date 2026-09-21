@@ -301,3 +301,36 @@ test_that("SPI batch does not greedily match identical splits", {
   pair_msi <- MatchingSplitInfoDistance(t1, t2)
   expect_equal(as.matrix(batch_msi)[2, 1], pair_msi, tolerance = 1e-10)
 })
+
+test_that("Batch path handles trees with no resolved splits", {
+  # A star tree contributes zero splits, so its canonical-split array is
+  # empty.  This exercises the zero-split guards in build_canon() and
+  # find_exact_matches(), which the rest of the suite never reaches.
+  star <- StarTree(8)
+  bal <- BalancedTree(8)
+  pec <- PectinateTree(8)
+  poly <- CollapseNode(BalancedTree(8), 11:12)
+  trees <- structure(list(star, bal, pec, poly), class = "multiPhylo")
+
+  for (fn in list(ClusteringInfoDistance, MatchingSplitDistance,
+                  InfoRobinsonFoulds, JaccardRobinsonFoulds)) {
+    batch <- as.matrix(fn(trees))
+    for (i in seq_len(3)) for (j in (i + 1):4) {
+      expect_equal(batch[i, j], fn(trees[[i]], trees[[j]]),
+                   tolerance = 1e-10,
+                   label = paste0("[", i, ",", j, "]"))
+    }
+  }
+
+  # Two star trees: both sides empty.
+  stars <- structure(list(StarTree(8), StarTree(8)), class = "multiPhylo")
+  expect_equal(as.matrix(ClusteringInfoDistance(stars))[1, 2], 0)
+  expect_equal(as.matrix(MatchingSplitDistance(stars))[1, 2], 0)
+
+  # Cross-pairs with an empty side.
+  cross <- ClusteringInfoDistance(structure(list(star, bal), class = "multiPhylo"),
+                                  structure(list(pec, poly), class = "multiPhylo"))
+  expect_equal(dim(cross), c(2L, 2L))
+  expect_equal(cross[1, 1], ClusteringInfoDistance(star, pec), tolerance = 1e-10)
+  expect_equal(cross[2, 2], ClusteringInfoDistance(bal, poly), tolerance = 1e-10)
+})
