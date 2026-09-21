@@ -14,7 +14,6 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -397,19 +396,19 @@
       "sameAs": "https://CRAN.R-project.org/package=withr"
     }
   ],
-  "softwareRequirements": {
-    "1": {
+  "softwareRequirements": [
+    {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 4.0"
     },
-    "2": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
-    "3": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "ape",
       "name": "ape",
@@ -422,7 +421,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ape"
     },
-    "4": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "cli",
       "name": "cli",
@@ -435,7 +434,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=cli"
     },
-    "5": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -448,7 +447,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "6": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -460,7 +459,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "7": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -472,7 +471,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "8": {
+    {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
@@ -485,10 +484,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
-    "SystemRequirements": "C++17, pandoc-citeproc"
-  },
-  "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "2086.252KB",
+    "C++17, pandoc-citeproc"
+  ],
+  "keywords": [
+    "phylogenetics",
+    "tree-distance"
+  ],
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -496,7 +497,10 @@
       "author": [
         {
           "@type": "Person",
-          "givenName": ["Martin", "R."],
+          "givenName": [
+            "Martin",
+            "R."
+          ],
           "familyName": "Smith",
           "email": "martin.smith@durham.ac.uk"
         }
@@ -511,7 +515,10 @@
         "issueNumber": "20",
         "datePublished": "2020",
         "isPartOf": {
-          "@type": ["PublicationVolume", "Periodical"],
+          "@type": [
+            "PublicationVolume",
+            "Periodical"
+          ],
           "volumeNumber": "36",
           "name": "Bioinformatics"
         }
@@ -523,7 +530,10 @@
       "author": [
         {
           "@type": "Person",
-          "givenName": ["Martin", "R."],
+          "givenName": [
+            "Martin",
+            "R."
+          ],
           "familyName": "Smith",
           "email": "martin.smith@durham.ac.uk"
         }
@@ -538,7 +548,10 @@
         "issueNumber": "5",
         "datePublished": "2022",
         "isPartOf": {
-          "@type": ["PublicationVolume", "Periodical"],
+          "@type": [
+            "PublicationVolume",
+            "Periodical"
+          ],
           "volumeNumber": "71",
           "name": "Systematic Biology"
         }
@@ -550,7 +563,10 @@
       "author": [
         {
           "@type": "Person",
-          "givenName": ["Martin", "R."],
+          "givenName": [
+            "Martin",
+            "R."
+          ],
           "familyName": "Smith",
           "email": "martin.smith@durham.ac.uk"
         }
@@ -563,7 +579,10 @@
         "@type": "PublicationIssue",
         "datePublished": "2020",
         "isPartOf": {
-          "@type": ["PublicationVolume", "Periodical"],
+          "@type": [
+            "PublicationVolume",
+            "Periodical"
+          ],
           "name": "Comprehensive R Archive Network"
         }
       }
