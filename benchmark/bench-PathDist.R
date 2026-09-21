@@ -1,6 +1,6 @@
 source("benchmark/_init.R")
 
-postTrees <- Postorder(as.phylo(0:5, 182))
+postTrees <- Postorder(as.phylo(0:12, 182))
 
 if (interactive()) {
   library("testthat")  
