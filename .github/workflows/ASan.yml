@@ -1,4 +1,7 @@
 # Address Sanitizer: Replicate CRAN's gcc-ASAN 'Additional Test'
+# Uses the r-hub gcc-asan container (R-devel built with ASAN/UBSAN).
+# Additional_repositories in DESCRIPTION (https://ms609.github.io/packages/) is
+# read automatically by ms609/actions/asan, so TreeDistData needs no extra input.
 on:
   workflow_dispatch:
   push:
@@ -26,9 +29,11 @@ name: gcc-ASAN
 
 jobs:
   mem-check:
-    runs-on: ubuntu-24.04 # Update RSPM when increasing
+    # The r-hub gcc-asan image has no arm64 variant: stay on x86.
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
     container:
-      image: rocker/r-devel-san
+      image: ghcr.io/r-hub/containers/gcc-asan:latest
 
     name: AddressSanitizer ${{ matrix.config.test }}
 
@@ -41,36 +46,14 @@ jobs:
           - {test: 'vignettes'}
 
     env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      _R_CHECK_FORCE_SUGGESTS_: false
-      RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
-      USING_ASAN: true
-      STRINGI_DISABLE_PKG_CONFIG: true
-      BIOCONDUCTOR_USE_CONTAINER_REPOSITORY: FALSE # For stringi
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      FS_USE_BUNDLED_LIBUV: 1
-      ASAN_OPTIONS: detect_container_overflow=1:verify_asan_link_order=0
 
     steps:
-      - uses: actions/checkout@v6
-      
-      - name: Install system dependencies
-        run: |
-          apt-get update && apt-get install -y --no-install-recommends \
-            libxml2-dev \
-            libssl-dev \
-            libcurl4-openssl-dev
-      
-      - name: Install R package dependencies
-        run: |
-          Rscript -e 'options(repos = c(CRAN = "https://cloud.r-project.org", ms609 = "https://ms609.github.io/packages/"))' \
-                  -e 'install.packages(c("remotes", "testthat"))' \
-                  -e 'remotes::install_github("ms609/TreeDistData")' \
-                  -e 'remotes::install_deps(dependencies = TRUE)' \
-                  -e 'remotes::install_local(build_opts = c("--no-build-vignettes", "--no-manual", "--no-resave-data"))'
-                  -e 'remotes::install_local()'
-
-      - name: ASAN - memcheck ${{ matrix.config.test }}
-        run: |
-          sudo sysctl -w vm.mmap_rnd_bits=16
-          Rscript memcheck/${{ matrix.config.test }}.R
+      - uses: ms609/actions/asan@main
+        with:
+          test: ${{ matrix.config.test }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Rogue hard-imports Rfast, a ~30-min source build under ASAN that
+          # adds no coverage to TreeDist's own compiled code. Its only use (the
+          # compare-treesets vignette) is requireNamespace()-guarded.
+          exclude-packages: Rogue
