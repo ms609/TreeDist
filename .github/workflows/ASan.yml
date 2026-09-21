@@ -49,22 +49,11 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # TreeDistData is not on CRAN. The action's pak::pkg_install() of the
-      # vignettes leg's Suggests does not see Additional_repositories (the
-      # action sets options(repos) in a separate R process), so the solve fails
-      # with "Can't find package called TreeDistData". Install it from GitHub
-      # here and exclude it below. The r-hub container ships R + pak, so this
-      # runs without a prior checkout.
-      - name: Pre-install TreeDistData
-        if: matrix.config.test == 'vignettes'
-        run: Rscript -e 'pak::pak("ms609/TreeDistData")'
-        shell: bash
-
-      - uses: ms609/actions/asan@main
+      - uses: ms609/actions/asan@asan-persist-repos
         with:
           test: ${{ matrix.config.test }}
           token: ${{ secrets.GITHUB_TOKEN }}
           # Rogue hard-imports Rfast, a ~30-min source build under ASAN that
           # adds no coverage to TreeDist's own compiled code. Its only use (the
           # compare-treesets vignette) is requireNamespace()-guarded.
-          exclude-packages: Rogue,TreeDistData
+          exclude-packages: Rogue
