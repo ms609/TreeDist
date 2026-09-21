@@ -5,7 +5,9 @@ on:
     - cron: "24 06 * * 1"
   workflow_dispatch:
   push:
-    branches: ["*"]
+    branches:
+      - main
+      - master
     paths-ignore:
       - "Meta**"
       - "AGENT**"
@@ -25,7 +27,7 @@ on:
       - "**.R[dD]ata"
       - "**.Rpro*"
   pull_request:
-    branches: ["*"]
+    branches: ["**"]
     paths-ignore:
       - "Meta**"
       - "AGENT**"
@@ -47,18 +49,66 @@ on:
 
 name: R-CMD-check
 
+# NB: there is deliberately NO workflow-level `concurrency`. Workflow-level
+# cancel-in-progress would kill the whole run (sense-check included) on every
+# new push. Instead, each EXPENSIVE job carries its own per-leg concurrency
+# group so superseded Windows/macOS work is cancelled, while the cheap
+# `sense-check` job has no concurrency and therefore always runs to completion
+# -- giving a per-commit "did this build?" signal even under rapid iteration.
+
+# Waves:
+#   codemeta    -> PRs only, ~15 s; pushes a stale codemeta.json to the PR
+#                  branch and holds back later waves.
+#   sense-check -> arm (cheapest), never cancelled. Fast signal. Skipped only
+#                  when codemeta pushed (the fresh run covers the new head).
+#   core        -> Windows (+codecov) / R 4.1 / R devel; only if sense-check passed.
+#   benchmark   -> PR-vs-base timings; also only if sense-check passed, and only
+#                  on pull_request / workflow_dispatch.
+#   full        -> macOS x2 + ubuntu-24.04 (release) backstop; only once core is green.
+#   revdepcheck -> reverse-dependency checks; also gated on core being green.
 jobs:
-  check-release:
-    runs-on: ubuntu-24.04
-    name: ubuntu-24.04 (release)
+  # ---------------------------------------------------------------------------
+  # Wave 0 (PRs only): is codemeta.json current? If stale, pushes the
+  # regenerated file to the PR branch (as the codemeta-writer App, so the push
+  # starts a fresh run) and fails. See ms609/actions/update-codemeta.
+  # ---------------------------------------------------------------------------
+  codemeta:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 5  # healthy run is ~15 s
+    permissions:
+      contents: read
+    outputs:
+      pushed: ${{ steps.codemeta.outputs.pushed }}
+
+    steps:
+      - id: codemeta
+        uses: ms609/actions/update-codemeta@main
+        with:
+          client-id: ${{ vars.CODEMETA_APP_ID }}
+          private-key: ${{ secrets.CODEMETA_APP_KEY }}
+
+  # ---------------------------------------------------------------------------
+  # Wave 1: cheapest leg as a fail-fast sense-check. No concurrency group, so a
+  # rapid follow-up push does NOT cancel it -- each commit gets its own signal.
+  # Waits ~15 s for codemeta, and skips if codemeta pushed an update: the
+  # fresh run checks the new head. Still runs if codemeta failed otherwise.
+  # ---------------------------------------------------------------------------
+  sense-check:
+    needs: codemeta
+    if: ${{ !cancelled() && needs.codemeta.outputs.pushed != 'true' }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30  # healthy run is ~10 min
+    name: sense-check (ubuntu-24.04-arm, release)
 
     env:
-      _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
+      _R_CHECK_CRAN_INCOMING_: ${{ github.event_name == 'pull_request' }}
       _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
       _R_CHECK_THINGS_IN_CHECK_DIR_: false
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_CRAN_INCOMING_USE_ASPELL_: false
       RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,17 +120,34 @@ jobs:
         run: |
           old_version=$(grep "Version:" DESCRIPTION | awk '{print $2}')
           if [[ $(echo "$old_version" | tr -cd '.' | wc -c) -eq 2 ]]; then
-            new_version="${old_version}.8888"
-            if [[ "$RUNNER_OS" == "macOS" ]]; then
-              sed -i "" "s/Version: .*/Version: ${new_version}/" DESCRIPTION
-            else
-              sed -i "s/Version: .*/Version: ${new_version}/" DESCRIPTION
-            fi
+            new_version="${old_version}.9999"
+            sed -i "s/Version: .*/Version: ${new_version}/" DESCRIPTION
           fi
         shell: bash
-        
+
+      # setup-r's first act on Linux is an internal `apt-get update`, and apt
+      # applies no transfer timeout by default: when a mirror accepts the
+      # connection and then stalls, the fetch never returns and the step burns
+      # the job's entire 6-hour budget. Observed 2026-08-19, when
+      # azure.archive.ubuntu.com went dark and the archive.ubuntu.com fallback
+      # stalled part-way through the index fetch -- a step whose healthy cost is
+      # ~35 s sat at 75 minutes. Capping the timeout turns that into a retry.
+      - name: Make apt fail fast on a stalled mirror
+        shell: bash
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts > /dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "20";
+          Acquire::https::Timeout "20";
+          Acquire::ftp::Timeout "20";
+          EOF
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
+        timeout-minutes: 15
+        with:
+          r-version: release
+          extra-repositories: https://ms609.github.io/packages/
 
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -94,20 +161,69 @@ jobs:
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
+      - name: Notify on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: &notify |
+            const issue_number = 164;
 
-  check-all:
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              per_page: 3
+            });
+
+            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+            const recentFailureNotified = comments.some(comment =>
+              new Date(comment.created_at) > oneHourAgo &&
+              comment.body.includes('Scheduled workflow has failed')
+            );
+
+            if (recentFailureNotified) {
+              console.log("Recently notified; don't bombard");
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: 'Scheduled workflow has failed: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              });
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                state: 'open'
+              });
+            }
+
+  # ---------------------------------------------------------------------------
+  # Wave 2: Windows (+codecov), R 4.1, R devel. Runs only if the sense-check
+  # passed and codemeta.json is current (or not checked, outside PRs).
+  # Per-leg concurrency so a superseding push cancels in-flight legs.
+  # ---------------------------------------------------------------------------
+  core:
+    needs: [sense-check, codemeta]
+    if: >-
+      !cancelled() && needs.sense-check.result == 'success' &&
+      contains(fromJSON('["success", "skipped"]'), needs.codemeta.result)
     runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 60  # healthy run is ~20 min (Windows, with coverage)
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    concurrency:
+      group: ${{ github.workflow }}-core-${{ matrix.config.os }}-${{ matrix.config.r }}-${{ github.ref }}
+      cancel-in-progress: true
 
     strategy:
       fail-fast: false
       matrix:
         config:
           - {os: windows-latest, r: "release"}
-          - {os: macos-15-intel, r: "release"} # Until Intel architecture retired 2027-11
-          - {os: macOS-latest, r: "release"}
-          - {os: ubuntu-22.04, r: '4.1', rspm: "https://packagemanager.posit.co/cran/__linux__/jammy/latest"}
-          - {os: ubuntu-24.04-arm, r: "release", rspm: "https://packagemanager.posit.co/cran/__linux__/noble/latest"}
+          - {os: ubuntu-22.04, r: "4.1", rspm: "https://packagemanager.posit.co/cran/__linux__/jammy/latest"}
           - {os: ubuntu-24.04, r: "devel", rspm: "https://packagemanager.posit.co/cran/__linux__/noble/latest"}
 
     env:
@@ -118,6 +234,7 @@ jobs:
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       R_REALLY_FORCE_SYMBOLS: true # Until R4.3
+      _R_CHECK_CRAN_INCOMING_USE_ASPELL_: false # Set to true when can figure how to install aspell on Windows
       RSPM: ${{ matrix.config.rspm }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -130,17 +247,28 @@ jobs:
         run: |
           old_version=$(grep "Version:" DESCRIPTION | awk '{print $2}')
           if [[ $(echo "$old_version" | tr -cd '.' | wc -c) -eq 2 ]]; then
-            new_version="${old_version}.8888"
-            if [[ "$RUNNER_OS" == "macOS" ]]; then
-              sed -i "" "s/Version: .*/Version: ${new_version}/" DESCRIPTION
-            else
-              sed -i "s/Version: .*/Version: ${new_version}/" DESCRIPTION
-            fi
+            new_version="${old_version}.9999"
+            sed -i "s/Version: .*/Version: ${new_version}/" DESCRIPTION
           fi
+          echo "Current package version is now: $(grep "Version:" DESCRIPTION | awk '{print $2}')"
         shell: bash
-        
+
+      # See sense-check: without a transfer timeout a stalled apt mirror burns
+      # the job's whole 6-hour budget.
+      - name: Make apt fail fast on a stalled mirror
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts > /dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "20";
+          Acquire::https::Timeout "20";
+          Acquire::ftp::Timeout "20";
+          EOF
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
+        timeout-minutes: 15
         with:
           r-version: ${{ matrix.config.r }}
           extra-repositories: https://ms609.github.io/packages/
@@ -155,7 +283,9 @@ jobs:
           needs: |
             check
             coverage
-            
+
+      # Suggests whose current CRAN releases need a newer R than the 4.1 leg
+      # offers are skipped there rather than pinned.
       - name: Set up R dependencies (Non-Windows)
         if: runner.os != 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -173,7 +303,7 @@ jobs:
             uwot=?ignore-before-r=4.4.0
           needs: |
             check
-        
+
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
@@ -187,61 +317,34 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const issue_number = 164;
+          script: *notify
 
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              per_page: 3
-            });
-
-            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-            const recentFailureNotified = comments.some(comment => 
-              new Date(comment.created_at) > oneHourAgo && 
-              comment.body.includes('Scheduled workflow has failed')
-            );
-            
-            if (recentFailureNotified) {
-              console.log("Recently notified; don't bombard");
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue_number,
-                body: 'Scheduled workflow has failed: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-              });
-        
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue_number,
-                state: 'open'
-              });
-            }
-  rev-dep-check:
-    runs-on: ubuntu-latest
-    needs: check-release
-
-    name: revdepcheck
-
-    env:
-      R_COMPILE_AND_INSTALL_PACKAGES: 'never'
-      R_REMOTES_STANDALONE: true
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - uses: ms609/actions/revdepcheck@main
-        with:
-          extra-packages: ms609/TreeDistData
-
+  # ---------------------------------------------------------------------------
+  # Also wave 2: the benchmark comparison, gated on sense-check for the same
+  # reason as `core` -- a tree that does not build cannot be timed, so four
+  # benchmark passes over a broken package only rediscover what the cheap leg
+  # already said. Never runs on push or schedule: outside a PR there is no base
+  # ref to compare against.
+  # ---------------------------------------------------------------------------
   benchmark:
+    needs: [sense-check, codemeta]
+    if: >-
+      !cancelled() && needs.sense-check.result == 'success' &&
+      contains(fromJSON('["success", "skipped"]'), needs.codemeta.result) &&
+      (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    needs: check-release
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    # A hung setup or a wedged benchmark otherwise runs to the 6-hour default,
+    # holding a runner the whole time.
+    timeout-minutes: 45
     name: benchmark
+
+    concurrency:
+      group: ${{ github.workflow }}-benchmark-${{ github.ref }}
+      cancel-in-progress: true
+
+    permissions:
+      contents: read
+      pull-requests: write
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -252,7 +355,7 @@ jobs:
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       R_REALLY_FORCE_SYMBOLS: true
-      PKG_CXXFLAGS: "-O3"
+      PKG_CXXFLAGS: "-O3" # release-grade optimisation for the compiled kernels
 
     steps:
       - name: Checkout PR branch
@@ -266,16 +369,35 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref || 'main' }}
           path: main
 
+      # See sense-check: without a transfer timeout a stalled apt mirror burns
+      # the job's whole 6-hour budget.
+      - name: Make apt fail fast on a stalled mirror
+        shell: bash
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts > /dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "20";
+          Acquire::https::Timeout "20";
+          Acquire::ftp::Timeout "20";
+          EOF
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
+        timeout-minutes: 15
         with:
           extra-repositories: https://ms609.github.io/packages/
 
+      # A cache of its own: the default key prefix is shared with every
+      # ubuntu/R-release job, so a partial restore can bring back a library
+      # where the package itself is installed, and benchmark-step then refuses
+      # to run.
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          working-directory: pr
           dependencies: '"hard"'
           needs: benchmark
+          cache-version: benchmark
 
       - name: Benchmark PR
         uses: ms609/actions/benchmark-step@main
@@ -294,6 +416,15 @@ jobs:
         with:
           path: pr
           output: pr2
+
+      # Both trees are measured twice, alternating, so the comparison can size
+      # its noise band from replicates of each: a single sample of the target
+      # cannot tell a real change from the runner's between-step drift.
+      - name: Benchmark target again
+        uses: ms609/actions/benchmark-step@main
+        with:
+          path: main
+          output: main2
 
       - run: dir pr-benchmark-results
         working-directory: pr
@@ -323,7 +454,7 @@ jobs:
 
       - name: Comment on PR
         if: always() && github.event_name == 'pull_request' && steps.compare_results.outputs.report != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           BENCHMARK_MESSAGE: ${{ steps.compare_results.outputs.report }}
         with:
@@ -390,3 +521,153 @@ jobs:
               issue_number: context.issue.number,
               body: newCommentBody
             });
+
+  # ---------------------------------------------------------------------------
+  # Wave 3 (backstop): the expensive, mostly-duplicate-failure legs. Only runs
+  # once the core wave is green, which in practice is "about to merge".
+  # macOS is ~10x runner-minutes, so keeping it off every push is the big save.
+  # ---------------------------------------------------------------------------
+  full:
+    needs: core
+    runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 60  # macOS legs are the slow ones
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    concurrency:
+      group: ${{ github.workflow }}-full-${{ matrix.config.os }}-${{ matrix.config.r }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-24.04, r: "release", rspm: "https://packagemanager.posit.co/cran/__linux__/noble/latest"}
+          - {os: macos-15-intel, r: "release"} # Until Intel architecture retired 2027-11
+          - {os: macOS-latest, r: "release"}
+
+    env:
+      _R_CHECK_CRAN_INCOMING_: ${{ github.event_name == 'pull_request' }}
+      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
+      R_COMPILE_AND_INSTALL_PACKAGES: 'never'
+      _R_CHECK_THINGS_IN_CHECK_DIR_: false
+      R_REMOTES_STANDALONE: true
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_CRAN_INCOMING_USE_ASPELL_: false
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout git repo
+        uses: actions/checkout@v6
+
+      - name: Temporarily bump package version
+        run: |
+          old_version=$(grep "Version:" DESCRIPTION | awk '{print $2}')
+          if [[ $(echo "$old_version" | tr -cd '.' | wc -c) -eq 2 ]]; then
+            new_version="${old_version}.9999"
+            if [[ "$RUNNER_OS" == "macOS" ]]; then
+              sed -i "" "s/Version: .*/Version: ${new_version}/" DESCRIPTION
+            else
+              sed -i "s/Version: .*/Version: ${new_version}/" DESCRIPTION
+            fi
+          fi
+          echo "Current package version is now: $(grep "Version:" DESCRIPTION | awk '{print $2}')"
+        shell: bash
+
+      # See sense-check: without a transfer timeout a stalled apt mirror burns
+      # the job's whole 6-hour budget.
+      - name: Make apt fail fast on a stalled mirror
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts > /dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "20";
+          Acquire::https::Timeout "20";
+          Acquire::ftp::Timeout "20";
+          EOF
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        timeout-minutes: 15
+        with:
+          r-version: ${{ matrix.config.r }}
+          extra-repositories: https://ms609.github.io/packages/
+
+      - name: Set up R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache-version: 2-${{ runner.arch }}
+          extra-packages: |
+            ms609/TreeDistData
+          needs: |
+            check
+
+      - name: Check package
+        uses: r-lib/actions/check-r-package@v2
+
+      - name: Notify on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: *notify
+
+  # ---------------------------------------------------------------------------
+  # Reverse-dependency checks: also a wave-3 backstop, gated on core being green.
+  # One leg per dependency type, so a slow Suggests sweep neither blocks nor
+  # masks the hard-dependency results.
+  # ---------------------------------------------------------------------------
+  rev-dep-check:
+    needs: core
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # revdepchecks are genuinely long
+
+    name: revdepcheck (${{ matrix.config.deps }})
+
+    concurrency:
+      group: ${{ github.workflow }}-revdep-${{ matrix.config.deps }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {deps: '"Depends"'}
+          - {deps: '"Suggests"'}
+          - {deps: '"Imports"'}
+          - {deps: '"LinkingTo"'}
+
+    env:
+      _R_CHECK_CRAN_INCOMING_: false
+      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
+      R_COMPILE_AND_INSTALL_PACKAGES: 'never'
+      _R_CHECK_THINGS_IN_CHECK_DIR_: false
+      R_REMOTES_STANDALONE: true
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      # See sense-check: without a transfer timeout a stalled apt mirror burns
+      # the job's whole 6-hour budget.
+      - name: Make apt fail fast on a stalled mirror
+        shell: bash
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-ci-timeouts > /dev/null <<'EOF'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "20";
+          Acquire::https::Timeout "20";
+          Acquire::ftp::Timeout "20";
+          EOF
+
+      - uses: ms609/actions/revdepcheck@main
+        with:
+          deps: ${{ matrix.config.deps }}
+          extra-packages: ms609/TreeDistData
+
+      - name: Notify on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: *notify

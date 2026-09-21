@@ -22,6 +22,10 @@ name: pkgdown
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: write
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -156,3 +160,60 @@ jobs:
           folder: docs
           branch: gh-pages
           clean: false
+
+      # ── Point /dev/ at the release site once a release is deployed ──
+      - name: Check if release version
+        id: version-check
+        run: |
+          VERSION=$(grep '^Version:' DESCRIPTION | sed 's/Version: *//')
+          # Release = exactly 3 numeric components (e.g. 2.2.0)
+          # Dev     = 4+ components (e.g. 2.2.0.9001)
+          if echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+[.\-][0-9]+$'; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+            echo "Release version: $VERSION"
+          else
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+            echo "Dev version: $VERSION"
+          fi
+        shell: bash
+
+      - name: Replace dev docs with redirects
+        if: steps.version-check.outputs.is_release == 'true'
+        run: |
+          TMPDIR=$(mktemp -d)
+          git clone --single-branch --branch gh-pages \
+            "https://x-access-token:${GITHUB_PAT}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$TMPDIR"
+          cd "$TMPDIR"
+
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+          # Remove old dev docs from git
+          git rm -rf dev || true
+
+          # Redirect template: strips /dev/ from the current URL
+          cat > /tmp/redirect.html << 'EOF'
+          <!DOCTYPE html>
+          <html><head><meta charset="utf-8">
+          <script>window.location.replace(window.location.href.replace(/\/dev\//, "/"));</script>
+          </head><body>
+          <p>Redirecting to <a id="r">release documentation</a>…</p>
+          <script>document.getElementById("r").href=window.location.href.replace(/\/dev\//, "/");</script>
+          </body></html>
+          EOF
+
+          # Create a redirect stub for every HTML page in the release site
+          find . -name '*.html' -not -path './dev/*' -not -path './.git/*' \
+            | while read -r f; do
+                rel="${f#./}"
+                mkdir -p "dev/$(dirname "$rel")"
+                cp /tmp/redirect.html "dev/$rel"
+              done
+
+          git add dev/
+          git commit -m "Replace dev/ docs with redirects to release" || true
+          git push origin gh-pages
+
+          rm -rf "$TMPDIR"
+        shell: bash
