@@ -533,6 +533,10 @@ jobs:
   # ---------------------------------------------------------------------------
   full:
     needs: core
+    # Explicit: the implicit success() fails when any upstream job was skipped,
+    # and codemeta is skipped outside pull requests, so without this the
+    # backstop never ran on push, schedule or workflow_dispatch.
+    if: ${{ !cancelled() && needs.core.result == 'success' }}
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 60  # macOS legs are the slow ones
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -662,6 +666,10 @@ jobs:
   # ---------------------------------------------------------------------------
   rev-dep-check:
     needs: core
+    # Explicit: the implicit success() fails when any upstream job was skipped,
+    # and codemeta is skipped outside pull requests, so without this the
+    # backstop never ran on push, schedule or workflow_dispatch.
+    if: ${{ !cancelled() && needs.core.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 120  # revdepchecks are genuinely long
 
