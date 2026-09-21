@@ -863,3 +863,76 @@ like TBRDist), significant speedups are unlikely.
 **Recommendation**: Close SPR optimization; move to other metrics or accept it as
 algorithmically constrained.
 
+
+---
+
+### Hoist canonical split forms out of the pairwise loop (DONE, kept)
+
+**Date:** 2026-09-19.  Follow-up to "Sort+merge exact-match pre-scan" above.
+
+That optimization moved exact-match detection to O(n log n), but placed the
+canonicalisation and the two `std::sort` calls *inside* `find_exact_matches()`,
+which runs once per **pair**.  Canonical form and sort order depend on a single
+tree, so for N trees the old code performed N(N-1) sorts where N suffice —
+39x redundant at N=40, 99x at N=100.
+
+**Fix:** new `CanonSplits` struct (canonical forms + originating split indices),
+built once per tree by `build_canon_all()` (parallel over trees) in each driver
+before the pair loop.  `find_exact_matches()` is now a pure O(n) merge scan.
+Canonical forms are stored **already permuted into sorted order**, so the merge
+scan reads two contiguous arrays instead of gathering through an index vector.
+
+Applied to all 8 drivers: `cpp_{mutual_clustering,rf_info,msd,jaccard}_all_pairs`
+and the matching `_cross_pairs`.  Not applicable to `msi_score` /
+`shared_phylo_score` (no exact-match detection — see earlier bug fix).
+
+**Files changed:** `src/pairwise_distances.cpp`,
+`tests/testthat/test-pairwise_distances.R` (new zero-split/star-tree test —
+the existing suite never exercised a 0-split tree through the batch path).
+
+**A/B benchmark** — Hamilton `cn025`, R 4.5.1, gcc 14.2, single-threaded,
+min of 12 interleaved passes.  Run locally first but **discarded**: the desktop
+was at 42% background load and the untouched-code canaries swung -22% to +19%,
+i.e. the noise floor exceeded the effect.  On Hamilton the canaries land within
++/-0.8%, so these numbers are trustworthy.
+
+| Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|
+| CID 100x50-tip | 12.44 | 7.47 | **-40.0%** |
+| CID 40x200-tip | 16.76 | 5.27 | **-68.6%** |
+| MSD 100x50-tip | 10.03 | 5.19 | **-48.2%** |
+| MSD 40x200-tip | 15.33 | 3.63 | **-76.3%** |
+| IRF 100x50-tip | 9.91 | 5.54 | **-44.1%** |
+| IRF 40x200-tip | 16.18 | 4.64 | **-71.3%** |
+| JRF 100x50-tip | 11.60 | 6.83 | **-41.1%** |
+| CID cross 20x30 50-tip | 3.18 | 2.62 | -17.6% |
+| MSD cross 20x30 50-tip | 2.41 | 1.86 | -22.7% |
+| CID 60 random 50-tip | 112.72 | 108.24 | -4.0% |
+| CID 12 random 1000-tip | 8874 | 8804 | -0.8% |
+| PID 100x50 (canary) | 85.54 | 84.86 | -0.8% |
+| MSID 100x50 (canary) | 103.81 | 103.10 | -0.7% |
+| LAPJV 400 (canary) | 2.42 | 2.43 | +0.5% |
+
+Output is **bit-identical** to ref on every metric (all-pairs and cross-pairs,
+including random trees, star/polytomy inputs and `allowConflict = FALSE`): the
+comparator, the `std::sort` call and hence the unstable tie-break are unchanged,
+only their call frequency is.  Full testthat suite: 1989 pass, 0 fail, 0 error.
+
+**Where the gain is not:** random trees share few splits, so the LAP dominates
+and the pre-scan is a rounding error (-4.0% at 50 leaves, -0.8% at 1000).  The
+win is concentrated in the common real-world case — MCMC posteriors, bootstrap
+replicates — where most splits are shared.
+
+**Cost:** holds `n_splits x n_bins x 8` bytes plus `n_splits x 4` per tree for
+the whole call, roughly doubling split storage.  252 kB for 40x200-tip; ~132 MB
+for 1000 trees of 1000 leaves.  Not guarded — a fallback path would be a second
+code path to cover for a case that also allocates SplitLists of the same size.
+
+**Rejected on the way here: powersort.**  Replacing `std::sort` with a
+power-based adaptive merge policy was measured at **15-31% slower** across
+50/200/1000-leaf inputs.  Canonical split keys are near-random bit patterns:
+real trees give mean natural run lengths of 1.4 (1000 leaves) to 8.2 (pectinate
+200), so run detection finds nothing to exploit and only adds overhead.
+Powersort's advantage over Timsort is an optimal merge tree over pre-existing
+runs at large n; neither condition holds here.  Note there was never a Timsort
+in TreeDist — every sort is `std::sort` / `std::stable_sort`.

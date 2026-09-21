@@ -1,8 +1,12 @@
 # TreeDist 2.15.0.9000 (development)
 
-- `PathVector()`, and thus `PathDist()`, runs in O(n²) time regardless of
-  tree shape, and around five times faster on 182-leaf trees.
+## Performance
 
+- Improve performance when comparing many similar trees with
+  `ClusteringInfoDistance()`, `MatchingSplitDistance()`, `InfoRobinsonFoulds()`
+  and `JaccardRobinsonFoulds()`.
+
+- Improve performance of `PathVector()`, and thus `PathDist()`.
 
 # TreeDist 2.15.0 (2026-09-11)
 
