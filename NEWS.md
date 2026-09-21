@@ -2,14 +2,11 @@
 
 ## Performance
 
-- Canonical split forms and their sort order are now computed once per tree,
-  rather than once per tree pair, in the exact-match pre-scan shared by
+- Improve performance when comparing many similar trees with
   `ClusteringInfoDistance()`, `MatchingSplitDistance()`, `InfoRobinsonFoulds()`
-  and `JaccardRobinsonFoulds()`.  Comparing _n_ trees performs _n_ sorts instead
-  of _n_(_n_ - 1).  Typical speedups on tree sets where most splits are shared:
-  40-48% for 50-leaf trees, 69-76% for 200-leaf trees, 18-23% for cross-pair
-  comparisons.  Results are unchanged.
+  and `JaccardRobinsonFoulds()`.
 
+- Improve performance of `PathVector()`, and thus `PathDist()`.
 
 # TreeDist 2.15.0 (2026-09-11)
 
