@@ -62,7 +62,8 @@
 <h2 class="pkg-version" data-toc-text="2.15.0.9000" id="treedist-21509000-development">TreeDist 2.15.0.9000 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509000-development"></a></h2>
 <div class="section level3">
 <h3 id="performance-2-15-0-9000">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9000"></a></h3>
-<ul><li>Canonical split forms and their sort order are now computed once per tree, rather than once per tree pair, in the exact-match pre-scan shared by <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>. Comparing <em>n</em> trees performs <em>n</em> sorts instead of <em>n</em>(<em>n</em> - 1). Typical speedups on tree sets where most splits are shared: 40-48% for 50-leaf trees, 69-76% for 200-leaf trees, 18-23% for cross-pair comparisons. Results are unchanged.</li>
+<ul><li><p>Improve performance when comparing many similar trees with <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>.</p></li>
+<li><p>Improve performance of <code><a href="../reference/KendallColijn.html">PathVector()</a></code>, and thus <code><a href="../reference/PathDist.html">PathDist()</a></code>.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
