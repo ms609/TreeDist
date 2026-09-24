@@ -78,7 +78,7 @@ jobs:
   # ---------------------------------------------------------------------------
   codemeta:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-slim
     timeout-minutes: 5  # healthy run is ~15 s
     permissions:
       contents: read
