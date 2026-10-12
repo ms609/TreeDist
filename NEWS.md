@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9002 (development)
+# TreeDist 2.15.0.9003 (development)
 
 ## Performance
 
@@ -8,7 +8,7 @@
 
 - Improve performance of `PathVector()`, and thus `PathDist()`.
 
-- `NNIMaxStep()` ported to C++, with branch-and-bound search (#204).
+- `NNIMaxStep()` ported to C++, with branch-and-bound searches (#204).
 
 # TreeDist 2.15.0 (2026-09-11)
 

@@ -250,3 +250,28 @@ test_that("NNIMaxStep() matches R reference", {
     }
   }
 })
+
+test_that("Block bounds give exact results at large n", {
+  n <- 1100L # Block bounds are used once s / 2 >= 512
+  ours <- .MinSubtreeEntropy(n)
+  ref <- .RefMinSubtreeEntropy(n)
+  cost <- ours[["cost"]]
+  expect_equal(cost, ref[["cost"]], tolerance = 1e-12)
+  split <- ours[["split"]]
+  optimal <- vapply(3:n, function(sz) {
+    i <- seq_len(sz %/% 2L)
+    abs(cost[[split[[sz]]]] + cost[[sz - split[[sz]]]] -
+          min(cost[i] + cost[sz - i])) < 1e-12
+  }, logical(1))
+  expect_true(all(optimal))
+  
+  res <- .NNIMaxStep1(n, TRUE)
+  # Value from exhaustive search
+  expect_equal(res[["value"]], 0.017407858108181639, tolerance = 1e-12)
+  parts <- res[["subtrees"]]
+  expect_equal(sum(parts), n)
+  keptH <- sort(.Hb(parts[[1]] + parts[-1], n))[1:2]
+  vi <- 2 * .Hjoint(parts, n) - sum(keptH)
+  expect_equal(vi / (2 * sum(cost[parts]) + sum(keptH)), res[["value"]],
+               tolerance = 1e-12)
+})
