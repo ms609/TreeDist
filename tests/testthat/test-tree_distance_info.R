@@ -128,6 +128,12 @@ test_that("NNIMaxStep() accepts trees and leaf counts alike", {
                c(2, as.numeric(NNIMaxStep(6))))
 })
 
+test_that("NNIMaxStep() retains names", {
+  expect_equal(names(NNIMaxStep(c(a = 7))), "a")
+  expect_equal(names(NNIMaxStep(c(a = 7, b = 9))), c("a", "b"))
+  expect_null(names(NNIMaxStep(7)))
+})
+
 test_that("NNIMaxStep() is NA where no NNI move exists", {
   expect_equal(as.numeric(NNIMaxStep(1:4)), c(NA, NA, NA, 2))
   expect_null(attr(NNIMaxStep(3), "subtrees"))

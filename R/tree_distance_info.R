@@ -496,6 +496,14 @@ NNIMaxStep <- function(tree, normalize = FALSE) {
 
 #' @export
 NNIMaxStep.numeric <- function(tree, normalize = FALSE) {
+  if (length(tree) == 1L) {
+    res <- .NNIMaxStep1(tree, normalize)
+    value <- res[["value"]]
+    names(value) <- names(tree)
+    attr(value, "subtrees") <- res[["subtrees"]]
+    attr(value, "splits") <- res[["splits"]]
+    return(value)
+  }
   res <- lapply(tree, .NNIMaxStep1, normalize = normalize)
   value <- vapply(res, `[[`, double(1), "value")
   subtrees <- lapply(res, `[[`, "subtrees")
