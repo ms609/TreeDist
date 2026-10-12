@@ -97,12 +97,11 @@ is 3.4e-11 at `n = 45 000`.  Bit-identity was also checked directly
 ## 2. Every size: Huffman trees with one heavy leaf
 
 Let `z = n - s` and `ĝ(w) = Hb(min(w, n/2) / n)`.  `ĝ` equals `f` on
-`[0, n/2]` and stays at 1 above `n/2`.  It is non-decreasing and concave on
-the integers.  The only point to check is the step past `n/2` at odd `n`:
-there `Hb` rises over a half step nearest its peak, which is no more than
-over the full step before it.
+`[0, n/2]` and stays at 1 above `n/2`.  Because `Hb` has zero slope at
+`1/2`, `ĝ` is non-decreasing and concave on the reals, and hence on the
+integers.
 
-**Theorem 2.**  For `1 <= s <= n` (with `z = 0` when `s = n`),
+**Theorem 2.**  For `n >= 2` and `1 <= s <= n` (with `z = 0` when `s = n`),
 
     cost[s] = Huf(s) - 2 + ĝ(z),
 
@@ -124,9 +123,10 @@ rooted binary trees `R` with leaf weights `{z, 1, ..., 1}` (`s` ones).  Here
   two root children together score `ĝ(w1) + ĝ(w2) = g~(e0) + 1`, because the
   heavier has `w >= n/2`.  So
   `sum over non-root u of ĝ(w_u) >= sum over e of g~(e) + 1`.
-- **Equality.** Pick `e0` incident to a centroid, a vertex whose three
-  branches each weigh `<= n/2`.  Then every non-root node except the
-  centroid side's root child weighs `<= n/2`, so the bound holds with
+- **Equality.** Pick `e0` incident to a centroid: a vertex all of whose
+  branches weigh `<= n/2`.  The centroid may be the leaf `H` itself, when
+  `z > n/2` or `s = 1`; then `e0` is `H`'s edge.  Every non-root node except
+  the centroid side's root child weighs `<= n/2`, so the bound holds with
   equality.  Every rooted `R` arises this way from some `U`.
 - **Counting.** The sum over non-root nodes equals
   `sum over internal v of ĝ(w_v) - ĝ(n) + s ĝ(1) + ĝ(z)`, and `ĝ(n) = 1`.
@@ -147,7 +147,9 @@ optimal `k`.
 
 *Conjecture (tie-completeness).*  The converse also holds: every optimal `k`
 arises from some Huffman tie-break.  It is checked exactly against the DP
-(optimal `k` taken within 1e-11) for every `n <= 800`, every `s`.  It
+(optimal `k` taken within 1e-11) for every `n <= 4000` and every `s`,
+and at sampled `n` up to 131 074.  Every non-candidate `k` was at least
+6.9e-7 worse for `n <= 4000`, so there are no hidden exact ties there.  It
 matters only when distinct `k` tie in exact arithmetic.  If it failed, the
 table could differ from an exhaustive scan by rounding of a tied value, and
 `cost` would still be exact to rounding.
@@ -182,7 +184,15 @@ This also explains the shapes seen earlier:
 `min_subtree_entropy_impl()` uses `complete_split(s)` for `s <= ceil(n/2)`
 (Corollary 1).  For larger `s` it evaluates the Huffman candidates in
 increasing `k` and keeps the first floating-point minimum, as the scan
-would.  The table build is `O(n log n)`.  The branch-and-bound scan, its SIMD
+would.  The table build is `O(n log n)`.
+
+For `s > n/2`, bit-identity with the exhaustive scan is not proven.  It
+needs the tie-completeness conjecture and a floating-point gap.  The
+smallest non-candidate gap is about `2 / (n² ln 2)`.  The crude error bound
+`n · 7e-15` from Section 1 overtakes that gap near `n ≈ 7 · 10^4`, while
+the measured error (about 1e-13) would not until about `5 · 10^6`.  So, for
+`s > n/2`, bit-identity rests on the conjecture plus the experiments below.
+`cost` is exact to rounding either way.  The branch-and-bound scan, its SIMD
 helpers and the earlier pruning lemma are no longer needed.
 
 `cost` and `split` are identical (`!=` on doubles) to a plain exhaustive DP
@@ -190,6 +200,13 @@ for:
 - every `n <= 3000`;
 - every 173rd `n` up to 30 000;
 - `n = 100 003`.
+
+An independent review found the same, comparing every `n <= 4000` and
+sampled `n` up to 131 074 against a plain exhaustive DP.  The review also
+checked Theorem 2's formula against an exhaustive search over trees with a
+heavy leaf, for every `n <= 450`, without relying on Glassey & Karp.  It
+compared `huffman_splits()` with a heap-based Huffman under all tie-breaks
+over 1.17 million `(s, z)` cases.  No differences were found.
 
 They are identical to the previous build for every `n <= 6000` and at
 `n = 200 000`.  The block bounds passed on to `nni_max_step()` are
