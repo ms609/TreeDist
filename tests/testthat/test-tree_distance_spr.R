@@ -316,6 +316,13 @@ test_that("Rogue SPR results unchanged by early exits", {
   expect_equal(Rogue(sprProxy = "C", sprDepth = 2), c(10, 10, 10, 10, 11))
   expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
   expect_equal(Rogue(sprProxy = "R"), c(11, 13, 11, 12, 13))
+  
+  # Abandons a divide-and-conquer candidate after its first half
+  expect_equal(SPRDist(
+    ape::read.tree(text = "(t1,((((t2,t4),t9),(((((((t3,t17),(t5,t7)),t11),t12),t14),t18),(t10,t13))),(t6,((t8,t16),t15))));"),
+    ape::read.tree(text = "(((((((((((t1,(t4,t8)),t16),t6),t14),t15),(t2,t12)),t10),((t3,t18),t9)),((t7,t13),t17)),t11),t5);"),
+    method = "Rogue"
+  ), 9)
   skip_if_not_installed("Quartet")
   expect_true(all(Rogue(sprProxy = "Q") %in% 1:15))
 })
