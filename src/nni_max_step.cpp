@@ -2,6 +2,7 @@
 #include <algorithm> /* for std::sort */
 #include <cmath> /* for std::log2 */
 #include <vector>
+#include "log2_table.h" /* for log2_lookup_table() */
 #if defined(__SSE2__)
 #include <emmintrin.h>
 #elif defined(__aarch64__)
@@ -10,9 +11,10 @@
 
 // x log2(x) for x = 0..n
 inline std::vector<double> xlog2x_table(const int n) {
+  const double *lg2 = log2_lookup_table();
   std::vector<double> t(n + 1, 0.0);
   for (int x = 1; x <= n; ++x) {
-    t[x] = x * std::log2(double(x));
+    t[x] = x * (x < LOG_MAX ? lg2[x] : std::log2(double(x)));
   }
   return t;
 }

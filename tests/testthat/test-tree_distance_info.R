@@ -275,3 +275,9 @@ test_that("Block bounds give exact results at large n", {
   expect_equal(vi / (2 * sum(cost[parts]) + sum(keptH)), res[["value"]],
                tolerance = 1e-12)
 })
+
+test_that(".MinSubtreeEntropy() is exact beyond the log2 lookup table", {
+  n <- 2100L # log2_lookup_table() covers 1..2047
+  expect_equal(.MinSubtreeEntropy(n)[["cost"]],
+               .RefMinSubtreeEntropy(n)[["cost"]], tolerance = 1e-12)
+})

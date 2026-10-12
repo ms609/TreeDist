@@ -5,15 +5,9 @@
 #include <TreeTools/assert.h>
 #include <cmath> /* for log2() */
 #include "ints.h" /* for int16 */
+#include "log2_table.h" /* for log2_lookup_table() */
 
-constexpr int_fast32_t LOG_MAX = 2048;
-static double log2_table[LOG_MAX];
-__attribute__((constructor))
-void compute_log2_table() {
-  for (int i = 1; i < LOG_MAX; ++i) {
-    log2_table[i] = std::log2(i);
-  }
-}
+static const double *const log2_table = log2_lookup_table();
 
 // 16383 is a legacy value from TreeTools v2.0.0
 // TODO consider increasing; or support more by calculation.
