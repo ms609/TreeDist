@@ -198,24 +198,49 @@ test_that("NNIMaxStep() agrees with SplitEntropy()", {
   list(value = best, subtrees = bestParts, splits = bestSplits)
 }
 
+# Exact ties can be broken differently where the compiler contracts to FMA
+# (e.g. ARM64), so compare values to a tolerance and check that the reported
+# configuration attains the optimum, rather than demanding identical choices.
 test_that(".MinSubtreeEntropy() matches R reference", {
   for (n in c(0:6, 17, 64)) {
     ours <- .MinSubtreeEntropy(n)
     ref <- .RefMinSubtreeEntropy(as.integer(n))
-    expect_equal(ours[["cost"]], ref[["cost"]], tolerance = 1e-12)
-    expect_identical(ours[["split"]], ref[["split"]])
+    cost <- ours[["cost"]]
+    expect_equal(cost, ref[["cost"]], tolerance = 1e-12)
+    split <- ours[["split"]]
+    expect_identical(split[seq_len(min(n, 2))], ref[["split"]][seq_len(min(n, 2))])
+    for (sz in seq_len(n)[-(1:2)]) {
+      i <- seq_len(sz %/% 2L)
+      expect_true(split[[sz]] %in% i)
+      expect_equal(cost[[split[[sz]]]] + cost[[sz - split[[sz]]]],
+                   min(cost[i] + cost[sz - i]), tolerance = 1e-12)
+    }
   }
 })
 
 test_that("NNIMaxStep() matches R reference", {
   for (n in c(4:21, 40, 63)) {
+    cost <- .MinSubtreeEntropy(n)[["cost"]]
     for (norm in c(FALSE, TRUE)) {
-      # FMA contraction (e.g. on ARM64) can perturb the last bits of `value`
       ours <- .NNIMaxStep1(n, norm)
       ref <- .RefNNIMaxStep1(as.integer(n), norm)
       expect_equal(ours[["value"]], ref[["value"]], tolerance = 1e-12)
-      expect_identical(ours[["subtrees"]], ref[["subtrees"]])
-      expect_identical(ours[["splits"]], ref[["splits"]])
+      
+      parts <- ours[["subtrees"]]
+      expect_type(parts, "integer")
+      expect_equal(sum(parts), n)
+      expect_false(is.unsorted(parts))
+      sizes <- parts[[1]] + parts[-1]
+      h <- .Hb(sizes, n)
+      keptH <- sort(h)[1:2]
+      splits <- ours[["splits"]]
+      expect_type(splits, "integer")
+      expect_false(is.unsorted(splits))
+      expect_true(all(splits %in% sizes))
+      expect_equal(sort(.Hb(splits, n)), keptH, tolerance = 1e-12)
+      vi <- 2 * .Hjoint(parts, n) - sum(keptH)
+      expect_equal(if (norm) vi / (2 * sum(cost[parts]) + sum(keptH)) else vi,
+                   ours[["value"]], tolerance = 1e-12)
     }
   }
 })
