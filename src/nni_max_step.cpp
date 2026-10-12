@@ -94,14 +94,27 @@ Rcpp::List min_subtree_entropy(const int n) {
   );
 }
 
+// Sum of the two smallest of three values
+inline double two_smallest(const double a, const double b, const double c) {
+  return a + b + c - std::max(std::max(a, b), c);
+}
+
 // Largest NNI clustering information distance for a single leaf count n >= 4;
 // see .NNIMaxStep1().
 //
 // Candidates (p, q, r) are visited in the same lexicographic order as an
-// exhaustive search, but an interval of r is skipped wherever an upper bound
-// on its values falls below the best value found so far (or a known lower
-// bound on the optimum).  Skipped candidates cannot be optimal, so the result,
-// including tie-breaking, is that of the exhaustive search.
+// exhaustive search, but a range of q, or an interval of r, is skipped
+// wherever an upper bound on its values falls below the best value found so
+// far (or a known lower bound on the optimum).  Skipped candidates cannot be
+// optimal, so the result, including tie-breaking, is that of the exhaustive
+// search.
+//
+// Bounds use an exact restatement of the variation of information.  Pairing
+// p with y (and the remaining parts with each other) defines one of the three
+// splits; its "deficit" D_y = (g(p, y) + g(rest)) / n, where
+// g(a, b) = (a + b)(1 - Hb(a / (a + b))) is zero for a balanced pair and grows
+// with imbalance.  Then VI = 2 - (sum of the two smallest deficits).
+// g(a, b), a <= b, decreases in a and increases in b.
 // [[Rcpp::export]]
 Rcpp::List nni_max_step(const int n, const bool normalize) {
   const std::vector<double> xlog2x = xlog2x_table(n);
@@ -112,11 +125,23 @@ Rcpp::List nni_max_step(const int n, const bool normalize) {
   if (normalize) {
     min_subtree_entropy_impl(n, h, cost, split);
   }
-  // costFloor[x] = min(cost[x..n]): a lower bound on cost[y] for all y >= x
+  // costFloor[x] = min(cost[x..n]): a lower bound on cost[y] for all y >= x.
+  // pairFloor[m] likewise bounds the cheapest split of >= m leaves into two
+  // subtrees, whose cost is cost[m] - h[m].
   std::vector<double> costFloor(cost);
-  for (int x = int(costFloor.size()) - 2; x >= 0; --x) {
-    costFloor[x] = std::min(costFloor[x], costFloor[x + 1]);
+  std::vector<double> pairFloor(cost.size());
+  for (int x = int(cost.size()) - 1; x >= 0; --x) {
+    pairFloor[x] = cost[x] - h[x];
+    if (x + 1 < int(cost.size())) {
+      costFloor[x] = std::min(costFloor[x], costFloor[x + 1]);
+      pairFloor[x] = std::min(pairFloor[x], pairFloor[x + 1]);
+    }
   }
+  
+  // n * deficit of the pair (a, b); 0 if a > b, i.e. outside its monotone range
+  auto G = [&](const int a, const int b) {
+    return a > b ? 0.0 : (a + b) - xlog2x[a + b] + xlog2x[a] + xlog2x[b];
+  };
   
   auto Value = [&](const int p, const int q, const int r) {
     const int s = n - p - q - r;
@@ -134,8 +159,25 @@ Rcpp::List nni_max_step(const int n, const bool normalize) {
       vi;
   };
   
+  // Upper bound on Value(p, q, r) for every q0 <= q <= q1, q <= r <= s.
+  auto QBound = [&](const int p, const int q0, const int q1) {
+    const int sMin = (n - p - q1 + 1) / 2;
+    // r >= q0 and s >= sMin; g(q, s) is smallest at q = q1, s = sMin
+    const double dq = G(p, q0);
+    const double dr = std::max(G(p, q0), G(q1, sMin));
+    const double ds = G(p, sMin);
+    const double viMax = 2 - two_smallest(dq, dr, ds) / n;
+    if (!normalize) return viMax;
+    if (viMax <= 0) return 0.0;
+    // Split sizes lie in [p + q0, n - 2 q0]; binary entropy is concave
+    const double keptMin = 2 * std::min(h[p + q0], h[n - q0 - q0]);
+    const double denom = 2 * (cost[p] + costFloor[q0] + pairFloor[n - p - q1]) +
+      keptMin;
+    return denom > 0 ? viMax / denom : R_PosInf;
+  };
+  
   // Upper bound on Value(p, q, r) for r0 <= r <= r1 <= (n - p - q) / 2.
-  auto Bound = [&](const int p, const int q, const int r0, const int r1) {
+  auto RBound = [&](const int p, const int q, const int r0, const int r1) {
     const int m = n - p - q;
     const int s0 = m - r0;
     const int s1 = m - r1;
@@ -147,11 +189,15 @@ Rcpp::List nni_max_step(const int n, const bool normalize) {
                                  std::min(h[p + s1], h[p + s0]));
     // The two kept entropies include at most one of h[p + q]
     const double keptMin = hMin + std::min(h[p + q], hMin);
-    const double viMax = 2 * joint - keptMin;
+    const double dq = std::max(G(p, q), G(r1, s1));
+    const double dr = std::max(G(p, r0), G(q, s1));
+    const double ds = std::max(G(p, s1), G(q, r0));
+    const double viMax = std::min(2 * joint - keptMin,
+                                  2 - two_smallest(dq, dr, ds) / n);
     if (!normalize) return viMax;
     if (viMax <= 0) return 0.0;
     // cost[r] + cost[s] is bounded by its range minima, and by the cheapest
-    // split of m leaves into two subtrees, which is cost[m] - h[m]
+    // split of m leaves into two subtrees
     const double rsMin = std::max(costFloor[r0] + costFloor[s1],
                                   cost[m] - h[m]);
     const double denom = 2 * (cost[p] + cost[q] + rsMin) + keptMin;
@@ -169,25 +215,43 @@ Rcpp::List nni_max_step(const int n, const bool normalize) {
   
   double best = -R_PosInf;
   int bestParts[4] = {0, 0, 0, 0};
+  auto Threshold = [&]() { return std::max(best - margin, floorValue); };
   
-  // Visit r-intervals depth first, lower half first, so that candidates are
-  // considered in increasing r.
+  // Intervals are visited depth first, lower half first, so that candidates
+  // are considered in lexicographic order.
   constexpr int leafSize = 8;
-  int stack[64][2];
+  int qStack[64][2];
+  int rStack[64][2];
   
   // Enumerate every partition of n into four parts p <= q <= r <= s.
   for (int p = 1; p <= n / 4; ++p) {
-    for (int q = p; q <= (n - p) / 3; ++q) {
-      int depth = 0;
-      stack[0][0] = q;
-      stack[0][1] = (n - p - q) / 2;
-      while (depth >= 0) {
-        const int r0 = stack[depth][0];
-        const int r1 = stack[depth][1];
-        --depth;
-        if (Bound(p, q, r0, r1) < std::max(best - margin, floorValue)) {
-          continue;
-        }
+    int qDepth = 0;
+    qStack[0][0] = p;
+    qStack[0][1] = (n - p) / 3;
+    while (qDepth >= 0) {
+      const int q0 = qStack[qDepth][0];
+      const int q1 = qStack[qDepth][1];
+      --qDepth;
+      if (QBound(p, q0, q1) < Threshold()) continue;
+      if (q0 != q1) {
+        const int mid = q0 + (q1 - q0) / 2;
+        ++qDepth;
+        qStack[qDepth][0] = mid + 1;
+        qStack[qDepth][1] = q1;
+        ++qDepth;
+        qStack[qDepth][0] = q0;
+        qStack[qDepth][1] = mid;
+        continue;
+      }
+      const int q = q0;
+      int rDepth = 0;
+      rStack[0][0] = q;
+      rStack[0][1] = (n - p - q) / 2;
+      while (rDepth >= 0) {
+        const int r0 = rStack[rDepth][0];
+        const int r1 = rStack[rDepth][1];
+        --rDepth;
+        if (RBound(p, q, r0, r1) < Threshold()) continue;
         if (r1 - r0 < leafSize) {
           for (int r = r0; r <= r1; ++r) {
             const double value = Value(p, q, r);
@@ -202,12 +266,12 @@ Rcpp::List nni_max_step(const int n, const bool normalize) {
           continue;
         }
         const int mid = r0 + (r1 - r0) / 2;
-        ++depth;
-        stack[depth][0] = mid + 1;
-        stack[depth][1] = r1;
-        ++depth;
-        stack[depth][0] = r0;
-        stack[depth][1] = mid;
+        ++rDepth;
+        rStack[rDepth][0] = mid + 1;
+        rStack[rDepth][1] = r1;
+        ++rDepth;
+        rStack[rDepth][0] = r0;
+        rStack[rDepth][1] = mid;
       }
     }
   }
