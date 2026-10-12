@@ -53,11 +53,11 @@ Systematic Biology 71: 1255–1270. doi: 10.1093/sysbio/syab100
     }
 
 Smith, M.R. (2020b). TreeDist: Distances between Phylogenetic Trees. R
-package version 2.15.0.9000. Comprehensive R Archive Network, Vienna.
+package version 2.15.0.9004. Comprehensive R Archive Network, Vienna.
 doi: 10.32614/CRAN.package.TreeDist
 
     @Manual{TreeDist,
-      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.15.0.9000},
+      title = {TreeDist: Distances between Phylogenetic Trees. R package version 2.15.0.9004},
       author = {Martin R. Smith},
       doi = {10.32614/CRAN.package.TreeDist},
       journal = {Comprehensive R Archive Network},

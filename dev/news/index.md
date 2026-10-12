@@ -1,6 +1,6 @@
 # Changelog
 
-## TreeDist 2.15.0.9000 (development)
+## TreeDist 2.15.0.9004 (development)
 
 ### Performance
 
@@ -15,6 +15,9 @@
   [`PathVector()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md),
   and thus
   [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md).
+
+- Improve performance of
+  [`NNIMaxStep()`](https://ms609.github.io/TreeDist/dev/reference/NNIMaxStep.md).
 
 ## TreeDist 2.15.0 (2026-09-11)
 
