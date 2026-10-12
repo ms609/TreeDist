@@ -196,13 +196,28 @@ public:
   }
 };
 
+// Smaller daughter of the complete binary tree with s >= 2 leaves
+inline int complete_split(const int s) {
+  int p = 1; // largest power of two below s
+  while (p * 2 < s) p *= 2;
+  return std::max(p / 2, s - p);
+}
+
 // Minimum clustering-entropy contribution of a rooted subtree of each size;
 // see .MinSubtreeEntropy(). Vectors are 1-indexed (element 0 unused).
 //
 // cost[s] = h[s] + min(cost[k] + cost[s - k]) over 1 <= k <= s / 2.  The
-// minimum is found by branch and bound over blocks of k, using lower bounds
-// from `bounds`; the first k attaining the minimum is recorded, as in an
-// exhaustive scan.  Returns whether `bounds` was filled; small n need none.
+// first k attaining the minimum is recorded, as in an exhaustive scan.
+// Two results proven in dev/min_subtree_entropy_proof.md avoid most of the
+// scan:
+//  - For s <= ceil(n / 2), the complete binary tree is the unique optimum, so
+//    k = complete_split(s).
+//  - For s >= 2n / 3, any k whose complete tree has a larger daughter of more
+//    than m = n - s leaves is beaten by its own smaller daughter, leaving
+//    k <= m + (largest power of two <= m).
+// Remaining candidates are found by branch and bound over blocks of k, using
+// lower bounds from `bounds`.  Returns whether `bounds` was filled; small n
+// need none.
 static bool min_subtree_entropy_impl(const int n, const std::vector<double> &h,
                                      std::vector<double> &cost,
                                      std::vector<int> &split,
@@ -231,7 +246,22 @@ static bool min_subtree_entropy_impl(const int n, const std::vector<double> &h,
     if (track) bounds.Complete(2, cost, false);
   }
   for (int s = 3; s <= n; ++s) {
-    const int half = s / 2;
+    if ((2 << (jStart + 4)) <= s / 2) ++jStart;
+    if (2 * s <= n + 1) {
+      const int k = complete_split(s);
+      cost[s] = h[s] + (cost[k] + cost[s - k]);
+      rev[n - s] = cost[s];
+      split[s] = k;
+      if (track) bounds.Complete(s, cost, s == n);
+      continue;
+    }
+    int half = s / 2;
+    if (3 * s >= 2 * n) {
+      const int m = n - s;
+      int q = 1;
+      while (q * 2 <= m) q *= 2;
+      half = std::min(half, m ? m + q : 1);
+    }
     // The previous size's split is a good first guess
     int arg = std::min(std::max(split[s - 1], 1), half);
     double best = cost[arg] + cost[s - arg];
@@ -239,8 +269,7 @@ static bool min_subtree_entropy_impl(const int n, const std::vector<double> &h,
       ++arg;
       best = cost[arg] + cost[s - arg];
     }
-    if ((2 << (jStart + 4)) <= half) ++jStart;
-    
+
     // Exhaustive scan of [k0, k1]
     auto Scan = [&](const int k0, const int k1) {
       const double *a = &cost[k0];        // a[i] = cost[k0 + i]
