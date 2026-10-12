@@ -2,11 +2,6 @@
 #include <algorithm> /* for std::sort */
 #include <cmath> /* for std::log2 */
 #include <vector>
-#if defined(__SSE2__)
-#include <emmintrin.h>
-#elif defined(__aarch64__)
-#include <arm_neon.h>
-#endif
 
 // x log2(x) for x = 0..n
 inline std::vector<double> xlog2x_table(const int n) {
@@ -43,89 +38,6 @@ inline std::vector<double> binary_entropies(const int n,
     h[k] = partition_entropy(parts, xlog2x, log2n, n);
   }
   return h;
-}
-
-// min(a[i] + b[i]) over 0 <= i < len, len >= 1.  min is exact, so the
-// result does not depend on the order of evaluation.
-inline double pair_sum_min(const double *a, const double *b, const int len) {
-  int i = 0;
-  double ret = a[0] + b[0];
-#if defined(__SSE2__)
-  if (len >= 8) {
-    __m128d m0 = _mm_add_pd(_mm_loadu_pd(a), _mm_loadu_pd(b));
-    __m128d m1 = _mm_add_pd(_mm_loadu_pd(a + 2), _mm_loadu_pd(b + 2));
-    __m128d m2 = _mm_add_pd(_mm_loadu_pd(a + 4), _mm_loadu_pd(b + 4));
-    __m128d m3 = _mm_add_pd(_mm_loadu_pd(a + 6), _mm_loadu_pd(b + 6));
-    for (i = 8; i + 8 <= len; i += 8) {
-      m0 = _mm_min_pd(m0, _mm_add_pd(_mm_loadu_pd(a + i), _mm_loadu_pd(b + i)));
-      m1 = _mm_min_pd(m1, _mm_add_pd(_mm_loadu_pd(a + i + 2),
-                                     _mm_loadu_pd(b + i + 2)));
-      m2 = _mm_min_pd(m2, _mm_add_pd(_mm_loadu_pd(a + i + 4),
-                                     _mm_loadu_pd(b + i + 4)));
-      m3 = _mm_min_pd(m3, _mm_add_pd(_mm_loadu_pd(a + i + 6),
-                                     _mm_loadu_pd(b + i + 6)));
-    }
-    const __m128d m = _mm_min_pd(_mm_min_pd(m0, m1), _mm_min_pd(m2, m3));
-    ret = std::min(_mm_cvtsd_f64(m), _mm_cvtsd_f64(_mm_unpackhi_pd(m, m)));
-  }
-#elif defined(__aarch64__)
-  if (len >= 8) {
-    float64x2_t m0 = vaddq_f64(vld1q_f64(a), vld1q_f64(b));
-    float64x2_t m1 = vaddq_f64(vld1q_f64(a + 2), vld1q_f64(b + 2));
-    float64x2_t m2 = vaddq_f64(vld1q_f64(a + 4), vld1q_f64(b + 4));
-    float64x2_t m3 = vaddq_f64(vld1q_f64(a + 6), vld1q_f64(b + 6));
-    for (i = 8; i + 8 <= len; i += 8) {
-      m0 = vminq_f64(m0, vaddq_f64(vld1q_f64(a + i), vld1q_f64(b + i)));
-      m1 = vminq_f64(m1, vaddq_f64(vld1q_f64(a + i + 2), vld1q_f64(b + i + 2)));
-      m2 = vminq_f64(m2, vaddq_f64(vld1q_f64(a + i + 4), vld1q_f64(b + i + 4)));
-      m3 = vminq_f64(m3, vaddq_f64(vld1q_f64(a + i + 6), vld1q_f64(b + i + 6)));
-    }
-    ret = vminvq_f64(vminq_f64(vminq_f64(m0, m1), vminq_f64(m2, m3)));
-  }
-#endif
-  // Independent accumulators break the dependency chain
-  double m0 = ret, m1 = ret, m2 = ret, m3 = ret;
-  for (; i + 4 <= len; i += 4) {
-    m0 = std::min(m0, a[i] + b[i]);
-    m1 = std::min(m1, a[i + 1] + b[i + 1]);
-    m2 = std::min(m2, a[i + 2] + b[i + 2]);
-    m3 = std::min(m3, a[i + 3] + b[i + 3]);
-  }
-  for (; i < len; ++i) {
-    m0 = std::min(m0, a[i] + b[i]);
-  }
-  return std::min(std::min(m0, m1), std::min(m2, m3));
-}
-
-// First i minimizing a[i] + b[i] over 0 <= i < len, len >= 1; sets `min`.
-// Minima of chunks locate the first minimum without a second full pass.
-inline int pair_sum_argmin(const double *a, const double *b, const int len,
-                           double &min) {
-  constexpr int chunk = 64;
-  if (len <= 16) {
-    int at = 0;
-    min = a[0] + b[0];
-    for (int i = 1; i < len; ++i) {
-      const double sum = a[i] + b[i];
-      if (sum < min) {
-        min = sum;
-        at = i;
-      }
-    }
-    return at;
-  }
-  min = R_PosInf;
-  int start = 0;
-  for (int c = 0; c < len; c += chunk) {
-    const double chunkMin = pair_sum_min(a + c, b + c, std::min(chunk, len - c));
-    if (chunkMin < min) {
-      min = chunkMin;
-      start = c;
-    }
-  }
-  int i = start;
-  while (a[i] + b[i] != min) ++i;
-  return i;
 }
 
 // Lower bounds on cost[y] that are linear within aligned blocks of 2^j sizes,
@@ -203,107 +115,107 @@ inline int complete_split(const int s) {
   return std::max(p / 2, s - p);
 }
 
+// Candidate splits k for a subtree of s > n / 2 leaves.  Optimal subtrees are
+// Huffman trees on the weights {z = n - s, 1 x s} (see
+// dev/min_subtree_entropy_proof.md); k is the smaller daughter of the subtree
+// beside the heavy leaf z.
+//
+// Huffman on the s unit weights alone merges, level by level, `count` items
+// of weight `reg` (a power of two) and at most one other item, of weight
+// `odd` in (reg / 2, 2 reg).  The heavy leaf joins the lighter item `a` of
+// the first merge (a, b) with b > z; a merge with b == z is a tie that z may
+// win, so contributes a candidate too.  If z is never lighter, it joins the
+// complete tree of s leaves.  Writes candidates, ascending, to `k`; returns
+// their number.
+inline int huffman_splits(const int n, const int s, int (&k)[8]) {
+  const int z = n - s;
+  int found = 0;
+  bool done = false;
+  auto Merge = [&](const int a, const int b) {
+    if (b < z) return;
+    const int x = std::min(a, s - a);
+    if (!found || k[found - 1] != x) k[found++] = x;
+    done = b > z;
+  };
+  int reg = 1, count = s, odd = 0;
+  int lastA = 0, lastB = 0;
+  while (count + (odd > 0) > 1) {
+    if (odd && odd < reg) {
+      Merge(odd, reg);
+      if (done) break;
+      lastA = odd;
+      lastB = reg;
+      odd += reg;
+      --count;
+    }
+    // Now odd == 0 or odd > reg
+    int pairs = count / 2;
+    if (pairs) {
+      Merge(reg, reg);
+      if (done) break;
+      lastA = lastB = reg;
+    }
+    if (count & 1) {
+      const int b = odd ? odd : 2 * reg;
+      Merge(reg, b);
+      if (done) break;
+      lastA = reg;
+      lastB = b;
+      if (!odd) --pairs;
+      odd = reg + b;
+    }
+    reg *= 2;
+    count = pairs;
+  }
+  if (!done) {
+    // z joins the complete tree of all s units, splitting as its root does
+    const int x = std::min(lastA, lastB);
+    if (!found || k[found - 1] != x) k[found++] = x;
+  }
+  std::sort(k, k + found);
+  return int(std::unique(k, k + found) - k);
+}
+
 // Minimum clustering-entropy contribution of a rooted subtree of each size;
 // see .MinSubtreeEntropy(). Vectors are 1-indexed (element 0 unused).
 //
-// cost[s] = h[s] + min(cost[k] + cost[s - k]) over 1 <= k <= s / 2.  The
-// first k attaining the minimum is recorded, as in an exhaustive scan.
-// Two results proven in dev/min_subtree_entropy_proof.md avoid most of the
-// scan:
-//  - For s <= ceil(n / 2), the complete binary tree is the unique optimum, so
-//    k = complete_split(s).
-//  - For s >= 2n / 3, any k whose complete tree has a larger daughter of more
-//    than m = n - s leaves is beaten by its own smaller daughter, leaving
-//    k <= m + (largest power of two <= m).
-// Remaining candidates are found by branch and bound over blocks of k, using
-// lower bounds from `bounds`.  Returns whether `bounds` was filled; small n
-// need none.
+// cost[s] = h[s] + min(cost[k] + cost[s - k]) over 1 <= k <= s / 2, recording
+// the first k attaining the minimum, as an exhaustive scan would.  Results
+// proven in dev/min_subtree_entropy_proof.md identify the optimal k directly:
+//  - for s <= ceil(n / 2), the complete binary tree is the unique optimum;
+//  - for larger s, optimal subtrees are Huffman trees with one heavy leaf,
+//    whose candidate splits are evaluated in increasing order.
+// Fills `bounds` if n is large enough for nni_max_step() to use them, and
+// returns whether it did.
 static bool min_subtree_entropy_impl(const int n, const std::vector<double> &h,
                                      std::vector<double> &cost,
                                      std::vector<int> &split,
                                      CostBounds &bounds) {
-  constexpr double margin = 1e-9;
-  // Visit blocks of 2^j sizes for j = jStart, jStart - 3, ..., starting with
-  // 16-32 blocks; blocks that survive at the last level >= jMin are scanned.
-  constexpr int jStep = 3;
-  constexpr int jLeaf = CostBounds::jMin - 1;
-  int jStart = -4; // floor(log2(s / 2)) - 4
-  // Below this, an exhaustive scan is faster
-  constexpr int minBlockHalf = 512;
-  const bool track = n / 2 >= minBlockHalf;
+  const bool track = n >= 1024;
   cost.assign(n + 1, 0.0);
   split.assign(n + 1, 0);
-  // rev[n - x] = cost[x], so that cost[k] + cost[s - k] reads both forwards
-  std::vector<double> rev(n + 1, 0.0);
   if (track) {
     bounds.Complete(0, cost, false);
     bounds.Complete(1, cost, false);
   }
-  if (n >= 2) {
-    cost[2] = h[2];
-    rev[n - 2] = cost[2];
-    split[2] = 1;
-    if (track) bounds.Complete(2, cost, false);
-  }
-  for (int s = 3; s <= n; ++s) {
-    if ((2 << (jStart + 4)) <= s / 2) ++jStart;
+  for (int s = 2; s <= n; ++s) {
+    int arg;
     if (2 * s <= n + 1) {
-      const int k = complete_split(s);
-      cost[s] = h[s] + (cost[k] + cost[s - k]);
-      rev[n - s] = cost[s];
-      split[s] = k;
-      if (track) bounds.Complete(s, cost, s == n);
-      continue;
-    }
-    int half = s / 2;
-    if (3 * s >= 2 * n) {
-      const int m = n - s;
-      int q = 1;
-      while (q * 2 <= m) q *= 2;
-      half = std::min(half, m ? m + q : 1);
-    }
-    // The previous size's split is a good first guess
-    int arg = std::min(std::max(split[s - 1], 1), half);
-    double best = cost[arg] + cost[s - arg];
-    if (arg < half && cost[arg + 1] + cost[s - arg - 1] < best) {
-      ++arg;
-      best = cost[arg] + cost[s - arg];
-    }
-
-    // Exhaustive scan of [k0, k1]
-    auto Scan = [&](const int k0, const int k1) {
-      const double *a = &cost[k0];        // a[i] = cost[k0 + i]
-      const double *b = &rev[n - s + k0]; // b[i] = cost[s - k0 - i]
-      double scanMin;
-      const int i = pair_sum_argmin(a, b, k1 - k0 + 1, scanMin);
-      if (scanMin < best || (scanMin == best && k0 + i < arg)) {
-        best = scanMin;
-        arg = k0 + i;
-      }
-    };
-    auto Visit = [&](auto &self, const int j, const int k0, const int k1) {
-      if (j <= jLeaf) {
-        Scan(k0, k1);
-        return;
-      }
-      // Bounds are valid for blocks that end before s
-      const int known = ((s >> j) << j) - 1;
-      for (int b0 = k0; b0 <= k1; b0 = (b0 | ((1 << j) - 1)) + 1) {
-        const int b1 = std::min(b0 | ((1 << j) - 1), k1);
-        if (s - b0 <= known && (b0 | ((1 << j) - 1)) <= known &&
-            bounds.PairMin(j, s, b0, b1) > best + margin) {
-          continue;
-        }
-        self(self, j - jStep, b0, b1);
-      }
-    };
-    if (half < minBlockHalf) {
-      Scan(1, half);
+      arg = complete_split(s);
     } else {
-      Visit(Visit, jStart, 1, half);
+      int k[8];
+      const int nK = huffman_splits(n, s, k);
+      arg = k[0];
+      double best = cost[arg] + cost[s - arg];
+      for (int i = 1; i < nK; ++i) {
+        const double sum = cost[k[i]] + cost[s - k[i]];
+        if (sum < best) {
+          best = sum;
+          arg = k[i];
+        }
+      }
     }
-    cost[s] = h[s] + best;
-    rev[n - s] = cost[s];
+    cost[s] = h[s] + (cost[arg] + cost[s - arg]);
     split[s] = arg;
     if (track) bounds.Complete(s, cost, s == n);
   }

@@ -92,104 +92,136 @@ bit for bit.  The implementation uses exactly these operations.
 Above `n ≈ 45 000` the guarantee is empirical only.  The gap bound is loose:
 the measured smallest gap is about `0.43 / n`, and the measured worst error
 is 3.4e-11 at `n = 45 000`.  Bit-identity was also checked directly
-(Section 3).
+(Section 4).
 
-## 2. Above `n/2`
+## 2. Every size: Huffman trees with one heavy leaf
 
-`f` is symmetric, `f(c) = f(n - c)`, and decreases beyond `n/2`.  Clades of
-more than `n/2` leaves form a chain (spine) from the root.  By Theorem 1,
-every other clade can be taken to be complete.
+Let `z = n - s` and `ĝ(w) = Hb(min(w, n/2) / n)`.  `ĝ` equals `f` on
+`[0, n/2]` and stays at 1 above `n/2`.  It is non-decreasing and concave on
+the integers.  The only point to check is the step past `n/2` at odd `n`:
+there `Hb` rises over a half step nearest its peak, which is no more than
+over the full step before it.
 
-**Lemma 2 (pruning).**  Let `n/2 < s`, `k <= s/2`, and `a = complete_split(k)`
-(the smaller daughter of `C_k`, so `k - a` is the larger).  Suppose
-`n - s + a <= n/2` (true for all `k` once `s >= 2n/3`).  If
-`k - a > n - s`, then `k` is not optimal for `s`; `a` does strictly better.
+**Theorem 2.**  For `1 <= s <= n` (with `z = 0` when `s = n`),
 
-*Proof.*  `cost[k] = f(k) + cost[a] + cost[k - a]` (Theorem 1, `k <= n/2`).
-Re-hang the daughter `k - a` beside `s - k`.  The tree with root split
-`a | s - a`, whose `s - a` side splits `k - a | s - k`, scores
-`f(s - a) - f(k)` relative to the tree using `k`.  Here
-`f(s - a) = f(n - s + a)`, and `n - s + a < k <= n/2`, where `f` is strictly
-increasing.  So `cost[a] + cost[s - a]` is less than `cost[k] + cost[s - k]`,
-by at least one step of `f` below `n/2` (about `2.9 / n²`).  ∎
+    cost[s] = Huf(s) - 2 + ĝ(z),
 
-The hypothesis `n - s + a <= n/2` is in fact implied, because
-`n - s + a < k <= n/2`.  For `s < 2n/3`, however, `m > s/2`, so the cap
-below has no effect there.
+where `Huf(s)` is the least value of `sum over internal v of ĝ(w_v)` over
+rooted binary trees `R` with leaf weights `{z, 1, ..., 1}` (`s` ones).  Here
+`w_v` is the total leaf weight below `v`.  So, by Glassey & Karp (Section 6),
+`Huf(s)` is attained by Huffman's algorithm.
 
-*Floating point.*  Both candidates reuse the same computed `cost[a]`,
-`cost[k - a]` and `cost[s - k]`.  Rounding is monotone, and `cost[s - a]`
-is at most the rounded `h[s - a] + (cost[k - a] + cost[s - k])`.  The
-comparison therefore reduces to `h[n - s + a] < h[k]`, a true gap of at
-least `2.9 / n²`, against about four roundings of size `<= u·n`.  That is
-safe up to `n ≈ 1.9 · 10^5`.  Because `a < k`, even a tie resolves to the
-smaller index, so the first argmin is never a pruned `k`.
+*Proof.*
 
-`k - complete_split(k)` is non-decreasing in `k`, so the surviving `k` form
-an initial segment.  With `m = n - s` and `Q` the largest power of two
-`<= m`, the segment is `k <= m + Q` (or `k = 1` if `m = 0`).  Near the root
-only a handful of candidates remain.
+- **Unrooting.** Join a leaf `H` of weight `z` by an edge to the root of a
+  tree `T` counted by `cost[s]`.  This gives an unrooted binary tree `U`,
+  and every `U` with leaf `H` arises from exactly one `T`.  Write `g~(e)` for
+  `Hb(w / n)` at an edge splitting the weights `w | n - w`; `g~` is
+  symmetric.  Then `cost(T) = sum over e in U of g~(e) - s ĝ(1)`, because
+  the root of `T` corresponds to `H`'s edge, with split `z | s`.
+- **Rooting.** Root `U` by subdividing an edge `e0`, giving `R`.  Each
+  non-root node `u` has `ĝ(w_u) >= g~(edge above u)`, since `ĝ >= g~`.  The
+  two root children together score `ĝ(w1) + ĝ(w2) = g~(e0) + 1`, because the
+  heavier has `w >= n/2`.  So
+  `sum over non-root u of ĝ(w_u) >= sum over e of g~(e) + 1`.
+- **Equality.** Pick `e0` incident to a centroid, a vertex whose three
+  branches each weigh `<= n/2`.  Then every non-root node except the
+  centroid side's root child weighs `<= n/2`, so the bound holds with
+  equality.  Every rooted `R` arises this way from some `U`.
+- **Counting.** The sum over non-root nodes equals
+  `sum over internal v of ĝ(w_v) - ĝ(n) + s ĝ(1) + ĝ(z)`, and `ĝ(n) = 1`.
+  Minimizing over `U` gives `Huf(s) = cost[s] + 2 - ĝ(z)`.  ∎
 
-## 3. Implementation and verification
+All Huffman tie-breaks give the same multiset of merged weights: the two
+smallest values at each step are fixed, whichever equal items are taken.
+So every Huffman tree is optimal.
 
-`min_subtree_entropy_impl()` uses Corollary 1 for `s <= ceil(n/2)`.  For
-`s >= 2n/3` it caps `k` at `m + Q` (Lemma 2).  Otherwise it keeps the
-existing branch-and-bound scan.  Against the previous build, `cost` and
-`split` are identical (`!=` on doubles) for every `n <= 3000`, every 97th
-`n` up to 20 000, and `n = 50 000`.  An independent review compared the new
-build against a plain exhaustive DP and found it identical for:
-- every `n <= 6000`;
-- every 37th `n` up to 20 000;
-- spot values up to `n = 131 073`.
+Theorem 1 is the special case `z >= s`.  Then `H` is merged last, and the
+units form a Huffman tree on equal weights, which is the complete tree.
 
-The same review re-derived each step of Theorem 1 and Lemma 2, and checked
-them numerically.  The table build is 1.6–1.9× faster
-(n = 300: 25 → 16 µs; 1000: 121 → 69 µs; 5000: 2.6 → 1.4 ms).
+**Corollary 2 (splits).**  Map an optimal `R` back to `T`.  If `H`'s first
+merge is with an item of weight `X < s`, the root of `T` splits
+`X | s - X`.  If `H` is merged last, with all `s` units, the root of `T`
+splits as the last unit merge did.  So every Huffman tie-break gives an
+optimal `k`.
 
-The table is still O(n²), because `n/2 < s < 2n/3` and the lower part of
-`s >= 2n/3` are scanned.
+*Conjecture (tie-completeness).*  The converse also holds: every optimal `k`
+arises from some Huffman tie-break.  It is checked exactly against the DP
+(optimal `k` taken within 1e-11) for every `n <= 800`, every `s`.  It
+matters only when distinct `k` tie in exact arithmetic.  If it failed, the
+table could differ from an exhaustive scan by rounding of a tied value, and
+`cost` would still be exact to rounding.
 
-## 4. Open: an O(n) build
+## 3. Huffman on `{z, 1, ..., 1}` in `O(log s)`
 
-Observed in the data, but not proven:
+Unit-only Huffman runs level by level.  At each level it holds `count`
+items of weight `reg = 2^j` and at most one other item of weight
+`odd in (reg/2, 2 reg)`.  Merges come in this order:
 
-- `C_s` stays optimal up to a threshold between `0.715 n` and `0.795 n`,
-  which varies irregularly with `n` (n <= 1200, 2000, 3001, 5000).
-- Above it, the optimal tree is a spine.  The pendants, from the root down,
-  are one subtree of arbitrary size and then powers of two, increasing toward
-  a centroid node.  One daughter of that centroid node has `P/2` leaves.
-  Example, n = 2000, s = 1976: pendants 24, 32, 128, 256, 512, then a
-  perfect 1024.
-- The larger daughter `s - split[s]` is non-decreasing in `s`.
-- Distinct splits can tie exactly (n = 19, s = 15: `k = 3` and `k = 4`).
+1. `(odd, reg)` if `odd < reg`;
+2. the `(reg, reg)` pairs;
+3. if one `reg` is left, `(reg, odd)`, or `(reg, 2 reg)` if there is no
+   `odd`.
 
-Two proven necessary conditions also hold on the spine.  Pendants increase
-away from the root, because swapping two neighbours changes one spine clade
-in `f`'s increasing range.  Each pendant exceeds the spine weight two steps
-nearer the root, because otherwise merging the two pendants costs no more.
-So the spine has `O(log n)` pendants.  The open difficulty is that, unlike in
-Section 1, no single tree is optimal for every `min(c, n - c, t)` at once.
-So the shape above `n/2` depends on the particular values of `Hb`, and a
-closed form will need a function-specific argument.
+The second-smallest weight `b` never decreases.  `H` first merges at the
+first unit merge `(a, b)` with `b > z`, and takes `a` as its partner.  A
+merge with `b = z` is a tie that `H` may win, so its `a` is also a
+candidate.  If no merge has `b >= z`, `H` joins last.  That gives at most
+3 candidates in every tested `n`, found in
+`O(log s)` steps.  `huffman_splits()` implements this.
 
-The complete-tree cost is not convex, so Monge/SMAWK speed-ups don't apply
-either.
+This also explains the shapes seen earlier:
 
-## 5. Prior art
+- the spine of power-of-two pendants is `H` absorbing `reg`-sized items;
+- the complete tree persists while `H` joins last;
+- the near-root runs of constant `k`, or constant `s - k`, come from
+  constant partner weights.
 
-Theorem 1 is known.
+## 4. Implementation and verification
+
+`min_subtree_entropy_impl()` uses `complete_split(s)` for `s <= ceil(n/2)`
+(Corollary 1).  For larger `s` it evaluates the Huffman candidates in
+increasing `k` and keeps the first floating-point minimum, as the scan
+would.  The table build is `O(n log n)`.  The branch-and-bound scan, its SIMD
+helpers and the earlier pruning lemma are no longer needed.
+
+`cost` and `split` are identical (`!=` on doubles) to a plain exhaustive DP
+for:
+- every `n <= 3000`;
+- every 173rd `n` up to 30 000;
+- `n = 100 003`.
+
+They are identical to the previous build for every `n <= 6000` and at
+`n = 200 000`.  The block bounds passed on to `nni_max_step()` are
+unchanged.
+
+Table build times, C++ only:
+
+| n | before | after |
+|---|---|---|
+| 300 | 17.5 µs | 5.2 µs |
+| 1000 | 96 µs | 27 µs |
+| 5000 | 1.14 ms | 0.35 ms |
+| 20 000 | 6.9 ms | 1.6 ms |
+
+## 5. History
+
+An earlier version of this note (reviewed) proved only Theorem 1 and a
+pruning lemma for `s >= 2n/3`.  Theorem 2 subsumes both.
+
+## 6. Prior art
 
 - Glassey & Karp (1976, *SIAM J. Appl. Math.* 31:368–378, Thm 1 and §4)
   show that Huffman trees minimize the sum of any non-decreasing concave
-  function of internal-node weights.  With equal weights, the Huffman tree is
-  the complete tree.
+  function of internal-node weights.  With equal weights, the Huffman tree
+  is the complete tree.  Theorem 2 rests on this result.
 - Cleary, Fischer & St. John (2025, *Bull. Math. Biol.*,
   doi:10.1007/s11538-025-01522-1, Thm 4.1 and Lemma 4.17) prove the
-  strictly increasing, strictly concave case, with uniqueness, for the
-  complete ("GFB") tree.
+  strictly increasing, strictly concave case of Theorem 1, with uniqueness.
 
-The proof above, via `min(c, t)`, is an independent route to the same
-result.  I found no treatment of the non-monotone, symmetric case
-`f(c) = Hb(c/n)`, so Lemma 2 and the open problem in Section 4 appear to be
-new.  That search was limited, and Hu, Kleitman & Tamaki (1979), Parker
-(1980) and Golumbic (1976) were not read directly.
+The proof of Theorem 1 above, via `min(c, t)`, is an independent route.
+Theorem 2 appears to be new: it reduces a symmetric, non-monotone split cost
+to a monotone one by unrooting at the heavy leaf and capping at `n/2`.  The
+same argument applies to any concave symmetric `f`.  The literature search
+was limited.  Hu, Kleitman & Tamaki (1979), Parker (1980) and Golumbic
+(1976) have not been read directly.
