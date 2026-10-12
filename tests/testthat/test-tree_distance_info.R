@@ -200,14 +200,22 @@ test_that("NNIMaxStep() agrees with SplitEntropy()", {
 
 test_that(".MinSubtreeEntropy() matches R reference", {
   for (n in c(0:6, 17, 64)) {
-    expect_identical(.MinSubtreeEntropy(n), .RefMinSubtreeEntropy(as.integer(n)))
+    ours <- .MinSubtreeEntropy(n)
+    ref <- .RefMinSubtreeEntropy(as.integer(n))
+    expect_equal(ours[["cost"]], ref[["cost"]], tolerance = 1e-12)
+    expect_identical(ours[["split"]], ref[["split"]])
   }
 })
 
 test_that("NNIMaxStep() matches R reference", {
   for (n in c(4:21, 40, 63)) {
     for (norm in c(FALSE, TRUE)) {
-      expect_identical(.NNIMaxStep1(n, norm), .RefNNIMaxStep1(as.integer(n), norm))
+      # FMA contraction (e.g. on ARM64) can perturb the last bits of `value`
+      ours <- .NNIMaxStep1(n, norm)
+      ref <- .RefNNIMaxStep1(as.integer(n), norm)
+      expect_equal(ours[["value"]], ref[["value"]], tolerance = 1e-12)
+      expect_identical(ours[["subtrees"]], ref[["subtrees"]])
+      expect_identical(ours[["splits"]], ref[["splits"]])
     }
   }
 })
