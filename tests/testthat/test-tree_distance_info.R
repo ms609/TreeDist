@@ -128,6 +128,12 @@ test_that("NNIMaxStep() accepts trees and leaf counts alike", {
                c(2, as.numeric(NNIMaxStep(6))))
 })
 
+test_that("NNIMaxStep() retains names", {
+  expect_equal(names(NNIMaxStep(c(a = 7))), "a")
+  expect_equal(names(NNIMaxStep(c(a = 7, b = 9))), c("a", "b"))
+  expect_null(names(NNIMaxStep(7)))
+})
+
 test_that("NNIMaxStep() is NA where no NNI move exists", {
   expect_equal(as.numeric(NNIMaxStep(1:4)), c(NA, NA, NA, 2))
   expect_null(attr(NNIMaxStep(3), "subtrees"))
@@ -144,4 +150,134 @@ test_that("NNIMaxStep() agrees with SplitEntropy()", {
     expect_equal(unname(SplitEntropy(s1, s2)[["Hd"]]),
                  .VI(a, b, cc, d, n), tolerance = 1e-9)
   }
+})
+
+# Reference R implementations, retained from before the C++ port (#204).
+.RefHb <- function(k, n) vapply(k, function(k) Ntropy(k, n - k), double(1))
+.RefMinSubtreeEntropy <- function(n) {
+  cost <- numeric(n)
+  split <- integer(n)
+  if (n >= 2L) {
+    cost[[2]] <- .RefHb(2L, n)
+    split[[2]] <- 1L
+  }
+  for (s in seq_len(n)[-(1:2)]) {
+    i <- seq_len(s %/% 2L)
+    daughters <- cost[i] + cost[s - i]
+    best <- which.min(daughters)
+    cost[s] <- .RefHb(s, n) + daughters[best]
+    split[s] <- i[best]
+  }
+  list(cost = cost, split = split)
+}
+.RefNNIMaxStep1 <- function(n, normalize) {
+  cost <- if (normalize) .RefMinSubtreeEntropy(n)[["cost"]] else NULL
+  best <- -Inf
+  for (p in seq_len(n %/% 4L)) {
+    for (q in p:((n - p) %/% 3L)) {
+      r <- q:((n - p - q) %/% 2L)
+      s <- n - p - q - r
+      h1 <- .RefHb(p + q, n)
+      h2 <- .RefHb(p + r, n)
+      h3 <- .RefHb(p + s, n)
+      keptEntropy <- h1 + h2 + h3 - pmax(h1, h2, h3)
+      joint <- vapply(seq_along(r), function(i) Ntropy(p, q, r[[i]], s[[i]]),
+                      double(1))
+      vi <- 2 * joint - keptEntropy
+      value <- if (normalize) {
+        vi / (2 * (cost[[p]] + cost[[q]] + cost[r] + cost[s]) + keptEntropy)
+      } else {
+        vi
+      }
+      winner <- which.max(value)
+      if (value[[winner]] > best) {
+        best <- value[[winner]]
+        rw <- r[[winner]]
+        sw <- s[[winner]]
+        bestParts <- c(p, q, rw, sw)
+        sizes <- c(p + q, p + rw, p + sw)
+        entropies <- c(h1, h2[[winner]], h3[[winner]])
+        bestSplits <- sort(sizes[-which.max(entropies)])
+      }
+    }
+  }
+  list(value = best, subtrees = bestParts, splits = bestSplits)
+}
+
+# Exact ties can be broken differently where the compiler contracts to FMA
+# (e.g. ARM64), so compare values to a tolerance and check that the reported
+# configuration attains the optimum, rather than demanding identical choices.
+test_that(".MinSubtreeEntropy() matches R reference", {
+  for (n in c(0:6, 17, 64)) {
+    ours <- .MinSubtreeEntropy(n)
+    ref <- .RefMinSubtreeEntropy(as.integer(n))
+    cost <- ours[["cost"]]
+    expect_equal(cost, ref[["cost"]], tolerance = 1e-12)
+    split <- ours[["split"]]
+    expect_identical(split[seq_len(min(n, 2))], ref[["split"]][seq_len(min(n, 2))])
+    for (sz in seq_len(n)[-(1:2)]) {
+      i <- seq_len(sz %/% 2L)
+      expect_true(split[[sz]] %in% i)
+      expect_equal(cost[[split[[sz]]]] + cost[[sz - split[[sz]]]],
+                   min(cost[i] + cost[sz - i]), tolerance = 1e-12)
+    }
+  }
+})
+
+test_that("NNIMaxStep() matches R reference", {
+  for (n in c(4:21, 40, 63, 80)) { # 80 subdivides r-ranges
+    cost <- .MinSubtreeEntropy(n)[["cost"]]
+    for (norm in c(FALSE, TRUE)) {
+      ours <- .NNIMaxStep1(n, norm)
+      ref <- .RefNNIMaxStep1(as.integer(n), norm)
+      expect_equal(ours[["value"]], ref[["value"]], tolerance = 1e-12)
+      
+      parts <- ours[["subtrees"]]
+      expect_type(parts, "integer")
+      expect_equal(sum(parts), n)
+      expect_false(is.unsorted(parts))
+      sizes <- parts[[1]] + parts[-1]
+      h <- .Hb(sizes, n)
+      keptH <- sort(h)[1:2]
+      splits <- ours[["splits"]]
+      expect_type(splits, "integer")
+      expect_false(is.unsorted(splits))
+      expect_true(all(splits %in% sizes))
+      expect_equal(sort(.Hb(splits, n)), keptH, tolerance = 1e-12)
+      vi <- 2 * .Hjoint(parts, n) - sum(keptH)
+      expect_equal(if (norm) vi / (2 * sum(cost[parts]) + sum(keptH)) else vi,
+                   ours[["value"]], tolerance = 1e-12)
+    }
+  }
+})
+
+test_that("Block bounds give exact results at large n", {
+  n <- 1100L # Block bounds are used once s / 2 >= 512
+  ours <- .MinSubtreeEntropy(n)
+  ref <- .RefMinSubtreeEntropy(n)
+  cost <- ours[["cost"]]
+  expect_equal(cost, ref[["cost"]], tolerance = 1e-12)
+  split <- ours[["split"]]
+  optimal <- vapply(3:n, function(sz) {
+    i <- seq_len(sz %/% 2L)
+    abs(cost[[split[[sz]]]] + cost[[sz - split[[sz]]]] -
+          min(cost[i] + cost[sz - i])) < 1e-12
+  }, logical(1))
+  expect_true(all(optimal))
+  
+  res <- .NNIMaxStep1(n, TRUE)
+  # Value from exhaustive search
+  expect_equal(res[["value"]], 0.017407858108181639, tolerance = 1e-12)
+  parts <- res[["subtrees"]]
+  expect_equal(sum(parts), n)
+  keptH <- sort(.Hb(parts[[1]] + parts[-1], n))[1:2]
+  vi <- 2 * .Hjoint(parts, n) - sum(keptH)
+  expect_equal(vi / (2 * sum(cost[parts]) + sum(keptH)), res[["value"]],
+               tolerance = 1e-12)
+})
+
+test_that(".MinSubtreeEntropy() is exact beyond the log2 lookup table", {
+  n <- 2100L # log2_lookup_table() covers 1..2047
+  expect_equal(.MinSubtreeEntropy(n)[["cost"]],
+               .RefMinSubtreeEntropy(n)[["cost"]], tolerance = 1e-12)
 })

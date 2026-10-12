@@ -94,6 +94,14 @@ cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
+min_subtree_entropy <- function(n) {
+    .Call(`_TreeDist_min_subtree_entropy`, n)
+}
+
+nni_max_step <- function(n, normalize) {
+    .Call(`_TreeDist_nni_max_step`, n, normalize)
+}
+
 #' Pairwise mutual clustering information — batch computation
 #'
 #' Internal function. Computes all pairwise MCI scores for a set of trees,
