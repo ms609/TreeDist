@@ -225,7 +225,7 @@ test_that(".MinSubtreeEntropy() matches R reference", {
 })
 
 test_that("NNIMaxStep() matches R reference", {
-  for (n in c(4:21, 40, 63)) {
+  for (n in c(4:21, 40, 63, 80)) { # 80 subdivides r-ranges
     cost <- .MinSubtreeEntropy(n)[["cost"]]
     for (norm in c(FALSE, TRUE)) {
       ours <- .NNIMaxStep1(n, norm)
