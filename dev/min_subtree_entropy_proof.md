@@ -65,20 +65,34 @@ Summing gives exactly `Lambda_t(s)`.  ∎
 all `s, t <= 700`.)
 
 **Corollary 1 (uniqueness and gap).**  If `f` is strictly concave, then
-`F(T) - F(C_s) >= min_u d_u` unless `T` has the same multiset of clade
-sizes as `C_s`.  This holds because some `Phi_t` with `t <= s - 1` must
-differ by at least 1.  In the DP, the candidate `k` stands for the tree
+`F(T) - F(C_s) >= min_{2 <= u <= s-2} d_u` unless `T` has the same multiset
+of clade sizes as `C_s`.  The counts `#{v : c_v >= t}` determine the
+multiset.  `Phi_2 = 2(s - 1)` and `Phi_s - Phi_(s-1) = 1` hold for every
+tree.  So if the multisets differ, some `Phi_t` with `3 <= t <= s - 1`
+differs by at least 1.  The restriction matters: at odd `n` with
+`s = ceil(n/2)`, `d_(s-1) = 0`.  In the DP, the candidate `k` stands for the tree
 `(C_k, C_(s-k))`.  Its largest non-root clade is `s - k`, so its multiset
 equals that of `C_s` only if `k = k*`.
 
 **Application.**  `Hb(c/n)` is non-decreasing on `c <= ceil(n/2)`, and
 strictly concave with `|f''(c)| = 1 / (ln 2 · c (n - c)) >= 4 / (n² ln 2)`.
 Hence, for `s <= ceil(n/2)`, `k*` is the unique minimizer.  Every other `k`
-is worse by at least `4 / (n² ln 2)` (5.8e-8 at n = 10^4).  A crude bound on
-floating-point error in `cost[]` (under `n · 3e-14`) is below half that gap
-for `n` up to about 45 000.  So for `s <= ceil(n/2)`, `split[s] = k*` and
+is worse by at least `4 / (n² ln 2)` (5.8e-8 at n = 10^4).
+
+Floating-point error in `cost[]` is at most about `n · 7e-15`:
+- `|error in h| <= ~6u log2 n`, given a `log2` correct to 1 ulp, summed
+  over at most `n/2` nodes;
+- plus addition rounding `<= 2u s log2 s`.
+
+That is below half the gap for `n` up to about 45 000.  So, for
+`s <= ceil(n/2)`, `split[s] = k*` and
 `cost[s] = h[s] + (cost[k*] + cost[s - k*])` reproduce the exhaustive scan
-bit for bit.  Bit-identity was also checked directly (below).
+bit for bit.  The implementation uses exactly these operations.
+
+Above `n ≈ 45 000` the guarantee is empirical only.  The gap bound is loose:
+the measured smallest gap is about `0.43 / n`, and the measured worst error
+is 3.4e-11 at `n = 45 000`.  Bit-identity was also checked directly
+(Section 3).
 
 ## 2. Above `n/2`
 
@@ -99,6 +113,18 @@ Re-hang the daughter `k - a` beside `s - k`.  The tree with root split
 increasing.  So `cost[a] + cost[s - a]` is less than `cost[k] + cost[s - k]`,
 by at least one step of `f` below `n/2` (about `2.9 / n²`).  ∎
 
+The hypothesis `n - s + a <= n/2` is in fact implied, because
+`n - s + a < k <= n/2`.  For `s < 2n/3`, however, `m > s/2`, so the cap
+below has no effect there.
+
+*Floating point.*  Both candidates reuse the same computed `cost[a]`,
+`cost[k - a]` and `cost[s - k]`.  Rounding is monotone, and `cost[s - a]`
+is at most the rounded `h[s - a] + (cost[k - a] + cost[s - k])`.  The
+comparison therefore reduces to `h[n - s + a] < h[k]`, a true gap of at
+least `2.9 / n²`, against about four roundings of size `<= u·n`.  That is
+safe up to `n ≈ 1.9 · 10^5`.  Because `a < k`, even a tie resolves to the
+smaller index, so the first argmin is never a pruned `k`.
+
 `k - complete_split(k)` is non-decreasing in `k`, so the surviving `k` form
 an initial segment.  With `m = n - s` and `Q` the largest power of two
 `<= m`, the segment is `k <= m + Q` (or `k = 1` if `m = 0`).  Near the root
@@ -110,7 +136,14 @@ only a handful of candidates remain.
 `s >= 2n/3` it caps `k` at `m + Q` (Lemma 2).  Otherwise it keeps the
 existing branch-and-bound scan.  Against the previous build, `cost` and
 `split` are identical (`!=` on doubles) for every `n <= 3000`, every 97th
-`n` up to 20 000, and `n = 50 000`.  The table build is 1.6–1.9× faster
+`n` up to 20 000, and `n = 50 000`.  An independent review compared the new
+build against a plain exhaustive DP and found it identical for:
+- every `n <= 6000`;
+- every 37th `n` up to 20 000;
+- spot values up to `n = 131 073`.
+
+The same review re-derived each step of Theorem 1 and Lemma 2, and checked
+them numerically.  The table build is 1.6–1.9× faster
 (n = 300: 25 → 16 µs; 1000: 121 → 69 µs; 5000: 2.6 → 1.4 ms).
 
 The table is still O(n²), because `n/2 < s < 2n/3` and the lower part of
@@ -142,5 +175,21 @@ closed form will need a function-specific argument.
 The complete-tree cost is not convex, so Monge/SMAWK speed-ups don't apply
 either.
 
-Theorem 1 may already be known in the majorization literature on
-subtree-size sequences; I haven't checked.
+## 5. Prior art
+
+Theorem 1 is known.
+
+- Glassey & Karp (1976, *SIAM J. Appl. Math.* 31:368–378, Thm 1 and §4)
+  show that Huffman trees minimize the sum of any non-decreasing concave
+  function of internal-node weights.  With equal weights, the Huffman tree is
+  the complete tree.
+- Cleary, Fischer & St. John (2025, *Bull. Math. Biol.*,
+  doi:10.1007/s11538-025-01522-1, Thm 4.1 and Lemma 4.17) prove the
+  strictly increasing, strictly concave case, with uniqueness, for the
+  complete ("GFB") tree.
+
+The proof above, via `min(c, t)`, is an independent route to the same
+result.  I found no treatment of the non-monotone, symmetric case
+`f(c) = Hb(c/n)`, so Lemma 2 and the open problem in Section 4 appear to be
+new.  That search was limited, and Hu, Kleitman & Tamaki (1979), Parker
+(1980) and Golumbic (1976) were not read directly.
