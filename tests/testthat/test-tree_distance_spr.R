@@ -304,8 +304,15 @@ test_that("cpp_mutual_clustering_bounded() exits early", {
 
 test_that("Rogue SPR results unchanged by early exits", {
   library("TreeTools", quietly = TRUE)
-  set.seed(174)
-  trees <- lapply(1:6, function(i) RandomTree(18, root = TRUE))
+  # Fixed trees: RandomTree() output can vary between TreeTools versions
+  trees <- ape::read.tree(text = c(
+    "(t1,(((t2,t17),(((((t4,t12),t6),t16),t9),t13)),(((t3,((t7,(((t10,t14),t18),t15)),t8)),t5),t11)));",
+    "((((((((t1,t14),(t9,t13)),t15),(t5,t17)),(((t2,t3),t8),(t10,t11))),t4),(t6,(t16,t18))),(t7,t12));",
+    "(((((t1,((t2,(((t5,((t8,t12),t11)),(t14,t18)),t6)),(t13,t15))),(t9,t17)),t3),t4),((t7,t10),t16));",
+    "(((((((((t1,t8),(t13,t14)),t18),t10),(((((t2,t15),t4),(t6,t12)),t16),t11)),t7),t17),t9),(t3,t5));",
+    "((((((t1,((((t3,(t7,t18)),(((((t8,t16),t9),t10),t11),t15)),t6),t12)),t17),t14),t5),t13),(t2,t4));",
+    "((((((((((t1,t2),t16),((t3,((t6,t15),t18)),t8)),t9),(((t5,t10),t12),t7)),t14),t11),t4),t13),t17);"
+  ))
   Rogue <- function(...) {
     opt <- options(...)
     on.exit(options(opt))
@@ -315,7 +322,7 @@ test_that("Rogue SPR results unchanged by early exits", {
   expect_equal(Rogue(sprProxy = "C"), c(10, 10, 11, 10, 11))
   expect_equal(Rogue(sprProxy = "C", sprDepth = 2), c(10, 10, 10, 10, 11))
   expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
-  expect_equal(Rogue(sprProxy = "R"), c(11, 13, 11, 12, 13))
+  expect_equal(Rogue(sprProxy = "R"), c(11, 12, 11, 13, 13))
   
   # Abandons a divide-and-conquer candidate after its first half
   expect_equal(SPRDist(
