@@ -257,18 +257,41 @@ SPRDist.multiPhylo <- SPRDist.list
   spr_table_7(sp1, sp2)
 }
 
+# Equivalent to ClusteringInfoDist(tree1, tree2) for trees with identical
+# leaves; but if the distance exceeds `cutoff` by more than numerical noise,
+# may instead return a lower bound on the distance that exceeds `cutoff`.
+.BoundedCID <- function(tree1, tree2, cutoff = Inf) {
+  splits1 <- as.Splits(tree1)
+  nTip <- attr(splits1, "nTip")
+  info <- ClusteringEntropy(splits1) + ClusteringEntropy(as.Splits(tree2))
+  mci <- if (nTip < 4) {
+    0
+  } else {
+    tol <- max(1, info) * .Machine[["double.eps"]] ^ 0.5
+    cpp_mutual_clustering_bounded(
+      splits1, as.Splits(tree2, tipLabels = TipLabels(splits1)), nTip,
+      (info - cutoff) / 2 - tol
+    )
+  }
+  .FloorNumericalNoise(info - mci - mci, info)
+}
+
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
 #' @importFrom TreeTools FirstMatchingSplit
 .SPRRogue <- function(tree1, tree2, check = TRUE) {
   moves <- 0
   
+  # A score above `cutoff` cannot be selected, so ProxyDistance() may return
+  # any value above `cutoff` in place of the exact distance.
   ProxyDistance <- switch(
     pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-    ClusteringInfoDist,
-    PhylogeneticInfoDistance,
-    function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
-    RobinsonFoulds
+    .BoundedCID,
+    function(x, y, cutoff) PhylogeneticInfoDistance(x, y),
+    function(x, y, cutoff) {
+      Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y))
+    },
+    function(x, y, cutoff) RobinsonFoulds(x, y)
   )
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
@@ -324,7 +347,7 @@ SPRDist.multiPhylo <- SPRDist.list
     depth <- max(getOption("sprDepth", 1), 1)
     
     
-    .ScoreWithout <- function(idx) {
+    .ScoreWithout <- function(idx, cutoff = Inf) {
       keep <- blank
       keep[idx] <- FALSE
       
@@ -349,18 +372,23 @@ SPRDist.multiPhylo <- SPRDist.list
         sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
                             KeepTipPostorder(outcome[[2]], subtips2))
         
+        score1 <- ProxyDistance(sub1[[1]], sub1[[2]], cutoff)
+        if (score1 > cutoff) {
+          return(score1)
+        }
         # Return:
-        ProxyDistance(sub1[[1]], sub1[[2]]) +
-          ProxyDistance(sub2[[1]], sub2[[2]])
+        score1 + ProxyDistance(sub2[[1]], sub2[[2]], cutoff - score1)
         
       } else {
         # Return:
-        ProxyDistance(outcome[[1]], outcome[[2]])
+        ProxyDistance(outcome[[1]], outcome[[2]], cutoff)
       }
     }
+    best <- Inf
     for (i in seq_along(labels)) {
-      scores[[i]] <- .ScoreWithout(i)
+      scores[[i]] <- .ScoreWithout(i, best)
       if (!is.finite(scores[[i]])) break
+      best <- min(best, scores[[i]])
     }
     if (any(!is.finite(scores))) {
       depth <- 1
@@ -370,8 +398,9 @@ SPRDist.multiPhylo <- SPRDist.list
       nPairs <- dim(pairs)[[2]]
       pairScores <- double(nPairs)
       for (i in seq_len(nPairs)) {
-        pairScores[[i]] <- .ScoreWithout(pairs[, i])
+        pairScores[[i]] <- .ScoreWithout(pairs[, i], best)
         if (!is.finite(pairScores[[i]])) break
+        best <- min(best, pairScores[[i]])
       }
     }
     

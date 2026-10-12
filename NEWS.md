@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9004 (development)
+# TreeDist 2.15.0.9005 (development)
 
 ## Performance
 
@@ -9,6 +9,10 @@
 - Improve performance of `PathVector()`, and thus `PathDist()`.
 
 - Improve performance of `NNIMaxStep()`.
+
+- Improve performance of `SPRDist(method = "Rogue")`: candidate leaves are
+  scored with fewer redundant calculations, and abandoned once they cannot
+  beat the best candidate so far.
 
 # TreeDist 2.15.0 (2026-09-11)
 

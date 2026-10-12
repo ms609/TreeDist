@@ -403,8 +403,13 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
 
 }
 
+// With Bounded = true, gives up once the score is known to fall below
+// min_score.  It then returns an upper bound on the score, below min_score,
+// and an empty matching.  Scores at or above min_score are computed exactly as
+// with Bounded = false.
+template <bool Bounded>
 List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
-                       const int32 n_tips) {
+                       const int32 n_tips, const double min_score = 0) {
   const SplitList a(x);
   const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
@@ -422,6 +427,28 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
   const double lg2_n = lg2_lookup(n_tips);
+
+  // Bounded only: upper bound on the score.  A split's mutual clustering
+  // information with any other split cannot exceed its own entropy.
+  [[maybe_unused]] double upper_bound = 0;
+  if constexpr (Bounded) {
+    double entropy_a = 0;
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      entropy_a += TreeDist::ic_matching(a.in_split[ai],
+                                         n_tips - a.in_split[ai], n_tips);
+    }
+    double entropy_b = 0;
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      entropy_b += TreeDist::ic_matching(b.in_split[bi],
+                                         n_tips - b.in_split[bi], n_tips);
+    }
+    upper_bound = std::min(entropy_a, entropy_b) * n_tips_reciprocal;
+    if (upper_bound < min_score) {
+      return List::create(Named("score") = upper_bound,
+                          _["matching"] = IntegerVector(0));
+    }
+    upper_bound = entropy_a * n_tips_reciprocal;
+  }
 
   cost_matrix score(most_splits);
 
@@ -441,6 +468,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     const auto *a_row = a.state[ai];
     const double offset_a = lg2_n - lg2_lookup(na);
     const double offset_A = lg2_n - lg2_lookup(nA);
+    [[maybe_unused]] cost row_min = max_score;
 
     for (split_int bi = 0; bi < b.n_splits; ++bi) {
 
@@ -479,6 +507,22 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
+      }
+      if constexpr (Bounded) {
+        if (score(ai, bi) < row_min) row_min = score(ai, bi);
+      }
+    }
+
+    if constexpr (Bounded) {
+      if (!a_match[ai]) {
+        // Replace this split's entropy with its best available match.
+        upper_bound += static_cast<double>(max_score - row_min) *
+          over_max_score - TreeDist::ic_matching(na, nA, n_tips) *
+          n_tips_reciprocal;
+        if (upper_bound < min_score) {
+          return List::create(Named("score") = upper_bound,
+                              _["matching"] = IntegerVector(0));
+        }
       }
     }
 
@@ -708,7 +752,20 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
-  return mutual_clustering(x, y, n_tip);
+  return mutual_clustering<false>(x, y, n_tip);
+}
+
+// Mutual clustering information, or an upper bound on it if it is below
+// minScore.  Used to discard candidates early in SPRDist(method = "Rogue").
+// [[Rcpp::export]]
+double cpp_mutual_clustering_bounded(const RawMatrix &x, const RawMatrix &y,
+                                     const IntegerVector &nTip,
+                                     const double minScore) {
+  ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return Rcpp::as<double>(
+    mutual_clustering<true>(x, y, n_tip, minScore)["score"]);
 }
 
 // [[Rcpp::export]]

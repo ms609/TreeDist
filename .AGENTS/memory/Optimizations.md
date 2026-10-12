@@ -936,3 +936,18 @@ real trees give mean natural run lengths of 1.4 (1000 leaves) to 8.2 (pectinate
 Powersort's advantage over Timsort is an optimal merge tree over pre-existing
 runs at large n; neither condition holds here.  Note there was never a Timsort
 in TreeDist — every sort is `std::sort` / `std::stable_sort`.
+
+## SPR Rogue early exits (#174, 2026-10-12)
+
+- Rprof on 40-tip `SPRDist(method = "Rogue")`: `cpp_mutual_clustering` is
+  under 0.2% of runtime; R overhead in the proxy distance (`as.Splits()`,
+  `ClusteringEntropy()`, `CalculateTreeDistance()`) dominates.
+- Kept: `.BoundedCID()` (one lean CID call with a cutoff) and a bounded
+  `mutual_clustering<true>()` that exits on entropy and row-maximum bounds.
+  Most of the ~20% gain is the leaner R wrapper; skipping the second half of
+  a divide-and-conquer score adds ~3%.
+- Discounted: an early exit inside `lap()` (column-minimum and post-ARR dual
+  bounds).  No measurable gain at 50–1000 tips: candidates far from the cutoff
+  are caught by the row bound first, and the dual bound is too loose for near
+  ones.  Templating `lap()` to share the body also changed its codegen
+  (`findRowSubmin` no longer inlined), so it was not worth the risk.

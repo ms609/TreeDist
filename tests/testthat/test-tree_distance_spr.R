@@ -252,6 +252,74 @@ test_that("SPR calculated correctly", {
   expect_equal(.SPRRogue(lockedMid1, lockedMid2)[[1]], 5)
 })
 
+test_that(".BoundedCID() matches ClusteringInfoDist()", {
+  library("TreeTools", quietly = TRUE)
+  set.seed(174)
+  for (nTip in c(3, 4, 9, 25)) {
+    tree1 <- RandomTree(nTip, root = TRUE)
+    tree2 <- RandomTree(nTip, root = TRUE)
+    exact <- ClusteringInfoDist(tree1, tree2)
+    expect_equal(.BoundedCID(tree1, tree2), exact, tolerance = 0)
+    expect_equal(.BoundedCID(tree1, tree2, exact), exact, tolerance = 0)
+    # Within numerical noise of the cutoff: must be exact, to preserve ties
+    expect_equal(.BoundedCID(tree1, tree2, exact - 1e-12), exact, tolerance = 0)
+    if (exact > 0) {
+      bounded <- .BoundedCID(tree1, tree2, exact / 2)
+      expect_gt(bounded, exact / 2)
+      expect_lte(bounded, exact + sqrt(.Machine$double.eps))
+    }
+  }
+  
+  # Identical trees
+  tree <- BalancedTree(12)
+  expect_equal(.BoundedCID(tree, tree, 0), 0)
+})
+
+test_that("cpp_mutual_clustering_bounded() exits early", {
+  library("TreeTools", quietly = TRUE)
+  MCI <- function(x, y, minScore) {
+    cpp_mutual_clustering_bounded(x, as.Splits(y, x), NTip(x), minScore)
+  }
+  bal <- as.Splits(BalancedTree(16))
+  pec <- as.Splits(PectinateTree(16))
+  
+  # Unequal entropies: exits before scoring any pair of splits
+  exact <- MutualClusteringInfo(bal, pec)
+  needed <- (ClusteringEntropy(bal) + ClusteringEntropy(pec)) / 2
+  bound <- MCI(bal, pec, needed)
+  expect_lt(bound, needed)
+  expect_gt(bound, exact)
+  expect_equal(MCI(bal, pec, -Inf), exact)
+  expect_equal(MCI(bal, pec, exact), exact)
+  
+  # Equal entropies: exits once a row's best match falls short
+  pec2 <- as.Splits(PectinateTree(paste0("t", c(9:16, 1:8))), pec)
+  exact <- MutualClusteringInfo(pec, pec2)
+  needed <- ClusteringEntropy(pec) - 1e-9
+  bound <- MCI(pec, pec2, needed)
+  expect_lt(bound, needed)
+  expect_gt(bound, exact)
+  expect_equal(MCI(pec, pec2, exact), exact)
+})
+
+test_that("Rogue SPR results unchanged by early exits", {
+  library("TreeTools", quietly = TRUE)
+  set.seed(174)
+  trees <- lapply(1:6, function(i) RandomTree(18, root = TRUE))
+  Rogue <- function(...) {
+    opt <- options(...)
+    on.exit(options(opt))
+    SPRDist(trees[[1]], trees[-1], method = "Rogue")
+  }
+  # Values computed before early exits were introduced
+  expect_equal(Rogue(sprProxy = "C"), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "C", sprDepth = 2), c(10, 10, 10, 10, 11))
+  expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "R"), c(11, 13, 11, 12, 13))
+  skip_if_not_installed("Quartet")
+  expect_true(all(Rogue(sprProxy = "Q") %in% 1:15))
+})
+
 test_that("SPR.dist called safely", {
   skip("#TODO")
   library("TreeTools")

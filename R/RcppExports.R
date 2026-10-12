@@ -311,6 +311,10 @@ cpp_mutual_clustering <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_mutual_clustering`, x, y, nTip)
 }
 
+cpp_mutual_clustering_bounded <- function(x, y, nTip, minScore) {
+    .Call(`_TreeDist_cpp_mutual_clustering_bounded`, x, y, nTip, minScore)
+}
+
 cpp_shared_phylo <- function(x, y, nTip, force_slow = FALSE) {
     .Call(`_TreeDist_cpp_shared_phylo`, x, y, nTip, force_slow)
 }
