@@ -145,3 +145,69 @@ test_that("NNIMaxStep() agrees with SplitEntropy()", {
                  .VI(a, b, cc, d, n), tolerance = 1e-9)
   }
 })
+
+# Reference R implementations, retained from before the C++ port (#204).
+.RefHb <- function(k, n) vapply(k, function(k) Ntropy(k, n - k), double(1))
+.RefMinSubtreeEntropy <- function(n) {
+  cost <- numeric(n)
+  split <- integer(n)
+  if (n >= 2L) {
+    cost[[2]] <- .RefHb(2L, n)
+    split[[2]] <- 1L
+  }
+  for (s in seq_len(n)[-(1:2)]) {
+    i <- seq_len(s %/% 2L)
+    daughters <- cost[i] + cost[s - i]
+    best <- which.min(daughters)
+    cost[s] <- .RefHb(s, n) + daughters[best]
+    split[s] <- i[best]
+  }
+  list(cost = cost, split = split)
+}
+.RefNNIMaxStep1 <- function(n, normalize) {
+  cost <- if (normalize) .RefMinSubtreeEntropy(n)[["cost"]] else NULL
+  best <- -Inf
+  for (p in seq_len(n %/% 4L)) {
+    for (q in p:((n - p) %/% 3L)) {
+      r <- q:((n - p - q) %/% 2L)
+      s <- n - p - q - r
+      h1 <- .RefHb(p + q, n)
+      h2 <- .RefHb(p + r, n)
+      h3 <- .RefHb(p + s, n)
+      keptEntropy <- h1 + h2 + h3 - pmax(h1, h2, h3)
+      joint <- vapply(seq_along(r), function(i) Ntropy(p, q, r[[i]], s[[i]]),
+                      double(1))
+      vi <- 2 * joint - keptEntropy
+      value <- if (normalize) {
+        vi / (2 * (cost[[p]] + cost[[q]] + cost[r] + cost[s]) + keptEntropy)
+      } else {
+        vi
+      }
+      winner <- which.max(value)
+      if (value[[winner]] > best) {
+        best <- value[[winner]]
+        rw <- r[[winner]]
+        sw <- s[[winner]]
+        bestParts <- c(p, q, rw, sw)
+        sizes <- c(p + q, p + rw, p + sw)
+        entropies <- c(h1, h2[[winner]], h3[[winner]])
+        bestSplits <- sort(sizes[-which.max(entropies)])
+      }
+    }
+  }
+  list(value = best, subtrees = bestParts, splits = bestSplits)
+}
+
+test_that(".MinSubtreeEntropy() matches R reference", {
+  for (n in c(0:6, 17, 64)) {
+    expect_identical(.MinSubtreeEntropy(n), .RefMinSubtreeEntropy(as.integer(n)))
+  }
+})
+
+test_that("NNIMaxStep() matches R reference", {
+  for (n in c(4:21, 40, 63)) {
+    for (norm in c(FALSE, TRUE)) {
+      expect_identical(.NNIMaxStep1(n, norm), .RefNNIMaxStep1(as.integer(n), norm))
+    }
+  }
+})

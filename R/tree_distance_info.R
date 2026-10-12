@@ -524,78 +524,25 @@ NNIMaxStep.list <- function(tree, normalize = FALSE) {
   lapply(tree, NNIMaxStep, normalize = normalize)
 }
 
-# Binary split entropy of a k | (n - k) split, in bits (vectorized over k).
-.BinaryEntropyBits <- function(k, n) {
-  vapply(k, function(k) Ntropy(k, n - k), double(1))
-}
-
 # Minimum clustering-entropy contribution (bits) of a rooted subtree of each
 # size 1..n, splits measured against the whole tree's n leaves. A subtree of
 # size `s` contributes its attaching split H(s, n) plus, recursively, its two
 # daughters; the daughter split is chosen to minimize the total. `split[s]`
 # records the smaller daughter's size, so the subtree shape is recoverable.
 .MinSubtreeEntropy <- function(n) {
-  cost <- numeric(n)
-  split <- integer(n)
-  if (n >= 2L) {
-    cost[[2]] <- .BinaryEntropyBits(2L, n)
-    split[[2]] <- 1L
-  }
-  for (s in seq_len(n)[-(1:2)]) {
-    i <- seq_len(s %/% 2L)
-    daughters <- cost[i] + cost[s - i]
-    best <- which.min(daughters)
-    cost[s] <- .BinaryEntropyBits(s, n) + daughters[best]
-    split[s] <- i[best]
-  }
-  list(cost = cost, split = split)
+  min_subtree_entropy(as.integer(n))
 }
 
 # Largest NNI clustering information distance for a single leaf count.
+# Every partition of n into four parts p <= q <= r <= s is the multiset of
+# subtree sizes around some edge, and every such multiset is realizable, so
+# enumerating them is exhaustive over all (tree, NNI move) pairs.  The four
+# subtrees define three possible splits; an NNI move exchanges two of them, and
+# the largest distance keeps the two least balanced (smallest entropy).
 .NNIMaxStep1 <- function(n, normalize) {
   n <- as.integer(round(n))
   if (is.na(n) || n < 4L) {
     return(list(value = NA_real_, subtrees = NULL, splits = NULL))
   }
-  cost <- if (normalize) .MinSubtreeEntropy(n)[["cost"]] else NULL
-
-  best <- -Inf
-  bestParts <- NULL
-  bestSplits <- NULL
-  # Enumerate every partition of n into four parts p <= q <= r <= s: each is the
-  # multiset of subtree sizes around some edge, and every such multiset is
-  # realizable, so this is exhaustive over all (tree, NNI move) pairs.
-  for (p in seq_len(n %/% 4L)) {
-    for (q in p:((n - p) %/% 3L)) {
-      # q <= (n - p) %/% 3 guarantees rMax >= q, so r <- q:rMax is non-empty.
-      r <- q:((n - p - q) %/% 2L)
-      s <- n - p - q - r
-      # The four subtrees define three possible splits, with one side p + q,
-      # p + r, p + s. An NNI move exchanges two of them; the largest distance
-      # keeps the two least balanced (smallest entropy), i.e. drops the largest.
-      h1 <- .BinaryEntropyBits(p + q, n)
-      h2 <- .BinaryEntropyBits(p + r, n)
-      h3 <- .BinaryEntropyBits(p + s, n)
-      keptEntropy <- h1 + h2 + h3 - pmax(h1, h2, h3)
-      joint <- vapply(seq_along(r), function(i) Ntropy(p, q, r[[i]], s[[i]]),
-                      double(1))
-      vi <- 2 * joint - keptEntropy
-      value <- if (normalize) {
-        vi / (2 * (cost[[p]] + cost[[q]] + cost[r] + cost[s]) + keptEntropy)
-      } else {
-        vi
-      }
-      winner <- which.max(value)
-      if (value[[winner]] > best) {
-        best <- value[[winner]]
-        rw <- r[[winner]]
-        sw <- s[[winner]]
-        bestParts <- c(p, q, rw, sw)
-        sizes <- c(p + q, p + rw, p + sw)
-        entropies <- c(h1, h2[[winner]], h3[[winner]])
-        bestSplits <- sort(sizes[-which.max(entropies)])
-      }
-    }
-  }
-  list(value = best, subtrees = bestParts, splits = bestSplits)
+  nni_max_step(n, as.logical(normalize))
 }

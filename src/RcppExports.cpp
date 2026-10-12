@@ -258,6 +258,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// min_subtree_entropy
+Rcpp::List min_subtree_entropy(const int n);
+RcppExport SEXP _TreeDist_min_subtree_entropy(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(min_subtree_entropy(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nni_max_step
+Rcpp::List nni_max_step(const int n, const bool normalize);
+RcppExport SEXP _TreeDist_nni_max_step(SEXP nSEXP, SEXP normalizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const bool >::type normalize(normalizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(nni_max_step(n, normalize));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_mutual_clustering_all_pairs
 NumericVector cpp_mutual_clustering_all_pairs(const List& splits_list, const int n_tip, const int n_threads);
 RcppExport SEXP _TreeDist_cpp_mutual_clustering_all_pairs(SEXP splits_listSEXP, SEXP n_tipSEXP, SEXP n_threadsSEXP) {
@@ -763,6 +786,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
+    {"_TreeDist_min_subtree_entropy", (DL_FUNC) &_TreeDist_min_subtree_entropy, 1},
+    {"_TreeDist_nni_max_step", (DL_FUNC) &_TreeDist_nni_max_step, 2},
     {"_TreeDist_cpp_mutual_clustering_all_pairs", (DL_FUNC) &_TreeDist_cpp_mutual_clustering_all_pairs, 3},
     {"_TreeDist_cpp_rf_info_all_pairs", (DL_FUNC) &_TreeDist_cpp_rf_info_all_pairs, 3},
     {"_TreeDist_cpp_msd_all_pairs", (DL_FUNC) &_TreeDist_cpp_msd_all_pairs, 3},

@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9000 (development)
+# TreeDist 2.15.0.9001 (development)
 
 ## Performance
 
@@ -7,6 +7,8 @@
   and `JaccardRobinsonFoulds()`.
 
 - Improve performance of `PathVector()`, and thus `PathDist()`.
+
+- `NNIMaxStep()` ported to C++ (#204).
 
 # TreeDist 2.15.0 (2026-09-11)
 
