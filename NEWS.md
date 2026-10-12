@@ -8,11 +8,7 @@
 
 - Improve performance of `PathVector()`, and thus `PathDist()`.
 
-- `NNIMaxStep()` ported to C++, with branch-and-bound searches (#204).
-
-- `NNIMaxStep(normalize = TRUE)` builds its subtree-entropy table faster,
-  using a proof that complete subtrees are optimal below n / 2
-  (`dev/min_subtree_entropy_proof.md`).
+- Improve performance of `NNIMaxStep()`.
 
 # TreeDist 2.15.0 (2026-09-11)
 
