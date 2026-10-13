@@ -12,6 +12,7 @@
 #endif
 
 #include <TreeTools/SplitList.h>
+#include <TreeDist/popcount.h>
 #include <Rcpp/Lightest>
 #include <algorithm>
 #include <chrono>
@@ -25,7 +26,6 @@ using Rcpp::IntegerVector;
 using Rcpp::List;
 using Rcpp::LogicalVector;
 using Rcpp::RawMatrix;
-using TreeTools::count_bits;
 using TreeTools::SplitList;
 
 
@@ -182,7 +182,7 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
         // Compute light_side = min(popcount, n_tips - popcount)
         int pc = 0;
         for (int bin = 0; bin < n_bins; ++bin) {
-          pc += count_bits(canon_buf[bin]);
+          pc += TreeDist::count_bits(canon_buf[bin]);
         }
         pool.light_side.push_back(std::min(pc, n_tips - pc));
 
@@ -210,9 +210,8 @@ static PooledSplits pool_splits(const List& splits_list, int n_tips) {
 // transfer_dist_mat: pairwise transfer distance between all unique splits
 // ============================================================================
 
-// Returns a flat n_splits x n_splits matrix (row-major).
-// DIST[i * n + j] = transfer distance between split i and split j.
-static std::vector<int> transfer_dist_mat(const PooledSplits& pool,
+template <typename Pop>
+static std::vector<int> transfer_dist_mat_impl(const PooledSplits& pool,
                                           int n_threads) {
   const int M = pool.n_splits;
   const int nb = pool.n_bins;
@@ -229,7 +228,7 @@ static std::vector<int> transfer_dist_mat(const PooledSplits& pool,
       const splitbit* b = pool.split(j);
       int hamming = 0;
       for (int bin = 0; bin < nb; ++bin) {
-        hamming += count_bits(a[bin] ^ b[bin]);
+        hamming += Pop::count(a[bin] ^ b[bin]);
       }
       int td = std::min(hamming, nt - hamming);
       dist[i * M + j] = td;
@@ -237,6 +236,15 @@ static std::vector<int> transfer_dist_mat(const PooledSplits& pool,
     }
   }
   return dist;
+}
+
+// Returns a flat n_splits x n_splits matrix (row-major).
+// DIST[i * n + j] = transfer distance between split i and split j.
+static std::vector<int> transfer_dist_mat(const PooledSplits& pool,
+                                          int n_threads) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return transfer_dist_mat_impl<decltype(pop)>(pool, n_threads);
+  });
 }
 
 

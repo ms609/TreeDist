@@ -12,6 +12,7 @@
  */
 
 #include <TreeTools/SplitList.h>
+#include <TreeDist/popcount.h>
 #include <TreeTools/assert.h>
 #include <Rcpp/Lightest>
 #include <algorithm>
@@ -27,7 +28,6 @@ using Rcpp::Named;
 using Rcpp::NumericMatrix;
 using Rcpp::NumericVector;
 using Rcpp::RawMatrix;
-using TreeTools::count_bits;
 using TreeTools::SplitList;
 
 using int16 = int_fast16_t;
@@ -40,22 +40,20 @@ using int32 = int_fast32_t;
 
 // Compute transfer distance between two bipartitions (split bitsets).
 // Returns min(hamming, n_tips - hamming).
+template <typename Pop = TreeDist::PopcountDefault>
 static inline int transfer_dist_splits(
     const splitbit* a, const splitbit* b, int n_bins, int n_tips
 ) {
   int hamming = 0;
   for (int bin = 0; bin < n_bins; ++bin) {
-    hamming += count_bits(a[bin] ^ b[bin]);
+    hamming += Pop::count(a[bin] ^ b[bin]);
   }
   return std::min(hamming, n_tips - hamming);
 }
 
 
-// For each split in `from`, find the minimum transfer distance to any split
-// in `to`.  Returns a vector of length from.n_splits with the min distances,
-// and a matching vector with the index of the best match in `to` (-1 if no
-// improvement over sentinel).
-static void find_min_transfer(
+template <typename Pop>
+static void find_min_transfer_impl(
     const SplitList& from,
     const SplitList& to,
     int n_tips,
@@ -67,7 +65,7 @@ static void find_min_transfer(
     // Sentinel distance: depth(b) - 1
     int pc = 0;
     for (int bin = 0; bin < n_bins; ++bin) {
-      pc += count_bits(from.state[i][bin]);
+      pc += Pop::count(from.state[i][bin]);
     }
     int depth = std::min(pc, n_tips - pc);
     int sentinel = depth - 1;
@@ -81,7 +79,7 @@ static void find_min_transfer(
     int best_j = -1;
 
     for (int16 j = 0; j < to.n_splits; ++j) {
-      int d = transfer_dist_splits(from.state[i], to.state[j], n_bins, n_tips);
+      int d = transfer_dist_splits<Pop>(from.state[i], to.state[j], n_bins, n_tips);
       if (d < best_d) {
         best_d = d;
         best_j = j;
@@ -92,6 +90,23 @@ static void find_min_transfer(
     min_dist[i] = best_d;
     best_match[i] = best_j;
   }
+}
+
+// For each split in `from`, find the minimum transfer distance to any split
+// in `to`.  Returns a vector of length from.n_splits with the min distances,
+// and a matching vector with the index of the best match in `to` (-1 if no
+// improvement over sentinel).
+static void find_min_transfer(
+    const SplitList& from,
+    const SplitList& to,
+    int n_tips,
+    int n_bins,
+    std::vector<int>& min_dist,     // out: [from.n_splits]
+    std::vector<int>& best_match    // out: [from.n_splits]
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return find_min_transfer_impl<decltype(pop)>(from, to, n_tips, n_bins, min_dist, best_match);
+  });
 }
 
 
@@ -108,7 +123,7 @@ static double accumulate_transfer(
   for (int16 i = 0; i < sl.n_splits; ++i) {
     int pc = 0;
     for (int bin = 0; bin < n_bins; ++bin) {
-      pc += count_bits(sl.state[i][bin]);
+      pc += TreeDist::count_bits(sl.state[i][bin]);
     }
     int depth = std::min(pc, n_tips - pc);
     int p_minus_1 = depth - 1;

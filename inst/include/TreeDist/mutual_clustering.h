@@ -10,7 +10,7 @@
 // TREEDIST_MCI_IMPLEMENTATION.
 
 #include "lap.h"
-#include <TreeTools/SplitList.h>   // splitbit, SL_MAX_TIPS, count_bits
+#include <TreeTools/SplitList.h>   // splitbit, SL_MAX_TIPS
 #include <cmath>
 
 namespace TreeDist {

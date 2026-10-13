@@ -1,4 +1,5 @@
 #include <TreeTools/SplitList.h>
+#include <TreeDist/popcount.h>
 #include <TreeTools/assert.h>
 #include <algorithm>
 #include <cmath>
@@ -14,7 +15,6 @@ using Rcpp::Named;
 using Rcpp::NumericVector;
 using Rcpp::RawMatrix;
 using TreeTools::SplitList;
-using TreeTools::count_bits;
 
 namespace TreeDist {
   
@@ -107,7 +107,8 @@ inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   return List::create(Named("score") = score, _["matching"] = matching);
   
 }
-inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
+template <typename Pop>
+inline List robinson_foulds_info_impl(const RawMatrix &x, const RawMatrix &y,
                                  const int32 n_tips) {
   const SplitList a(x), b(y);
   
@@ -155,7 +156,7 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
       if (all_match || all_complement) {
         split_int leaves_in_split = 0;
         for (split_int bin = 0; bin < a.n_bins; ++bin) {
-          leaves_in_split += count_bits(a.state[ai][bin]);
+          leaves_in_split += Pop::count(a.state[ai][bin]);
         }
 
         score += lg2_unrooted_n - lg2_rooted_lookup(leaves_in_split) -
@@ -171,10 +172,18 @@ inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
 }
 
+inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
+                                 const int32 n_tips) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return robinson_foulds_info_impl<decltype(pop)>(x, y, n_tips);
+  });
+}
+
 
 
   
-inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
+template <typename Pop>
+inline List matching_split_distance_impl(const RawMatrix &x, const RawMatrix &y,
                                     const int32 n_tips) {
   const SplitList a(x), b(y);
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
@@ -191,7 +200,7 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
     for (split_int bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+        total += Pop::count(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       score(ai, bi) = total;
     }
@@ -232,7 +241,15 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
                       _["matching"] = final_matching);
 }
 
-inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
+inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
+                                    const int32 n_tips) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return matching_split_distance_impl<decltype(pop)>(x, y, n_tips);
+  });
+}
+
+template <typename Pop>
+inline List jaccard_similarity_impl(const RawMatrix &x, const RawMatrix &y,
                                    const int32 n_tips, const NumericVector &k,
                                    const LogicalVector &allowConflict) {
   const SplitList a(x), b(y);
@@ -257,7 +274,7 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
       // x divides tips into a|A; y divides tips into b|B
       split_int a_and_b = 0;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
+        a_and_b += Pop::count(a.state[ai][bin] & b.state[bi][bin]);
       }
 
       const split_int
@@ -340,7 +357,16 @@ inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
 
 }
 
-List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
+inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
+                                   const int32 n_tips, const NumericVector &k,
+                                   const LogicalVector &allowConflict) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return jaccard_similarity_impl<decltype(pop)>(x, y, n_tips, k, allowConflict);
+  });
+}
+
+template <typename Pop>
+List msi_distance_impl(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   const SplitList a(x), b(y);
   const split_int most_splits = std::max(a.n_splits, b.n_splits);
   constexpr cost max_score = BIG;
@@ -364,9 +390,9 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
       ;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
-        n_different += count_bits(different[bin]);
-        n_a_only += count_bits(a.state[ai][bin] & different[bin]);
-        n_a_and_b += count_bits(a.state[ai][bin] & ~different[bin]);
+        n_different += Pop::count(different[bin]);
+        n_a_only += Pop::count(a.state[ai][bin] & different[bin]);
+        n_a_and_b += Pop::count(a.state[ai][bin] & ~different[bin]);
       }
       const split_int n_same = n_tips - n_different;
 
@@ -403,7 +429,14 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
 
 }
 
-List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return msi_distance_impl<decltype(pop)>(x, y, n_tips);
+  });
+}
+
+template <typename Pop>
+List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
                        const int32 n_tips) {
   const SplitList a(x);
   const SplitList b(y);
@@ -448,7 +481,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       split_int a_and_b = 0;
       const auto *b_row = b.state[bi];
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        a_and_b += count_bits(a_row[bin] & b_row[bin]);
+        a_and_b += Pop::count(a_row[bin] & b_row[bin]);
       }
 
       const split_int nb = b.in_split[bi];
@@ -572,6 +605,34 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
 }
 
+List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                       const int32 n_tips) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return mutual_clustering_impl<decltype(pop)>(x, y, n_tips);
+  });
+}
+
+template <bool Fast, typename Pop>
+static inline void shared_phylo_fill_impl(const SplitList& a, const SplitList& b,
+                                     const int32 n_tips,
+                                     const double best_overlap,
+                                     const double score_over_possible,
+                                     const cost max_score,
+                                     cost_matrix& score) {
+  for (split_int ai = a.n_splits; ai--; ) {
+    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    for (split_int bi = b.n_splits; bi--; ) {
+      const double spi_over = TreeDist::spi_overlap<Fast, Pop>(
+        a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
+                                                                    a.n_bins);
+
+      score(ai, bi) = spi_over < 0.0 ? max_score :
+        cost((spi_over - best_overlap) * score_over_possible);
+    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
+  }
+}
+
 // Templated LAP-fill so the per-cell spi_overlap resolves to direct
 // lg2_rooted[] access on the hot path (n_tips <= SL_MAX_TIPS).
 template<bool Fast>
@@ -581,18 +642,9 @@ static inline void shared_phylo_fill(const SplitList& a, const SplitList& b,
                                      const double score_over_possible,
                                      const cost max_score,
                                      cost_matrix& score) {
-  for (split_int ai = a.n_splits; ai--; ) {
-    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
-    for (split_int bi = b.n_splits; bi--; ) {
-      const double spi_over = TreeDist::spi_overlap<Fast>(
-        a.state[ai], b.state[bi], n_tips, a.in_split[ai], b.in_split[bi],
-                                                                    a.n_bins);
-
-      score(ai, bi) = spi_over < 0.0 ? max_score :
-        cost((spi_over - best_overlap) * score_over_possible);
-    }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
-  }
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return shared_phylo_fill_impl<Fast, decltype(pop)>(a, b, n_tips, best_overlap, score_over_possible, max_score, score);
+  });
 }
 
 inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
