@@ -21,6 +21,8 @@ test_that("Portable popcount path matches the POPCNT path", {
                             RandomTree(nTip, root = TRUE),
                             RandomTree(nTip, root = TRUE)),
                        class = "multiPhylo")
+    # Trees that share most splits take the pinned SPI and exact-match paths
+    similar <- as.phylo(c(0:3, 40), nTip)
     sp1 <- as.Splits(trees[[1]])
     sp3 <- as.Splits(trees[[3]], trees[[1]])
     c(
@@ -35,7 +37,11 @@ test_that("Portable popcount path matches the POPCNT path", {
         TreeDist:::cpp_mci_impl_score(sp1, sp3, nTip),
         TreeDist:::cpp_shared_phylo(sp1, sp3, nTip, force_slow = FALSE),
         TreeDist:::cpp_shared_phylo(sp1, sp3, nTip, force_slow = TRUE),
-        suppressWarnings(TransferConsensus(trees))
+        suppressWarnings(TransferConsensus(trees)),
+        SharedPhylogeneticInfo(similar),
+        SharedPhylogeneticInfo(similar[1:2], similar[3:5]),
+        ClusteringInfoDistance(similar),
+        MatchingSplitInfoDistance(similar)
       )
     )
   }

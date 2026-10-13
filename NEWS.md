@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9004 (development)
+# TreeDist 2.15.0.9005 (development)
 
 ## Bug fixes
 
@@ -15,6 +15,9 @@
 - Improve performance of `PathVector()`, and thus `PathDist()`.
 
 - Improve performance of `NNIMaxStep()`.
+
+- Improve performance of `SharedPhylogeneticInfo()` and
+  `PhylogeneticInfoDistance()` when comparing similar trees.
 
 # TreeDist 2.15.0 (2026-09-11)
 

@@ -228,17 +228,45 @@ pruning lemma for `s >= 2n/3`.  Theorem 2 subsumes both.
 
 ## 6. Prior art
 
-- Glassey & Karp (1976, *SIAM J. Appl. Math.* 31:368–378, Thm 1 and §4)
-  show that Huffman trees minimize the sum of any non-decreasing concave
-  function of internal-node weights.  With equal weights, the Huffman tree
-  is the complete tree.  Theorem 2 rests on this result.
-- Cleary, Fischer & St. John (2025, *Bull. Math. Biol.*,
-  doi:10.1007/s11538-025-01522-1, Thm 4.1 and Lemma 4.17) prove the
-  strictly increasing, strictly concave case of Theorem 1, with uniqueness.
+Read directly: Glassey & Karp (1976) and Parker (1980).
 
-The proof of Theorem 1 above, via `min(c, t)`, is an independent route.
-Theorem 2 appears to be new: it reduces a symmetric, non-monotone split cost
-to a monotone one by unrooting at the heavy leaf and capping at `n/2`.  The
-same argument applies to any concave symmetric `f`.  The literature search
-was limited.  Hu, Kleitman & Tamaki (1979), Parker (1980) and Golumbic
-(1976) have not been read directly.
+**Glassey & Karp (1976)**, *SIAM J. Appl. Math.* 31:368–378:
+- Their Theorem 1 says a tree minimizes `sum f(W_j)` over internal weights
+  for *every* non-decreasing concave `f` if and only if it is a Huffman tree
+  (H-tree).  This holds for any leaf weights, including our weight-0 leaf.
+- They characterize H-trees as the trees with a lexicographically minimal
+  sorted weight sequence.
+- Section 4 solves exactly the recurrence of Theorem 1 above,
+  `F(n) = f(n) + min_j [F(j) + F(n - j)]` with `f` concave and
+  non-decreasing.  The minimizing `j` is the unique power of two with
+  `n/3 <= j < 2n/3`.  This matches `complete_split()` (checked for all
+  `s < 2 · 10^5`).
+- Their Lemma 2 proves the majorization step with the functions
+  `min(x, s_q)`, the same reduction as Section 1.
+
+So Theorem 1 is theirs, and Section 1 is only a self-contained re-proof.
+
+Hong's converse, their Theorem 2, matters for us.  For any `f` that is not
+non-decreasing and concave, some weights make every H-tree suboptimal.
+`Hb(c/n)` is such an `f`, so H-trees cannot be applied to it directly.
+Theorem 2 here gets around this for split costs: it unroots at the heavy
+leaf and caps the cost at `n/2`, which turns the symmetric cost into a
+non-decreasing concave one.
+
+**Parker (1980)**, *SIAM J. Comput.* 9:470–489, extends Glassey & Karp in
+two ways: to "quasilinear" weight-combination functions, and to
+Schur-concave costs of the internal weights (Theorems 5 and 9).  It does
+not treat symmetric or non-monotone node costs.
+
+**Cleary, Fischer & St. John (2025)**, *Bull. Math. Biol.*,
+doi:10.1007/s11538-025-01522-1, Thm 4.1, rediscover the strict case of
+Theorem 1 with uniqueness, without citing Glassey & Karp.
+
+**Not read:** Forst & Thorup (2005, *SIAM J. Discrete Math.* 19:46–68,
+"What costs are minimized by Huffman trees?"), Hu, Kleitman & Tamaki (1979)
+and Golumbic (1976).  Forst & Thorup is the most likely to bear on
+Theorem 2.
+
+Tie-completeness, Section 2, is not settled by Glassey & Karp's
+"only if".  That direction concerns trees optimal for every concave `f`,
+whereas ours are optimal for one `ĝ`, which is flat above `n/2`.
