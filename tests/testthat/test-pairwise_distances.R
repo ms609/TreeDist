@@ -334,3 +334,35 @@ test_that("Batch path handles trees with no resolved splits", {
   expect_equal(cross[1, 1], ClusteringInfoDistance(star, pec), tolerance = 1e-10)
   expect_equal(cross[2, 2], ClusteringInfoDistance(bal, poly), tolerance = 1e-10)
 })
+
+test_that("SPI batch: pinning identical splits matches the full LAP", {
+  # shared_phylo_pinned() matches identical splits first, then certifies the
+  # result; pairs it cannot certify are released into the residual LAP.
+  # Consecutive tree numbers give trees that share most of their splits.
+  Check <- function(trees) {
+    batch <- as.matrix(SharedPhylogeneticInfo(trees))
+    nTree <- length(trees)
+    for (i in seq_len(nTree - 1)) for (j in (i + 1):nTree) {
+      expect_equal(batch[i, j], SharedPhylogeneticInfo(trees[[i]], trees[[j]]),
+                   tolerance = 1e-12, label = paste0("[", i, ",", j, "]"))
+    }
+    half <- seq_len(nTree %/% 2)
+    cross <- SharedPhylogeneticInfo(trees[half], trees[-half])
+    expect_equal(unname(cross), unname(batch[half, -half]), tolerance = 1e-12)
+  }
+  for (nTip in c(4, 5, 7, 12, 30, 80)) {
+    trees <- as.phylo(c(0:5, 40, 200), nTip)
+    Check(trees)
+  }
+
+  # Unequal split counts: padded rows and columns in the residual LAP.
+  tips <- paste0("t", 1:30)
+  bal <- BalancedTree(tips)
+  trees <- structure(list(
+    bal,
+    CollapseNode(bal, 40:42),
+    CollapseNode(bal, 50),
+    CollapseNode(as.phylo(3, tipLabels = tips), 35:37)
+  ), class = "multiPhylo")
+  Check(trees)
+})

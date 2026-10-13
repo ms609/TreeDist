@@ -39,6 +39,16 @@ struct MatchScratch {
   std::vector<split_int>  b_match;
 };
 
+// Reusable buffers for shared_phylo_pinned(); one per thread.
+struct PinScratch {
+  std::vector<split_int> pin_a, pin_b, free_a, free_b;
+  std::vector<cost> pin_d, pin_lo, pin_u, u;
+  std::vector<char> b_pinned;
+  std::vector<split_int> cls;          // size group of each pinned pair
+  std::vector<split_int> group_of;     // group index by split size, or -1
+  std::vector<split_int> group_size, group_start, by_u, by_w;
+};
+
 // ---------------------------------------------------------------------------
 // CanonSplits — per-tree canonical split forms, held in sorted order.
 //
@@ -710,10 +720,11 @@ NumericVector cpp_msi_all_pairs(
 // SharedPhylogeneticInfo — LAP-based
 // =============================================================================
 
-// NOTE: shared_phylo_score does NOT use exact-match detection.  For the SPI
-// metric, spi_overlap(A, B) where B contains A can EXCEED spi_overlap(A, A)
-// for identical splits, so the LAP can find a better global assignment by NOT
-// matching identical splits.  The full LAP is always solved.
+// NOTE: For SPI, matching each split to its identical copy is NOT always
+// globally optimal: the LAP can do better by pairing an identical split with
+// a different compatible split.  shared_phylo_pinned() therefore treats
+// identical matches as a guess that must be certified, and falls back to the
+// full LAP when it cannot be.
 // LAP-fill body for shared_phylo_score, templated on Fast so the per-cell
 // spi_overlap call resolves at compile time to direct lg2_rooted[] access
 // (Fast=true) or the bounds-checked lookup (Fast=false).
@@ -735,47 +746,49 @@ static inline void shared_phylo_fill_lap(
   }
 }
 
-static double shared_phylo_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips,
-    LapScratch& scratch
-) {
-  const split_int most_splits = std::max(a.n_splits, b.n_splits);
-  if (most_splits == 0) return 0.0;
+// Scaling shared by the full and pinned SPI solvers.
+struct SpiScale {
+  double best_overlap;
+  double score_over_possible;
+  double possible_over_score;
+};
 
+static SpiScale spi_scale(const int32 n_tips, const bool fast) {
   const split_int overlap_a = (n_tips + 1) / 2;
-  constexpr cost max_score = BIG;
-  // Hot path: n_tips <= SL_MAX_TIPS, so all lg2_rooted/lg2_unrooted indices
-  // fall in the precomputed table.  Dispatch once here so the per-cell loop
-  // emits direct table loads with no bounds-check branch.
-  // The else branch is reachable only on TT 2.3 builds with n_tips > 32705,
-  // which is too large to exercise in routine tests; the equivalent slow
-  // template instantiations (one_overlap<false> etc.) are covered by the
-  // legacy single-pair entry (cpp_shared_phylo) via force_slow=true.
-  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
   double best_overlap, max_possible;
   if (fast) {
     best_overlap = TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips);
     max_possible = lg2_unrooted[n_tips] - best_overlap;
   } else {
-    // LCOV_EXCL_START
+    // LCOV_EXCL_START # nocov start
     best_overlap = TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
     max_possible = lg2_unrooted_lookup(n_tips) - best_overlap;
-    // LCOV_EXCL_STOP
+    // LCOV_EXCL_STOP # nocov end
   }
-  const double score_over_possible = static_cast<double>(max_score) / max_possible;
-  const double possible_over_score = max_possible / static_cast<double>(max_score);
+  return {best_overlap,
+          static_cast<double>(BIG) / max_possible,
+          max_possible / static_cast<double>(BIG)};
+}
+
+// Full SPI: fill the whole cost matrix and solve the LAP.
+static double shared_phylo_full(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const bool fast, const SpiScale& sc, LapScratch& scratch
+) {
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  constexpr cost max_score = BIG;
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
 
   if (fast) {
-    shared_phylo_fill_lap<true>(a, b, n_tips, best_overlap,
-                                score_over_possible, max_score, score);
+    shared_phylo_fill_lap<true>(a, b, n_tips, sc.best_overlap,
+                                sc.score_over_possible, max_score, score);
   } else {
-    // LCOV_EXCL_START
-    shared_phylo_fill_lap<false>(a, b, n_tips, best_overlap,
-                                 score_over_possible, max_score, score);
-    // LCOV_EXCL_STOP
+    // LCOV_EXCL_START # nocov start
+    shared_phylo_fill_lap<false>(a, b, n_tips, sc.best_overlap,
+                                 sc.score_over_possible, max_score, score);
+    // LCOV_EXCL_STOP # nocov end
   }
   score.padAfterRow(a.n_splits, max_score);
 
@@ -785,7 +798,270 @@ static double shared_phylo_score(
 
   return static_cast<double>(
     (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
-  ) * possible_over_score;
+  ) * sc.possible_over_score;
+}
+
+// Pinned SPI: match identical splits to one another, solve the LAP on the
+// remaining splits only, then prove the combined assignment optimal.
+//
+// Matching identical splits is not always optimal (see NOTE above), so the
+// pinned assignment is certified with LP duals (u_i + v_j <= c_ij for every
+// cell, with equality on assigned cells).  The residual LAP supplies duals
+// for unpinned rows and columns; each pinned pair (i, j) with cost d needs
+// u_i + v_j = d, and its window for u_i is set by the residual cells in row
+// i and column j.  A pair whose window is empty is released into the
+// residual problem and the round repeats.
+//
+// Cells between two pinned pairs are never computed.  Pinned splits all
+// belong to tree a, so any two are compatible, and the cost of matching them
+// is bounded below by a function of their sizes alone; checking duals
+// against that bound, one group of equal-sized splits at a time, covers
+// every such cell.
+//
+// Returns a negative value if no certificate is found; the caller then solves
+// the full problem.
+static double shared_phylo_pinned(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const SpiScale& sc, const split_int* a_match,
+    LapScratch& scratch, PinScratch& pin
+) {
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  constexpr cost max_score = BIG;
+  // Lower bound on the cost of matching two distinct compatible splits whose
+  // smaller sides hold s and t tips: the cheaper of nesting the smaller in the
+  // larger, or keeping them disjoint.  Less 1e-6 bits to absorb rounding.
+  const double slack = 1e-6 * sc.score_over_possible + 2;
+  auto bound_cost = [&](split_int s, split_int t) -> cost {
+    if (s > t) std::swap(s, t);
+    double ov = std::numeric_limits<double>::infinity();
+    if (s < t) {
+      ov = lg2_rooted[t] + lg2_rooted[n_tips - s] - lg2_rooted[t - s + 1];
+    }
+    if (s + t < n_tips) {
+      ov = std::min(ov, lg2_rooted[n_tips - t] + lg2_rooted[n_tips - s] -
+                          lg2_rooted[n_tips - t - s + 1]);
+    }
+    if (ov == std::numeric_limits<double>::infinity()) return max_score;
+    return cost((ov - sc.best_overlap) * sc.score_over_possible - slack);
+  };
+
+  auto cell = [&](split_int ai, split_int bi) -> cost {
+    const double spi = TreeDist::spi_overlap<true>(
+      a.state[ai], b.state[bi], n_tips,
+      a.in_split[ai], b.in_split[bi], a.n_bins);
+    return (spi < 0.0) ? max_score
+                       : cost((spi - sc.best_overlap) * sc.score_over_possible);
+  };
+
+  auto& pin_a  = pin.pin_a;
+  auto& pin_b  = pin.pin_b;
+  auto& pin_d  = pin.pin_d;
+  auto& pin_lo = pin.pin_lo;
+  auto& pin_u  = pin.pin_u;
+  auto& free_a = pin.free_a;
+  auto& free_b = pin.free_b;
+  auto& u      = pin.u;
+  pin_a.clear(); pin_b.clear(); pin_d.clear();
+  free_a.clear(); free_b.clear();
+  pin.b_pinned.assign(b.n_splits, 0);
+  if (pin.group_of.size() < static_cast<size_t>(n_tips / 2 + 1)) {
+    pin.group_of.assign(n_tips / 2 + 1, -1);
+  }
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) {
+      const split_int bi = a_match[ai] - 1;
+      pin_a.push_back(ai);
+      pin_b.push_back(bi);
+      pin_d.push_back(cell(ai, bi));
+      pin.b_pinned[bi] = 1;
+    } else {
+      free_a.push_back(ai);
+    }
+  }
+  for (split_int bi = 0; bi < b.n_splits; ++bi) {
+    if (!pin.b_pinned[bi]) free_b.push_back(bi);
+  }
+
+  // Each round either certifies or releases at least one pair, so the loop
+  // ends; in the worst case every pair is released and the residual LAP is
+  // the full problem.
+  for (;;) {
+    const split_int n_pin = static_cast<split_int>(pin_a.size());
+    const split_int dim = most_splits - n_pin;
+    const split_int fa = static_cast<split_int>(free_a.size());
+    const split_int fb = static_cast<split_int>(free_b.size());
+
+    // --- Residual LAP over unpinned splits, padded with max_score ---
+    cost residual = 0;
+    cost_matrix& score = scratch.score_pool;
+    if (dim > 0) {
+      score.resize(dim);
+      for (split_int r = 0; r < fa; ++r) {
+        for (split_int c = 0; c < fb; ++c) {
+          score(r, c) = cell(free_a[r], free_b[c]);
+        }
+        score.padRowAfterCol(r, fb, max_score);
+      }
+      score.padAfterRow(fa, max_score);
+      scratch.ensure(dim);
+      residual = lap(dim, score, scratch.rowsol, scratch.colsol, false,
+                     scratch);
+
+      // Row duals; complementary slackness confirms the residual is optimal.
+      const cost* v = scratch.v.data();
+      u.resize(dim);
+      for (split_int r = 0; r < dim; ++r) {
+        const cost* row = score.row(r);
+        cost min_r = row[0] - v[0];
+        for (split_int c = 1; c < dim; ++c) {
+          min_r = std::min(min_r, row[c] - v[c]);
+        }
+        u[r] = min_r;
+        const split_int c_r = scratch.rowsol[r];
+        if (row[c_r] - v[c_r] != min_r) return -1.0;
+      }
+    }
+
+    // --- Dual window [lo, hi] for each pinned pair's u_i ---
+    const cost* v = scratch.v.data();
+    pin_lo.resize(n_pin);
+    pin_u.resize(n_pin);
+    split_int kept = 0;
+    for (split_int p = 0; p < n_pin; ++p) {
+      const split_int ai = pin_a[p];
+      const split_int bi = pin_b[p];
+      const cost d = pin_d[p];
+      // u_i <= hi: residual columns in row ai
+      cost hi = std::numeric_limits<cost>::max();
+      for (split_int c = 0; c < fb; ++c) {
+        hi = std::min(hi, cell(ai, free_b[c]) - v[c]);
+      }
+      for (split_int c = fb; c < dim; ++c) hi = std::min(hi, max_score - v[c]);
+      // v_j = d - u_i <= residual rows in column bi
+      cost lo = std::numeric_limits<cost>::min();
+      for (split_int r = 0; r < fa; ++r) {
+        lo = std::max(lo, d - (cell(free_a[r], bi) - u[r]));
+      }
+      for (split_int r = fa; r < dim; ++r) lo = std::max(lo, d - (max_score - u[r]));
+
+      if (lo > hi) {
+        free_a.push_back(ai);
+        free_b.push_back(bi);
+      } else {
+        pin_a[kept] = ai;
+        pin_b[kept] = bi;
+        pin_d[kept] = d;
+        pin_lo[kept] = lo;
+        pin_u[kept] = hi;
+        ++kept;
+      }
+    }
+    if (kept < n_pin) {
+      pin_a.resize(kept); pin_b.resize(kept); pin_d.resize(kept);
+      continue;
+    }
+
+    // --- Cells between pinned pairs ---
+    // With v_q = d_q - u_q, cell (p, q) needs u_p - w_q <= c(p, q), where
+    // w_q = u_q - d_q.  Both splits come from tree a, so they are compatible,
+    // and c(p, q) >= bound_cost(size_p, size_q).  Taking each u at the top of
+    // its window (u = hi) keeps v small.  For each pair of size groups, walk
+    // p by decreasing u and q by increasing w, evaluating cells only while
+    // the bound fails to clear them.
+    if (n_pin > 1) {
+      auto& cls = pin.cls;
+      auto& group_size = pin.group_size;
+      auto& group_start = pin.group_start;
+      group_size.clear();
+      cls.resize(n_pin);
+      for (split_int p = 0; p < n_pin; ++p) {
+        const split_int in = a.in_split[pin_a[p]];
+        const split_int size = std::min(in, split_int(n_tips - in));
+        if (pin.group_of[size] < 0) {
+          pin.group_of[size] = static_cast<split_int>(group_size.size());
+          group_size.push_back(size);
+        }
+        cls[p] = pin.group_of[size];
+      }
+      for (const split_int size : group_size) pin.group_of[size] = -1;
+      const split_int n_groups = static_cast<split_int>(group_size.size());
+      group_start.assign(n_groups + 1, 0);
+      for (split_int p = 0; p < n_pin; ++p) ++group_start[cls[p] + 1];
+      for (split_int g = 0; g < n_groups; ++g) {
+        group_start[g + 1] += group_start[g];
+      }
+
+      auto& by_u = pin.by_u;
+      auto& by_w = pin.by_w;
+      by_u.resize(n_pin);
+      std::iota(by_u.begin(), by_u.end(), split_int(0));
+      by_w = by_u;
+      std::sort(by_u.begin(), by_u.end(), [&](split_int x, split_int y) {
+        return cls[x] != cls[y] ? cls[x] < cls[y] : pin_u[x] > pin_u[y];
+      });
+      std::sort(by_w.begin(), by_w.end(), [&](split_int x, split_int y) {
+        return cls[x] != cls[y] ? cls[x] < cls[y]
+                                : pin_u[x] - pin_d[x] < pin_u[y] - pin_d[y];
+      });
+
+      for (split_int gp = 0; gp < n_groups; ++gp) {
+        for (split_int gq = 0; gq < n_groups; ++gq) {
+          const cost bound = bound_cost(group_size[gp], group_size[gq]);
+          const split_int q_first = group_start[gq];
+          const split_int q_end = group_start[gq + 1];
+          const split_int q0 = by_w[q_first];
+          for (split_int pi = group_start[gp]; pi < group_start[gp + 1];
+               ++pi) {
+            const split_int p = by_u[pi];
+            if (pin_u[p] - (pin_u[q0] - pin_d[q0]) <= bound) break;
+            for (split_int qi = q_first; qi < q_end; ++qi) {
+              const split_int q = by_w[qi];
+              const cost lhs = pin_u[p] - (pin_u[q] - pin_d[q]);
+              if (lhs <= bound) break;
+              if (p != q && lhs > cell(pin_a[p], pin_b[q])) {
+                return -1.0; // # nocov: not observed; defensive
+              }
+            }
+          }
+        }
+      }
+    }
+
+    cost total = residual;
+    for (split_int p = 0; p < n_pin; ++p) total += pin_d[p];
+    return static_cast<double>((max_score * most_splits) - total) *
+      sc.possible_over_score;
+  }
+}
+
+static double shared_phylo_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    LapScratch& scratch, MatchScratch& mscratch, PinScratch& pin
+) {
+  const split_int most_splits = std::max(a.n_splits, b.n_splits);
+  if (most_splits == 0) return 0.0;
+
+  // Hot path: n_tips <= SL_MAX_TIPS, so all lg2_rooted/lg2_unrooted indices
+  // fall in the precomputed table.  Dispatch once here so the per-cell loop
+  // emits direct table loads with no bounds-check branch.
+  // The slow branch is reachable only on TT 2.3 builds with n_tips > 32705,
+  // which is too large to exercise in routine tests; the equivalent slow
+  // template instantiations (one_overlap<false> etc.) are covered by the
+  // legacy single-pair entry (cpp_shared_phylo) via force_slow=true.
+  const bool fast = n_tips <= static_cast<int32>(SL_MAX_TIPS + 1);
+  const SpiScale sc = spi_scale(n_tips, fast);
+
+  if (fast) {
+    const split_int exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
+    // Pinning pays only when most splits are shared.
+    if (exact_n * 10 >= most_splits * 7) {
+      const double pinned = shared_phylo_pinned(
+        a, b, n_tips, sc, mscratch.a_match.data(), scratch, pin);
+      if (pinned >= 0.0) return pinned;
+    }
+  }
+  return shared_phylo_full(a, b, n_tips, fast, sc, scratch);
 }
 
 //' @keywords internal
@@ -808,11 +1084,16 @@ NumericVector cpp_shared_phylo_all_pairs(
     );
   }
 
+  std::vector<CanonSplits> canon;
+  build_canon_all(splits, n_tip, n_threads, canon);
+
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
+  std::vector<PinScratch> pscratches(n_scratch);
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
@@ -822,13 +1103,15 @@ NumericVector cpp_shared_phylo_all_pairs(
     Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = shared_phylo_score(*splits[col], *splits[row], n_tip, scratch);
+      res[p] = shared_phylo_score(*splits[col], *splits[row], n_tip,
+                                  canon[col], canon[row], scratches[tid],
+                                  mscratches[tid], pscratches[tid]);
     }
   }
   return result;
@@ -1231,11 +1514,17 @@ NumericMatrix cpp_shared_phylo_cross_pairs(
   parse_split_list(splits_a, sa);
   parse_split_list(splits_b, sb);
 
+  std::vector<CanonSplits> canon_a, canon_b;
+  build_canon_all(sa, n_tip, n_threads, canon_a);
+  build_canon_all(sb, n_tip, n_threads, canon_b);
+
   NumericMatrix result(nA, nB);
   double* res = result.begin();
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
+  std::vector<PinScratch> pscratches(n_scratch);
   const int total = nA * nB;
 
 #ifdef _OPENMP
@@ -1246,13 +1535,15 @@ NumericMatrix cpp_shared_phylo_cross_pairs(
     if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = shared_phylo_score(*sa[i], *sb[j], n_tip, scratch);
+    res[idx] = shared_phylo_score(*sa[i], *sb[j], n_tip, canon_a[i], canon_b[j],
+                                  scratches[tid], mscratches[tid],
+                                  pscratches[tid]);
   }
   return result;
 }
