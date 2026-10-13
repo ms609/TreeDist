@@ -4,9 +4,10 @@
 // Population count that is safe on x86-64 CPUs without POPCNT
 // (ms609/TreeTools#287), at full speed where POPCNT exists.
 //
-// TreeTools versions that define TREETOOLS_POPCOUNT_DISPATCH provide these
-// definitions; with older TreeTools, identical local copies are used, so
-// TreeDist builds against either.
+// TreeTools versions that define TREETOOLS_POPCOUNT_DISPATCH provide
+// count_bits(), has_popcnt, PopcountHW and PopcountSW; with older TreeTools,
+// identical local copies are used, so TreeDist builds against either.
+// dispatch_popcount() is TreeDist's own, adding a test hook.
 //
 // # TODO: Once TreeDist requires TreeTools > 2.4.1, drop the legacy support.
 //
@@ -29,7 +30,6 @@ namespace TreeDist {
 #ifdef TREETOOLS_POPCOUNT_DISPATCH
 
   using TreeTools::count_bits;
-  using TreeTools::dispatch_popcount;
   using TreeTools::has_popcnt;
   using TreeTools::PopcountHW;
   using TreeTools::PopcountSW;
@@ -84,11 +84,10 @@ namespace TreeDist {
 
   inline int32_t count_bits(splitbit x) noexcept {
 #if defined(__GNUC__) || defined(__clang__)
-    if (__builtin_expect(has_popcnt, 1)) return popcount_hw(x);
+    return __builtin_expect(has_popcnt, 1) ? popcount_hw(x) : popcount_sw(x);
 #else
-    if (has_popcnt) return popcount_hw(x);
+    return has_popcnt ? popcount_hw(x) : popcount_sw(x);
 #endif
-    return popcount_sw(x);
   }
 
   struct PopcountHW {
@@ -98,13 +97,19 @@ namespace TreeDist {
     static int32_t count(splitbit x) noexcept { return popcount_sw(x); }
   };
 
+#endif // TREETOOLS_POPCOUNT_DISPATCH
+
+  // Test hook: when true, dispatch_popcount() takes the portable path even
+  // where POPCNT exists, so that the tests exercise the code that runs on
+  // CPUs without it. Set only through cpp_popcount_force_sw(), from R's main
+  // thread, never while a kernel is running.
+  inline bool popcount_force_sw = false;
+
   template <typename F>
   inline decltype(auto) dispatch_popcount(F&& f) {
-    if (has_popcnt) return f(PopcountHW{});
+    if (has_popcnt && !popcount_force_sw) return f(PopcountHW{});
     return f(PopcountSW{});
   }
-
-#endif // TREETOOLS_POPCOUNT_DISPATCH
 
   struct PopcountDefault {
     static auto count(splitbit x) noexcept { return count_bits(x); }

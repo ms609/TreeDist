@@ -772,3 +772,12 @@ List cpp_shared_phylo(const RawMatrix &x, const RawMatrix &y,
   TreeDist::check_ntip(n_tip);
   return shared_phylo(x, y, n_tip, force_slow);
 }
+
+// Test hook: force the portable popcount path so that tests exercise the
+// code that runs on CPUs without POPCNT. Returns the previous setting.
+// [[Rcpp::export]]
+bool cpp_popcount_force_sw(const bool force) {
+  const bool previous = TreeDist::popcount_force_sw;
+  TreeDist::popcount_force_sw = force;
+  return previous;
+}

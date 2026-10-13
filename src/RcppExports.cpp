@@ -764,6 +764,18 @@ BEGIN_RCPP
 END_RCPP
 }
 
+// cpp_popcount_force_sw
+bool cpp_popcount_force_sw(const bool force);
+RcppExport SEXP _TreeDist_cpp_popcount_force_sw(SEXP forceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const bool >::type force(forceSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_popcount_force_sw(force));
+    return rcpp_result_gen;
+END_RCPP
+}
+
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_binary_entropy_counts", (DL_FUNC) &_TreeDist_binary_entropy_counts, 2},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
@@ -824,6 +836,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_msi_distance", (DL_FUNC) &_TreeDist_cpp_msi_distance, 3},
     {"_TreeDist_cpp_mutual_clustering", (DL_FUNC) &_TreeDist_cpp_mutual_clustering, 3},
     {"_TreeDist_cpp_shared_phylo", (DL_FUNC) &_TreeDist_cpp_shared_phylo, 4},
+    {"_TreeDist_cpp_popcount_force_sw", (DL_FUNC) &_TreeDist_cpp_popcount_force_sw, 1},
     {NULL, NULL, 0}
 };
 
