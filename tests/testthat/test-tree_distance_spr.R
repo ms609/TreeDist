@@ -284,8 +284,8 @@ test_that("spr_bounded_cid() matches .BoundedCID()", {
     tree2 <- Postorder(RenumberTips(RandomTree(nTip, root = TRUE), tree1))
     exact <- .BoundedCID(tree1, tree2)
     for (cutoff in c(Inf, exact, exact - 1e-12, exact / 2, 0)) {
-      expect_identical(spr_bounded_cid(tree1, tree2, cutoff),
-                       .BoundedCID(tree1, tree2, cutoff))
+      expect_equal(spr_bounded_cid(tree1, tree2, cutoff),
+                   .BoundedCID(tree1, tree2, cutoff))
     }
   }
 })

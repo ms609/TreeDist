@@ -5,6 +5,7 @@
 #include <TreeTools/root_tree.h> // for root_on_node
 #include <TreeTools/SplitList.h> // for SplitList, count_bits
 #include "reduce_tree.h"
+#include <cmath> // for log2
 
 using namespace Rcpp;
 
@@ -237,16 +238,14 @@ List keep_and_reduce(const List& tree1,
 
 // Leaf scoring for SPRDist(method = "Rogue").
 //
-// Reproduces the R implementation (.ScoreWithout() with the clustering
-// information proxy) step by step, so that scores, and thus tie-breaks,
-// are identical; R-level overhead dominated its run time.
+// Follows the R implementation (.ScoreWithout() with the clustering
+// information proxy) step by step; scores match to within numerical error.
+// R-level overhead dominated its run time.
 
 extern double mutual_clustering_bounded_score(const RawMatrix &x,
                                               const RawMatrix &y,
                                               const int32 n_tip,
                                               const double min_score);
-extern NumericVector binary_entropy_counts(IntegerVector inSplit,
-                                           int nLeaves);
 
 namespace {
 
@@ -254,14 +253,19 @@ namespace {
 constexpr double SQRT_EPS = 1.4901161193847656e-08;
 constexpr int SPLIT_BIN = 8;
 
+struct TreeSplits {
+  RawMatrix bits;
+  double entropy; // As ClusteringEntropy()
+};
+
 // As TreeTools::as.Splits(): splits in node order, omitting the root and
 // its non-tip child.  Edges must be in postorder.
-RawMatrix TreeSplits(const IntegerMatrix &edge, const int n_tip) {
+TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
   const int n_edge = edge.nrow();
   const int n_vertex = n_edge + 1;
   const int n_bin = (n_tip - 1) / SPLIT_BIN + 1;
   if (n_edge == n_tip || n_tip < 4) {
-    return RawMatrix(0, n_bin);
+    return {RawMatrix(0, n_bin), 0};
   }
   const int *parent = edge.begin();
   const int *child = parent + n_edge;
@@ -301,49 +305,42 @@ RawMatrix TreeSplits(const IntegerMatrix &edge, const int n_tip) {
   }
   const int n_split = rows.size();
   RawMatrix ret(n_split, n_bin);
-  for (int j = 0; j != n_bin; ++j) {
-    for (int r = 0; r != n_split; ++r) {
-      ret(r, j) = below[rows[r] * n_bin + j];
-    }
-  }
-  return ret;
-}
-
-// As ClusteringEntropy(splits): R's sum() accumulates in long double.
-double SplitEntropy(const RawMatrix &splits, const int n_tip) {
-  const int n_split = splits.nrow();
-  IntegerVector in_split(n_split);
+  // Sum of n * H(split), in bits
+  const double n_lg2_n = n_tip * std::log2(double(n_tip));
+  double n_entropy = 0;
   for (int r = 0; r != n_split; ++r) {
+    const uint8_t *row = below.data() + rows[r] * n_bin;
     int count = 0;
-    for (int j = 0; j != splits.ncol(); ++j) {
-      count += TreeTools::count_bits(splits(r, j));
+    for (int j = 0; j != n_bin; ++j) {
+      ret(r, j) = row[j];
+      count += TreeTools::count_bits(row[j]);
     }
-    in_split[r] = count;
+    const int other = n_tip - count;
+    n_entropy += n_lg2_n - count * std::log2(double(count)) -
+      other * std::log2(double(other));
   }
-  const NumericVector entropy = binary_entropy_counts(in_split, n_tip);
-  long double sum = 0;
-  for (const double h : entropy) {
-    sum += h;
-  }
-  return static_cast<double>(sum);
+  return {ret, n_entropy / n_tip};
 }
 
 // As ClusteringInfoDist(tree1, tree2), for trees with identical tip labels
 // and edges in postorder; but if the distance exceeds `cutoff` by more than
 // numerical noise, may instead return a lower bound that exceeds `cutoff`.
-double BoundedCID(const List &tree1, const List &tree2, const double cutoff) {
-  const CharacterVector labels = tree1["tip.label"];
-  const int n_tip = labels.size();
-  const RawMatrix splits1 = TreeSplits(tree1["edge"], n_tip);
-  const RawMatrix splits2 = TreeSplits(tree2["edge"], n_tip);
-  const double info = SplitEntropy(splits1, n_tip) +
-    SplitEntropy(splits2, n_tip);
+double BoundedCID(const TreeSplits &splits1, const TreeSplits &splits2,
+                  const int n_tip, const double cutoff) {
+  const double info = splits1.entropy + splits2.entropy;
   const double tol = std::max(1.0, info) * SQRT_EPS;
   const double mci = n_tip < 4 ? 0 :
-    mutual_clustering_bounded_score(splits1, splits2, n_tip,
+    mutual_clustering_bounded_score(splits1.bits, splits2.bits, n_tip,
                                     (info - cutoff) / 2 - tol);
   const double ret = info - mci - mci;
   return ret < tol ? 0 : ret;
+}
+
+double BoundedCID(const List &tree1, const List &tree2, const double cutoff) {
+  const CharacterVector labels = tree1["tip.label"];
+  const int n_tip = labels.size();
+  return BoundedCID(GetSplits(tree1["edge"], n_tip),
+                    GetSplits(tree2["edge"], n_tip), n_tip, cutoff);
 }
 
 // Index of the first split in `x` that also occurs in `table`, or -1;
@@ -371,37 +368,34 @@ int FirstMatchingSplit(const RawMatrix &x, const RawMatrix &table,
   return -1;
 }
 
-// As ReduceTrees(KeepTipPostorder(tree1, keep), KeepTipPostorder(tree2, keep))
+// As ReduceTrees(KeepTipPostorder(tree1, keep), KeepTipPostorder(tree2, keep));
+// a list holding NULL if no tree remains after reduction.
 List KeepAndReduce(const List &tree1, const List &tree2,
                    const LogicalVector &keep) {
-  const CharacterVector labels = tree1["tip.label"];
-  const CharacterVector kept_labels = labels[keep];
   int n_kept = 0;
   for (const int k : keep) {
     n_kept += k;
   }
+  if (n_kept < 4) {
+    // Unrooted trees on three leaves are identical, so reduce to nothing
+    return List::create(R_NilValue);
+  }
+  const CharacterVector labels = tree1["tip.label"];
   IntegerMatrix rooted[2];
   const List *trees[2] = {&tree1, &tree2};
   for (int t = 0; t != 2; ++t) {
     const IntegerMatrix edge = (*trees[t])["edge"];
-    const IntegerMatrix kept = n_kept == labels.size() ? edge :
-      TreeTools::keep_tip(reverse(edge), keep);
-    const List tree = List::create(
-      Named("edge") = kept,
-      _["Nnode"] = kept.nrow() + 1 - n_kept,
-      _["tip.label"] = kept_labels
-    );
-    const List rerooted = TreeTools::root_on_node(tree, 1);
-    rooted[t] = reverse(rerooted["edge"]);
+    rooted[t] = reverse(TreeTools::root_binary(
+      TreeTools::keep_tip(reverse(edge), keep), 1));
   }
-  return reduce_trees(rooted[0], rooted[1], kept_labels);
+  return reduce_trees(rooted[0], rooted[1], labels[keep]);
 }
 
 // As .ScoreWithout(): the proxy distance between the trees that remain once
 // the leaves not in `keep` are removed and the trees reduced.
 double ScoreWithout(const List &tree1, const List &tree2,
                     const LogicalVector &keep, const double cutoff) {
-  const List outcome = keep_and_reduce(tree1, tree2, keep);
+  const List outcome = KeepAndReduce(tree1, tree2, keep);
   if (Rf_isNull(outcome[0])) {
     return R_NegInf;
   }
@@ -409,17 +403,18 @@ double ScoreWithout(const List &tree1, const List &tree2,
   const List out2 = outcome[1];
   const CharacterVector labels = out1["tip.label"];
   const int n_tip = labels.size();
-  const RawMatrix splits1 = TreeSplits(out1["edge"], n_tip);
-  const RawMatrix splits2 = TreeSplits(out2["edge"], n_tip);
-  const int first_match = FirstMatchingSplit(splits1, splits2, n_tip);
+  const TreeSplits splits1 = GetSplits(out1["edge"], n_tip);
+  const TreeSplits splits2 = GetSplits(out2["edge"], n_tip);
+  const int first_match = FirstMatchingSplit(splits1.bits, splits2.bits,
+                                             n_tip);
   if (first_match < 0) {
-    return BoundedCID(out1, out2, cutoff);
+    return BoundedCID(splits1, splits2, n_tip, cutoff);
   }
   
   // Divide at the shared split, anchoring each half to the other
   LogicalVector half1(n_tip), half2(n_tip);
   for (int t = 0; t != n_tip; ++t) {
-    half1[t] = (splits1(first_match, t / SPLIT_BIN) >> (t % SPLIT_BIN)) & 1;
+    half1[t] = (splits1.bits(first_match, t / SPLIT_BIN) >> (t % SPLIT_BIN)) & 1;
     half2[t] = !half1[t];
   }
   for (LogicalVector *half : {&half1, &half2}) {
@@ -431,13 +426,16 @@ double ScoreWithout(const List &tree1, const List &tree2,
     }
   }
   const List sub1 = KeepAndReduce(out1, out2, half1);
-  const List sub2 = KeepAndReduce(out1, out2, half2);
-  if (Rf_isNull(sub1[0]) || Rf_isNull(sub2[0])) {
+  if (Rf_isNull(sub1[0])) {
     Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
   }
   const double score1 = BoundedCID(sub1[0], sub1[1], cutoff);
   if (score1 > cutoff) {
     return score1;
+  }
+  const List sub2 = KeepAndReduce(out1, out2, half2);
+  if (Rf_isNull(sub2[0])) {
+    Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
   }
   return score1 + BoundedCID(sub2[0], sub2[1], cutoff - score1);
 }

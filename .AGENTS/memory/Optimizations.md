@@ -957,3 +957,13 @@ in TreeDist — every sort is `std::sort` / `std::stable_sort`.
   summed in long double, same cutoff/tolerance arithmetic.  Verified on 420
   random and near-identical pairs at depths 1 and 2 against main.
   30 tips: 1.79 s -> 0.24 s; 80 tips: 5.24 s -> 1.62 s (6-20 pairs).
+- Martin (2026-10-13): bit-identical tie-breaks are not required; agreement
+  within machine error suffices.  So the C++ path now sums split entropy in
+  double from popcounts during split construction (no second pass or
+  `binary_entropy_counts()`), reuses the reduced trees' splits when no split
+  is shared, builds the second half-tree only if the first is under the
+  cutoff, and drops/reroots leaves with `keep_tip()` + `root_binary()` on
+  edge matrices instead of `keep_and_reduce()`'s phylo lists.  ~20% faster
+  (80 tips 1.68 s -> 1.33 s).  Argmin sets matched the exact path on 197
+  pairs; SPR results matched on 300.  What remains: MCI ~45% (LAP, two
+  CostMatrix allocations per call), `reduce_trees()` and Rcpp allocation/GC.
