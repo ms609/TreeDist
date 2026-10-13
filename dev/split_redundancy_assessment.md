@@ -84,3 +84,50 @@ Cost-matrix fill, ns per cell (`split_redundancy_lookup.cpp`):
   70–90 %, a 1.3–2× bound for PID only. A better target for that case is the
   LAP itself (e.g. warm-starting from the identity assignment on shared
   splits), which is outside #57.
+
+## Follow-up: pinning identical splits in PID
+
+`shared_phylo_pinned()` in `src/pairwise_distances.cpp` matches identical
+splits to each other, solves the LAP on the rest, and then proves the
+combined assignment optimal with LP duals. Pairs it cannot certify are
+released into the residual LAP; the full LAP is the fallback. Scores are
+bit-identical to the full LAP.
+
+The trap is real: forcing identical matches without a certificate lowered
+PID in 104 of 300 near-identical pairs (8–30 tips, 1–6 NNI moves).
+
+Cells between two pinned splits are never computed. Both splits come from
+one tree, so they are compatible, and their cost is bounded below by a
+function of the two split sizes (nested or disjoint, whichever is cheaper).
+Separately, for distinct compatible splits A and B,
+SPI(A, B) <= min(h(A), h(B)) - log2(3), checked for every size pair up to
+2048 tips.
+
+Pinning runs when at least 70% of splits are shared. Single thread, min of
+two runs, `cpp_shared_phylo_all_pairs()`; run-to-run noise on this machine
+is about ±10%:
+
+| scenario | tips × trees | before (s) | after (s) |
+|---|---|---|---|
+| random | 50 × 100 | 0.40 | 0.37 |
+| walk-10NNI | 50 × 100 | 0.39 | 0.44 |
+| walk-2NNI | 50 × 100 | 0.27 | 0.28 |
+| perturb-5NNI | 50 × 100 | 0.17 | 0.21 |
+| random | 200 × 50 | 2.95 | 3.37 |
+| walk-10NNI | 200 × 50 | 1.54 | 1.59 |
+| walk-2NNI | 200 × 50 | 0.91 | 0.73 |
+| perturb-5NNI | 200 × 50 | 0.73 | 0.32 |
+| random | 1000 × 15 | 31.8 | 38.1 |
+| walk-10NNI | 1000 × 15 | 4.50 | 1.86 |
+| walk-2NNI | 1000 × 15 | 3.50 | 0.55 |
+| perturb-5NNI | 1000 × 15 | 3.18 | 0.53 |
+
+Random sets never pin, so they run the same code as before. Three
+interleaved A/B runs on random sets gave 1.90–2.10 s (before) against
+1.97–2.15 s (after) at 200 × 40, and 8.40–8.51 s against 8.20–9.19 s at
+1000 × 8, so the gaps in the random rows of the table are mostly noise.
+
+`PhylogeneticInfoDistance()` on the CI benchmark sets takes 0.064 s instead
+of 0.130 s (`as.phylo(0:99, 50)`), 0.089 s instead of 0.282 s
+(`as.phylo(0:39, 180)`) and 0.311 s instead of 1.146 s
+(`as.phylo(0:49, 280)`).
