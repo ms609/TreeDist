@@ -23,7 +23,9 @@
   [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
   and
   [`PhylogeneticInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
-  when comparing similar trees.
+  when comparing similar trees: identical splits are matched first, and
+  the result is certified optimal (or the full matching computed) so
+  that scores are unchanged.
 
 ## TreeDist 2.15.0 (2026-09-11)
 

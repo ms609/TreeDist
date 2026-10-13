@@ -65,7 +65,7 @@
 <ul><li><p>Improve performance when comparing many similar trees with <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>.</p></li>
 <li><p>Improve performance of <code><a href="../reference/KendallColijn.html">PathVector()</a></code>, and thus <code><a href="../reference/PathDist.html">PathDist()</a></code>.</p></li>
 <li><p>Improve performance of <code><a href="../reference/NNIMaxStep.html">NNIMaxStep()</a></code>.</p></li>
-<li><p>Improve performance of <code><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code> and <code><a href="../reference/TreeDistance.html">PhylogeneticInfoDistance()</a></code> when comparing similar trees.</p></li>
+<li><p>Improve performance of <code><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code> and <code><a href="../reference/TreeDistance.html">PhylogeneticInfoDistance()</a></code> when comparing similar trees: identical splits are matched first, and the result is certified optimal (or the full matching computed) so that scores are unchanged.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
