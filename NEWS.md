@@ -4,14 +4,7 @@
 
 - C++ code no longer executes the x86 POPCNT instruction on CPUs that lack
   it, which crashed R with "illegal operation" on some virtual machines
-  (ms609/TreeTools#287). The hot loops check for the instruction once per call,
-  so speed is unchanged where it is available. Complete protection also needs
-  TreeTools > 2.4.1, whose `SplitList` constructor is compiled into TreeDist.
-
-## C++ API
-
-- New header `TreeDist/popcount.h` provides `count_bits()` and
-  `dispatch_popcount()`, using TreeTools' definitions where available.
+  (ms609/TreeTools#287).
 
 ## Performance
 
