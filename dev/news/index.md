@@ -1,6 +1,6 @@
 # Changelog
 
-## TreeDist 2.15.0.9004 (development)
+## TreeDist 2.15.0.9005 (development)
 
 ### Performance
 
@@ -18,6 +18,12 @@
 
 - Improve performance of
   [`NNIMaxStep()`](https://ms609.github.io/TreeDist/dev/reference/NNIMaxStep.md).
+
+- Improve performance of
+  [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
+  and
+  [`PhylogeneticInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
+  when comparing similar trees.
 
 ## TreeDist 2.15.0 (2026-09-11)
 
