@@ -8,6 +8,8 @@
 // definitions; with older TreeTools, identical local copies are used, so
 // TreeDist builds against either.
 //
+// # TODO: Once TreeDist requires TreeTools > 2.4.1, drop the legacy support.
+//
 // - count_bits(x): drop-in; one well-predicted branch on a load-time CPUID
 //   flag per call.
 // - dispatch_popcount(f): calls f(PopcountHW{}) or f(PopcountSW{}) once, so
