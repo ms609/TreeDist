@@ -309,22 +309,24 @@ SPRDist.multiPhylo <- SPRDist.list
       return(moves + 1)
     }
     
-    sp1 <- as.Splits(tr1)
-    sp2 <- as.Splits(tr2, tr1)
-    if (nTip == 5 && getOption("sprShortcut", Inf) >= 5) {
-      return(moves + .SPRExact5(sp1, sp2))
-    }
-    if (nTip == 6 && getOption("sprShortcut", Inf) >= 6) {
-      return(moves + .SPRExact6(sp1, sp2))
-    }
-    if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
-      return(moves + .SPRExact7(sp1, sp2))
+    if (nTip < 8 && getOption("sprShortcut", Inf) >= nTip) {
+      sp1 <- as.Splits(tr1)
+      sp2 <- as.Splits(tr2, tr1)
+      return(moves + switch(nTip - 4L,
+                            .SPRExact5(sp1, sp2),
+                            .SPRExact6(sp1, sp2),
+                            .SPRExact7(sp1, sp2)))
     }
     
-    firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
-    if (!isFALSE(getOption("sprMatches")) && firstMatchedSplit > 0) {
-      # At least one split exists in both trees
-      subtips1 <- as.logical(sp1[[firstMatchedSplit]])
+    # Leaves on one side of a split that exists in both trees, if any
+    subtips1 <- if (useCpp) {
+      spr_first_shared_split(tr1, tr2)
+    } else {
+      sp1 <- as.Splits(tr1)
+      firstMatchedSplit <- FirstMatchingSplit(sp1, as.Splits(tr2, tr1))
+      if (firstMatchedSplit > 0) as.logical(sp1[[firstMatchedSplit]])
+    }
+    if (!isFALSE(getOption("sprMatches")) && length(subtips1)) {
       subtips2 <- !subtips1
       
       # Add dummy tip as placeholder for other half of tree
@@ -438,8 +440,12 @@ SPRDist.multiPhylo <- SPRDist.list
       drop[[which.min(scores)]] <- TRUE
     }
     
-    reduced <- keep_and_reduce(tr1, tr2, !drop)
-    if (length(reduced) == 1L) {
+    reduced <- if (useCpp) {
+      spr_keep_and_reduce(tr1, tr2, !drop)
+    } else {
+      keep_and_reduce(tr1, tr2, !drop)
+    }
+    if (is.null(reduced[[1]])) {
       reduced <- NULL
     }
     

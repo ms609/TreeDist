@@ -967,3 +967,14 @@ in TreeDist — every sort is `std::sort` / `std::stable_sort`.
   (80 tips 1.68 s -> 1.33 s).  Argmin sets matched the exact path on 197
   pairs; SPR results matched on 300.  What remains: MCI ~45% (LAP, two
   CostMatrix allocations per call), `reduce_trees()` and Rcpp allocation/GC.
+- Round 3 (2026-10-13): mutual_clustering<true>() reuses thread_local
+  CostMatrix buffers and skips Rcpp::checkUserInterrupt() (per-call and in
+  lap(); the singles loop checks instead); FirstMatchingSplit() hashes
+  polarized splits instead of an O(n^2) scan; `.SPRRogue()` finds the shared
+  split (`spr_first_shared_split()`) and drops leaves
+  (`spr_keep_and_reduce()`) in C++, building Splits only for the 5-7 leaf
+  shortcuts.  Min-of-N vs merged head: 30 tips -33%, 80 tips -19%.
+- Counters at 80 tips: ~98% of bounded MCI calls run the full LAP, and ~89%
+  of those end below the cutoff (candidate rejected); the row bound exits
+  ~2%, a column-max bound would add ~1%.  Further gains need a tighter
+  MCI upper bound or LAP warm starts between candidates.

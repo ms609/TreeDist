@@ -407,6 +407,13 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
 // min_score.  It then returns an upper bound on the score, below min_score,
 // and an empty matching.  Scores at or above min_score are computed exactly as
 // with Bounded = false.
+// Reusable cost matrices for mutual_clustering<true>().
+static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
+  static thread_local cost_matrix pool[2];
+  pool[i].resize(dim);
+  return pool[i];
+}
+
 template <bool Bounded>
 List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                        const int32 n_tips, const double min_score = 0) {
@@ -450,7 +457,10 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     upper_bound = entropy_a * n_tips_reciprocal;
   }
 
-  cost_matrix score(most_splits);
+  // Bounded only: called once per candidate in SPR leaf scoring, so reuse
+  // buffers rather than reallocating them on each call.
+  cost_matrix local_score(Bounded ? 0 : most_splits);
+  cost_matrix &score = Bounded ? BoundedPool(0, most_splits) : local_score;
 
   double exact_match_score = 0;
   split_int exact_matches = 0;
@@ -460,7 +470,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::unique_ptr<split_int[]> b_match = std::make_unique<split_int[]>(b.n_splits);
 
   for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    if (!Bounded && (ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
 
     const split_int na = a.in_split[ai];
@@ -543,7 +553,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_row> colsol;
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
-  cost_matrix small_score(lap_dim);
+  cost_matrix local_small(Bounded ? 0 : lap_dim);
+  cost_matrix &small_score = Bounded ? BoundedPool(1, lap_dim) : local_small;
 
   if (exact_matches) {
     split_int a_pos = 0;
@@ -561,7 +572,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
 
     const double lap_score = static_cast<double>((max_score * lap_dim) -
-      lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
+      lap(lap_dim, small_score, rowsol, colsol, !Bounded)) * over_max_score;
     const double final_score = lap_score + (exact_match_score / n_tips);
 
     std::unique_ptr<split_int[]> lap_decode = std::make_unique<split_int[]>(lap_dim);
@@ -599,7 +610,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
 
     const double final_score = static_cast<double>(
-      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
+      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, !Bounded)
     ) / max_score;
 
     std::vector<int> final_matching;

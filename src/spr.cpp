@@ -6,6 +6,9 @@
 #include <TreeTools/SplitList.h> // for SplitList, count_bits
 #include "reduce_tree.h"
 #include <cmath> // for log2
+#include <algorithm> // for sort, lower_bound, equal
+#include <cstdint>
+#include <vector>
 
 using namespace Rcpp;
 
@@ -350,17 +353,41 @@ int FirstMatchingSplit(const RawMatrix &x, const RawMatrix &table,
   const int n_bin = x.ncol();
   const int n_spare = n_tip % SPLIT_BIN;
   const uint8_t last_mask = n_spare ? uint8_t((1u << n_spare) - 1u) : 0xFF;
-  for (int i = 0; i != x.nrow(); ++i) {
-    for (int k = 0; k != table.nrow(); ++k) {
-      bool same = true, complement = true;
-      for (int j = 0; j != n_bin && (same || complement); ++j) {
+  // Polarize each split so that leaf 1 lies outside it, then hash
+  const auto Canonical = [&](const RawMatrix &splits, std::vector<uint8_t> &key,
+                             std::vector<uint64_t> &hash) {
+    const int n_row = splits.nrow();
+    key.resize(n_row * n_bin);
+    hash.resize(n_row);
+    for (int r = 0; r != n_row; ++r) {
+      const uint8_t flip = (splits(r, 0) & 1) ? 0xFF : 0;
+      uint64_t h = 14695981039346656037ULL; // FNV-1a
+      for (int j = 0; j != n_bin; ++j) {
         const uint8_t mask = j == n_bin - 1 ? last_mask : 0xFF;
-        const uint8_t a = x(i, j) & mask;
-        const uint8_t b = table(k, j) & mask;
-        same = same && a == b;
-        complement = complement && a == (uint8_t(~b) & mask);
+        const uint8_t byte = (splits(r, j) ^ flip) & mask;
+        key[r * n_bin + j] = byte;
+        h = (h ^ byte) * 1099511628211ULL;
       }
-      if (same || complement) {
+      hash[r] = h;
+    }
+  };
+  std::vector<uint8_t> x_key, t_key;
+  std::vector<uint64_t> x_hash, t_hash;
+  Canonical(x, x_key, x_hash);
+  Canonical(table, t_key, t_hash);
+  
+  std::vector<std::pair<uint64_t, int>> sorted(t_hash.size());
+  for (int k = 0; k != int(t_hash.size()); ++k) {
+    sorted[k] = {t_hash[k], k};
+  }
+  std::sort(sorted.begin(), sorted.end());
+  for (int i = 0; i != x.nrow(); ++i) {
+    auto it = std::lower_bound(sorted.begin(), sorted.end(),
+                               std::make_pair(x_hash[i], 0));
+    for (; it != sorted.end() && it->first == x_hash[i]; ++it) {
+      if (std::equal(x_key.begin() + i * n_bin,
+                     x_key.begin() + (i + 1) * n_bin,
+                     t_key.begin() + it->second * n_bin)) {
         return i;
       }
     }
@@ -370,8 +397,8 @@ int FirstMatchingSplit(const RawMatrix &x, const RawMatrix &table,
 
 // As ReduceTrees(KeepTipPostorder(tree1, keep), KeepTipPostorder(tree2, keep));
 // a list holding NULL if no tree remains after reduction.
-List KeepAndReduce(const List &tree1, const List &tree2,
-                   const LogicalVector &keep) {
+List KeepAndReduce(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+                   const CharacterVector &labels, const LogicalVector &keep) {
   int n_kept = 0;
   for (const int k : keep) {
     n_kept += k;
@@ -380,29 +407,33 @@ List KeepAndReduce(const List &tree1, const List &tree2,
     // Unrooted trees on three leaves are identical, so reduce to nothing
     return List::create(R_NilValue);
   }
-  const CharacterVector labels = tree1["tip.label"];
-  IntegerMatrix rooted[2];
-  const List *trees[2] = {&tree1, &tree2};
-  for (int t = 0; t != 2; ++t) {
-    const IntegerMatrix edge = (*trees[t])["edge"];
-    rooted[t] = reverse(TreeTools::root_binary(
-      TreeTools::keep_tip(reverse(edge), keep), 1));
-  }
-  return reduce_trees(rooted[0], rooted[1], labels[keep]);
+  return reduce_trees(
+    reverse(TreeTools::root_binary(TreeTools::keep_tip(pre1, keep), 1)),
+    reverse(TreeTools::root_binary(TreeTools::keep_tip(pre2, keep), 1)),
+    labels[keep]);
+}
+
+// Trees with edges in postorder
+List KeepAndReduce(const List &tree1, const List &tree2,
+                   const LogicalVector &keep) {
+  return KeepAndReduce(reverse(tree1["edge"]), reverse(tree2["edge"]),
+                       tree1["tip.label"], keep);
 }
 
 // As .ScoreWithout(): the proxy distance between the trees that remain once
 // the leaves not in `keep` are removed and the trees reduced.
-double ScoreWithout(const List &tree1, const List &tree2,
+// `pre1` and `pre2` are the trees' edges in preorder.
+double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+                    const CharacterVector &labels,
                     const LogicalVector &keep, const double cutoff) {
-  const List outcome = KeepAndReduce(tree1, tree2, keep);
+  const List outcome = KeepAndReduce(pre1, pre2, labels, keep);
   if (Rf_isNull(outcome[0])) {
     return R_NegInf;
   }
   const List out1 = outcome[0];
   const List out2 = outcome[1];
-  const CharacterVector labels = out1["tip.label"];
-  const int n_tip = labels.size();
+  const CharacterVector out_labels = out1["tip.label"];
+  const int n_tip = out_labels.size();
   const TreeSplits splits1 = GetSplits(out1["edge"], n_tip);
   const TreeSplits splits2 = GetSplits(out2["edge"], n_tip);
   const int first_match = FirstMatchingSplit(splits1.bits, splits2.bits,
@@ -451,13 +482,16 @@ double ScoreWithout(const List &tree1, const List &tree2,
 List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
   const CharacterVector labels = tree1["tip.label"];
   const int n_tip = labels.size();
+  const IntegerMatrix pre1 = reverse(tree1["edge"]);
+  const IntegerMatrix pre2 = reverse(tree2["edge"]);
   NumericVector scores(n_tip);
   double best = R_PosInf;
   bool all_finite = true;
   LogicalVector keep(n_tip, true);
   for (int i = 0; i != n_tip; ++i) {
+    Rcpp::checkUserInterrupt();
     keep[i] = false;
-    scores[i] = ScoreWithout(tree1, tree2, keep, best);
+    scores[i] = ScoreWithout(pre1, pre2, labels, keep, best);
     keep[i] = true;
     if (!R_FINITE(scores[i])) {
       all_finite = false;
@@ -478,7 +512,7 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
     keep[i] = false;
     for (int j = i + 1; j != n_tip; ++j) {
       keep[j] = false;
-      pair_scores[pair] = ScoreWithout(tree1, tree2, keep, best);
+      pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best);
       keep[j] = true;
       if (!R_FINITE(pair_scores[pair])) {
         return List::create(Named("scores") = scores,
@@ -498,4 +532,33 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
 double spr_bounded_cid(const List &tree1, const List &tree2,
                        const double cutoff) {
   return BoundedCID(tree1, tree2, cutoff);
+}
+
+// Leaves on one side of the first split in `tree1` that also occurs in
+// `tree2`, as as.logical(as.Splits(tree1)[[FirstMatchingSplit(...)]]);
+// a zero-length vector if the trees share no split.
+// Trees must have identical tip labels and edges in postorder.
+// [[Rcpp::export]]
+LogicalVector spr_first_shared_split(const List &tree1, const List &tree2) {
+  const CharacterVector labels = tree1["tip.label"];
+  const int n_tip = labels.size();
+  const RawMatrix splits1 = GetSplits(tree1["edge"], n_tip).bits;
+  const int first_match = FirstMatchingSplit(
+    splits1, GetSplits(tree2["edge"], n_tip).bits, n_tip);
+  if (first_match < 0) {
+    return LogicalVector(0);
+  }
+  LogicalVector ret(n_tip);
+  for (int t = 0; t != n_tip; ++t) {
+    ret[t] = (splits1(first_match, t / SPLIT_BIN) >> (t % SPLIT_BIN)) & 1;
+  }
+  return ret;
+}
+
+// As keep_and_reduce(), via a leaner route; returns a list whose first
+// element is NULL if no tree remains after reduction.
+// [[Rcpp::export]]
+List spr_keep_and_reduce(const List &tree1, const List &tree2,
+                         const LogicalVector &keep) {
+  return KeepAndReduce(tree1, tree2, keep);
 }

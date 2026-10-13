@@ -216,6 +216,14 @@ spr_bounded_cid <- function(tree1, tree2, cutoff) {
     .Call(`_TreeDist_spr_bounded_cid`, tree1, tree2, cutoff)
 }
 
+spr_first_shared_split <- function(tree1, tree2) {
+    .Call(`_TreeDist_spr_first_shared_split`, tree1, tree2)
+}
+
+spr_keep_and_reduce <- function(tree1, tree2, keep) {
+    .Call(`_TreeDist_spr_keep_and_reduce`, tree1, tree2, keep)
+}
+
 spr_table_7 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_7`, sp1, sp2)
 }
