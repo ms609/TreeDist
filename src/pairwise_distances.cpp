@@ -760,10 +760,10 @@ static SpiScale spi_scale(const int32 n_tips, const bool fast) {
     best_overlap = TreeDist::one_overlap<true>(overlap_a, n_tips / 2, n_tips);
     max_possible = lg2_unrooted[n_tips] - best_overlap;
   } else {
-    // LCOV_EXCL_START
+    // LCOV_EXCL_START # nocov start
     best_overlap = TreeDist::one_overlap<false>(overlap_a, n_tips / 2, n_tips);
     max_possible = lg2_unrooted_lookup(n_tips) - best_overlap;
-    // LCOV_EXCL_STOP
+    // LCOV_EXCL_STOP # nocov end
   }
   return {best_overlap,
           static_cast<double>(BIG) / max_possible,
@@ -785,10 +785,10 @@ static double shared_phylo_full(
     shared_phylo_fill_lap<true>(a, b, n_tips, sc.best_overlap,
                                 sc.score_over_possible, max_score, score);
   } else {
-    // LCOV_EXCL_START
+    // LCOV_EXCL_START # nocov start
     shared_phylo_fill_lap<false>(a, b, n_tips, sc.best_overlap,
                                  sc.score_over_possible, max_score, score);
-    // LCOV_EXCL_STOP
+    // LCOV_EXCL_STOP # nocov end
   }
   score.padAfterRow(a.n_splits, max_score);
 
