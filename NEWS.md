@@ -13,6 +13,9 @@
 - Improve performance of `SPRDist(method = "Rogue")`: candidate leaves are
   scored in C++, and abandoned once they cannot beat the best candidate so far.
 
+- Improve performance of `SharedPhylogeneticInfo()` and
+  `PhylogeneticInfoDistance()` when comparing similar trees.
+
 # TreeDist 2.15.0 (2026-09-11)
 
 - New function `NNIMaxStep()` computes the largest clustering information

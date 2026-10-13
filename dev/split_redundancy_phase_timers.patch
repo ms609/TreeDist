@@ -1,0 +1,100 @@
+--- a/src/pairwise_distances.cpp
++++ b/src/pairwise_distances.cpp
+@@ -21,6 +21,11 @@
+ #include <Rcpp/Lightest>
+ 
+ #include "tree_distances.h"
++#include <chrono>
++static double g_t[4] = {0,0,0,0}; // match, fill, lap, total pairs
++static inline double NowNs() { return std::chrono::duration<double, std::nano>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
++// [[Rcpp::export]]
++Rcpp::NumericVector cpp_phase_times(bool reset) { Rcpp::NumericVector r(g_t, g_t + 4); if (reset) for (auto& x : g_t) x = 0; return r; }
+ 
+ using Rcpp::List;
+ using Rcpp::NumericVector;
+@@ -215,6 +220,7 @@
+   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
+   const double lg2_n = lg2_lookup(n_tips);
+ 
++  double t0 = NowNs();
+   // --- Phase 1: O(n log n) exact-match detection ---
+   const split_int exact_n = find_exact_matches(ca, cb, a.n_bins, mscratch);
+   const split_int* a_match = mscratch.a_match.data();
+@@ -230,6 +236,7 @@
+     }
+   }
+ 
++  double t1 = NowNs(); g_t[0] += t1 - t0;
+   // Early exit when everything matched exactly
+   if (exact_n == b.n_splits || exact_n == a.n_splits) {
+     return exact_score * n_tips_rcp;
+@@ -301,6 +308,7 @@
+     score.padAfterRow(a_unmatched_n, max_score);
+   }
+ 
++  double t2 = NowNs(); g_t[1] += t2 - t1;
+   // --- Phase 3: solve LAP on the reduced matrix ---
+   scratch.ensure(lap_n);
+   auto& rowsol = scratch.rowsol;
+@@ -309,6 +317,7 @@
+   const double lap_score =
+     static_cast<double>((max_score * lap_n) -
+                         lap(lap_n, score, rowsol, colsol, false, scratch)) * over_max;
++  g_t[2] += NowNs() - t2;
+   return lap_score + exact_score * n_tips_rcp;
+ }
+ 
+@@ -629,6 +638,7 @@
+   const double score_over_possible = static_cast<double>(max_score) / max_possible;
+   const double possible_over_score = max_possible / static_cast<double>(max_score);
+ 
++  double t1 = NowNs();
+   scratch.score_pool.resize(most_splits);
+   cost_matrix& score = scratch.score_pool;
+ 
+@@ -649,14 +659,17 @@
+     score.padRowAfterCol(ai, b.n_splits, max_score);
+   }
+   score.padAfterRow(a.n_splits, max_score);
++  double t2 = NowNs(); g_t[1] += t2 - t1;
+ 
+   scratch.ensure(most_splits);
+   auto& rowsol = scratch.rowsol;
+   auto& colsol = scratch.colsol;
+ 
+-  return static_cast<double>(
++  double ret = static_cast<double>(
+     (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
+   ) * possible_over_score;
++  g_t[2] += NowNs() - t2;
++  return ret;
+ }
+ 
+ //' @keywords internal
+@@ -765,6 +778,7 @@
+   const double score_over_possible = static_cast<double>(max_score) / max_possible;
+   const double possible_over_score = max_possible / static_cast<double>(max_score);
+ 
++  double t1 = NowNs();
+   scratch.score_pool.resize(most_splits);
+   cost_matrix& score = scratch.score_pool;
+ 
+@@ -778,14 +792,17 @@
+     // LCOV_EXCL_STOP
+   }
+   score.padAfterRow(a.n_splits, max_score);
++  double t2 = NowNs(); g_t[1] += t2 - t1;
+ 
+   scratch.ensure(most_splits);
+   auto& rowsol = scratch.rowsol;
+   auto& colsol = scratch.colsol;
+ 
+-  return static_cast<double>(
++  double ret = static_cast<double>(
+     (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
+   ) * possible_over_score;
++  g_t[2] += NowNs() - t2;
++  return ret;
+ }
+ 
+ //' @keywords internal
