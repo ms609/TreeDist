@@ -951,3 +951,9 @@ in TreeDist — every sort is `std::sort` / `std::stable_sort`.
   are caught by the row bound first, and the dual bound is too loose for near
   ones.  Templating `lap()` to share the body also changed its codegen
   (`findRowSubmin` no longer inlined), so it was not worth the risk.
+- Then ported the whole candidate-scoring loop to C++ (`spr_rogue_scores()`
+  in `src/spr.cpp`), for the default "C" proxy.  Scores are bit-identical to
+  the R path (`options(sprCpp = FALSE)`): split rows in node order, entropy
+  summed in long double, same cutoff/tolerance arithmetic.  Verified on 420
+  random and near-identical pairs at depths 1 and 2 against main.
+  30 tips: 1.79 s -> 0.24 s; 80 tips: 5.24 s -> 1.62 s (6-20 pairs).

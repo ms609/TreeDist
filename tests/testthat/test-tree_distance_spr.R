@@ -273,6 +273,52 @@ test_that(".BoundedCID() matches ClusteringInfoDist()", {
   # Identical trees
   tree <- BalancedTree(12)
   expect_equal(.BoundedCID(tree, tree, 0), 0)
+  expect_equal(spr_bounded_cid(Postorder(tree), Postorder(tree), 0), 0)
+})
+
+test_that("spr_bounded_cid() matches .BoundedCID()", {
+  library("TreeTools", quietly = TRUE)
+  set.seed(1174)
+  for (nTip in c(3, 4, 9, 25)) {
+    tree1 <- Postorder(RandomTree(nTip, root = TRUE))
+    tree2 <- Postorder(RenumberTips(RandomTree(nTip, root = TRUE), tree1))
+    exact <- .BoundedCID(tree1, tree2)
+    for (cutoff in c(Inf, exact, exact - 1e-12, exact / 2, 0)) {
+      expect_identical(spr_bounded_cid(tree1, tree2, cutoff),
+                       .BoundedCID(tree1, tree2, cutoff))
+    }
+  }
+})
+
+test_that("C++ Rogue scorer matches R implementation", {
+  library("TreeTools", quietly = TRUE)
+  Rogue <- function(tree1, tree2, ...) {
+    opt <- options(...)
+    on.exit(options(opt))
+    SPRDist(tree1, tree2, method = "Rogue")
+  }
+  # Dropping one leaf reconciles the trees: abandons scoring early
+  tree1 <- BalancedTree(8)
+  tree2 <- AddTip(DropTip(tree1, "t1"), 11, "t1")
+  expect_equal(spr_rogue_scores(Postorder(tree1),
+                                Postorder(RenumberTips(tree2, tree1)), 2L),
+               list(scores = c(-Inf, double(7)), pair_scores = NULL))
+  for (depth in 1:2) {
+    expect_equal(Rogue(tree1, tree2, sprDepth = depth, sprShortcut = 0), 1)
+    expect_equal(Rogue(tree1, tree2, sprDepth = depth, sprShortcut = 0,
+                       sprCpp = FALSE), 1)
+  }
+  
+  set.seed(2174)
+  for (i in 1:12) {
+    nTip <- 4 + i
+    tree1 <- RandomTree(nTip, root = TRUE)
+    tree2 <- RandomTree(nTip, root = TRUE)
+    for (depth in 1:2) {
+      expect_identical(Rogue(tree1, tree2, sprDepth = depth),
+                       Rogue(tree1, tree2, sprDepth = depth, sprCpp = FALSE))
+    }
+  }
 })
 
 test_that("cpp_mutual_clustering_bounded() exits early", {
@@ -323,13 +369,16 @@ test_that("Rogue SPR results unchanged by early exits", {
   expect_equal(Rogue(sprProxy = "C", sprDepth = 2), c(10, 10, 10, 10, 11))
   expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
   expect_equal(Rogue(sprProxy = "R"), c(11, 12, 11, 13, 13))
+  expect_equal(Rogue(sprCpp = FALSE), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprCpp = FALSE, sprDepth = 2), c(10, 10, 10, 10, 11))
   
   # Abandons a divide-and-conquer candidate after its first half
-  expect_equal(SPRDist(
-    ape::read.tree(text = "(t1,((((t2,t4),t9),(((((((t3,t17),(t5,t7)),t11),t12),t14),t18),(t10,t13))),(t6,((t8,t16),t15))));"),
-    ape::read.tree(text = "(((((((((((t1,(t4,t8)),t16),t6),t14),t15),(t2,t12)),t10),((t3,t18),t9)),((t7,t13),t17)),t11),t5);"),
-    method = "Rogue"
-  ), 9)
+  pinned1 <- ape::read.tree(text = "(t1,((((t2,t4),t9),(((((((t3,t17),(t5,t7)),t11),t12),t14),t18),(t10,t13))),(t6,((t8,t16),t15))));")
+  pinned2 <- ape::read.tree(text = "(((((((((((t1,(t4,t8)),t16),t6),t14),t15),(t2,t12)),t10),((t3,t18),t9)),((t7,t13),t17)),t11),t5);")
+  expect_equal(SPRDist(pinned1, pinned2, method = "Rogue"), 9)
+  opt <- options(sprCpp = FALSE)
+  expect_equal(SPRDist(pinned1, pinned2, method = "Rogue"), 9)
+  options(opt)
   skip_if_not_installed("Quartet")
   expect_true(all(Rogue(sprProxy = "Q") %in% 1:15))
 })

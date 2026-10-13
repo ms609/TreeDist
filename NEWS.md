@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9005 (development)
+# TreeDist 2.15.0.9006 (development)
 
 ## Performance
 
@@ -11,8 +11,7 @@
 - Improve performance of `NNIMaxStep()`.
 
 - Improve performance of `SPRDist(method = "Rogue")`: candidate leaves are
-  scored with fewer redundant calculations, and abandoned once they cannot
-  beat the best candidate so far.
+  scored in C++, and abandoned once they cannot beat the best candidate so far.
 
 # TreeDist 2.15.0 (2026-09-11)
 

@@ -545,6 +545,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// spr_rogue_scores
+List spr_rogue_scores(const List& tree1, const List& tree2, const int depth);
+RcppExport SEXP _TreeDist_spr_rogue_scores(SEXP tree1SEXP, SEXP tree2SEXP, SEXP depthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const int >::type depth(depthSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_rogue_scores(tree1, tree2, depth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_bounded_cid
+double spr_bounded_cid(const List& tree1, const List& tree2, const double cutoff);
+RcppExport SEXP _TreeDist_spr_bounded_cid(SEXP tree1SEXP, SEXP tree2SEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_bounded_cid(tree1, tree2, cutoff));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spr_table_7
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2);
 RcppExport SEXP _TreeDist_spr_table_7(SEXP sp1SEXP, SEXP sp2SEXP) {
@@ -822,6 +848,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
+    {"_TreeDist_spr_rogue_scores", (DL_FUNC) &_TreeDist_spr_rogue_scores, 3},
+    {"_TreeDist_spr_bounded_cid", (DL_FUNC) &_TreeDist_spr_bounded_cid, 3},
     {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
     {"_TreeDist_cpp_transfer_consensus", (DL_FUNC) &_TreeDist_cpp_transfer_consensus, 6},
     {"_TreeDist_cpp_tc_profile", (DL_FUNC) &_TreeDist_cpp_tc_profile, 7},

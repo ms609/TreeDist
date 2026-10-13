@@ -208,6 +208,14 @@ keep_and_reduce <- function(tree1, tree2, keep) {
     .Call(`_TreeDist_keep_and_reduce`, tree1, tree2, keep)
 }
 
+spr_rogue_scores <- function(tree1, tree2, depth) {
+    .Call(`_TreeDist_spr_rogue_scores`, tree1, tree2, depth)
+}
+
+spr_bounded_cid <- function(tree1, tree2, cutoff) {
+    .Call(`_TreeDist_spr_bounded_cid`, tree1, tree2, cutoff)
+}
+
 spr_table_7 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_7`, sp1, sp2)
 }

@@ -284,8 +284,12 @@ SPRDist.multiPhylo <- SPRDist.list
   
   # A score above `cutoff` cannot be selected, so ProxyDistance() may return
   # any value above `cutoff` in place of the exact distance.
+  proxy <- pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R"))
+  # Score leaves in C++ for the default proxy; option `sprCpp = FALSE` uses
+  # the equivalent R implementation.
+  useCpp <- proxy == 1L && !isFALSE(getOption("sprCpp"))
   ProxyDistance <- switch(
-    pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
+    proxy,
     .BoundedCID,
     function(x, y, cutoff) PhylogeneticInfoDistance(x, y),
     function(x, y, cutoff) {
@@ -346,61 +350,72 @@ SPRDist.multiPhylo <- SPRDist.list
 
     depth <- max(getOption("sprDepth", 1), 1)
     
-    
-    .ScoreWithout <- function(idx, cutoff = Inf) {
-      keep <- blank
-      keep[idx] <- FALSE
-      
-      outcome <- keep_and_reduce(tr1, tr2, keep)
-      if (is.null(outcome[[1]])) {
-        return(-Inf)
+    if (useCpp) {
+      rogue <- spr_rogue_scores(tr1, tr2, as.integer(min(depth, 2)))
+      scores <- rogue[["scores"]]
+      if (any(!is.finite(scores))) {
+        depth <- 1
       }
-      
-      oSpl <- as.Splits(outcome)
-      firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
-      
-      if (firstMatch > 0) {
-        subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
-        subtips2 <- !subtips1
-        # Anchor to shared edge
-        subtips1[!subtips1][[1]] <- TRUE
-        subtips2[!subtips2][[1]] <- TRUE
-        
-        sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
-                            KeepTipPostorder(outcome[[2]], subtips1))
-        
-        sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
-                            KeepTipPostorder(outcome[[2]], subtips2))
-        
-        score1 <- ProxyDistance(sub1[[1]], sub1[[2]], cutoff)
-        if (score1 > cutoff) {
-          return(score1)
+      if (depth > 1) {
+        pairs <- combn(seq_along(labels), 2)
+        pairScores <- rogue[["pair_scores"]]
+      }
+    } else {
+      .ScoreWithout <- function(idx, cutoff = Inf) {
+        keep <- blank
+        keep[idx] <- FALSE
+
+        outcome <- keep_and_reduce(tr1, tr2, keep)
+        if (is.null(outcome[[1]])) {
+          return(-Inf)
         }
-        # Return:
-        score1 + ProxyDistance(sub2[[1]], sub2[[2]], cutoff - score1)
-        
-      } else {
-        # Return:
-        ProxyDistance(outcome[[1]], outcome[[2]], cutoff)
+
+        oSpl <- as.Splits(outcome)
+        firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
+
+        if (firstMatch > 0) {
+          subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
+          subtips2 <- !subtips1
+          # Anchor to shared edge
+          subtips1[!subtips1][[1]] <- TRUE
+          subtips2[!subtips2][[1]] <- TRUE
+
+          sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
+                              KeepTipPostorder(outcome[[2]], subtips1))
+
+          sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
+                              KeepTipPostorder(outcome[[2]], subtips2))
+
+          score1 <- ProxyDistance(sub1[[1]], sub1[[2]], cutoff)
+          if (score1 > cutoff) {
+            return(score1)
+          }
+          # Return:
+          score1 + ProxyDistance(sub2[[1]], sub2[[2]], cutoff - score1)
+
+        } else {
+          # Return:
+          ProxyDistance(outcome[[1]], outcome[[2]], cutoff)
+        }
       }
-    }
-    best <- Inf
-    for (i in seq_along(labels)) {
-      scores[[i]] <- .ScoreWithout(i, best)
-      if (!is.finite(scores[[i]])) break
-      best <- min(best, scores[[i]])
-    }
-    if (any(!is.finite(scores))) {
-      depth <- 1
-    }
-    if (depth > 1) {
-      pairs <- combn(seq_along(labels), 2)
-      nPairs <- dim(pairs)[[2]]
-      pairScores <- double(nPairs)
-      for (i in seq_len(nPairs)) {
-        pairScores[[i]] <- .ScoreWithout(pairs[, i], best)
-        if (!is.finite(pairScores[[i]])) break
-        best <- min(best, pairScores[[i]])
+      best <- Inf
+      for (i in seq_along(labels)) {
+        scores[[i]] <- .ScoreWithout(i, best)
+        if (!is.finite(scores[[i]])) break
+        best <- min(best, scores[[i]])
+      }
+      if (any(!is.finite(scores))) {
+        depth <- 1
+      }
+      if (depth > 1) {
+        pairs <- combn(seq_along(labels), 2)
+        nPairs <- dim(pairs)[[2]]
+        pairScores <- double(nPairs)
+        for (i in seq_len(nPairs)) {
+          pairScores[[i]] <- .ScoreWithout(pairs[, i], best)
+          if (!is.finite(pairScores[[i]])) break
+          best <- min(best, pairScores[[i]])
+        }
       }
     }
     

@@ -756,7 +756,14 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 }
 
 // Mutual clustering information, or an upper bound on it if it is below
-// minScore.  Used to discard candidates early in SPRDist(method = "Rogue").
+// min_score.  Used to discard candidates early in SPRDist(method = "Rogue").
+double mutual_clustering_bounded_score(const RawMatrix &x, const RawMatrix &y,
+                                       const int32 n_tip,
+                                       const double min_score) {
+  return Rcpp::as<double>(
+    mutual_clustering<true>(x, y, n_tip, min_score)["score"]);
+}
+
 // [[Rcpp::export]]
 double cpp_mutual_clustering_bounded(const RawMatrix &x, const RawMatrix &y,
                                      const IntegerVector &nTip,
@@ -764,8 +771,7 @@ double cpp_mutual_clustering_bounded(const RawMatrix &x, const RawMatrix &y,
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
-  return Rcpp::as<double>(
-    mutual_clustering<true>(x, y, n_tip, minScore)["score"]);
+  return mutual_clustering_bounded_score(x, y, n_tip, minScore);
 }
 
 // [[Rcpp::export]]
