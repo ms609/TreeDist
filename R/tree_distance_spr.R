@@ -257,18 +257,45 @@ SPRDist.multiPhylo <- SPRDist.list
   spr_table_7(sp1, sp2)
 }
 
+# Equivalent to ClusteringInfoDist(tree1, tree2) for trees with identical
+# leaves; but if the distance exceeds `cutoff` by more than numerical noise,
+# may instead return a lower bound on the distance that exceeds `cutoff`.
+.BoundedCID <- function(tree1, tree2, cutoff = Inf) {
+  splits1 <- as.Splits(tree1)
+  nTip <- attr(splits1, "nTip")
+  info <- ClusteringEntropy(splits1) + ClusteringEntropy(as.Splits(tree2))
+  mci <- if (nTip < 4) {
+    0
+  } else {
+    tol <- max(1, info) * .Machine[["double.eps"]] ^ 0.5
+    cpp_mutual_clustering_bounded(
+      splits1, as.Splits(tree2, tipLabels = TipLabels(splits1)), nTip,
+      (info - cutoff) / 2 - tol
+    )
+  }
+  .FloorNumericalNoise(info - mci - mci, info)
+}
+
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
 #' @importFrom TreeTools FirstMatchingSplit
 .SPRRogue <- function(tree1, tree2, check = TRUE) {
   moves <- 0
   
+  # A score above `cutoff` cannot be selected, so ProxyDistance() may return
+  # any value above `cutoff` in place of the exact distance.
+  proxy <- pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R"))
+  # Score leaves in C++ for the default proxy; option `sprCpp = FALSE` uses
+  # the equivalent R implementation.
+  useCpp <- proxy == 1L && !isFALSE(getOption("sprCpp"))
   ProxyDistance <- switch(
-    pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-    ClusteringInfoDist,
-    PhylogeneticInfoDistance,
-    function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
-    RobinsonFoulds
+    proxy,
+    .BoundedCID,
+    function(x, y, cutoff) PhylogeneticInfoDistance(x, y),
+    function(x, y, cutoff) {
+      Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y))
+    },
+    function(x, y, cutoff) RobinsonFoulds(x, y)
   )
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
@@ -282,22 +309,24 @@ SPRDist.multiPhylo <- SPRDist.list
       return(moves + 1)
     }
     
-    sp1 <- as.Splits(tr1)
-    sp2 <- as.Splits(tr2, tr1)
-    if (nTip == 5 && getOption("sprShortcut", Inf) >= 5) {
-      return(moves + .SPRExact5(sp1, sp2))
-    }
-    if (nTip == 6 && getOption("sprShortcut", Inf) >= 6) {
-      return(moves + .SPRExact6(sp1, sp2))
-    }
-    if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
-      return(moves + .SPRExact7(sp1, sp2))
+    if (nTip < 8 && getOption("sprShortcut", Inf) >= nTip) {
+      sp1 <- as.Splits(tr1)
+      sp2 <- as.Splits(tr2, tr1)
+      return(moves + switch(nTip - 4L,
+                            .SPRExact5(sp1, sp2),
+                            .SPRExact6(sp1, sp2),
+                            .SPRExact7(sp1, sp2)))
     }
     
-    firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
-    if (!isFALSE(getOption("sprMatches")) && firstMatchedSplit > 0) {
-      # At least one split exists in both trees
-      subtips1 <- as.logical(sp1[[firstMatchedSplit]])
+    # Leaves on one side of a split that exists in both trees, if any
+    subtips1 <- if (useCpp) {
+      spr_first_shared_split(tr1, tr2)
+    } else {
+      sp1 <- as.Splits(tr1)
+      firstMatchedSplit <- FirstMatchingSplit(sp1, as.Splits(tr2, tr1))
+      if (firstMatchedSplit > 0) as.logical(sp1[[firstMatchedSplit]])
+    }
+    if (!isFALSE(getOption("sprMatches")) && length(subtips1)) {
       subtips2 <- !subtips1
       
       # Add dummy tip as placeholder for other half of tree
@@ -323,55 +352,72 @@ SPRDist.multiPhylo <- SPRDist.list
 
     depth <- max(getOption("sprDepth", 1), 1)
     
-    
-    .ScoreWithout <- function(idx) {
-      keep <- blank
-      keep[idx] <- FALSE
-      
-      outcome <- keep_and_reduce(tr1, tr2, keep)
-      if (is.null(outcome[[1]])) {
-        return(-Inf)
+    if (useCpp) {
+      rogue <- spr_rogue_scores(tr1, tr2, as.integer(min(depth, 2)))
+      scores <- rogue[["scores"]]
+      if (any(!is.finite(scores))) {
+        depth <- 1
       }
-      
-      oSpl <- as.Splits(outcome)
-      firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
-      
-      if (firstMatch > 0) {
-        subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
-        subtips2 <- !subtips1
-        # Anchor to shared edge
-        subtips1[!subtips1][[1]] <- TRUE
-        subtips2[!subtips2][[1]] <- TRUE
-        
-        sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
-                            KeepTipPostorder(outcome[[2]], subtips1))
-        
-        sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
-                            KeepTipPostorder(outcome[[2]], subtips2))
-        
-        # Return:
-        ProxyDistance(sub1[[1]], sub1[[2]]) +
-          ProxyDistance(sub2[[1]], sub2[[2]])
-        
-      } else {
-        # Return:
-        ProxyDistance(outcome[[1]], outcome[[2]])
+      if (depth > 1) {
+        pairs <- combn(seq_along(labels), 2)
+        pairScores <- rogue[["pair_scores"]]
       }
-    }
-    for (i in seq_along(labels)) {
-      scores[[i]] <- .ScoreWithout(i)
-      if (!is.finite(scores[[i]])) break
-    }
-    if (any(!is.finite(scores))) {
-      depth <- 1
-    }
-    if (depth > 1) {
-      pairs <- combn(seq_along(labels), 2)
-      nPairs <- dim(pairs)[[2]]
-      pairScores <- double(nPairs)
-      for (i in seq_len(nPairs)) {
-        pairScores[[i]] <- .ScoreWithout(pairs[, i])
-        if (!is.finite(pairScores[[i]])) break
+    } else {
+      .ScoreWithout <- function(idx, cutoff = Inf) {
+        keep <- blank
+        keep[idx] <- FALSE
+
+        outcome <- keep_and_reduce(tr1, tr2, keep)
+        if (is.null(outcome[[1]])) {
+          return(-Inf)
+        }
+
+        oSpl <- as.Splits(outcome)
+        firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
+
+        if (firstMatch > 0) {
+          subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
+          subtips2 <- !subtips1
+          # Anchor to shared edge
+          subtips1[!subtips1][[1]] <- TRUE
+          subtips2[!subtips2][[1]] <- TRUE
+
+          sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
+                              KeepTipPostorder(outcome[[2]], subtips1))
+
+          sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
+                              KeepTipPostorder(outcome[[2]], subtips2))
+
+          score1 <- ProxyDistance(sub1[[1]], sub1[[2]], cutoff)
+          if (score1 > cutoff) {
+            return(score1)
+          }
+          # Return:
+          score1 + ProxyDistance(sub2[[1]], sub2[[2]], cutoff - score1)
+
+        } else {
+          # Return:
+          ProxyDistance(outcome[[1]], outcome[[2]], cutoff)
+        }
+      }
+      best <- Inf
+      for (i in seq_along(labels)) {
+        scores[[i]] <- .ScoreWithout(i, best)
+        if (!is.finite(scores[[i]])) break
+        best <- min(best, scores[[i]])
+      }
+      if (any(!is.finite(scores))) {
+        depth <- 1
+      }
+      if (depth > 1) {
+        pairs <- combn(seq_along(labels), 2)
+        nPairs <- dim(pairs)[[2]]
+        pairScores <- double(nPairs)
+        for (i in seq_len(nPairs)) {
+          pairScores[[i]] <- .ScoreWithout(pairs[, i], best)
+          if (!is.finite(pairScores[[i]])) break
+          best <- min(best, pairScores[[i]])
+        }
       }
     }
     
@@ -394,8 +440,12 @@ SPRDist.multiPhylo <- SPRDist.list
       drop[[which.min(scores)]] <- TRUE
     }
     
-    reduced <- keep_and_reduce(tr1, tr2, !drop)
-    if (length(reduced) == 1L) {
+    reduced <- if (useCpp) {
+      spr_keep_and_reduce(tr1, tr2, !drop)
+    } else {
+      keep_and_reduce(tr1, tr2, !drop)
+    }
+    if (is.null(reduced[[1]])) {
       reduced <- NULL
     }
     
