@@ -1,4 +1,4 @@
-# TreeDist 2.15.0.9006 (development)
+# TreeDist 2.15.0.9007 (development)
 
 ## Bug fixes
 
@@ -7,6 +7,11 @@
   (ms609/TreeTools#287).
 
 ## Performance
+
+- `SPRDist(method = "Rogue")` bounds each candidate's clustering information
+  with the optimal dual prices of the parent pair, skipping most assignment
+  problems and warm-starting the rest: c. 50% faster at 80 leaves and 65% at
+  150 leaves on unrelated trees.
 
 - Improve performance when comparing many similar trees with
   `ClusteringInfoDistance()`, `MatchingSplitDistance()`, `InfoRobinsonFoulds()`
