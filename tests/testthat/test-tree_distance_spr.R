@@ -567,3 +567,8 @@ test_that("SPR deOliveira2008 calculation looks valid", {
     overShot[overs, overs]
   }
 })
+
+test_that("spr_rogue_scores() handles trees without splits", {
+  star <- Postorder(StarTree(6))
+  expect_equal(spr_rogue_scores(star, star, 1L)[["scores"]][1], -Inf)
+})
