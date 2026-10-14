@@ -145,14 +145,57 @@ merge is with an item of weight `X < s`, the root of `T` splits
 splits as the last unit merge did.  So every Huffman tie-break gives an
 optimal `k`.
 
-*Conjecture (tie-completeness).*  The converse also holds: every optimal `k`
-arises from some Huffman tie-break.  It is checked exactly against the DP
-(optimal `k` taken within 1e-11) for every `n <= 4000` and every `s`,
-and at sampled `n` up to 131 074.  Every non-candidate `k` was at least
-6.9e-7 worse for `n <= 4000`, so there are no hidden exact ties there.  It
-matters only when distinct `k` tie in exact arithmetic.  If it failed, the
-table could differ from an exhaustive scan by rounding of a tied value, and
-`cost` would still be exact to rounding.
+**Theorem 3 (tie-completeness).**  Conversely, every optimal `k` arises
+from some Huffman tree, i.e. some tie-break of Huffman's algorithm.
+
+*Proof.*  Take `s > n/2` (else Corollary 1), so `z < n/2`.  Call `R`
+optimal if it attains `Huf(s)`.
+
+- **Optimal `R` have a short heavy chain.**  In *Rooting*, a non-root node
+  that is not a root child has `ĝ(w_u) > g~` exactly when `w_u > n/2`.  So
+  if such a node exists, `R` scores strictly more than its own `U`'s bound,
+  which is at least the optimum.  In an optimal `R`, only the root and one
+  root child can weigh more than `n/2`.
+- **`k` depends only on `U`.**  `k` is the smaller of the two non-`H`
+  branches at `H`'s neighbour in `U`.  Re-rooting `R` without changing `U`
+  leaves `k` alone.
+- **Flips.**  Forst & Thorup (2005, Thm 5.3) transform any weighted tree
+  into a Huffman tree by a finite sequence of strict H-flips.  Their proof
+  takes each flip from Lemma 5.2, so we may assume every flip has that
+  form.  Their Thm 5.5 and Cor 5.7 show that
+  `G_ĝ = sum ĝ(internal weights)` never increases under an H-flip, since
+  `ĝ` is non-decreasing and concave.  Start from an optimal `R`.  The end
+  is Huffman, hence optimal, so every flip has zero cost and every
+  intermediate tree is optimal.
+- **Zero-cost Lemma 5.2 flips only re-root.**  In their notation an H-flip
+  swaps `U` and `V`, at distance `l` from `V` to the common ancestor `V_l
+  = U_{l+p}`.  The proof of Thm 5.5 changes the internal weights as:
+  pairs `{u_i, v_i} -> {ũ_i, ṽ_i}` (`i < l`), with equal sums and `ũ_i`
+  the smallest of the four; and singles `u_i -> ũ_i <= u_i` (`i >= l`).
+  Lemma 5.2 gives either `l = 1` (the uncle case) or (5.2.1):
+  `v < u` and `u' <= u < v'`.  In the second case with `l >= 2`, pair
+  `i = 1` goes from `{u + u', v + v'}` to `{v + u', u + v'}`.  `v + u'` is
+  strictly the smallest of these four, so the pair changes.  (A general
+  strict H-flip need not change a pair, so the restriction to Lemma 5.2
+  matters.)  A changed pair keeps `G_ĝ` only if `ĝ` is affine on
+  `[ũ_i, ṽ_i]`.  That needs `ũ_i >= n/2`, as `Hb` is strictly concave on
+  `[0, 1/2]`.  But `u_i + v_i <= n`, since `U_i` and `V_i` are disjoint, so
+  `ũ_i = u_i = v_i = n/2`, which contradicts the change.
+  So `l = 1`, `V` is the brother of `U_p`, and `p >= 1`.  The weights
+  `u_1, ..., u_p` each fall by `u - v > 0`.  Zero cost then needs
+  `u_1 - (u - v) >= n/2`.  So `U_1, ..., U_p` weigh more than `n/2`, are
+  non-root, and lie below `U_{p+1}`.  By the first point, `p = 1`, `U_1` is
+  the heavy root child and `V` the other root child.  In `U`, node `U_1`
+  touches `U`, `U'` and `V`.  The flip moves the root from edge `U_1–V` to
+  edge `U_1–U` and leaves `U` unchanged.
+- So the optimal `R` and the Huffman tree at the end of the sequence share
+  `U`, and hence `k`.  ∎
+
+Section 3 lists `k` for every Huffman tree.  Ties among units leave `H`'s
+partner weight unchanged.  Ties involving `H` are the `b = z` cases it
+enumerates.  So the candidates are exactly the
+optimal `k` in exact arithmetic.  For `n <= 4000`, every non-candidate `k`
+was at least 6.9e-7 worse.
 
 ## 3. Huffman on `{z, 1, ..., 1}` in `O(log s)`
 
@@ -186,12 +229,13 @@ This also explains the shapes seen earlier:
 increasing `k` and keeps the first floating-point minimum, as the scan
 would.  The table build is `O(n log n)`.
 
-For `s > n/2`, bit-identity with the exhaustive scan is not proven.  It
-needs the tie-completeness conjecture and a floating-point gap.  The
+For `s > n/2`, Theorem 3 makes the candidates exactly the optimal `k`.
+Bit-identity with the exhaustive scan also needs a floating-point gap,
+which is not proven.  The
 smallest non-candidate gap is about `2 / (n² ln 2)`.  The crude error bound
 `n · 7e-15` from Section 1 overtakes that gap near `n ≈ 7 · 10^4`, while
 the measured error (about 1e-13) would not until about `5 · 10^6`.  So, for
-`s > n/2`, bit-identity rests on the conjecture plus the experiments below.
+`s > n/2`, bit-identity rests on Theorem 3 plus the experiments below.
 `cost` is exact to rounding either way.  The branch-and-bound scan, its SIMD
 helpers and the earlier pruning lemma are no longer needed.
 
@@ -207,6 +251,13 @@ checked Theorem 2's formula against an exhaustive search over trees with a
 heavy leaf, for every `n <= 450`, without relying on Glassey & Karp.  It
 compared `huffman_splits()` with a heap-based Huffman under all tie-breaks
 over 1.17 million `(s, z)` cases.  No differences were found.
+
+A second review checked Theorem 3 in exact (`Decimal`) arithmetic.  For
+`s <= 8`, it enumerated every rooted tree on `{z, 1^s}`:
+- every optimal tree reached a Huffman tree by zero-cost re-rootings;
+- the optimal `k` matched `huffman_splits()` and every Huffman tie-break.
+
+The optimal `k` sets also matched for `n <= 160`.
 
 They are identical to the previous build for every `n <= 6000` and at
 `n = 200 000`.  The block bounds passed on to `nni_max_step()` are
@@ -228,7 +279,7 @@ pruning lemma for `s >= 2n/3`.  Theorem 2 subsumes both.
 
 ## 6. Prior art
 
-Read directly: Glassey & Karp (1976) and Parker (1980).
+Read directly: Glassey & Karp (1976), Parker (1980), Forst & Thorup (2005) and Golumbic (1976).
 
 **Glassey & Karp (1976)**, *SIAM J. Appl. Math.* 31:368–378:
 - Their Theorem 1 says a tree minimizes `sum f(W_j)` over internal weights
@@ -262,11 +313,20 @@ not treat symmetric or non-monotone node costs.
 doi:10.1007/s11538-025-01522-1, Thm 4.1, rediscover the strict case of
 Theorem 1 with uniqueness, without citing Glassey & Karp.
 
-**Not read:** Forst & Thorup (2005, *SIAM J. Discrete Math.* 19:46–68,
-"What costs are minimized by Huffman trees?"), Hu, Kleitman & Tamaki (1979)
-and Golumbic (1976).  Forst & Thorup is the most likely to bear on
-Theorem 2.
+**Forst & Thorup (2005)**, *SIAM J. Discrete Math.* 19:46–68, "What costs
+are minimized by Huffman trees?":
+- They characterize Huffman trees by subtree-weight inequalities (Thm 2.3).
+- Every tree reaches a Huffman tree by strict H-flips (Thm 5.3).
+- The internal-weight multiset is a strict Huffman cost under Schur order
+  (Thm 5.5).
+- Hence a strictly increasing, strictly concave `g` is minimized only at
+  Huffman trees (Cor 5.7).
 
-Tie-completeness, Section 2, is not settled by Glassey & Karp's
-"only if".  That direction concerns trees optimal for every concave `f`,
-whereas ours are optimal for one `ĝ`, which is flat above `n/2`.
+`ĝ` is flat above `n/2`, so Cor 5.7's uniqueness does not apply.  Theorem 3
+instead uses Thm 5.3 and the proof of Thm 5.5 directly.  The step that
+zero-cost flips only re-root an unrooted tree appears new.
+
+**Golumbic (1976)**, *IEEE Trans. Comput.* C-25:1164–1167: merging with
+cost `1 + max` of the children.  Not relevant.
+
+**Not found:** Hu, Kleitman & Tamaki (1979) has no PDF in the library.
