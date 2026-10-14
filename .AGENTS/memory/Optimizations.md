@@ -978,3 +978,12 @@ in TreeDist — every sort is `std::sort` / `std::stable_sort`.
   of those end below the cutoff (candidate rejected); the row bound exits
   ~2%, a column-max bound would add ~1%.  Further gains need a tighter
   MCI upper bound or LAP warm starts between candidates.
+
+## Rogue SPR: parent dual prices (PR #215, 2026-10-14)
+Full write-up: `dev/rogue_mci_bound_findings.md`.  Parent column duals bound
+82–88% of wasted LAPs; remaining LAPs warm-start (2–4×).  −51% at 80 tips,
+−65% at 150.  Size-profile / compatibility bounds ~100× too loose; progressive
+row-filling skips ≤1.5% of fill.  Next lever: build child cost matrices
+incrementally from the parent (97.6% of candidates drop one leaf); the fill is
+now 37–55% of runtime.  TODO on #215: coverage for new branches; lazy parent
+prices.
