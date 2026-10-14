@@ -1,0 +1,339 @@
+diff --git a/src/instr.h b/src/instr.h
+new file mode 100644
+index 0000000..558e2ab
+--- /dev/null
++++ b/src/instr.h
+@@ -0,0 +1,32 @@
++// Instrumentation for bound research (scratch only).
++#ifndef TREEDIST_INSTR_H_
++#define TREEDIST_INSTR_H_
++#include <x86intrin.h>
++#include <cstdint>
++#include <cstdio>
++
++namespace instr {
++enum Timer {
++  T_TOTAL, T_KAR, T_SPLITS, T_FMS, T_BCID, T_MCI_SETUP, T_MCI_FILL,
++  T_MCI_COPY, T_MCI_LAP, T_MCI_TAIL, T_HALF_KAR, T_PARENT, N_TIMER
++};
++enum Count {
++  C_CALLS, C_ENTROPY, C_ROW, C_EXACT, C_LAP, C_LAP_BELOW, C_WHOLE, C_HALF1,
++  C_HALF2, C_CANDIDATES, C_EXTRA_EXIT, N_COUNT
++};
++inline uint64_t ticks[N_TIMER] = {};
++inline uint64_t counts[N_COUNT] = {};
++inline FILE *dump = nullptr;
++inline int cand_id = -1;
++inline int call_kind = -1;
++inline bool lap_below_last = false;
++
++struct Scope {
++  int t;
++  uint64_t s;
++  explicit Scope(int timer) : t(timer), s(__rdtsc()) {}
++  ~Scope() { ticks[t] += __rdtsc() - s; }
++};
++}
++
++#endif
+diff --git a/src/spr.cpp b/src/spr.cpp
+index 7651639..ac25132 100644
+--- a/src/spr.cpp
++++ b/src/spr.cpp
+@@ -5,6 +5,8 @@
+ #include <TreeTools/root_tree.h> // for root_on_node
+ #include <TreeTools/SplitList.h> // for SplitList, count_bits
+ #include "reduce_tree.h"
++#include "instr.h"
++#include <unordered_map>
+ #include <cmath> // for log2
+ #include <algorithm> // for sort, lower_bound, equal
+ #include <cstdint>
+@@ -251,6 +253,20 @@ extern double mutual_clustering_bounded_score(const RawMatrix &x,
+                                               const double min_score);
+ 
+ namespace {
++std::unordered_map<SEXP, int> g_parent_index;
++const CharacterVector *g_cur_labels = nullptr;
++
++void DumpSplits(const RawMatrix &m) {
++  const int nr = m.nrow(), nc = m.ncol();
++  int hdr[2] = {nr, nc};
++  fwrite(hdr, sizeof(int), 2, instr::dump);
++  for (int r = 0; r != nr; ++r) {
++    for (int c = 0; c != nc; ++c) {
++      const uint8_t b = m(r, c);
++      fwrite(&b, 1, 1, instr::dump);
++    }
++  }
++}
+ 
+ // .Machine$double.eps ^ 0.5
+ constexpr double SQRT_EPS = 1.4901161193847656e-08;
+@@ -330,11 +346,31 @@ TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
+ // numerical noise, may instead return a lower bound that exceeds `cutoff`.
+ double BoundedCID(const TreeSplits &splits1, const TreeSplits &splits2,
+                   const int n_tip, const double cutoff) {
++  instr::Scope scope(instr::T_BCID);
+   const double info = splits1.entropy + splits2.entropy;
+   const double tol = std::max(1.0, info) * SQRT_EPS;
+   const double mci = n_tip < 4 ? 0 :
+     mutual_clustering_bounded_score(splits1.bits, splits2.bits, n_tip,
+                                     (info - cutoff) / 2 - tol);
++  if (instr::dump && n_tip >= 4) {
++    const double min_score = (info - cutoff) / 2 - tol;
++    const double exact = mutual_clustering_bounded_score(
++      splits1.bits, splits2.bits, n_tip, R_NegInf);
++    int hdr[4] = {2, instr::cand_id, instr::call_kind, n_tip};
++    fwrite(hdr, sizeof(int), 4, instr::dump);
++    std::vector<int> map(n_tip, -1);
++    if (g_cur_labels) {
++      for (int t = 0; t != n_tip; ++t) {
++        auto it = g_parent_index.find(STRING_ELT(*g_cur_labels, t));
++        if (it != g_parent_index.end()) map[t] = it->second;
++      }
++    }
++    fwrite(map.data(), sizeof(int), n_tip, instr::dump);
++    double vals[4] = {min_score, exact, mci, info};
++    fwrite(vals, sizeof(double), 4, instr::dump);
++    DumpSplits(splits1.bits);
++    DumpSplits(splits2.bits);
++  }
+   const double ret = info - mci - mci;
+   return ret < tol ? 0 : ret;
+ }
+@@ -342,8 +378,16 @@ double BoundedCID(const TreeSplits &splits1, const TreeSplits &splits2,
+ double BoundedCID(const List &tree1, const List &tree2, const double cutoff) {
+   const CharacterVector labels = tree1["tip.label"];
+   const int n_tip = labels.size();
+-  return BoundedCID(GetSplits(tree1["edge"], n_tip),
+-                    GetSplits(tree2["edge"], n_tip), n_tip, cutoff);
++  g_cur_labels = &labels;
++  TreeSplits s1, s2;
++  {
++    instr::Scope scope(instr::T_SPLITS);
++    s1 = GetSplits(tree1["edge"], n_tip);
++    s2 = GetSplits(tree2["edge"], n_tip);
++  }
++  const double ret = BoundedCID(s1, s2, n_tip, cutoff);
++  g_cur_labels = nullptr;
++  return ret;
+ }
+ 
+ // Index of the first split in `x` that also occurs in `table`, or -1;
+@@ -426,7 +470,10 @@ List KeepAndReduce(const List &tree1, const List &tree2,
+ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+                     const CharacterVector &labels,
+                     const LogicalVector &keep, const double cutoff) {
++  ++instr::counts[instr::C_CANDIDATES];
++  uint64_t t0 = __rdtsc();
+   const List outcome = KeepAndReduce(pre1, pre2, labels, keep);
++  { const uint64_t t = __rdtsc(); instr::ticks[instr::T_KAR] += t - t0; t0 = t; }
+   if (Rf_isNull(outcome[0])) {
+     return R_NegInf;
+   }
+@@ -436,10 +483,17 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+   const int n_tip = out_labels.size();
+   const TreeSplits splits1 = GetSplits(out1["edge"], n_tip);
+   const TreeSplits splits2 = GetSplits(out2["edge"], n_tip);
++  { const uint64_t t = __rdtsc(); instr::ticks[instr::T_SPLITS] += t - t0; t0 = t; }
+   const int first_match = FirstMatchingSplit(splits1.bits, splits2.bits,
+                                              n_tip);
++  { const uint64_t t = __rdtsc(); instr::ticks[instr::T_FMS] += t - t0; t0 = t; }
+   if (first_match < 0) {
+-    return BoundedCID(splits1, splits2, n_tip, cutoff);
++    ++instr::counts[instr::C_WHOLE];
++    instr::call_kind = 0;
++    g_cur_labels = &out_labels;
++    const double ret = BoundedCID(splits1, splits2, n_tip, cutoff);
++    g_cur_labels = nullptr;
++    return ret;
+   }
+   
+   // Divide at the shared split, anchoring each half to the other
+@@ -456,18 +510,26 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+       }
+     }
+   }
++  t0 = __rdtsc();
+   const List sub1 = KeepAndReduce(out1, out2, half1);
++  { const uint64_t t = __rdtsc(); instr::ticks[instr::T_HALF_KAR] += t - t0; t0 = t; }
+   if (Rf_isNull(sub1[0])) {
+     Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
+   }
++  ++instr::counts[instr::C_HALF1];
++  instr::call_kind = 1;
+   const double score1 = BoundedCID(sub1[0], sub1[1], cutoff);
+   if (score1 > cutoff) {
+     return score1;
+   }
++  t0 = __rdtsc();
+   const List sub2 = KeepAndReduce(out1, out2, half2);
++  { const uint64_t t = __rdtsc(); instr::ticks[instr::T_HALF_KAR] += t - t0; t0 = t; }
+   if (Rf_isNull(sub2[0])) {
+     Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
+   }
++  ++instr::counts[instr::C_HALF2];
++  instr::call_kind = 2;
+   return score1 + BoundedCID(sub2[0], sub2[1], cutoff - score1);
+ }
+ 
+@@ -480,8 +542,21 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+ // rather than their exact score.
+ // [[Rcpp::export]]
+ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
++  instr::Scope total_scope(instr::T_TOTAL);
+   const CharacterVector labels = tree1["tip.label"];
+   const int n_tip = labels.size();
++  if (instr::dump) {
++    g_parent_index.clear();
++    for (int t = 0; t != n_tip; ++t) g_parent_index[STRING_ELT(labels, t)] = t;
++    const TreeSplits p1 = GetSplits(tree1["edge"], n_tip);
++    const TreeSplits p2 = GetSplits(tree2["edge"], n_tip);
++    int hdr[2] = {1, n_tip};
++    fwrite(hdr, sizeof(int), 2, instr::dump);
++    double info = p1.entropy + p2.entropy;
++    fwrite(&info, sizeof(double), 1, instr::dump);
++    DumpSplits(p1.bits);
++    DumpSplits(p2.bits);
++  }
+   const IntegerMatrix pre1 = reverse(tree1["edge"]);
+   const IntegerMatrix pre2 = reverse(tree2["edge"]);
+   NumericVector scores(n_tip);
+@@ -491,6 +566,7 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
+   for (int i = 0; i != n_tip; ++i) {
+     Rcpp::checkUserInterrupt();
+     keep[i] = false;
++    instr::cand_id = i;
+     scores[i] = ScoreWithout(pre1, pre2, labels, keep, best);
+     keep[i] = true;
+     if (!R_FINITE(scores[i])) {
+@@ -512,6 +588,7 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
+     keep[i] = false;
+     for (int j = i + 1; j != n_tip; ++j) {
+       keep[j] = false;
++      instr::cand_id = n_tip + pair;
+       pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best);
+       keep[j] = true;
+       if (!R_FINITE(pair_scores[pair])) {
+@@ -562,3 +639,21 @@ List spr_keep_and_reduce(const List &tree1, const List &tree2,
+                          const LogicalVector &keep) {
+   return KeepAndReduce(tree1, tree2, keep);
+ }
++
++// [[Rcpp::export]]
++NumericVector instr_get(const bool reset) {
++  NumericVector ret(instr::N_TIMER + instr::N_COUNT);
++  for (int i = 0; i != instr::N_TIMER; ++i) ret[i] = double(instr::ticks[i]);
++  for (int i = 0; i != instr::N_COUNT; ++i) ret[instr::N_TIMER + i] = double(instr::counts[i]);
++  if (reset) {
++    for (auto &t : instr::ticks) t = 0;
++    for (auto &c : instr::counts) c = 0;
++  }
++  return ret;
++}
++
++// [[Rcpp::export]]
++void instr_dump(const std::string &path) {
++  if (instr::dump) { fclose(instr::dump); instr::dump = nullptr; }
++  if (!path.empty()) instr::dump = fopen(path.c_str(), "wb");
++}
+diff --git a/src/tree_distances.cpp b/src/tree_distances.cpp
+index 0dc6eae..624e8a5 100644
+--- a/src/tree_distances.cpp
++++ b/src/tree_distances.cpp
+@@ -5,6 +5,7 @@
+ #include <memory> /* for unique_ptr, make_unique */
+ #include <Rcpp/Lightest>
+ #include "tree_distances.h"
++#include "instr.h"
+ 
+ using Rcpp::_;
+ using Rcpp::IntegerVector;
+@@ -417,6 +418,8 @@ static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
+ template <bool Bounded>
+ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                        const int32 n_tips, const double min_score = 0) {
++  [[maybe_unused]] uint64_t tick0 = __rdtsc();
++  if constexpr (Bounded) ++instr::counts[instr::C_CALLS];
+   const SplitList a(x);
+   const SplitList b(y);
+   const bool a_has_more_splits = (a.n_splits > b.n_splits);
+@@ -451,6 +454,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+     }
+     upper_bound = std::min(entropy_a, entropy_b) * n_tips_reciprocal;
+     if (upper_bound < min_score) {
++      ++instr::counts[instr::C_ENTROPY];
+       return List::create(Named("score") = upper_bound,
+                           _["matching"] = IntegerVector(0));
+     }
+@@ -461,6 +465,9 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+   // buffers rather than reallocating them on each call.
+   cost_matrix local_score(Bounded ? 0 : most_splits);
+   cost_matrix &score = Bounded ? BoundedPool(0, most_splits) : local_score;
++  if constexpr (Bounded) {
++    const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_SETUP] += t - tick0; tick0 = t;
++  }
+ 
+   double exact_match_score = 0;
+   split_int exact_matches = 0;
+@@ -530,6 +537,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+           over_max_score - TreeDist::ic_matching(na, nA, n_tips) *
+           n_tips_reciprocal;
+         if (upper_bound < min_score) {
++          ++instr::counts[instr::C_ROW];
++          const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_FILL] += t - tick0; tick0 = t;
+           return List::create(Named("score") = upper_bound,
+                               _["matching"] = IntegerVector(0));
+         }
+@@ -541,7 +550,11 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+     }
+   }
+ 
++  if constexpr (Bounded) {
++    const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_FILL] += t - tick0; tick0 = t;
++  }
+   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
++    if constexpr (Bounded) ++instr::counts[instr::C_EXACT];
+     return List::create(
+       Named("score") = exact_match_score * n_tips_reciprocal,
+       _["matching"] = a_match);
+@@ -570,10 +583,19 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+       a_pos++;
+     }
+     small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
++    if constexpr (Bounded) {
++      const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_COPY] += t - tick0; tick0 = t;
++    }
+ 
+     const double lap_score = static_cast<double>((max_score * lap_dim) -
+       lap(lap_dim, small_score, rowsol, colsol, !Bounded)) * over_max_score;
+     const double final_score = lap_score + (exact_match_score / n_tips);
++    if constexpr (Bounded) {
++      const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_LAP] += t - tick0; tick0 = t;
++      ++instr::counts[instr::C_LAP];
++      instr::lap_below_last = final_score < min_score;
++      if (final_score < min_score) ++instr::counts[instr::C_LAP_BELOW];
++    }
+ 
+     std::unique_ptr<split_int[]> lap_decode = std::make_unique<split_int[]>(lap_dim);
+     split_int fuzzy_match = 0;
+@@ -609,9 +631,18 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+       }
+     }
+ 
++    if constexpr (Bounded) {
++      const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_COPY] += t - tick0; tick0 = t;
++    }
+     const double final_score = static_cast<double>(
+       (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, !Bounded)
+     ) / max_score;
++    if constexpr (Bounded) {
++      const uint64_t t = __rdtsc(); instr::ticks[instr::T_MCI_LAP] += t - tick0; tick0 = t;
++      ++instr::counts[instr::C_LAP];
++      instr::lap_below_last = final_score < min_score;
++      if (final_score < min_score) ++instr::counts[instr::C_LAP_BELOW];
++    }
+ 
+     std::vector<int> final_matching;
+     final_matching.reserve(a.n_splits);

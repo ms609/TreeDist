@@ -1,0 +1,764 @@
+diff --git a/src/col_prices.h b/src/col_prices.h
+new file mode 100644
+index 0000000..65b4eed
+--- /dev/null
++++ b/src/col_prices.h
+@@ -0,0 +1,15 @@
++#ifndef TREEDIST_COL_PRICES_H_
++#define TREEDIST_COL_PRICES_H_
++
++#include <cstdint>
++
++// Supplies, on demand, prices for the splits of the second tree in a bounded
++// mutual clustering calculation: one per split, in LAP cost units, each in
++// [0, BIG].  `get` may return null if no prices are available.  Prices
++// affect only speed, never results.
++struct ColPrices {
++  const int_fast64_t *(*get)(void *context);
++  void *context;
++};
++
++#endif
+diff --git a/src/lap_warm.cpp b/src/lap_warm.cpp
+new file mode 100644
+index 0000000..2b61b0b
+--- /dev/null
++++ b/src/lap_warm.cpp
+@@ -0,0 +1,182 @@
++// Jonker-Volgenant LAP warm-started from given column duals.
++//
++// As TreeDist::lap() (inst/include/TreeDist/lap_impl.h), except that column
++// reduction and reduction transfer are replaced by a start from the column
++// duals `v_init`: each row takes its cheapest reduced-cost column if that
++// column is still free, so every assigned edge is tight, as the augmenting
++// row reduction and augmentation phases require.  Any `v_init` gives the
++// same optimum; duals close to the optimum leave few rows to augment.
++//
++// Kept in its own translation unit so that lap()'s code generation, which is
++// sensitive to layout, is unaffected.  Final column duals are left in
++// scratch.v.
++
++#include "lap.h"
++#include <algorithm>
++
++namespace {
++inline bool nontrivially_less_than(cost a, cost b) noexcept {
++  return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
++}
++}
++
++cost lap_warm(const lap_row dim, CostMatrix &input_cost,
++              std::vector<lap_col> &rowsol, std::vector<lap_row> &colsol,
++              LapScratch &scratch, const cost *v_init) {
++  lap_row num_free = 0;
++  scratch.ensure(dim);
++  auto &v = scratch.v;
++  auto &freeunassigned = scratch.freeunassigned;
++  const cost *__restrict__ v_ptr = v.data();
++
++  // WARM START
++  for (lap_col j = 0; j < dim; ++j) {
++    v[j] = v_init[j];
++    colsol[j] = -1;
++  }
++  for (lap_row i = 0; i < dim; ++i) {
++    const cost *__restrict__ row_i = input_cost.row(i);
++    cost best = row_i[0] - v_ptr[0];
++    lap_col best_j = 0;
++    for (lap_col j = 1; j < dim; ++j) {
++      const cost h = row_i[j] - v_ptr[j];
++      if (h < best) {
++        best = h;
++        best_j = j;
++      }
++    }
++    if (colsol[best_j] < 0) {
++      colsol[best_j] = i;
++      rowsol[i] = best_j;
++    } else {
++      freeunassigned[num_free++] = i;
++    }
++  }
++
++  // AUGMENTING ROW REDUCTION
++  int loopcnt = 0;
++  do {
++    ++loopcnt;
++    lap_row previous_num_free = num_free;
++    num_free = 0;
++    lap_row k = 0;
++    while (k < previous_num_free) {
++      const lap_row i = freeunassigned[k++];
++      const auto [umin, usubmin, min_idx, j2] =
++        input_cost.findRowSubmin(&i, v);
++      lap_col j1 = min_idx;
++      lap_row i0 = colsol[j1];
++      const bool strictly_less = nontrivially_less_than(umin, usubmin);
++      if (strictly_less) {
++        v[j1] -= (usubmin - umin);
++      } else if (i0 > -1) {
++        j1 = j2;
++        i0 = colsol[j2];
++      }
++      rowsol[i] = j1;
++      colsol[j1] = i;
++      if (i0 > -1) {
++        if (strictly_less) {
++          freeunassigned[--k] = i0;
++        } else {
++          freeunassigned[num_free++] = i0;
++        }
++      }
++    }
++  } while (loopcnt < 2);
++
++  // AUGMENT SOLUTION for each free row.
++  cost *__restrict__ d_ptr = scratch.d.data();
++  lap_row *__restrict__ pred_ptr = scratch.predecessor.data();
++  lap_col *__restrict__ cl_ptr = scratch.col_list.data();
++
++  for (lap_row f = 0; f < num_free; ++f) {
++    bool unassignedfound = false;
++    lap_row free_row = freeunassigned[f];
++    const cost *__restrict__ free_row_cost = input_cost.row(free_row);
++    lap_col endofpath = 0;
++    lap_col last = 0;
++    lap_row i;
++    lap_col j1;
++
++    for (lap_col j = 0; j < dim; ++j) {
++      d_ptr[j] = free_row_cost[j] - v_ptr[j];
++      pred_ptr[j] = free_row;
++      cl_ptr[j] = j;
++    }
++
++    cost min = 0;
++    lap_col low = 0;
++    lap_col up = 0;
++
++    do {
++      if (up == low) {
++        last = low - 1;
++        min = d_ptr[cl_ptr[up++]];
++        for (lap_dim k = up; k < dim; ++k) {
++          const lap_col j = cl_ptr[k];
++          const cost h = d_ptr[j];
++          if (h <= min) {
++            if (h < min) {
++              up = low;
++              min = h;
++            }
++            cl_ptr[k] = cl_ptr[up];
++            cl_ptr[up++] = j;
++          }
++        }
++        for (lap_dim k = low; k < up; ++k) {
++          if (colsol[cl_ptr[k]] < 0) {
++            endofpath = cl_ptr[k];
++            unassignedfound = true;
++            break;
++          }
++        }
++      }
++
++      if (!unassignedfound) {
++        j1 = cl_ptr[low++];
++        i = colsol[j1];
++        const cost *__restrict__ row_i = input_cost.row(i);
++        const cost h = row_i[j1] - v_ptr[j1] - min;
++        for (lap_dim k = up; k < dim; ++k) {
++          const lap_col j = cl_ptr[k];
++          cost v2 = row_i[j] - v_ptr[j] - h;
++          if (v2 < d_ptr[j]) {
++            pred_ptr[j] = i;
++            if (v2 == min) {
++              if (colsol[j] < 0) {
++                endofpath = j;
++                unassignedfound = true;
++                break;
++              } else {
++                cl_ptr[k] = cl_ptr[up];
++                cl_ptr[up++] = j;
++              }
++            }
++            d_ptr[j] = v2;
++          }
++        }
++      }
++    } while (!unassignedfound);
++
++    for (lap_dim k = 0; k <= last; ++k) {
++      j1 = cl_ptr[k];
++      v[j1] += d_ptr[j1] - min;
++    }
++
++    do {
++      i = pred_ptr[endofpath];
++      colsol[endofpath] = i;
++      j1 = endofpath;
++      endofpath = rowsol[i];
++      rowsol[i] = j1;
++    } while (i != free_row);
++  }
++
++  cost lapcost = 0;
++  for (lap_dim i = 0; i < dim; ++i) {
++    lapcost += input_cost(i, rowsol[i]);
++  }
++  return lapcost;
++}
+diff --git a/src/spr.cpp b/src/spr.cpp
+index 7651639..e52d3f8 100644
+--- a/src/spr.cpp
++++ b/src/spr.cpp
+@@ -5,6 +5,7 @@
+ #include <TreeTools/root_tree.h> // for root_on_node
+ #include <TreeTools/SplitList.h> // for SplitList, count_bits
+ #include "reduce_tree.h"
++#include "col_prices.h"
+ #include <cmath> // for log2
+ #include <algorithm> // for sort, lower_bound, equal
+ #include <cstdint>
+@@ -248,7 +249,10 @@ List keep_and_reduce(const List& tree1,
+ extern double mutual_clustering_bounded_score(const RawMatrix &x,
+                                               const RawMatrix &y,
+                                               const int32 n_tip,
+-                                              const double min_score);
++                                              const double min_score,
++                                              const ColPrices *prices);
++extern std::vector<int_fast64_t> mutual_clustering_col_prices(
++    const RawMatrix &x, const RawMatrix &y, const int32 n_tips);
+ 
+ namespace {
+ 
+@@ -261,9 +265,45 @@ struct TreeSplits {
+   double entropy; // As ClusteringEntropy()
+ };
+ 
++using price_t = int_fast64_t;
++
++// Prices (optimal column duals) for matching the splits of a pair of trees
++// whose candidate leaves are being scored.  Each candidate's reduced trees
++// are these trees restricted to fewer leaves, so each candidate split is the
++// restriction of a split here, whose price is near-optimal for it.
++struct ParentPrices {
++  int n_tip = 0;
++  int n_word = 0; // 64-bit words per split
++  int n_split = 0;
++  std::vector<uint64_t> bits; // Splits of tree 2, n_split * n_word
++  std::vector<price_t> price;
++  std::vector<SEXP> label; // CHARSXP of each leaf
++};
++
++// Position of each of `labels` among the parent's leaves; false unless
++// `labels` is a subsequence of the parent's labels.
++bool MapLeaves(const ParentPrices &pp, const CharacterVector &labels,
++               std::vector<int> &map) {
++  const int n_tip = labels.size();
++  map.resize(n_tip);
++  int j = 0;
++  for (int t = 0; t != n_tip; ++t) {
++    const SEXP lab = STRING_ELT(labels, t);
++    while (j < pp.n_tip && pp.label[j] != lab) ++j;
++    if (j == pp.n_tip) return false;
++    map[t] = j++;
++  }
++  return n_tip > 0;
++}
++
+ // As TreeTools::as.Splits(): splits in node order, omitting the root and
+ // its non-tip child.  Edges must be in postorder.
+-TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
++// If `leaf_index` is given, also writes each split to `indexed` as
++// `n_word` 64-bit words in which leaf t sets bit leaf_index[t].
++TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip,
++                     const std::vector<int> *leaf_index = nullptr,
++                     const int n_word = 0,
++                     std::vector<uint64_t> *indexed = nullptr) {
+   const int n_edge = edge.nrow();
+   const int n_vertex = n_edge + 1;
+   const int n_bin = (n_tip - 1) / SPLIT_BIN + 1;
+@@ -285,6 +325,22 @@ TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
+     }
+   }
+   
++  static thread_local std::vector<uint64_t> below_ix;
++  if (leaf_index) {
++    below_ix.assign(size_t(n_vertex) * n_word, 0);
++    for (int t = 0; t != n_tip; ++t) {
++      const int ix = (*leaf_index)[t];
++      below_ix[size_t(t) * n_word + (ix >> 6)] = uint64_t(1) << (ix & 63);
++    }
++    for (int e = 0; e != n_edge; ++e) {
++      uint64_t *p = below_ix.data() + size_t(parent[e] - 1) * n_word;
++      const uint64_t *c = below_ix.data() + size_t(child[e] - 1) * n_word;
++      for (int w = 0; w != n_word; ++w) {
++        p[w] |= c[w];
++      }
++    }
++  }
++  
+   const int root_node = parent[n_edge - 1];
+   int root_child = child[n_edge - 1];
+   int root_children = 1;
+@@ -308,6 +364,13 @@ TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
+   }
+   const int n_split = rows.size();
+   RawMatrix ret(n_split, n_bin);
++  if (leaf_index) {
++    indexed->resize(size_t(n_split) * n_word);
++    for (int r = 0; r != n_split; ++r) {
++      std::copy_n(below_ix.data() + size_t(rows[r]) * n_word, n_word,
++                  indexed->data() + size_t(r) * n_word);
++    }
++  }
+   // Sum of n * H(split), in bits
+   const double n_lg2_n = n_tip * std::log2(double(n_tip));
+   double n_entropy = 0;
+@@ -325,23 +388,129 @@ TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
+   return {ret, n_entropy / n_tip};
+ }
+ 
++// Prices for the splits of tree 2 of a candidate, from those of its parent.
++struct CandidatePrices {
++  const ParentPrices *pp;
++  const std::vector<int> *map; // Parent position of each candidate leaf
++  const std::vector<uint64_t> *bits; // Candidate splits, parent leaf indexing
++  int n_split;
++  std::vector<price_t> price;
++  
++  // Each candidate split takes the least price among the parent splits that
++  // restrict to it (a split of the candidate tree always has one, as the
++  // candidate tree is the parent tree restricted to fewer leaves).
++  static const price_t *Get(void *context) {
++    CandidatePrices &cp = *static_cast<CandidatePrices *>(context);
++    const ParentPrices &pp = *cp.pp;
++    const std::vector<int> &map = *cp.map;
++    const int n_word = pp.n_word;
++    static thread_local std::vector<uint64_t> mask, keys;
++    static thread_local std::vector<price_t> key_price;
++    static thread_local std::vector<int> slot;
++    mask.assign(n_word, 0);
++    for (const int ix : map) {
++      mask[ix >> 6] |= uint64_t(1) << (ix & 63);
++    }
++    // Polarize so that the candidate's first leaf lies outside each split
++    const int ref_word = map[0] >> 6;
++    const uint64_t ref_bit = uint64_t(1) << (map[0] & 63);
++    int capacity = 4;
++    while (capacity < 2 * pp.n_split) capacity <<= 1;
++    slot.assign(capacity, -1);
++    keys.resize(size_t(pp.n_split) * n_word);
++    key_price.resize(pp.n_split);
++    const auto Hash = [n_word, capacity](const uint64_t *k) {
++      uint64_t h = 0x9E3779B97F4A7C15ULL;
++      for (int w = 0; w != n_word; ++w) {
++        h ^= k[w];
++        h *= 0xBF58476D1CE4E5B9ULL;
++        h ^= h >> 31;
++      }
++      return int(h & uint64_t(capacity - 1));
++    };
++    int n_key = 0;
++    for (int q = 0; q != pp.n_split; ++q) {
++      const uint64_t *src = &pp.bits[size_t(q) * n_word];
++      uint64_t *k = &keys[size_t(n_key) * n_word];
++      const uint64_t flip = (src[ref_word] & ref_bit) ? ~uint64_t(0) : 0;
++      for (int w = 0; w != n_word; ++w) k[w] = (src[w] ^ flip) & mask[w];
++      for (int h = Hash(k); ; h = (h + 1) & (capacity - 1)) {
++        const int e = slot[h];
++        if (e < 0) {
++          slot[h] = n_key;
++          key_price[n_key++] = pp.price[q];
++          break;
++        }
++        if (std::equal(k, k + n_word, &keys[size_t(e) * n_word])) {
++          key_price[e] = std::min(key_price[e], pp.price[q]);
++          break;
++        }
++      }
++    }
++    cp.price.assign(cp.n_split, -1);
++    std::vector<uint64_t> key(n_word);
++    int n_found = 0;
++    long double found_sum = 0;
++    for (int i = 0; i != cp.n_split; ++i) {
++      const uint64_t *src = cp.bits->data() + size_t(i) * n_word;
++      const uint64_t flip = (src[ref_word] & ref_bit) ? ~uint64_t(0) : 0;
++      for (int w = 0; w != n_word; ++w) key[w] = (src[w] ^ flip) & mask[w];
++      for (int h = Hash(key.data()); slot[h] >= 0;
++           h = (h + 1) & (capacity - 1)) {
++        const int e = slot[h];
++        if (std::equal(key.begin(), key.end(), &keys[size_t(e) * n_word])) {
++          cp.price[i] = key_price[e];
++          found_sum += key_price[e];
++          ++n_found;
++          break;
++        }
++      }
++    }
++    if (n_found == 0) return nullptr; // #nocov
++    if (n_found < cp.n_split) {
++      const price_t fill = price_t(found_sum / n_found); // #nocov
++      for (price_t &v : cp.price) if (v < 0) v = fill; // #nocov
++    }
++    return cp.price.data();
++  }
++};
++
+ // As ClusteringInfoDist(tree1, tree2), for trees with identical tip labels
+ // and edges in postorder; but if the distance exceeds `cutoff` by more than
+ // numerical noise, may instead return a lower bound that exceeds `cutoff`.
++// `pp` (may be null) holds prices for a parent pair of trees; `map` gives the
++// parent position of each leaf, and `bits2` the splits of tree 2 in parent
++// leaf indexing.
+ double BoundedCID(const TreeSplits &splits1, const TreeSplits &splits2,
+-                  const int n_tip, const double cutoff) {
++                  const int n_tip, const double cutoff,
++                  const ParentPrices *pp = nullptr,
++                  const std::vector<int> *map = nullptr,
++                  const std::vector<uint64_t> *bits2 = nullptr) {
+   const double info = splits1.entropy + splits2.entropy;
+   const double tol = std::max(1.0, info) * SQRT_EPS;
+-  const double mci = n_tip < 4 ? 0 :
+-    mutual_clustering_bounded_score(splits1.bits, splits2.bits, n_tip,
+-                                    (info - cutoff) / 2 - tol);
++  double mci = 0;
++  if (n_tip >= 4) {
++    CandidatePrices cp{pp, map, bits2, int(splits2.bits.nrow()), {}};
++    const ColPrices prices{&CandidatePrices::Get, &cp};
++    mci = mutual_clustering_bounded_score(splits1.bits, splits2.bits, n_tip,
++                                          (info - cutoff) / 2 - tol,
++                                          pp ? &prices : nullptr);
++  }
+   const double ret = info - mci - mci;
+   return ret < tol ? 0 : ret;
+ }
+ 
+-double BoundedCID(const List &tree1, const List &tree2, const double cutoff) {
++double BoundedCID(const List &tree1, const List &tree2, const double cutoff,
++                  const ParentPrices *pp = nullptr) {
+   const CharacterVector labels = tree1["tip.label"];
+   const int n_tip = labels.size();
++  std::vector<int> map;
++  std::vector<uint64_t> bits2;
++  if (pp && MapLeaves(*pp, labels, map)) {
++    return BoundedCID(GetSplits(tree1["edge"], n_tip),
++                      GetSplits(tree2["edge"], n_tip, &map, pp->n_word, &bits2),
++                      n_tip, cutoff, pp, &map, &bits2);
++  }
+   return BoundedCID(GetSplits(tree1["edge"], n_tip),
+                     GetSplits(tree2["edge"], n_tip), n_tip, cutoff);
+ }
+@@ -425,7 +594,8 @@ List KeepAndReduce(const List &tree1, const List &tree2,
+ // `pre1` and `pre2` are the trees' edges in preorder.
+ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+                     const CharacterVector &labels,
+-                    const LogicalVector &keep, const double cutoff) {
++                    const LogicalVector &keep, const double cutoff,
++                    const ParentPrices *pp) {
+   const List outcome = KeepAndReduce(pre1, pre2, labels, keep);
+   if (Rf_isNull(outcome[0])) {
+     return R_NegInf;
+@@ -434,12 +604,19 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+   const List out2 = outcome[1];
+   const CharacterVector out_labels = out1["tip.label"];
+   const int n_tip = out_labels.size();
++  std::vector<int> map;
++  std::vector<uint64_t> bits2;
++  if (pp && !MapLeaves(*pp, out_labels, map)) {
++    pp = nullptr; // #nocov
++  }
+   const TreeSplits splits1 = GetSplits(out1["edge"], n_tip);
+-  const TreeSplits splits2 = GetSplits(out2["edge"], n_tip);
++  const TreeSplits splits2 = pp ?
++    GetSplits(out2["edge"], n_tip, &map, pp->n_word, &bits2) :
++    GetSplits(out2["edge"], n_tip);
+   const int first_match = FirstMatchingSplit(splits1.bits, splits2.bits,
+                                              n_tip);
+   if (first_match < 0) {
+-    return BoundedCID(splits1, splits2, n_tip, cutoff);
++    return BoundedCID(splits1, splits2, n_tip, cutoff, pp, &map, &bits2);
+   }
+   
+   // Divide at the shared split, anchoring each half to the other
+@@ -460,7 +637,7 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+   if (Rf_isNull(sub1[0])) {
+     Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
+   }
+-  const double score1 = BoundedCID(sub1[0], sub1[1], cutoff);
++  const double score1 = BoundedCID(sub1[0], sub1[1], cutoff, pp);
+   if (score1 > cutoff) {
+     return score1;
+   }
+@@ -468,7 +645,7 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
+   if (Rf_isNull(sub2[0])) {
+     Rcpp::stop("Half-tree reduced to nothing; please report this bug."); // #nocov
+   }
+-  return score1 + BoundedCID(sub2[0], sub2[1], cutoff - score1);
++  return score1 + BoundedCID(sub2[0], sub2[1], cutoff - score1, pp);
+ }
+ 
+ }
+@@ -484,6 +661,27 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
+   const int n_tip = labels.size();
+   const IntegerMatrix pre1 = reverse(tree1["edge"]);
+   const IntegerMatrix pre2 = reverse(tree2["edge"]);
++  
++  // Prices from the full trees, to bound and warm-start each candidate
++  ParentPrices pp;
++  pp.n_tip = n_tip;
++  pp.n_word = (n_tip + 63) / 64;
++  pp.label.resize(n_tip);
++  for (int t = 0; t != n_tip; ++t) {
++    pp.label[t] = STRING_ELT(labels, t);
++  }
++  std::vector<int> identity(n_tip);
++  for (int t = 0; t != n_tip; ++t) {
++    identity[t] = t;
++  }
++  {
++    const TreeSplits full1 = GetSplits(tree1["edge"], n_tip);
++    const TreeSplits full2 = GetSplits(tree2["edge"], n_tip, &identity,
++                                       pp.n_word, &pp.bits);
++    pp.price = mutual_clustering_col_prices(full1.bits, full2.bits, n_tip);
++    pp.n_split = pp.price.size();
++  }
++  const ParentPrices *pp_ptr = pp.n_split ? &pp : nullptr;
+   NumericVector scores(n_tip);
+   double best = R_PosInf;
+   bool all_finite = true;
+@@ -491,7 +689,7 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
+   for (int i = 0; i != n_tip; ++i) {
+     Rcpp::checkUserInterrupt();
+     keep[i] = false;
+-    scores[i] = ScoreWithout(pre1, pre2, labels, keep, best);
++    scores[i] = ScoreWithout(pre1, pre2, labels, keep, best, pp_ptr);
+     keep[i] = true;
+     if (!R_FINITE(scores[i])) {
+       all_finite = false;
+@@ -512,7 +710,8 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
+     keep[i] = false;
+     for (int j = i + 1; j != n_tip; ++j) {
+       keep[j] = false;
+-      pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best);
++      pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best,
++                                       pp_ptr);
+       keep[j] = true;
+       if (!R_FINITE(pair_scores[pair])) {
+         return List::create(Named("scores") = scores,
+diff --git a/src/tree_distances.cpp b/src/tree_distances.cpp
+index 0dc6eae..aa0b270 100644
+--- a/src/tree_distances.cpp
++++ b/src/tree_distances.cpp
+@@ -5,6 +5,7 @@
+ #include <memory> /* for unique_ptr, make_unique */
+ #include <Rcpp/Lightest>
+ #include "tree_distances.h"
++#include "col_prices.h"
+ 
+ using Rcpp::_;
+ using Rcpp::IntegerVector;
+@@ -403,10 +404,26 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
+ 
+ }
+ 
++// Warm-started LAP; see lap_warm.cpp.
++extern cost lap_warm(lap_row dim, CostMatrix &input_cost,
++                     std::vector<lap_col> &rowsol,
++                     std::vector<lap_row> &colsol, LapScratch &scratch,
++                     const cost *v_init);
++
+ // With Bounded = true, gives up once the score is known to fall below
+ // min_score.  It then returns an upper bound on the score, below min_score,
+ // and an empty matching.  Scores at or above min_score are computed exactly as
+ // with Bounded = false.
++//
++// Bounded only: `prices` (may be null) can supply a price v_j for each split
++// j of `y`, typically the optimal column duals of a closely related problem.
++// When both trees have the same number of splits, the matching is a perfect
++// assignment, and for any prices
++//   sum_j v_j + sum_i min_j (c_ij - v_j)  <=  minimum assignment cost,
++// because u_i = min_j (c_ij - v_j) makes (u, v) feasible for the dual.  This
++// gives an upper bound on the score once the cost matrix is filled.  If that
++// bound does not reject the candidate, the prices warm-start the LAP.
++// Prices affect only speed, never the result.
+ // Reusable cost matrices for mutual_clustering<true>().
+ static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
+   static thread_local cost_matrix pool[2];
+@@ -416,7 +433,8 @@ static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
+ 
+ template <bool Bounded>
+ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+-                       const int32 n_tips, const double min_score = 0) {
++                       const int32 n_tips, const double min_score = 0,
++                       const ColPrices *prices = nullptr) {
+   const SplitList a(x);
+   const SplitList b(y);
+   const bool a_has_more_splits = (a.n_splits > b.n_splits);
+@@ -549,10 +567,64 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+ 
+   const split_int lap_dim = most_splits - exact_matches;
+   ASSERT(lap_dim > 0);
++
++  // Bounded: dual bound from prices, on the problem that remains once exact
++  // matches are removed.  Each row minimum ranges over every column, so it
++  // cannot exceed the minimum over the remaining columns.  Prices lie in
++  // [0, BIG] and costs in [0, BIG], so |bound| <= 2 * lap_dim * BIG, which
++  // fits in a cost when most_splits <= SL_MAX_SPLITS / 2.
++  [[maybe_unused]] const cost *col_price = nullptr;
++  [[maybe_unused]] static thread_local std::vector<cost> v_init;
++  if constexpr (Bounded) {
++    if (prices && a.n_splits == b.n_splits &&
++        most_splits <= SL_MAX_SPLITS / 2) {
++      col_price = prices->get(prices->context);
++    }
++    if (col_price) {
++      cost lb = 0;
++      v_init.clear();
++      for (split_int bi = 0; bi < b.n_splits; ++bi) {
++        if (!b_match[bi]) {
++          lb += col_price[bi];
++          v_init.push_back(col_price[bi]);
++        }
++      }
++      for (split_int ai = 0; ai < a.n_splits; ++ai) {
++        if (a_match[ai]) continue;
++        const cost *row = score.row(ai);
++        cost row_min = row[0] - col_price[0];
++        for (split_int bi = 1; bi < b.n_splits; ++bi) {
++          const cost reduced = row[bi] - col_price[bi];
++          if (reduced < row_min) row_min = reduced;
++        }
++        lb += row_min;
++      }
++      const cost lap_ub = max_score * lap_dim - lb;
++      const double bound = exact_matches ?
++        static_cast<double>(lap_ub) * over_max_score +
++          exact_match_score / n_tips :
++        static_cast<double>(lap_ub) / max_score;
++      if (bound < min_score) {
++        return List::create(Named("score") = bound,
++                            _["matching"] = IntegerVector(0));
++      }
++    }
++  }
++
+   std::vector<lap_col> rowsol;
+   std::vector<lap_row> colsol;
+   resize_uninitialized(rowsol, lap_dim);
+   resize_uninitialized(colsol, lap_dim);
++  [[maybe_unused]] static thread_local LapScratch warm_scratch;
++  const auto Solve = [&](cost_matrix &m) -> cost {
++    if constexpr (Bounded) {
++      if (col_price) {
++        return lap_warm(lap_dim, m, rowsol, colsol, warm_scratch,
++                        v_init.data());
++      }
++    }
++    return lap(lap_dim, m, rowsol, colsol, !Bounded);
++  };
+   cost_matrix local_small(Bounded ? 0 : lap_dim);
+   cost_matrix &small_score = Bounded ? BoundedPool(1, lap_dim) : local_small;
+ 
+@@ -572,7 +644,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+     small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
+ 
+     const double lap_score = static_cast<double>((max_score * lap_dim) -
+-      lap(lap_dim, small_score, rowsol, colsol, !Bounded)) * over_max_score;
++      Solve(small_score)) * over_max_score;
+     const double final_score = lap_score + (exact_match_score / n_tips);
+ 
+     std::unique_ptr<split_int[]> lap_decode = std::make_unique<split_int[]>(lap_dim);
+@@ -610,7 +682,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+     }
+ 
+     const double final_score = static_cast<double>(
+-      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, !Bounded)
++      (max_score * lap_dim) - Solve(score)
+     ) / max_score;
+ 
+     std::vector<int> final_matching;
+@@ -770,9 +842,71 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+ // min_score.  Used to discard candidates early in SPRDist(method = "Rogue").
+ double mutual_clustering_bounded_score(const RawMatrix &x, const RawMatrix &y,
+                                        const int32 n_tip,
+-                                       const double min_score) {
++                                       const double min_score,
++                                       const ColPrices *prices) {
+   return Rcpp::as<double>(
+-    mutual_clustering<true>(x, y, n_tip, min_score)["score"]);
++    mutual_clustering<true>(x, y, n_tip, min_score, prices)["score"]);
++}
++
++// Optimal column duals of the mutual clustering LAP between the splits `x`
++// and `y` (identical splits included), one per split in `y`, in cost units,
++// shifted so that the least is zero and capped at BIG: prices for
++// mutual_clustering<true>() on related problems.  Empty if there is nothing
++// to match.
++std::vector<cost> mutual_clustering_col_prices(const RawMatrix &x,
++                                               const RawMatrix &y,
++                                               const int32 n_tips) {
++  const SplitList a(x);
++  const SplitList b(y);
++  const split_int dim = std::max(a.n_splits, b.n_splits);
++  if (dim == 0 || n_tips < 4 || b.n_splits == 0) {
++    return {};
++  }
++  constexpr cost max_score = BIG;
++  const double max_over_tips = static_cast<double>(max_score) / n_tips;
++  const double lg2_n = lg2_lookup(n_tips);
++  cost_matrix score(dim);
++  for (split_int ai = 0; ai < a.n_splits; ++ai) {
++    const split_int na = a.in_split[ai];
++    const split_int nA = n_tips - na;
++    const double offset_a = lg2_n - lg2_lookup(na);
++    const double offset_A = lg2_n - lg2_lookup(nA);
++    for (split_int bi = 0; bi < b.n_splits; ++bi) {
++      split_int a_and_b = 0;
++      for (split_int bin = 0; bin < a.n_bins; ++bin) {
++        a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
++      }
++      const split_int nb = b.in_split[bi];
++      const split_int nB = n_tips - nb;
++      const split_int a_and_B = na - a_and_b;
++      const split_int A_and_b = nb - a_and_b;
++      const split_int A_and_B = nA - A_and_b;
++      if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
++        score(ai, bi) = max_score;
++      } else {
++        const double lg2_nb = lg2_lookup(nb);
++        const double lg2_nB = lg2_lookup(nB);
++        const double ic_sum =
++          a_and_b * (lg2_lookup(a_and_b) + offset_a - lg2_nb) +
++          a_and_B * (lg2_lookup(a_and_B) + offset_a - lg2_nB) +
++          A_and_b * (lg2_lookup(A_and_b) + offset_A - lg2_nb) +
++          A_and_B * (lg2_lookup(A_and_B) + offset_A - lg2_nB);
++        score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
++      }
++    }
++    score.padRowAfterCol(ai, b.n_splits, max_score);
++  }
++  score.padAfterRow(a.n_splits, max_score);
++  std::vector<lap_col> rowsol(dim);
++  std::vector<lap_row> colsol(dim);
++  LapScratch scratch;
++  lap(dim, score, rowsol, colsol, false, scratch);
++  std::vector<cost> ret(scratch.v.begin(), scratch.v.begin() + b.n_splits);
++  const cost least = *std::min_element(ret.begin(), ret.end());
++  for (cost &v : ret) {
++    v = std::min(v - least, max_score);
++  }
++  return ret;
+ }
+ 
+ // [[Rcpp::export]]
+@@ -782,7 +916,7 @@ double cpp_mutual_clustering_bounded(const RawMatrix &x, const RawMatrix &y,
+   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
+   const int32 n_tip = static_cast<int32>(nTip[0]);
+   TreeDist::check_ntip(n_tip);
+-  return mutual_clustering_bounded_score(x, y, n_tip, minScore);
++  return mutual_clustering_bounded_score(x, y, n_tip, minScore, nullptr);
+ }
+ 
+ // [[Rcpp::export]]

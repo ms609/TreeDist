@@ -1,0 +1,10 @@
+suppressMessages(library(TreeTools, lib.loc = "/root/Rlib"))
+src <- readLines("make_workload.R")
+end <- grep("^set.seed", src)[1] - 1
+eval(parse(text = src[1:end]))
+wl <- readRDS("workloads.rds")
+set.seed(777)
+wl$mid80 <- lapply(1:12, function(i) NearPair(80, 15))
+wl$mid150 <- lapply(1:6, function(i) NearPair(150, 30))
+saveRDS(wl, "workloads.rds")
+cat(names(wl), "\n")
