@@ -335,3 +335,7 @@ cpp_shared_phylo <- function(x, y, nTip, force_slow = FALSE) {
     .Call(`_TreeDist_cpp_shared_phylo`, x, y, nTip, force_slow)
 }
 
+cpp_popcount_force_sw <- function(force) {
+    .Call(`_TreeDist_cpp_popcount_force_sw`, force)
+}
+

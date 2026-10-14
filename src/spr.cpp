@@ -3,7 +3,8 @@
 #include <TreeTools/types.h> // for intx
 #include <TreeTools/keep_tip.h> // for keep_tip
 #include <TreeTools/root_tree.h> // for root_on_node
-#include <TreeTools/SplitList.h> // for SplitList, count_bits
+#include <TreeTools/SplitList.h> // for SplitList
+#include <TreeDist/popcount.h>
 #include "reduce_tree.h"
 #include <cmath> // for log2
 #include <algorithm> // for sort, lower_bound, equal
@@ -12,7 +13,8 @@
 
 using namespace Rcpp;
 
-IntegerVector calc_mismatch_size(const RawMatrix& x, const RawMatrix& y) {
+template <typename Pop>
+IntegerVector calc_mismatch_size_impl(const RawMatrix& x, const RawMatrix& y) {
   
   const TreeTools::SplitList a(x), b(y);
   
@@ -33,12 +35,12 @@ IntegerVector calc_mismatch_size(const RawMatrix& x, const RawMatrix& y) {
       
       --ret_ptr;
       
-      *ret_ptr = TreeTools::count_bits(
+      *ret_ptr = Pop::count(
         (a.state[ai][last_bin] ^ b.state[bi][last_bin]) & unset_mask
       );
       
       for (int32 bin = last_bin; bin--; ) {
-        *ret_ptr += TreeTools::count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+        *ret_ptr += Pop::count(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       
       if (*ret_ptr > half_tip) {
@@ -47,6 +49,12 @@ IntegerVector calc_mismatch_size(const RawMatrix& x, const RawMatrix& y) {
     }
   }
   return ret;
+}
+
+IntegerVector calc_mismatch_size(const RawMatrix& x, const RawMatrix& y) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return calc_mismatch_size_impl<decltype(pop)>(x, y);
+  });
 }
 
 // [[Rcpp::export]]
@@ -59,7 +67,8 @@ IntegerVector mismatch_size (const RawMatrix& x, const RawMatrix& y) {
   return calc_mismatch_size(x, y);
 }
 
-IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
+template <typename Pop>
+IntegerVector calc_confusion_impl(const RawMatrix &x, const RawMatrix &y) {
   
   const TreeTools::SplitList a(x), b(y);
   
@@ -79,7 +88,7 @@ IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
       // x divides tips into a|A; y divides tips into b|B
       int32 a_and_b = 0;
       for (int32 bin = n_bin; bin--; ) {
-        a_and_b += TreeTools::count_bits(a.state[ai][bin] & b.state[bi][bin]);
+        a_and_b += Pop::count(a.state[ai][bin] & b.state[bi][bin]);
       }
       
       const int32 na = a.in_split[ai];
@@ -95,6 +104,12 @@ IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
   }
   ret.attr("dim") = Dimension(confusion_size, n_split, n_split);
   return ret;
+}
+
+IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return calc_confusion_impl<decltype(pop)>(x, y);
+  });
 }
 
 // [[Rcpp::export]]
@@ -316,7 +331,7 @@ TreeSplits GetSplits(const IntegerMatrix &edge, const int n_tip) {
     int count = 0;
     for (int j = 0; j != n_bin; ++j) {
       ret(r, j) = row[j];
-      count += TreeTools::count_bits(row[j]);
+      count += TreeDist::count_bits(row[j]);
     }
     const int other = n_tip - count;
     n_entropy += n_lg2_n - count * std::log2(double(count)) -

@@ -15,6 +15,8 @@
 
 #ifdef TREEDIST_MCI_IMPLEMENTATION
 
+#include <TreeDist/popcount.h>
+
 #include "mutual_clustering.h"
 
 #include <algorithm>
@@ -188,7 +190,8 @@ static split_int find_exact_matches_raw(
 
 // ---- MCI score implementation ----
 
-double mutual_clustering_score(
+template <typename Pop>
+double mutual_clustering_score_impl(
     const splitbit* const* a_state, const split_int* a_in, split_int a_n_splits,
     const splitbit* const* b_state, const split_int* b_in, split_int b_n_splits,
     split_int n_bins, int32 n_tips,
@@ -265,7 +268,7 @@ double mutual_clustering_score(
       const splitbit* b_row = b_state[bi];
       split_int a_and_b = 0;
       for (split_int bin = 0; bin < n_bins; ++bin) {
-        a_and_b += TreeTools::count_bits(a_row[bin] & b_row[bin]);
+        a_and_b += Pop::count(a_row[bin] & b_row[bin]);
       }
 
       const split_int nb = b_in[bi];
@@ -306,6 +309,17 @@ double mutual_clustering_score(
     static_cast<double>((max_score * lap_n) -
       lap(lap_n, score, rowsol, colsol, false, scratch)) * over_max;
   return lap_score + exact_score * n_tips_rcp;
+}
+
+double mutual_clustering_score(
+    const splitbit* const* a_state, const split_int* a_in, split_int a_n_splits,
+    const splitbit* const* b_state, const split_int* b_in, split_int b_n_splits,
+    split_int n_bins, int32 n_tips,
+    LapScratch& scratch)
+{
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return mutual_clustering_score_impl<decltype(pop)>(a_state, a_in, a_n_splits, b_state, b_in, b_n_splits, n_bins, n_tips, scratch);
+  });
 }
 
 } // namespace TreeDist

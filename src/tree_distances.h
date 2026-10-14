@@ -4,6 +4,7 @@
 #include "lap.h"
 #include <TreeDist/mutual_clustering.h>
 #include <TreeTools/SplitList.h>
+#include <TreeDist/popcount.h>
 
 /***** Re-export shared lookup tables and fallback functions to global scope *****/
 
@@ -125,7 +126,7 @@ namespace TreeDist {
   // Fast=true: caller guarantees n_tips <= SL_MAX_TIPS, so inner one_overlap*
   // calls use direct lg2_rooted[] access.  Caller (shared_phylo_score) dispatches
   // once on n_tips; per-cell branches are eliminated.
-  template<bool Fast = false>
+  template<bool Fast = false, typename Pop = TreeDist::PopcountDefault>
   [[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
                        const split_int n_tips, const split_int in_a,
                        const split_int in_b, const split_int n_bins) noexcept {
@@ -135,7 +136,7 @@ namespace TreeDist {
 
     split_int n_ab = 0;
     for (split_int bin = 0; bin < n_bins; ++bin) {
-      n_ab += TreeTools::count_bits(a_state[bin] & b_state[bin]);
+      n_ab += Pop::count(a_state[bin] & b_state[bin]);
     }
 
     // n_a_only  = in_a - n_ab   (tips in A but not B)

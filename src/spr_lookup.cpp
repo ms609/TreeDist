@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <TreeDist/popcount.h>
 #include "spr/lookup_table_7.h"
 #include "TreeTools/assert.h"
 
@@ -9,17 +10,9 @@ using Split7 = uint8_t;          // 7 bits used
 using SplitSet7 = std::array<Split7, 4>;
 using Perm7 = std::array<uint8_t, 7>;
 
-// Hardware POPCNT via inline asm (no -mpopcnt flag needed)
+// POPCNT where the CPU has it (checked at load time), else portable.
 static inline int popcnt32(uint32_t x) {
-#if (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
-  uint32_t result;
-  __asm__ ("popcnt %1, %0" : "=r" (result) : "r" (x));
-  return static_cast<int>(result);
-#elif defined(_MSC_VER)
-  return __popcnt(x);
-#else
-  return __builtin_popcount(x);
-#endif
+  return static_cast<int>(TreeDist::count_bits(x));
 }
 
 inline int popcount7(uint8_t x) {

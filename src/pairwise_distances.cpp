@@ -11,6 +11,7 @@
 #endif
 
 #include <TreeTools/SplitList.h>
+#include <TreeDist/popcount.h>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -26,7 +27,6 @@ using Rcpp::List;
 using Rcpp::NumericVector;
 using Rcpp::RawMatrix;
 using TreeTools::SplitList;
-using TreeTools::count_bits;
 
 
 // ---------------------------------------------------------------------------
@@ -206,11 +206,8 @@ static split_int find_exact_matches(
 }
 
 
-// Score-only version of mutual_clustering(). Thread-safe: uses only local
-// storage and read-only globals (lg2 table, lookup tables).
-// Passes allow_interrupt = false to lap() so it is safe to call from an
-// OpenMP parallel region.
-static double mutual_clustering_score(
+template <typename Pop>
+static double mutual_clustering_score_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const CanonSplits& ca, const CanonSplits& cb,
     LapScratch& scratch, MatchScratch& mscratch
@@ -279,7 +276,7 @@ static double mutual_clustering_score(
       const auto* b_row = b.state[bi];
       split_int a_and_b = 0;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        a_and_b += count_bits(a_row[bin] & b_row[bin]);
+        a_and_b += Pop::count(a_row[bin] & b_row[bin]);
       }
 
       const split_int nb    = b.in_split[bi];
@@ -320,6 +317,20 @@ static double mutual_clustering_score(
     static_cast<double>((max_score * lap_n) -
                         lap(lap_n, score, rowsol, colsol, false, scratch)) * over_max;
   return lap_score + exact_score * n_tips_rcp;
+}
+
+// Score-only version of mutual_clustering(). Thread-safe: uses only local
+// storage and read-only globals (lg2 table, lookup tables).
+// Passes allow_interrupt = false to lap() so it is safe to call from an
+// OpenMP parallel region.
+static double mutual_clustering_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    LapScratch& scratch, MatchScratch& mscratch
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return mutual_clustering_score_impl<decltype(pop)>(a, b, n_tips, ca, cb, scratch, mscratch);
+  });
 }
 
 
@@ -407,7 +418,8 @@ NumericVector cpp_mutual_clustering_all_pairs(
 // InfoRobinsonFoulds (rf_info) — no LAP, thread-safe
 // =============================================================================
 
-static double rf_info_score(
+template <typename Pop>
+static double rf_info_score_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const CanonSplits& ca, const CanonSplits& cb,
     MatchScratch& mscratch
@@ -428,13 +440,23 @@ static double rf_info_score(
     if (a_match[ai] == 0) continue;
     split_int leaves_in_split = 0;
     for (split_int bin = 0; bin < a.n_bins; ++bin) {
-      leaves_in_split += count_bits(a.state[ai][bin]);
+      leaves_in_split += Pop::count(a.state[ai][bin]);
     }
     score += lg2_unrooted_n
            - lg2_rooted_lookup(leaves_in_split)
            - lg2_rooted_lookup(n_tips - leaves_in_split);
   }
   return score;
+}
+
+static double rf_info_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    MatchScratch& mscratch
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return rf_info_score_impl<decltype(pop)>(a, b, n_tips, ca, cb, mscratch);
+  });
 }
 
 //' @keywords internal
@@ -492,7 +514,8 @@ NumericVector cpp_rf_info_all_pairs(
 // MatchingSplitDistance — LAP-based
 // =============================================================================
 
-static double msd_score(
+template <typename Pop>
+static double msd_score_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const CanonSplits& ca, const CanonSplits& cb,
     LapScratch& scratch, MatchScratch& mscratch
@@ -539,7 +562,7 @@ static double msd_score(
       const split_int bi = b_unmatch[b_pos];
       splitbit total = 0;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+        total += Pop::count(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       score(a_pos, b_pos) = static_cast<cost>(
         total > static_cast<splitbit>(half_tips) ? n_tips - total : total);
@@ -560,6 +583,16 @@ static double msd_score(
   const cost split_diff_cost = max_score * (a_extra + b_extra);
   return static_cast<double>(
     lap(lap_n, score, rowsol, colsol, false, scratch) - split_diff_cost);
+}
+
+static double msd_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    LapScratch& scratch, MatchScratch& mscratch
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return msd_score_impl<decltype(pop)>(a, b, n_tips, ca, cb, scratch, mscratch);
+  });
 }
 
 //' @keywords internal
@@ -620,12 +653,8 @@ NumericVector cpp_msd_all_pairs(
 // MatchingSplitInfo — LAP-based
 // =============================================================================
 
-// NOTE: msi_score does NOT use exact-match detection.  For the MSI metric,
-// matching a split to its identical copy is NOT necessarily globally optimal —
-// the LAP can find a better assignment where the identical split pairs with
-// a different (compatible, containing) split that has higher mmsi_score.
-// This differs from MCI and MSD where exact matches are provably optimal.
-static double msi_score(
+template <typename Pop>
+static double msi_score_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch
 ) {
@@ -648,9 +677,9 @@ static double msi_score(
       splitbit different;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
         different   = a.state[ai][bin] ^ b.state[bi][bin];
-        n_different += count_bits(different);
-        n_a_only   += count_bits(a.state[ai][bin] &  different);
-        n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
+        n_different += Pop::count(different);
+        n_a_only   += Pop::count(a.state[ai][bin] &  different);
+        n_a_and_b  += Pop::count(a.state[ai][bin] & ~different);
       }
       const split_int n_same = n_tips - n_different;
       score(ai, bi) = cost(max_score - score_over_possible *
@@ -667,6 +696,20 @@ static double msi_score(
   return static_cast<double>(
     (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
   ) * possible_over_score;
+}
+
+// NOTE: msi_score does NOT use exact-match detection.  For the MSI metric,
+// matching a split to its identical copy is NOT necessarily globally optimal —
+// the LAP can find a better assignment where the identical split pairs with
+// a different (compatible, containing) split that has higher mmsi_score.
+// This differs from MCI and MSD where exact matches are provably optimal.
+static double msi_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return msi_score_impl<decltype(pop)>(a, b, n_tips, scratch);
+  });
 }
 
 //' @keywords internal
@@ -720,6 +763,24 @@ NumericVector cpp_msi_all_pairs(
 // SharedPhylogeneticInfo — LAP-based
 // =============================================================================
 
+template <bool Fast, typename Pop>
+static inline void shared_phylo_fill_lap_impl(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const double best_overlap, const double score_over_possible,
+    const cost max_score, cost_matrix& score
+) {
+  for (split_int ai = 0; ai < a.n_splits; ++ai) {
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      const double spi = TreeDist::spi_overlap<Fast, Pop>(
+        a.state[ai], b.state[bi], n_tips,
+        a.in_split[ai], b.in_split[bi], a.n_bins);
+      score(ai, bi) = (spi < 0.0) ? max_score
+                                  : cost((spi - best_overlap) * score_over_possible);
+    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
+  }
+}
+
 // NOTE: For SPI, matching each split to its identical copy is NOT always
 // globally optimal: the LAP can do better by pairing an identical split with
 // a different compatible split.  shared_phylo_pinned() therefore treats
@@ -734,16 +795,9 @@ static inline void shared_phylo_fill_lap(
     const double best_overlap, const double score_over_possible,
     const cost max_score, cost_matrix& score
 ) {
-  for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    for (split_int bi = 0; bi < b.n_splits; ++bi) {
-      const double spi = TreeDist::spi_overlap<Fast>(
-        a.state[ai], b.state[bi], n_tips,
-        a.in_split[ai], b.in_split[bi], a.n_bins);
-      score(ai, bi) = (spi < 0.0) ? max_score
-                                  : cost((spi - best_overlap) * score_over_possible);
-    }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
-  }
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return shared_phylo_fill_lap_impl<Fast, decltype(pop)>(a, b, n_tips, best_overlap, score_over_possible, max_score, score);
+  });
 }
 
 // Scaling shared by the full and pinned SPI solvers.
@@ -801,26 +855,8 @@ static double shared_phylo_full(
   ) * sc.possible_over_score;
 }
 
-// Pinned SPI: match identical splits to one another, solve the LAP on the
-// remaining splits only, then prove the combined assignment optimal.
-//
-// Matching identical splits is not always optimal (see NOTE above), so the
-// pinned assignment is certified with LP duals (u_i + v_j <= c_ij for every
-// cell, with equality on assigned cells).  The residual LAP supplies duals
-// for unpinned rows and columns; each pinned pair (i, j) with cost d needs
-// u_i + v_j = d, and its window for u_i is set by the residual cells in row
-// i and column j.  A pair whose window is empty is released into the
-// residual problem and the round repeats.
-//
-// Cells between two pinned pairs are never computed.  Pinned splits all
-// belong to tree a, so any two are compatible, and the cost of matching them
-// is bounded below by a function of their sizes alone; checking duals
-// against that bound, one group of equal-sized splits at a time, covers
-// every such cell.
-//
-// Returns a negative value if no certificate is found; the caller then solves
-// the full problem.
-static double shared_phylo_pinned(
+template <typename Pop>
+static double shared_phylo_pinned_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const SpiScale& sc, const split_int* a_match,
     LapScratch& scratch, PinScratch& pin
@@ -846,7 +882,7 @@ static double shared_phylo_pinned(
   };
 
   auto cell = [&](split_int ai, split_int bi) -> cost {
-    const double spi = TreeDist::spi_overlap<true>(
+    const double spi = TreeDist::spi_overlap<true, Pop>(
       a.state[ai], b.state[bi], n_tips,
       a.in_split[ai], b.in_split[bi], a.n_bins);
     return (spi < 0.0) ? max_score
@@ -1034,6 +1070,35 @@ static double shared_phylo_pinned(
   }
 }
 
+// Pinned SPI: match identical splits to one another, solve the LAP on the
+// remaining splits only, then prove the combined assignment optimal.
+//
+// Matching identical splits is not always optimal (see NOTE above), so the
+// pinned assignment is certified with LP duals (u_i + v_j <= c_ij for every
+// cell, with equality on assigned cells).  The residual LAP supplies duals
+// for unpinned rows and columns; each pinned pair (i, j) with cost d needs
+// u_i + v_j = d, and its window for u_i is set by the residual cells in row
+// i and column j.  A pair whose window is empty is released into the
+// residual problem and the round repeats.
+//
+// Cells between two pinned pairs are never computed.  Pinned splits all
+// belong to tree a, so any two are compatible, and the cost of matching them
+// is bounded below by a function of their sizes alone; checking duals
+// against that bound, one group of equal-sized splits at a time, covers
+// every such cell.
+//
+// Returns a negative value if no certificate is found; the caller then solves
+// the full problem.
+static double shared_phylo_pinned(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const SpiScale& sc, const split_int* a_match,
+    LapScratch& scratch, PinScratch& pin
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return shared_phylo_pinned_impl<decltype(pop)>(a, b, n_tips, sc, a_match, scratch, pin);
+  });
+}
+
 static double shared_phylo_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const CanonSplits& ca, const CanonSplits& cb,
@@ -1122,7 +1187,8 @@ NumericVector cpp_shared_phylo_all_pairs(
 // Jaccard / Nye similarity — LAP-based; k and allow_conflict are per-call
 // =============================================================================
 
-static double jaccard_score(
+template <typename Pop>
+static double jaccard_score_impl(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const CanonSplits& ca, const CanonSplits& cb,
     const double exponent, const bool allow_conflict,
@@ -1184,7 +1250,7 @@ static double jaccard_score(
       const split_int bi = b_unmatch[b_pos];
       split_int a_and_b = 0;
       for (split_int bin = 0; bin < a.n_bins; ++bin) {
-        a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
+        a_and_b += Pop::count(a.state[ai][bin] & b.state[bi][bin]);
       }
       const split_int nb    = b.in_split[bi];
       const split_int nB    = n_tips - nb;
@@ -1234,6 +1300,17 @@ static double jaccard_score(
   return static_cast<double>(exact_n) + static_cast<double>(
     (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
   ) / max_scoreL;
+}
+
+static double jaccard_score(
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    const CanonSplits& ca, const CanonSplits& cb,
+    const double exponent, const bool allow_conflict,
+    LapScratch& scratch, MatchScratch& mscratch
+) {
+  return TreeDist::dispatch_popcount([&](auto pop) {
+    return jaccard_score_impl<decltype(pop)>(a, b, n_tips, ca, cb, exponent, allow_conflict, scratch, mscratch);
+  });
 }
 
 //' @keywords internal

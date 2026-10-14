@@ -1,21 +1,14 @@
 #include "hpart.h"
 #include <Rcpp.h>
 #include <cmath>
+#include <TreeDist/popcount.h>
 using namespace Rcpp;
 
 namespace TreeDist {
 
-// Hardware POPCNT via inline asm (no -mpopcnt flag needed)
+// POPCNT where the CPU has it (checked at load time), else portable.
 static inline size_t popcnt64(uint64_t x) {
-#if (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
-  uint64_t result;
-  __asm__ ("popcnt %1, %0" : "=r" (result) : "r" (x));
-  return result;
-#elif defined(_MSC_VER) && defined(_M_X64)
-  return __popcnt64(x);
-#else
-  return __builtin_popcountll(x);
-#endif
+  return static_cast<size_t>(TreeDist::count_bits(x));
 }
 
 static inline double x_log_x(size_t x) {
