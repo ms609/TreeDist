@@ -1,6 +1,6 @@
 # Changelog
 
-## TreeDist 2.15.0.9005 (development)
+## TreeDist 2.15.0.9006 (development)
 
 ### Performance
 
@@ -19,13 +19,15 @@
 - Improve performance of
   [`NNIMaxStep()`](https://ms609.github.io/TreeDist/dev/reference/NNIMaxStep.md).
 
+- Improve performance of `SPRDist(method = "Rogue")`: candidate leaves
+  are scored in C++, and abandoned once they cannot beat the best
+  candidate so far.
+
 - Improve performance of
   [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
   and
   [`PhylogeneticInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
-  when comparing similar trees: identical splits are matched first, and
-  the result is certified optimal (or the full matching computed) so
-  that scores are unchanged.
+  when comparing similar trees.
 
 ## TreeDist 2.15.0 (2026-09-11)
 
