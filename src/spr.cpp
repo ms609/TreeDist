@@ -291,8 +291,22 @@ struct ParentPrices {
   int n_word = 0; // 64-bit words per split
   int n_split = 0;
   std::vector<uint64_t> bits; // Splits of tree 2, n_split * n_word
-  std::vector<price_t> price;
   std::vector<SEXP> label; // CHARSXP of each leaf
+  RawMatrix splits1, splits2; // As as.Splits(), for computing prices
+
+  // Prices are computed on first use: a parent LAP is wasted if the row
+  // bound rejects every candidate.  Empty if there is nothing to match.
+  const std::vector<price_t> &Price() const {
+    if (!ready) {
+      price = mutual_clustering_col_prices(splits1, splits2, n_tip);
+      ready = true;
+    }
+    return price;
+  }
+
+private:
+  mutable std::vector<price_t> price;
+  mutable bool ready = false;
 };
 
 // Position of each of `labels` among the parent's leaves; false unless
@@ -417,6 +431,8 @@ struct CandidatePrices {
   static const price_t *Get(void *context) {
     CandidatePrices &cp = *static_cast<CandidatePrices *>(context);
     const ParentPrices &pp = *cp.pp;
+    const std::vector<price_t> &parent_price = pp.Price();
+    if (parent_price.empty()) return nullptr; // #nocov
     const std::vector<int> &map = *cp.map;
     const int n_word = pp.n_word;
     static thread_local std::vector<uint64_t> mask, keys;
@@ -453,11 +469,11 @@ struct CandidatePrices {
         const int e = slot[h];
         if (e < 0) {
           slot[h] = n_key;
-          key_price[n_key++] = pp.price[q];
+          key_price[n_key++] = parent_price[q];
           break;
         }
         if (std::equal(k, k + n_word, &keys[size_t(e) * n_word])) {
-          key_price[e] = std::min(key_price[e], pp.price[q]);
+          key_price[e] = std::min(key_price[e], parent_price[q]);
           break;
         }
       }
@@ -693,8 +709,9 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth) {
     const TreeSplits full1 = GetSplits(tree1["edge"], n_tip);
     const TreeSplits full2 = GetSplits(tree2["edge"], n_tip, &identity,
                                        pp.n_word, &pp.bits);
-    pp.price = mutual_clustering_col_prices(full1.bits, full2.bits, n_tip);
-    pp.n_split = pp.price.size();
+    pp.splits1 = full1.bits;
+    pp.splits2 = full2.bits;
+    pp.n_split = full2.bits.nrow();
   }
   const ParentPrices *pp_ptr = pp.n_split ? &pp : nullptr;
   NumericVector scores(n_tip);

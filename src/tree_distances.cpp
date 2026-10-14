@@ -914,7 +914,7 @@ std::vector<cost> mutual_clustering_col_prices(const RawMatrix &x,
   const SplitList b(y);
   const split_int dim = std::max(a.n_splits, b.n_splits);
   if (dim == 0 || n_tips < 4 || b.n_splits == 0) {
-    return {};
+    return {}; // #nocov
   }
   constexpr cost max_score = BIG;
   const double max_over_tips = static_cast<double>(max_score) / n_tips;
