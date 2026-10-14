@@ -160,21 +160,27 @@ optimal if it attains `Huf(s)`.
   branches at `H`'s neighbour in `U`.  Re-rooting `R` without changing `U`
   leaves `k` alone.
 - **Flips.**  Forst & Thorup (2005, Thm 5.3) transform any weighted tree
-  into a Huffman tree by a finite sequence of strict H-flips.  Their
-  Thm 5.5 and Cor 5.7 show that `G_ĝ = sum ĝ(internal weights)` never
-  increases under an H-flip, since `ĝ` is non-decreasing and concave.
-  Start from an optimal `R`.  The end is Huffman, hence optimal, so every
-  flip has zero cost and every intermediate tree is optimal.
-- **Zero-cost strict flips only re-root.**  In their notation an H-flip
+  into a Huffman tree by a finite sequence of strict H-flips.  Their proof
+  takes each flip from Lemma 5.2, so we may assume every flip has that
+  form.  Their Thm 5.5 and Cor 5.7 show that
+  `G_ĝ = sum ĝ(internal weights)` never increases under an H-flip, since
+  `ĝ` is non-decreasing and concave.  Start from an optimal `R`.  The end
+  is Huffman, hence optimal, so every flip has zero cost and every
+  intermediate tree is optimal.
+- **Zero-cost Lemma 5.2 flips only re-root.**  In their notation an H-flip
   swaps `U` and `V`, at distance `l` from `V` to the common ancestor `V_l
   = U_{l+p}`.  The proof of Thm 5.5 changes the internal weights as:
   pairs `{u_i, v_i} -> {ũ_i, ṽ_i}` (`i < l`), with equal sums and `ũ_i`
   the smallest of the four; and singles `u_i -> ũ_i <= u_i` (`i >= l`).
-  Strictness makes some pair change when `l >= 2` (at `i = 1` if `p > 0`,
-  at `i = l - 1` if `p = 0`).  A changed pair keeps `G_ĝ` only if `ĝ` is
-  affine on `[ũ_i, ṽ_i]`.  That needs `ũ_i >= n/2`, as `Hb` is strictly
-  concave on `[0, 1/2]`.  But `u_i + v_i <= n`, since `U_i` and `V_i` are
-  disjoint, so `ũ_i = u_i = v_i = n/2`, which contradicts the change.
+  Lemma 5.2 gives either `l = 1` (the uncle case) or (5.2.1):
+  `v < u` and `u' <= u < v'`.  In the second case with `l >= 2`, pair
+  `i = 1` goes from `{u + u', v + v'}` to `{v + u', u + v'}`.  `v + u'` is
+  strictly the smallest of these four, so the pair changes.  (A general
+  strict H-flip need not change a pair, so the restriction to Lemma 5.2
+  matters.)  A changed pair keeps `G_ĝ` only if `ĝ` is affine on
+  `[ũ_i, ṽ_i]`.  That needs `ũ_i >= n/2`, as `Hb` is strictly concave on
+  `[0, 1/2]`.  But `u_i + v_i <= n`, since `U_i` and `V_i` are disjoint, so
+  `ũ_i = u_i = v_i = n/2`, which contradicts the change.
   So `l = 1`, `V` is the brother of `U_p`, and `p >= 1`.  The weights
   `u_1, ..., u_p` each fall by `u - v > 0`.  Zero cost then needs
   `u_1 - (u - v) >= n/2`.  So `U_1, ..., U_p` weigh more than `n/2`, are
@@ -185,8 +191,9 @@ optimal if it attains `Huf(s)`.
 - So the optimal `R` and the Huffman tree at the end of the sequence share
   `U`, and hence `k`.  ∎
 
-Section 3 lists `k` for every Huffman tree (an equal-weight swap leaves the
-partner weight, and so `k`, unchanged).  So the candidates are exactly the
+Section 3 lists `k` for every Huffman tree.  Ties among units leave `H`'s
+partner weight unchanged.  Ties involving `H` are the `b = z` cases it
+enumerates.  So the candidates are exactly the
 optimal `k` in exact arithmetic.  For `n <= 4000`, every non-candidate `k`
 was at least 6.9e-7 worse.
 
@@ -244,6 +251,13 @@ checked Theorem 2's formula against an exhaustive search over trees with a
 heavy leaf, for every `n <= 450`, without relying on Glassey & Karp.  It
 compared `huffman_splits()` with a heap-based Huffman under all tie-breaks
 over 1.17 million `(s, z)` cases.  No differences were found.
+
+A second review checked Theorem 3 in exact (`Decimal`) arithmetic.  For
+`s <= 8`, it enumerated every rooted tree on `{z, 1^s}`:
+- every optimal tree reached a Huffman tree by zero-cost re-rootings;
+- the optimal `k` matched `huffman_splits()` and every Huffman tie-break.
+
+The optimal `k` sets also matched for `n <= 160`.
 
 They are identical to the previous build for every `n <= 6000` and at
 `n = 200 000`.  The block bounds passed on to `nni_max_step()` are
