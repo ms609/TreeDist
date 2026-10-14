@@ -545,6 +545,57 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// spr_rogue_scores
+List spr_rogue_scores(const List& tree1, const List& tree2, const int depth);
+RcppExport SEXP _TreeDist_spr_rogue_scores(SEXP tree1SEXP, SEXP tree2SEXP, SEXP depthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const int >::type depth(depthSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_rogue_scores(tree1, tree2, depth));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_bounded_cid
+double spr_bounded_cid(const List& tree1, const List& tree2, const double cutoff);
+RcppExport SEXP _TreeDist_spr_bounded_cid(SEXP tree1SEXP, SEXP tree2SEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_bounded_cid(tree1, tree2, cutoff));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_first_shared_split
+LogicalVector spr_first_shared_split(const List& tree1, const List& tree2);
+RcppExport SEXP _TreeDist_spr_first_shared_split(SEXP tree1SEXP, SEXP tree2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_first_shared_split(tree1, tree2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_keep_and_reduce
+List spr_keep_and_reduce(const List& tree1, const List& tree2, const LogicalVector& keep);
+RcppExport SEXP _TreeDist_spr_keep_and_reduce(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type keep(keepSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_keep_and_reduce(tree1, tree2, keep));
+    return rcpp_result_gen;
+END_RCPP
+}
 // spr_table_7
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2);
 RcppExport SEXP _TreeDist_spr_table_7(SEXP sp1SEXP, SEXP sp2SEXP) {
@@ -749,6 +800,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_mutual_clustering_bounded
+double cpp_mutual_clustering_bounded(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip, const double minScore);
+RcppExport SEXP _TreeDist_cpp_mutual_clustering_bounded(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP minScoreSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< const double >::type minScore(minScoreSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_mutual_clustering_bounded(x, y, nTip, minScore));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_shared_phylo
 List cpp_shared_phylo(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip, const bool force_slow);
 RcppExport SEXP _TreeDist_cpp_shared_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP force_slowSEXP) {
@@ -820,6 +885,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
+    {"_TreeDist_spr_rogue_scores", (DL_FUNC) &_TreeDist_spr_rogue_scores, 3},
+    {"_TreeDist_spr_bounded_cid", (DL_FUNC) &_TreeDist_spr_bounded_cid, 3},
+    {"_TreeDist_spr_first_shared_split", (DL_FUNC) &_TreeDist_spr_first_shared_split, 2},
+    {"_TreeDist_spr_keep_and_reduce", (DL_FUNC) &_TreeDist_spr_keep_and_reduce, 3},
     {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
     {"_TreeDist_cpp_transfer_consensus", (DL_FUNC) &_TreeDist_cpp_transfer_consensus, 6},
     {"_TreeDist_cpp_tc_profile", (DL_FUNC) &_TreeDist_cpp_tc_profile, 7},
@@ -835,6 +904,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_jaccard_similarity", (DL_FUNC) &_TreeDist_cpp_jaccard_similarity, 5},
     {"_TreeDist_cpp_msi_distance", (DL_FUNC) &_TreeDist_cpp_msi_distance, 3},
     {"_TreeDist_cpp_mutual_clustering", (DL_FUNC) &_TreeDist_cpp_mutual_clustering, 3},
+    {"_TreeDist_cpp_mutual_clustering_bounded", (DL_FUNC) &_TreeDist_cpp_mutual_clustering_bounded, 4},
     {"_TreeDist_cpp_shared_phylo", (DL_FUNC) &_TreeDist_cpp_shared_phylo, 4},
     {"_TreeDist_cpp_popcount_force_sw", (DL_FUNC) &_TreeDist_cpp_popcount_force_sw, 1},
     {NULL, NULL, 0}

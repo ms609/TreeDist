@@ -936,3 +936,45 @@ real trees give mean natural run lengths of 1.4 (1000 leaves) to 8.2 (pectinate
 Powersort's advantage over Timsort is an optimal merge tree over pre-existing
 runs at large n; neither condition holds here.  Note there was never a Timsort
 in TreeDist — every sort is `std::sort` / `std::stable_sort`.
+
+## SPR Rogue early exits (#174, 2026-10-12)
+
+- Rprof on 40-tip `SPRDist(method = "Rogue")`: `cpp_mutual_clustering` is
+  under 0.2% of runtime; R overhead in the proxy distance (`as.Splits()`,
+  `ClusteringEntropy()`, `CalculateTreeDistance()`) dominates.
+- Kept: `.BoundedCID()` (one lean CID call with a cutoff) and a bounded
+  `mutual_clustering<true>()` that exits on entropy and row-maximum bounds.
+  Most of the ~20% gain is the leaner R wrapper; skipping the second half of
+  a divide-and-conquer score adds ~3%.
+- Discounted: an early exit inside `lap()` (column-minimum and post-ARR dual
+  bounds).  No measurable gain at 50–1000 tips: candidates far from the cutoff
+  are caught by the row bound first, and the dual bound is too loose for near
+  ones.  Templating `lap()` to share the body also changed its codegen
+  (`findRowSubmin` no longer inlined), so it was not worth the risk.
+- Then ported the whole candidate-scoring loop to C++ (`spr_rogue_scores()`
+  in `src/spr.cpp`), for the default "C" proxy.  Scores are bit-identical to
+  the R path (`options(sprCpp = FALSE)`): split rows in node order, entropy
+  summed in long double, same cutoff/tolerance arithmetic.  Verified on 420
+  random and near-identical pairs at depths 1 and 2 against main.
+  30 tips: 1.79 s -> 0.24 s; 80 tips: 5.24 s -> 1.62 s (6-20 pairs).
+- Martin (2026-10-13): bit-identical tie-breaks are not required; agreement
+  within machine error suffices.  So the C++ path now sums split entropy in
+  double from popcounts during split construction (no second pass or
+  `binary_entropy_counts()`), reuses the reduced trees' splits when no split
+  is shared, builds the second half-tree only if the first is under the
+  cutoff, and drops/reroots leaves with `keep_tip()` + `root_binary()` on
+  edge matrices instead of `keep_and_reduce()`'s phylo lists.  ~20% faster
+  (80 tips 1.68 s -> 1.33 s).  Argmin sets matched the exact path on 197
+  pairs; SPR results matched on 300.  What remains: MCI ~45% (LAP, two
+  CostMatrix allocations per call), `reduce_trees()` and Rcpp allocation/GC.
+- Round 3 (2026-10-13): mutual_clustering<true>() reuses thread_local
+  CostMatrix buffers and skips Rcpp::checkUserInterrupt() (per-call and in
+  lap(); the singles loop checks instead); FirstMatchingSplit() hashes
+  polarized splits instead of an O(n^2) scan; `.SPRRogue()` finds the shared
+  split (`spr_first_shared_split()`) and drops leaves
+  (`spr_keep_and_reduce()`) in C++, building Splits only for the 5-7 leaf
+  shortcuts.  Min-of-N vs merged head: 30 tips -33%, 80 tips -19%.
+- Counters at 80 tips: ~98% of bounded MCI calls run the full LAP, and ~89%
+  of those end below the cutoff (candidate rejected); the row bound exits
+  ~2%, a column-max bound would add ~1%.  Further gains need a tighter
+  MCI upper bound or LAP warm starts between candidates.

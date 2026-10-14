@@ -27,6 +27,13 @@
 
 namespace TreeDist {
 
+  // Test hook: when true, dispatch_popcount() (and, with older TreeTools, the
+  // local count_bits()) takes the portable path even where POPCNT exists, so
+  // that the tests exercise the code that runs on CPUs without it. Set only
+  // through cpp_popcount_force_sw(), from R's main thread, never while a
+  // kernel is running.
+  inline bool popcount_force_sw = false;
+
 #ifdef TREETOOLS_POPCOUNT_DISPATCH
 
   using TreeTools::count_bits;
@@ -84,9 +91,10 @@ namespace TreeDist {
 
   inline int32_t count_bits(splitbit x) noexcept {
 #if defined(__GNUC__) || defined(__clang__)
-    return __builtin_expect(has_popcnt, 1) ? popcount_hw(x) : popcount_sw(x);
+    return __builtin_expect(has_popcnt && !popcount_force_sw, 1) ?
+      popcount_hw(x) : popcount_sw(x);
 #else
-    return has_popcnt ? popcount_hw(x) : popcount_sw(x);
+    return has_popcnt && !popcount_force_sw ? popcount_hw(x) : popcount_sw(x);
 #endif
   }
 
@@ -98,12 +106,6 @@ namespace TreeDist {
   };
 
 #endif // TREETOOLS_POPCOUNT_DISPATCH
-
-  // Test hook: when true, dispatch_popcount() takes the portable path even
-  // where POPCNT exists, so that the tests exercise the code that runs on
-  // CPUs without it. Set only through cpp_popcount_force_sw(), from R's main
-  // thread, never while a kernel is running.
-  inline bool popcount_force_sw = false;
 
   template <typename F>
   inline decltype(auto) dispatch_popcount(F&& f) {

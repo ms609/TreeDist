@@ -1,6 +1,6 @@
 # The portable popcount path is what runs on x86-64 CPUs without POPCNT
 # (ms609/TreeTools#287). CI machines all have POPCNT, so force that path and
-# check that every kernel that dispatches on it returns identical results.
+# check that every kernel that uses it returns identical results.
 
 test_that("Portable popcount path matches the POPCNT path", {
   library("TreeTools", quietly = TRUE)
@@ -41,7 +41,10 @@ test_that("Portable popcount path matches the POPCNT path", {
         SharedPhylogeneticInfo(similar),
         SharedPhylogeneticInfo(similar[1:2], similar[3:5]),
         ClusteringInfoDistance(similar),
-        MatchingSplitInfoDistance(similar)
+        MatchingSplitInfoDistance(similar),
+        SPRDist(trees[1:3], method = "Rogue"),
+        SPRDist(trees[[1]], trees[[3]]),
+        HierarchicalMutualInfo(trees[[1]], trees[[3]])
       )
     )
   }

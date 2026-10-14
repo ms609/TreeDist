@@ -435,9 +435,20 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   });
 }
 
-template <typename Pop>
+// With Bounded = true, gives up once the score is known to fall below
+// min_score.  It then returns an upper bound on the score, below min_score,
+// and an empty matching.  Scores at or above min_score are computed exactly as
+// with Bounded = false.
+// Reusable cost matrices for mutual_clustering<true>().
+static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
+  static thread_local cost_matrix pool[2];
+  pool[i].resize(dim);
+  return pool[i];
+}
+
+template <bool Bounded, typename Pop>
 List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
-                       const int32 n_tips) {
+                       const int32 n_tips, const double min_score) {
   const SplitList a(x);
   const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
@@ -456,7 +467,32 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
   const double lg2_n = lg2_lookup(n_tips);
 
-  cost_matrix score(most_splits);
+  // Bounded only: upper bound on the score.  A split's mutual clustering
+  // information with any other split cannot exceed its own entropy.
+  [[maybe_unused]] double upper_bound = 0;
+  if constexpr (Bounded) {
+    double entropy_a = 0;
+    for (split_int ai = 0; ai < a.n_splits; ++ai) {
+      entropy_a += TreeDist::ic_matching(a.in_split[ai],
+                                         n_tips - a.in_split[ai], n_tips);
+    }
+    double entropy_b = 0;
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      entropy_b += TreeDist::ic_matching(b.in_split[bi],
+                                         n_tips - b.in_split[bi], n_tips);
+    }
+    upper_bound = std::min(entropy_a, entropy_b) * n_tips_reciprocal;
+    if (upper_bound < min_score) {
+      return List::create(Named("score") = upper_bound,
+                          _["matching"] = IntegerVector(0));
+    }
+    upper_bound = entropy_a * n_tips_reciprocal;
+  }
+
+  // Bounded only: called once per candidate in SPR leaf scoring, so reuse
+  // buffers rather than reallocating them on each call.
+  cost_matrix local_score(Bounded ? 0 : most_splits);
+  cost_matrix &score = Bounded ? BoundedPool(0, most_splits) : local_score;
 
   double exact_match_score = 0;
   split_int exact_matches = 0;
@@ -466,7 +502,7 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
   std::unique_ptr<split_int[]> b_match = std::make_unique<split_int[]>(b.n_splits);
 
   for (split_int ai = 0; ai < a.n_splits; ++ai) {
-    if ((ai & 1023) == 0) Rcpp::checkUserInterrupt();
+    if (!Bounded && (ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
 
     const split_int na = a.in_split[ai];
@@ -474,6 +510,7 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
     const auto *a_row = a.state[ai];
     const double offset_a = lg2_n - lg2_lookup(na);
     const double offset_A = lg2_n - lg2_lookup(nA);
+    [[maybe_unused]] cost row_min = max_score;
 
     for (split_int bi = 0; bi < b.n_splits; ++bi) {
 
@@ -513,6 +550,22 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
+      if constexpr (Bounded) {
+        if (score(ai, bi) < row_min) row_min = score(ai, bi);
+      }
+    }
+
+    if constexpr (Bounded) {
+      if (!a_match[ai]) {
+        // Replace this split's entropy with its best available match.
+        upper_bound += static_cast<double>(max_score - row_min) *
+          over_max_score - TreeDist::ic_matching(na, nA, n_tips) *
+          n_tips_reciprocal;
+        if (upper_bound < min_score) {
+          return List::create(Named("score") = upper_bound,
+                              _["matching"] = IntegerVector(0));
+        }
+      }
     }
 
     if (b.n_splits < most_splits) {
@@ -532,7 +585,8 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_row> colsol;
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
-  cost_matrix small_score(lap_dim);
+  cost_matrix local_small(Bounded ? 0 : lap_dim);
+  cost_matrix &small_score = Bounded ? BoundedPool(1, lap_dim) : local_small;
 
   if (exact_matches) {
     split_int a_pos = 0;
@@ -550,7 +604,7 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
     small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
 
     const double lap_score = static_cast<double>((max_score * lap_dim) -
-      lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
+      lap(lap_dim, small_score, rowsol, colsol, !Bounded)) * over_max_score;
     const double final_score = lap_score + (exact_match_score / n_tips);
 
     std::unique_ptr<split_int[]> lap_decode = std::make_unique<split_int[]>(lap_dim);
@@ -588,7 +642,7 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
     }
 
     const double final_score = static_cast<double>(
-      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
+      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, !Bounded)
     ) / max_score;
 
     std::vector<int> final_matching;
@@ -605,10 +659,11 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
   }
 }
 
+template <bool Bounded>
 List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
-                       const int32 n_tips) {
+                       const int32 n_tips, const double min_score = 0) {
   return TreeDist::dispatch_popcount([&](auto pop) {
-    return mutual_clustering_impl<decltype(pop)>(x, y, n_tips);
+    return mutual_clustering_impl<Bounded, decltype(pop)>(x, y, n_tips, min_score);
   });
 }
 
@@ -760,7 +815,26 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
   const int32 n_tip = static_cast<int32>(nTip[0]);
   TreeDist::check_ntip(n_tip);
-  return mutual_clustering(x, y, n_tip);
+  return mutual_clustering<false>(x, y, n_tip);
+}
+
+// Mutual clustering information, or an upper bound on it if it is below
+// min_score.  Used to discard candidates early in SPRDist(method = "Rogue").
+double mutual_clustering_bounded_score(const RawMatrix &x, const RawMatrix &y,
+                                       const int32 n_tip,
+                                       const double min_score) {
+  return Rcpp::as<double>(
+    mutual_clustering<true>(x, y, n_tip, min_score)["score"]);
+}
+
+// [[Rcpp::export]]
+double cpp_mutual_clustering_bounded(const RawMatrix &x, const RawMatrix &y,
+                                     const IntegerVector &nTip,
+                                     const double minScore) {
+  ASSERT(x.cols() == y.cols() && "Input splits must address same number of tips.");
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return mutual_clustering_bounded_score(x, y, n_tip, minScore);
 }
 
 // [[Rcpp::export]]
