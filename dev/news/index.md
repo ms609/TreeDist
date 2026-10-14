@@ -2,6 +2,12 @@
 
 ## TreeDist 2.15.0.9006 (development)
 
+### Bug fixes
+
+- C++ code no longer executes the x86 POPCNT instruction on CPUs that
+  lack it, which crashed R with “illegal operation” on some virtual
+  machines (ms609/TreeTools#287).
+
 ### Performance
 
 - Improve performance when comparing many similar trees with
