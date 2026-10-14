@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.15.0.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.15.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,14 +59,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.15.0.9006" id="treedist-21509006-development">TreeDist 2.15.0.9006 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509006-development"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.15.0.9007" id="treedist-21509007-development">TreeDist 2.15.0.9007 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509007-development"></a></h2>
 <div class="section level3">
-<h3 id="bug-fixes-2-15-0-9006">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9006"></a></h3>
+<h3 id="bug-fixes-2-15-0-9007">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9007"></a></h3>
 <ul><li>C++ code no longer executes the x86 POPCNT instruction on CPUs that lack it, which crashed R with “illegal operation” on some virtual machines (ms609/TreeTools#287).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-2-15-0-9006">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9006"></a></h3>
-<ul><li><p>Improve performance when comparing many similar trees with <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>.</p></li>
+<h3 id="performance-2-15-0-9007">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9007"></a></h3>
+<ul><li><p><code>SPRDist(method = "Rogue")</code> bounds each candidate’s clustering information with the optimal dual prices of the parent pair, skipping most assignment problems and warm-starting the rest: c. 50% faster at 80 leaves and 65% at 150 leaves on unrelated trees.</p></li>
+<li><p>Improve performance when comparing many similar trees with <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>.</p></li>
 <li><p>Improve performance of <code><a href="../reference/KendallColijn.html">PathVector()</a></code>, and thus <code><a href="../reference/PathDist.html">PathDist()</a></code>.</p></li>
 <li><p>Improve performance of <code><a href="../reference/NNIMaxStep.html">NNIMaxStep()</a></code>.</p></li>
 <li><p>Improve performance of <code>SPRDist(method = "Rogue")</code>: candidate leaves are scored in C++, and abandoned once they cannot beat the best candidate so far.</p></li>
