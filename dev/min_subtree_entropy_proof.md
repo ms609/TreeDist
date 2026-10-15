@@ -15,9 +15,21 @@ a perfect tree on `2^L <= s` leaves whose `s - 2^L` leftmost leaves are each
 replaced by a cherry.  Its root splits `k* = max(P/2, s - P) | s - k*`, where
 `P` is the largest power of two below `s` (`complete_split()`).
 
+**Attribution.**  None of the structural results below is new; see Section 6.
+- Theorem 1 is Glassey & Karp (1976, §4).  Cleary, Fischer & St. John (2025,
+  Thm 4.1) give the strictly concave case with uniqueness.
+- Theorem 2 is a special case of Goubko (2016, Thm 3 with Lemmas 19–20).
+- Theorem 3 follows from Goubko's equality clause (Thm 3, Lemma 8).
+- Our own contributions are:
+  - the heavy-leaf reduction of the recurrence above to Goubko's setting;
+  - the short capping proof of Theorem 2 via Glassey & Karp, and the
+    independent flip proof of Theorem 3;
+  - the `O(log s)` enumeration of every optimal split (Section 3), hence the
+    `O(n log n)` table.
+
 ## 1. The complete tree is optimal while `f` is non-decreasing
 
-**Theorem 1.** Let `f` be non-decreasing and concave on `{2, ..., s}`.
+**Theorem 1** (Glassey & Karp 1976, §4)**.** Let `f` be non-decreasing and concave on `{2, ..., s}`.
 Then `F(C_s) <= F(T)` for every rooted binary tree `T` with `s` leaves.
 
 *Reduction.*  With `D_u = f(u+1) - f(u)` and `d_u = D_u - D_{u+1} >= 0`
@@ -97,11 +109,12 @@ is 3.4e-11 at `n = 45 000`.  Bit-identity was also checked directly
 ## 2. Every size: Huffman trees with one heavy leaf
 
 Let `z = n - s` and `ĝ(w) = Hb(min(w, n/2) / n)`.  `ĝ` equals `f` on
-`[0, n/2]` and stays at 1 above `n/2`.  Because `Hb` has zero slope at
-`1/2`, `ĝ` is non-decreasing and concave on the reals, and hence on the
-integers.
+`[0, n/2]` and stays at 1 above `n/2`.  `ĝ` is non-decreasing and concave
+on the reals, and hence on the integers: on `[0, n/2]` its slopes are
+non-negative and non-increasing, and beyond that its slope is 0.  The zero
+slope of `Hb` at `1/2` is not needed; see *Generalization* below.
 
-**Theorem 2.**  For `n >= 2` and `1 <= s <= n` (with `z = 0` when `s = n`),
+**Theorem 2** (a special case of Goubko 2016, Thm 3)**.**  For `n >= 2` and `1 <= s <= n` (with `z = 0` when `s = n`),
 
     cost[s] = Huf(s) - 2 + ĝ(z),
 
@@ -139,17 +152,57 @@ So every Huffman tree is optimal.
 Theorem 1 is the special case `z >= s`.  Then `H` is merged last, and the
 units form a Huffman tree on equal weights, which is the complete tree.
 
+*Generalization.*  Nothing above uses the shape of `Hb` beyond monotonicity
+and concavity on `[0, n/2]`.  Let the split cost be `h(min(c, n - c))`, with
+`h` non-decreasing and concave on `[0, n/2]`.  Equivalently, the cost is any
+symmetric concave function of `c` on `[0, n]`.  Put
+`ĥ(w) = h(min(w, n/2))`, which is concave for the same reason as `ĝ`.  The
+same proof then gives
+
+    cost[s] = Huf_ĥ(s) - 2 h(n/2) + ĥ(z).
+
+Theorem 3 below additionally needs `h` strictly concave on `[0, n/2]`.  It
+fails for linear `h`: at `n = 8`, `s = 6` the optimal `k` are `{1, 2, 3}`,
+but Huffman gives only `{2}`.  So, for every strictly concave `h`, the
+optimal-split set is the same as for `Hb`.  A third review confirmed both
+statements in exact arithmetic for `h` = sqrt, log1p and `w^0.7`, all with
+non-zero slope at `n/2`, for `n <= 40`.
+
 **Corollary 2 (splits).**  Map an optimal `R` back to `T`.  If `H`'s first
 merge is with an item of weight `X < s`, the root of `T` splits
 `X | s - X`.  If `H` is merged last, with all `s` units, the root of `T`
 splits as the last unit merge did.  So every Huffman tie-break gives an
 optimal `k`.
 
-**Theorem 3 (tie-completeness).**  Conversely, every optimal `k` arises
-from some Huffman tree, i.e. some tie-break of Huffman's algorithm.
+**Theorem 3 (tie-completeness).**  Conversely, for `2 <= s <= n`, every
+optimal `k` arises from some Huffman tree, i.e. some tie-break of Huffman's
+algorithm.
 
-*Proof.*  Take `s > n/2` (else Corollary 1), so `z < n/2`.  Call `R`
-optimal if it attains `Huf(s)`.
+*Proof via Goubko (2016).*  Root each unrooted tree at a centroid vertex,
+or at the leaf's neighbour if the centroid is a leaf (Goubko's Lemma 19).
+These are Goubko's proper trees, and Huffman trees are among them
+(Lemma 20).
+- In a proper tree every non-root internal vertex has subordinate weight
+  `<= n/2`, where `ĝ` is strictly increasing and strictly concave.
+- Goubko's Thm 2 (compare Forst & Thorup's Thm 5.5) makes the Huffman weight
+  vector weakly majorize every other proper tree's.  By strictness, the cost
+  is then strictly lower unless the sorted vectors coincide.
+- If they coincide, Goubko's Lemma 8 makes the tree a Huffman tree.
+
+So every optimal unrooted tree is an unrooted Huffman tree, and `k` depends
+only on the unrooted tree.
+
+Two caveats apply.  Goubko's Lemma 11 asserts strictness for every
+increasing concave `χ`, which is false as stated (take `χ` linear).  It holds
+for strictly increasing, strictly concave `χ`, which covers `Hb(x/n)` on
+`[0, n/2]`.  Goubko also requires positive pendant weights, so `s = n`
+(`z = 0`) is covered only by the proof below and by the exact checks
+(Section 4).  ∎
+
+*Independent proof via Forst & Thorup (2005).*  The hypothesis `s > n/2` is
+not needed; it was verified unnecessary for every `2 <= s <= n <= 300`
+(Section 4).  For `s <= ceil(n/2)`, Corollary 1 also gives the result
+directly.  Call `R` optimal if it attains `Huf(s)`.
 
 - **Optimal `R` have a short heavy chain.**  In *Rooting*, a non-root node
   that is not a root child has `ĝ(w_u) > g~` exactly when `w_u > n/2`.  So
@@ -160,9 +213,12 @@ optimal if it attains `Huf(s)`.
   branches at `H`'s neighbour in `U`.  Re-rooting `R` without changing `U`
   leaves `k` alone.
 - **Flips.**  Forst & Thorup (2005, Thm 5.3) transform any weighted tree
-  into a Huffman tree by a finite sequence of strict H-flips.  Their proof
-  takes each flip from Lemma 5.2, so we may assume every flip has that
-  form.  Their Thm 5.5 and Cor 5.7 show that
+  into a Huffman tree by a finite sequence of strict H-flips.  The theorem
+  as stated allows any strict H-flip.  The restriction to Lemma 5.2 flips
+  comes from its proof: Lemma 5.2 supplies a flip of that form whenever the
+  tree is not Huffman, and strict flips strictly decrease the weight vector
+  in Schur order (Thm 5.5) on a finite set.  So we may assume every flip has
+  that form.  Their Thm 5.5 and Cor 5.7 show that
   `G_ĝ = sum ĝ(internal weights)` never increases under an H-flip, since
   `ĝ` is non-decreasing and concave.  Start from an optimal `R`.  The end
   is Huffman, hence optimal, so every flip has zero cost and every
@@ -172,12 +228,20 @@ optimal if it attains `Huf(s)`.
   = U_{l+p}`.  The proof of Thm 5.5 changes the internal weights as:
   pairs `{u_i, v_i} -> {ũ_i, ṽ_i}` (`i < l`), with equal sums and `ũ_i`
   the smallest of the four; and singles `u_i -> ũ_i <= u_i` (`i >= l`).
-  Lemma 5.2 gives either `l = 1` (the uncle case) or (5.2.1):
-  `v < u` and `u' <= u < v'`.  In the second case with `l >= 2`, pair
+  Each pair term is `<= 0` by concavity and each single term `<= 0` by
+  monotonicity.  A zero-cost flip therefore has every term zero.
+  Lemma 5.2 gives either `l = 1` (the uncle case) or (5.2.1).  (5.2.1) gives
+  `v < u` and `u' < v'`, and also `u' <= u` and `v <= v'`.  It does not give
+  `u < v'`; the argument below uses only `v < u` and `u' < v'`.  In the second case with `l >= 2`, pair
   `i = 1` goes from `{u + u', v + v'}` to `{v + u', u + v'}`.  `v + u'` is
   strictly the smallest of these four, so the pair changes.  (A general
   strict H-flip need not change a pair, so the restriction to Lemma 5.2
-  matters.)  A changed pair keeps `G_ĝ` only if `ĝ` is affine on
+  matters.  For example, take `n = 7`, `s = 6`, and let `H` have weight 1.
+  `T = (((H,(1,2)),(3,4)),(5,6))` has `k = 2`.  Flipping `U = (1,2)` with
+  `V` = leaf 5 gives `(((H,5),(3,4)),((1,2),6))`, with `k = 1`.  Internal
+  weights go from `{7,5,3,2,2,2}` to `{7,4,3,2,2,2}`, and both 5 and 4
+  exceed `n/2`, so the cost is unchanged.  Pair `i = 1` goes `{3,2} -> {2,3}`,
+  because `u' = v' = 1`, which violates `u' < v'`.)  A changed pair keeps `G_ĝ` only if `ĝ` is affine on
   `[ũ_i, ṽ_i]`.  That needs `ũ_i >= n/2`, as `Hb` is strictly concave on
   `[0, 1/2]`.  But `u_i + v_i <= n`, since `U_i` and `V_i` are disjoint, so
   `ũ_i = u_i = v_i = n/2`, which contradicts the change.
@@ -212,8 +276,16 @@ The second-smallest weight `b` never decreases.  `H` first merges at the
 first unit merge `(a, b)` with `b > z`, and takes `a` as its partner.  A
 merge with `b = z` is a tie that `H` may win, so its `a` is also a
 candidate.  If no merge has `b >= z`, `H` joins last.  That gives at most
-3 candidates in every tested `n`, found in
-`O(log s)` steps.  `huffman_splits()` implements this.
+3 candidates in every tested `n` (`n <= 2000` exhaustively), found in
+`O(log s)` steps.  The `O(n log n)` bound needs only `O(log s)` candidates,
+at most one per level step.  The `<= 3` bound is empirical.
+`huffman_splits()` implements this.
+
+Huffman coding by runs of equal weights, in time that depends on the number
+of distinct weights rather than on the number of leaves, is due to Moffat &
+Turpin (1998).  Here there are two distinct weights, 1 and `z`.
+`huffman_splits()` specializes that idea to track `H`'s partner.  (Moffat &
+Turpin was not read; it is cited on the editor review's advice.)
 
 This also explains the shapes seen earlier:
 
@@ -252,12 +324,28 @@ heavy leaf, for every `n <= 450`, without relying on Glassey & Karp.  It
 compared `huffman_splits()` with a heap-based Huffman under all tie-breaks
 over 1.17 million `(s, z)` cases.  No differences were found.
 
-A second review checked Theorem 3 in exact (`Decimal`) arithmetic.  For
+A second review checked Theorem 3 in high-precision (`Decimal`) arithmetic.
+`Decimal` is not exact for logarithms.  For
 `s <= 8`, it enumerated every rooted tree on `{z, 1^s}`:
 - every optimal tree reached a Huffman tree by zero-cost re-rootings;
 - the optimal `k` matched `huffman_splits()` and every Huffman tie-break.
 
 The optimal `k` sets also matched for `n <= 160`.
+
+A third review (2026-10) used exact arithmetic.  It stored each
+`n ln2 Hb(c/n) = n ln n - c ln c - (n - c) ln(n - c)` as an integer vector of
+prime exponents.  Logs of primes are linearly independent over the
+rationals, so two values tie exactly when their vectors are equal.  Strict
+inequalities were decided in floating point, falling back to 60-digit
+`mpmath` below a gap of 1e-6; no near-tie below 1e-45 occurred.  For every
+`2 <= n <= 300` and `1 <= s <= n` it confirmed:
+- Theorem 2, against an exhaustive DP over all rooted trees on `{z, 1^s}`;
+- Corollary 2 and Theorem 3, including `s <= n/2`;
+- that the candidates from `huffman_splits()` are exactly the brute-force
+  tie-break set.
+
+It also found the level description identical to heap-based Huffman for
+`s < 3000`, and at most `1.9 log2 s` level steps.
 
 They are identical to the previous build for every `n <= 6000` and at
 `n = 200 000`.  The block bounds passed on to `nni_max_step()` are
@@ -277,56 +365,154 @@ Table build times, C++ only:
 An earlier version of this note (reviewed) proved only Theorem 1 and a
 pruning lemma for `s >= 2n/3`.  Theorem 2 subsumes both.
 
+Theorems 2 and 3 were at first believed new.  A wider search in 2026-10
+found both in Goubko (2016); Section 6 now records this.  The results stand
+unchanged, but the attribution was corrected.  The stand-alone write-up was
+dropped in favour of a lemma in a paper on `NNIMaxStep()`.
+
 ## 6. Prior art
 
-Read directly: Glassey & Karp (1976), Parker (1980), Forst & Thorup (2005) and Golumbic (1976).
+Read directly:
+- Glassey & Karp (1976), Forst & Thorup (2005), Parker (1980) and Golumbic
+  (1976), the first two again in 2026-10 against the cited result numbers;
+- Goubko (2016), from arXiv:1502.01216 v2.  Theorem and lemma numbers below
+  follow arXiv v2; the published MATCH version was not seen.
 
-**Glassey & Karp (1976)**, *SIAM J. Appl. Math.* 31:368–378:
+**Summary.**
+| Here | Source | Status |
+|---|---|---|
+| Thm 1 | Glassey & Karp 1976, §4 (Cleary et al. 2025, Thm 4.1, strict case) | known |
+| Thm 2 | Goubko 2016, Thm 3 + Lemmas 19–20 | known; our capping proof is shorter |
+| Thm 3 | Goubko 2016, Thm 3 equality clause + Lemma 8 (strict `χ`) | known; our flip proof is independent |
+| Reduction of `cost[]` to one heavy leaf | — | not found in prior art |
+| Section 3 enumeration, `O(n log n)` table | (Moffat & Turpin 1998 for run-length Huffman) | not found in prior art; elementary |
+
+**Goubko (2016)**, "Minimizing Wiener index for vertex-weighted trees with
+given weight and degree sequences", *MATCH Commun. Math. Comput. Chem.*
+75(1):3–27; arXiv:1502.01216.  This is the closest prior work.
+- *Setting.*  Trees with prescribed vertex weights `µ(v) >= 0` and degrees
+  `d(v)`.  Pendant weights must be positive, and weights must be
+  degree-monotone among internal vertices (Def. 4).  Our case has internal
+  vertices of degree 3 and weight 0, and leaves `{z, 1^s}`.  This fits
+  whenever `z > 0`, i.e. `s < n`.
+- *Generalized Huffman* (Def. 6).  Repeatedly join the lightest items into
+  a star whose centre is the lightest free internal vertex.  For degree-3
+  internals this is binary Huffman, with the last three items joined at one
+  root vertex: the unrooted form of a binary Huffman tree.  Tie-breaks give
+  the collection `T_H`.
+- *Lemma 19.*  Every tree has a vertex whose deletion leaves components of
+  weight `<= µ̄/2` (a weighted centroid).  Rooting there, or at a leaf
+  centroid's neighbour, gives a "proper" directed tree.
+- *Lemma 20.*  Every directed Huffman tree is proper.
+- *Thm 3.*  For `χ` concave and increasing on `[0, µ̄/2]`, a Huffman tree
+  minimizes `sum over non-root v of χ(f(v))` among proper trees, where
+  `f(v)` is the weight subordinate to `v`.  Equality holds only for Huffman
+  trees.  Every non-root internal vertex of a proper tree has
+  `f(v) <= µ̄/2`.  So, up to a constant from the pendant edges, this sum
+  equals `sum over edges e of χ(min(w_e, µ̄ - w_e))`.  With
+  `χ = Hb(·/n)` this is Theorem 2 here, once the heavy leaf is attached.
+- *Thm 1* (`χ(x) = x(µ̄ - x)`, the vertex-weighted Wiener index of Klavžar &
+  Gutman 1997): the minimizers are exactly `T_H`.
+- *Lemma 8.*  A tree with the same subordinate-weight vector as a Huffman
+  tree is a Huffman tree.
+- *Caveat.*  Lemma 11, quoted from majorization texts, claims strictness for
+  every increasing concave `χ`.  That is false for linear `χ`.  It holds for
+  strictly increasing, strictly concave `χ`, which is all Theorem 3 here
+  needs.
+- His Thm 2, that the Huffman subordinate-weight vector weakly majorizes
+  every other tree's, follows Zhang et al. (2008, unit weights).  It is the
+  analogue of Forst & Thorup's Thm 5.5.
+
+**Glassey & Karp (1976)**, "On the optimality of Huffman trees", *SIAM J.
+Appl. Math.* 31:368–378, doi:10.1137/0131030:
 - Their Theorem 1 says a tree minimizes `sum f(W_j)` over internal weights
   for *every* non-decreasing concave `f` if and only if it is a Huffman tree
-  (H-tree).  This holds for any leaf weights, including our weight-0 leaf.
+  (H-tree).  This holds for any non-negative leaf weights and any tie-break,
+  including our weight-0 leaf.  They need `f` on `[0, ∞)`; extend `f`
+  linearly between integers and as a constant beyond `s`.
 - They characterize H-trees as the trees with a lexicographically minimal
   sorted weight sequence.
-- Section 4 solves exactly the recurrence of Theorem 1 above,
-  `F(n) = f(n) + min_j [F(j) + F(n - j)]` with `f` concave and
-  non-decreasing.  The minimizing `j` is the unique power of two with
-  `n/3 <= j < 2n/3`.  This matches `complete_split()` (checked for all
+- Section 4 solves the recurrence of Theorem 1 above,
+  `F(n) = f(n) + min_j [F(j) + F(n - j)]`, `1 <= j <= n - 1`, with `f`
+  concave and non-decreasing.  The minimizing `j` is the unique power of two
+  with `n/3 <= j < 2n/3`.  With `k <= s/2` as in our recurrence, one part of
+  the minimizing split is that power of two.  For `s = 7` the power of two
+  is 4, so `k = 3`.  This matches `complete_split()` (checked for all
   `s < 2 · 10^5`).
 - Their Lemma 2 proves the majorization step with the functions
   `min(x, s_q)`, the same reduction as Section 1.
 
 So Theorem 1 is theirs, and Section 1 is only a self-contained re-proof.
 
-Hong's converse, their Theorem 2, matters for us.  For any `f` that is not
-non-decreasing and concave, some weights make every H-tree suboptimal.
-`Hb(c/n)` is such an `f`, so H-trees cannot be applied to it directly.
-Theorem 2 here gets around this for split costs: it unroots at the heavy
-leaf and caps the cost at `n/2`, which turns the symmetric cost into a
-non-decreasing concave one.
+Hong's converse, their Theorem 2, assumes `f ∈ C²[0, ∞)`.  For any such `f`
+that is not non-decreasing and concave, some weights make every H-tree
+suboptimal.  `Hb(c/n)` is not non-decreasing; its non-monotone case is the
+one that matters, so H-trees cannot be applied to it directly.  Capping at
+`n/2` after unrooting at the heavy leaf (Theorem 2 here) gets around this;
+Goubko gets around it with proper rootings.
 
-**Parker (1980)**, *SIAM J. Comput.* 9:470–489, extends Glassey & Karp in
-two ways: to "quasilinear" weight-combination functions, and to
-Schur-concave costs of the internal weights (Theorems 5 and 9).  It does
-not treat symmetric or non-monotone node costs.
-
-**Cleary, Fischer & St. John (2025)**, *Bull. Math. Biol.*,
-doi:10.1007/s11538-025-01522-1, Thm 4.1, rediscover the strict case of
-Theorem 1 with uniqueness, without citing Glassey & Karp.
-
-**Forst & Thorup (2005)**, *SIAM J. Discrete Math.* 19:46–68, "What costs
-are minimized by Huffman trees?":
+**Forst & Thorup (2005)**, "What costs are minimized by Huffman trees?",
+*SIAM J. Discrete Math.* 19:46–68, doi:10.1137/S0895480103421725:
 - They characterize Huffman trees by subtree-weight inequalities (Thm 2.3).
 - Every tree reaches a Huffman tree by strict H-flips (Thm 5.3).
 - The internal-weight multiset is a strict Huffman cost under Schur order
   (Thm 5.5).
 - Hence a strictly increasing, strictly concave `g` is minimized only at
-  Huffman trees (Cor 5.7).
+  Huffman trees (Cor 5.7; the converse is Note 5.6).  "Increasing" there is
+  weak.
 
-`ĝ` is flat above `n/2`, so Cor 5.7's uniqueness does not apply.  Theorem 3
-instead uses Thm 5.3 and the proof of Thm 5.5 directly.  The step that
-zero-cost flips only re-root an unrooted tree appears new.
+`ĝ` is flat above `n/2`, so Cor 5.7's uniqueness does not apply to rooted
+trees.  The flip proof of Theorem 3 uses Thm 5.3 and the proof of Thm 5.5
+instead.  The step showing that zero-cost Lemma 5.2 flips only re-root is
+ours.  Its conclusion also follows from Goubko's equality clause.
+
+**Parker (1980)**, "Conditions for optimality of the Huffman algorithm",
+*SIAM J. Comput.* 9:470–489, doi:10.1137/0209035, extends Glassey & Karp in
+two ways: to "quasilinear" weight-combination functions, and to Schur-concave
+costs of the internal weights (Theorems 5 and 9).  It does not treat
+symmetric or non-monotone node costs.  An erratum exists, not read: *SIAM J.
+Comput.* 27:317 (1998), doi:10.1137/S0097539797328550.
+
+**Cleary, Fischer & St. John (2025)**, "The GFB tree and tree imbalance
+indices", *Bull. Math. Biol.* 87(10):145, doi:10.1007/s11538-025-01522-1.
+Their Thm 4.1 rediscovers the strict case of Theorem 1 with uniqueness,
+without citing Glassey & Karp.
 
 **Golumbic (1976)**, *IEEE Trans. Comput.* C-25:1164–1167: merging with
 cost `1 + max` of the children.  Not relevant.
 
-**Not found:** Hu, Kleitman & Tamaki (1979) has no PDF in the library.
+**Related, lower relevance or not read:**
+- *Cai, Cao, Li & Wang (2018)*, "On distances in vertex-weighted trees",
+  *Appl. Math. Comput.* 333:435–442, doi:10.1016/j.amc.2018.03.117.  **Not
+  read** (closed access).  The abstract claims "a simpler approach (than
+  that of Goubko's) to obtain a stronger result" for a given degree
+  sequence.  It may state the general-`χ` or the tie case, so check it
+  before citing either as Goubko's alone.
+- *Klavžar & Gutman (1997)*, *Discrete Appl. Math.* 80:73–81,
+  doi:10.1016/S0166-218X(97)00070-X: defines the vertex-weighted Wiener
+  index.
+- *Zhang, Xiang, Xu & Pan (2008)*, "The Wiener index of trees with given
+  degree sequences", *MATCH* 60:623–644, and *Wang (2008)*, *Discrete Appl.
+  Math.* 156:2647–2654, doi:10.1016/j.dam.2007.11.005: greedy trees minimize
+  the Wiener index for a given degree sequence.  This is the unit-weight
+  case.  Zhang et al. was not read.
+- *Schmuck, Wagner & Wang (2012)*, *MATCH* 68:273–292: greedy trees are
+  extremal for many Wiener-type (distance-based) invariants.
+- *Moffat & Turpin (1998)*, "Efficient construction of minimum-redundancy
+  codes for large alphabets", *IEEE Trans. Inf. Theory* 44:1650–1657,
+  doi:10.1109/18.681345: run-length Huffman construction.  Not read.
+- *Hu, Kleitman & Tamaki (1979)*, "Binary trees optimum under various
+  criteria", *SIAM J. Appl. Math.* 37:246–256, doi:10.1137/0137015.  Not
+  obtained.  The abstract and citing papers concern alphabetic
+  (order-preserving) and minimax trees; provisionally low relevance.
+- Ruled out after checking:
+  - Knuth (1982, algebraic Huffman);
+  - Fujiwara & Jacobs (2014, leaf-depth cost functions);
+  - Gallager (1978, sibling property; linear cost);
+  - Golomb (1980) and Schwartz (1964) on Huffman tie-breaks;
+  - Dasgupta (2016) hierarchical-clustering cost: it depends on a similarity
+    graph, and on unit cliques all trees tie;
+  - Lemant et al. (2022), whose entropy balance index is not `Hb(c/n)`.
+
+Full search records (queries, ledgers, referee reports) are in the
+2026-10 review artifacts, not in this repository.
