@@ -483,11 +483,14 @@ cost `1 + max` of the children.  Not relevant.
 
 **Related, lower relevance or not read:**
 - *Cai, Cao, Li & Wang (2018)*, "On distances in vertex-weighted trees",
-  *Appl. Math. Comput.* 333:435–442, doi:10.1016/j.amc.2018.03.117.  **Not
-  read** (closed access).  The abstract claims "a simpler approach (than
-  that of Goubko's) to obtain a stronger result" for a given degree
-  sequence.  It may state the general-`χ` or the tie case, so check it
-  before citing either as Goubko's alone.
+  *Appl. Math. Comput.* 333:435–442, doi:10.1016/j.amc.2018.03.117.  Read
+  2026-10.  It treats only the vertex-weighted Wiener index
+  (`χ(x) = x(W - x)`).  Its Thm 1.2 drops Goubko's degree-monotonicity
+  hypothesis, since monotone weight assignment is shown to be forced at the
+  optimum, and it gives a simpler proof.  It does not treat a general concave
+  `χ`: replacing distance by a function of distance is listed in §4 as
+  future work.  It has nothing on ties or on all optimal trees.  So Goubko
+  (2016) remains the source for Theorems 2–3 here.
 - *Klavžar & Gutman (1997)*, *Discrete Appl. Math.* 80:73–81,
   doi:10.1016/S0166-218X(97)00070-X: defines the vertex-weighted Wiener
   index.
