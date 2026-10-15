@@ -183,7 +183,8 @@ inline int huffman_splits(const int n, const int s, int (&k)[8]) {
 //
 // cost[s] = h[s] + min(cost[k] + cost[s - k]) over 1 <= k <= s / 2, recording
 // the first k attaining the minimum, as an exhaustive scan would.  Results
-// proven in dev/min_subtree_entropy_proof.md identify the optimal k directly:
+// in dev/min_subtree_entropy_proof.md (after Glassey & Karp 1976 and
+// Goubko 2016, MATCH 75:3-27) identify the optimal k directly:
 //  - for s <= ceil(n / 2), the complete binary tree is the unique optimum;
 //  - for larger s, optimal subtrees are Huffman trees with one heavy leaf,
 //    whose candidate splits are evaluated in increasing order.
