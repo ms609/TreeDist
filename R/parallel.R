@@ -22,8 +22,8 @@
 #' `"mc.cores"` option:
 #' 
 #' ```r
-#' options(mc.cores = parallel::detectCores())  # use all available cores
-#' options(mc.cores = 4L)                        # or a fixed number
+#' options(mc.cores = parallelly::availableCores())  # use all available cores
+#' options(mc.cores = 4L)                             # or a fixed number
 #' ```
 #' 
 #' The default is `1` (single-threaded).
