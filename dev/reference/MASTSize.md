@@ -85,24 +85,24 @@ MASTInfo(PectinateTree(8), BalancedTree(8))
 #> [1] 3.906891
 
 MASTSize(BalancedTree(7), as.phylo(0:3, 7))
-#> [1] 3 3 3 3
+#> [1] 3 4 3 3
 MASTSize(as.phylo(0:3, 7), PectinateTree(7))
 #> [1] 6 5 5 5
 
 MASTInfo(BalancedTree(7), as.phylo(0:3, 7))
-#> [1] 1.584963 1.584963 1.584963 1.584963
+#> [1] 1.584963 3.906891 1.584963 1.584963
 MASTInfo(as.phylo(0:3, 7), PectinateTree(7))
 #> [1] 9.884171 6.714246 6.714246 6.714246
 
 MASTSize(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
          as.phylo(0:3, 7))
 #>     [,1] [,2] [,3] [,4]
-#> Bal    3    3    3    3
+#> Bal    3    4    3    3
 #> Pec    6    5    5    5
 MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
          as.phylo(0:3, 7))
 #>         [,1]     [,2]     [,3]     [,4]
-#> Bal 1.584963 1.584963 1.584963 1.584963
+#> Bal 1.584963 3.906891 1.584963 1.584963
 #> Pec 9.884171 6.714246 6.714246 6.714246
 
 CompareAll(as.phylo(0:4, 8), MASTSize)

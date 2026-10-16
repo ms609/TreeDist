@@ -62,7 +62,8 @@
 <h2 class="pkg-version" data-toc-text="2.15.0.9007" id="treedist-21509007-development">TreeDist 2.15.0.9007 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509007-development"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-2-15-0-9007">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9007"></a></h3>
-<ul><li>C++ code no longer executes the x86 POPCNT instruction on CPUs that lack it, which crashed R with “illegal operation” on some virtual machines (ms609/TreeTools#287).</li>
+<ul><li><p>Fix <code><a href="../reference/MASTSize.html">MASTSize()</a></code> under-counting on some trees: the root of each tree was never compared with the subtrees of the other, so a maximum agreement subtree confined to one side of a root could be missed. Affects both <code>rooted = TRUE</code> and <code>rooted = FALSE</code>, and thus <code><a href="../reference/MASTSize.html">MASTInfo()</a></code>.</p></li>
+<li><p>C++ code no longer executes the x86 POPCNT instruction on CPUs that lack it, which crashed R with “illegal operation” on some virtual machines (ms609/TreeTools#287).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="performance-2-15-0-9007">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9007"></a></h3>
