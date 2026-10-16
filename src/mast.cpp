@@ -118,6 +118,20 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
              t2_left, t2_right, n_tip, n_all_nodes);
     }
   }
+  // Root of each tree against every non-root node of the other.
+  // The root recurrence reads M[root1, child of root2] and
+  // M[child of root1, root2], so these must be filled first.
+  // edge2 is in postorder, so M[root1, child of node2] precedes M[root1, node2].
+  for (int16 j = 0; j != n_edge; j++) {
+    fill_M(n_tip, edge2(j, 1), M, t1_descendantsof,
+           t2_descendantsof, t1_left, t1_right,
+           t2_left, t2_right, n_tip, n_all_nodes);
+  }
+  for (int16 i = 0; i != n_edge; i++) {
+    fill_M(edge1(i, 1), n_tip, M, t1_descendantsof,
+           t2_descendantsof, t1_left, t1_right,
+           t2_left, t2_right, n_tip, n_all_nodes);
+  }
   // Root node:
   fill_M(n_tip, n_tip, M, t1_descendantsof,
          t2_descendantsof, t1_left, t1_right,
