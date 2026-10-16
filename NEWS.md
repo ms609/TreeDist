@@ -2,6 +2,11 @@
 
 ## Bug fixes
 
+- Fix `MASTSize()` under-counting on some trees: the root of each tree was
+  never compared with the subtrees of the other, so a maximum agreement
+  subtree confined to one side of a root could be missed. Affects both
+  `rooted = TRUE` and `rooted = FALSE`, and thus `MASTInfo()`.
+
 - C++ code no longer executes the x86 POPCNT instruction on CPUs that lack
   it, which crashed R with "illegal operation" on some virtual machines
   (ms609/TreeTools#287).
