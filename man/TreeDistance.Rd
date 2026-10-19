@@ -263,8 +263,8 @@ When \code{tree2 = NULL} and all trees share the same tip labels, pairwise
 distance calculation uses a multi-threaded \acronym{OpenMP} batch path
 automatically.  Control the number of threads with the \code{"mc.cores"} option:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{options(mc.cores = parallel::detectCores())  # use all cores
-options(mc.cores = 4L)                        # or a fixed number
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{options(mc.cores = parallelly::availableCores())  # use all cores
+options(mc.cores = 4L)                             # or a fixed number
 }\if{html}{\out{</div>}}
 
 Do \strong{not} call \code{\link[=StartParallel]{StartParallel()}} for these functions: a registered

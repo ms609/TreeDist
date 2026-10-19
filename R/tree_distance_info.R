@@ -128,8 +128,8 @@
 #' automatically.  Control the number of threads with the `"mc.cores"` option:
 #' 
 #' ```r
-#' options(mc.cores = parallel::detectCores())  # use all cores
-#' options(mc.cores = 4L)                        # or a fixed number
+#' options(mc.cores = parallelly::availableCores())  # use all cores
+#' options(mc.cores = 4L)                            # or a fixed number
 #' ```
 #' 
 #' Do **not** call [`StartParallel()`] for these functions: a registered
