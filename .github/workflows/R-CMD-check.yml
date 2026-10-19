@@ -227,9 +227,9 @@ jobs:
       matrix:
         config:
           - {os: windows-latest, r: "release"}
-          # R 4.1 installs from a dated snapshot: current CRAN releases (e.g.
-          # readxl 1.6.0) may need a newer R.
-          - {os: ubuntu-24.04, r: "4.1", rspm: "https://packagemanager.posit.co/cran/2026-06-05"}
+          # Oldest supported platform.  Installs from a dated snapshot, as
+          # current CRAN releases (e.g. readxl 1.6.0) may need a newer R.
+          - {os: ubuntu-22.04, r: "4.1", rspm: "https://packagemanager.posit.co/cran/__linux__/jammy/2026-06-05"}
           - {os: ubuntu-24.04, r: "devel", rspm: "https://packagemanager.posit.co/cran/__linux__/noble/latest"}
 
     env:
