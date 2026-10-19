@@ -225,7 +225,9 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       s1 <- splits[[i[[1]]]]
       s2 <- splits[[i[[2]]]]
       common <- intersect(TipLabels(s1), TipLabels(s2))
-      Func(KeepTip(s1, common), KeepTip(s2, common),
+      # Both pruned trees must list leaves in the same order
+      Func(as.Splits(KeepTip(s1, common), tipLabels = common),
+           as.Splits(KeepTip(s2, common), tipLabels = common),
            nTip = length(common), reportMatching = FALSE, ...)
     }
     

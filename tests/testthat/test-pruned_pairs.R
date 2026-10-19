@@ -206,7 +206,17 @@ test_that("R fallbacks for functions without a C++ implementation", {
   expect_equal(NormalizeInfo(matrix(1, 6, 3), trees, others, how = 4),
                matrix(0.25, 6, 3))
 
-  # Scoring function without a C++ implementation: rows match tree1
+  # Scoring function without a C++ implementation
+  MCI <- function(...) MutualClusteringInfoSplits(...)
+  expect_equal(AsPairs(CalculateTreeDistance(MCI, trees)),
+               OracleAll(MutualClusteringInfo, trees))
+  expect_equal(unname(CalculateTreeDistance(MCI, trees[[2]], others)),
+               unname(OracleCross(MutualClusteringInfo, others,
+                                  trees[2])[, 1]))
+  expect_equal(unname(CalculateTreeDistance(MCI, trees, others)),
+               unname(OracleCross(MutualClusteringInfo, trees, others)))
+  
+  # Rows match tree1
   NSharedSplits <- function(splits1, splits2, nTip, ...) nTip
   expect_equal(CalculateTreeDistance(NSharedSplits, trees, others),
                sharedCross, ignore_attr = TRUE)
