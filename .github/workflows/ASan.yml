@@ -57,14 +57,18 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # r-hub's fedora-44 binaries (ape, mvtnorm, ...) link libRlapack.so,
-      # but the current gcc-asan image builds R against an external LAPACK
-      # and has no libRlapack.so, so those packages fail to load.  Point
+      # r-hub's fedora-44 binaries (ape, mvtnorm, ...) were built against an
+      # R using OpenBLAS and R's own LAPACK, so link libopenblasp.so.0 and
+      # libRlapack.so.  The current gcc-asan image's R uses FlexiBLAS and has
+      # neither, so those packages fail to load.  Install OpenBLAS, and point
       # libRlapack.so at the LAPACK that R itself uses: it exports the same
       # Fortran symbols.
-      - name: Provide libRlapack.so
+      - name: Provide libopenblasp.so and libRlapack.so
         shell: bash
         run: |
+          if ! ldconfig -p | grep -q 'libopenblasp\.so\.0'; then
+            dnf install -y openblas-threads
+          fi
           rlib="$(Rscript -e 'cat(R.home("lib"))')"
           if [ -e "$rlib/libRlapack.so" ]; then
             echo "libRlapack.so present; nothing to do"
