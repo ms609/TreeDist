@@ -27,7 +27,7 @@
 
 - Trees with different leaf sets are pruned to their shared leaves in C++,
   without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
-  is c. 15× faster, with lower memory use (#123).
+  is c. 15Ã— faster, with lower memory use (#123).
 
 - `SPRDist(method = "Rogue")` bounds each candidate's clustering information
   with the optimal dual prices of the parent pair, skipping most assignment

@@ -57,6 +57,20 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      # The r-hub fedora-44 binary of ape links libRlapack.so, which the
+      # current gcc-asan image's R-devel no longer provides, so loading ape
+      # fails.  Building ape from source first means the action's pak call
+      # finds it already installed and leaves it be.
+      - name: Install ape from source
+        run: |
+          lib <- path.expand(strsplit(Sys.getenv("R_LIBS_USER"), ":")[[1]][1])
+          dir.create(lib, recursive = TRUE, showWarnings = FALSE)
+          .libPaths(c(lib, .libPaths()))
+          install.packages("ape", lib = lib, type = "source",
+                           repos = "https://cloud.r-project.org")
+          library("ape")
+        shell: Rscript {0}
+
       - uses: ms609/actions/asan@main
         with:
           test: ${{ matrix.config.test }}
