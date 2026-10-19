@@ -163,7 +163,7 @@ test_that("Simple NNI approximations", {
 })
 
 test_that("NNIDist() lower bounds are valid", {
-  # ms609/TreeDist#220: best_lower exceeded the true distance of 2
+  # Exact NNI distance is 2 (ms609/TreeDist issue 220)
   a <- read.tree(text = "(t1,(t2,(t4,t5)),(t3,t6));")
   b <- read.tree(text = "(t6,(t1,(t4,t5)),(t3,t2));")
   expect_equal(NNIDist(a, b)[c("lower", "best_lower")],
@@ -190,16 +190,17 @@ test_that("NNIDist() lower bounds are valid", {
     }
     exact[origin, ] <- dist
   }
-  expect_equal(max(exact), NNIDiameter(nTip)[, "exact"], ignore_attr = TRUE)
+  testthat::expect_equal(max(exact), NNIDiameter(nTip)[, "exact"],
+                         ignore_attr = TRUE)
 
   bounds <- lapply(NNIDist(trees), as.matrix)
   exact <- exact[lower.tri(exact)]
   .Bound <- function(field) bounds[[field]][lower.tri(bounds[[field]])]
-  expect_true(all(.Bound("lower") <= exact))
-  expect_equal(.Bound("best_lower"), .Bound("lower"))
+  testthat::expect_true(all(.Bound("lower") <= exact))
+  testthat::expect_equal(.Bound("best_lower"), .Bound("lower"))
   for (upper in c("tight_upper", "best_upper", "loose_upper", "fack_upper",
                   "li_upper")) {
-    expect_true(all(.Bound(upper) >= exact))
+    testthat::expect_true(all(.Bound(upper) >= exact))
   }
 }
 
