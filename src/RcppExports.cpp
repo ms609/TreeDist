@@ -471,6 +471,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_pruned_pairs
+List cpp_pruned_pairs(const List& splits_a, const List& tips_a, const List& splits_b, const List& tips_b, const bool all_pairs, const int n_union, const int metric, const int info, const double k, const bool allow_conflict, const int n_threads);
+RcppExport SEXP _TreeDist_cpp_pruned_pairs(SEXP splits_aSEXP, SEXP tips_aSEXP, SEXP splits_bSEXP, SEXP tips_bSEXP, SEXP all_pairsSEXP, SEXP n_unionSEXP, SEXP metricSEXP, SEXP infoSEXP, SEXP kSEXP, SEXP allow_conflictSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits_a(splits_aSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tips_a(tips_aSEXP);
+    Rcpp::traits::input_parameter< const List& >::type splits_b(splits_bSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tips_b(tips_bSEXP);
+    Rcpp::traits::input_parameter< const bool >::type all_pairs(all_pairsSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_union(n_unionSEXP);
+    Rcpp::traits::input_parameter< const int >::type metric(metricSEXP);
+    Rcpp::traits::input_parameter< const int >::type info(infoSEXP);
+    Rcpp::traits::input_parameter< const double >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const bool >::type allow_conflict(allow_conflictSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_pruned_pairs(splits_a, tips_a, splits_b, tips_b, all_pairs, n_union, metric, info, k, allow_conflict, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // path_vector
 IntegerVector path_vector(IntegerMatrix edge);
 RcppExport SEXP _TreeDist_path_vector(SEXP edgeSEXP) {
@@ -828,7 +849,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-
 // cpp_popcount_force_sw
 bool cpp_popcount_force_sw(const bool force);
 RcppExport SEXP _TreeDist_cpp_popcount_force_sw(SEXP forceSEXP) {
@@ -879,6 +899,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_jaccard_cross_pairs", (DL_FUNC) &_TreeDist_cpp_jaccard_cross_pairs, 6},
     {"_TreeDist_cpp_clustering_entropy_batch", (DL_FUNC) &_TreeDist_cpp_clustering_entropy_batch, 2},
     {"_TreeDist_cpp_splitwise_info_batch", (DL_FUNC) &_TreeDist_cpp_splitwise_info_batch, 2},
+    {"_TreeDist_cpp_pruned_pairs", (DL_FUNC) &_TreeDist_cpp_pruned_pairs, 11},
     {"_TreeDist_path_vector", (DL_FUNC) &_TreeDist_path_vector, 1},
     {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 3},
     {"_TreeDist_mismatch_size", (DL_FUNC) &_TreeDist_mismatch_size, 2},

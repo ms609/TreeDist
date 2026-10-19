@@ -121,7 +121,9 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom stats setNames
 .SplitDistanceOneMany <- function(Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
-  if (is.na(nTip)) {
+  if (is.na(nTip) && !is.na(.PrunedMetric(Func))) {
+    setNames(.PrunedScore(Func, manySplits, oneSplit, ...), names(manySplits))
+  } else if (is.na(nTip)) {
     oneLabels <- TipLabels(oneSplit)
     manyLabels <- TipLabels(manySplits)
     common <- if (is.list(manyLabels)) {
@@ -209,6 +211,13 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     }
   }
 
+  if (is.na(nTip) && is.null(cluster) && !is.na(.PrunedMetric(Func))) {
+    return(structure(
+      .PrunedScore(Func, splits1, NULL, ...),
+      class = "dist", Size = length(splits1), Labels = names(splits1),
+      Diag = FALSE, Upper = FALSE))
+  }
+
   if (is.na(nTip)) {
     splits <- lapply(splits1, as.Splits)
     
@@ -258,12 +267,19 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
   .CheckMaxTips(nTip)
-  if (is.na(nTip)) {
+  if (is.na(nTip) && !is.na(.PrunedMetric(Func))) {
+    matrix(
+      .PrunedScore(Func, splits1, splits2, ...),
+      length(splits1), length(splits2),
+      dimnames = list(names(splits1), names(splits2))
+    )
+  } else if (is.na(nTip)) {
     tipLabels <- union(unlist(tipLabels, use.names = FALSE),
                        unlist(TipLabels(splits2), use.names = FALSE))
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = TRUE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = TRUE)
-    vapply(splits1, function(s1) {
+    # Rows correspond to splits1, as when leaves are shared
+    t(vapply(splits1, function(s1) {
         l1 <- TipLabels(s1)
         vapply(splits2, function(s2) {
           common <- intersect(l1, TipLabels(s2))
@@ -272,7 +288,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
         }, double(1))
       },
       setNames(double(length(splits2)), names(splits2))
-    )
+    ))
   } else {
     # Fast path: use OpenMP batch functions when available
     .n_threads <- as.integer(getOption("mc.cores", 1L))
@@ -641,36 +657,29 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
       }
     }
     
-    lab1 <- TipLabels(tree1)
-    lab2 <- TipLabels(tree2)
-    sameLabels <- .AllTipsSame(lab1, lab2)
-    
-    if (!sameLabels) {
-      trees <- .SharedOnly(tree1, tree2, lab1, lab2)
-      tree1 <- trees[[1]]
-      tree2 <- trees[[2]]
+    if (!is.logical(how) && !is.function(how)) {
+      infoInBoth <- how
     }
     
-    if (is.logical(how)) {
+    if (is.null(infoInBoth)) {
       # how == FALSE case handled early above
-      if (is.null(infoInBoth)) {
-        info1 <- InfoInTree(tree1, ...)
-        info2 <- if (is.null(tree2)) {
-          info1
-        } else {
-          InfoInTree(tree2, ...)
-        }
-        infoInBoth <- CombineInfo(info1, info2, pairwise = !sameLabels)
-      }
-    } else if (is.function(how)) {
-      if (is.null(infoInBoth)) {
+      Combiner <- if (is.function(how)) how else Combine
+      sameLabels <- .AllTipsSame(TipLabels(tree1), TipLabels(tree2))
+      
+      if (sameLabels) {
         info1 <- InfoInTree(tree1, ...)
         info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
-        infoInBoth <- CombineInfo(info1, info2, Combiner = how,
-                                  pairwise = !sameLabels)
+      } else if (...length() == 0 && !is.na(.PrunedInfo(InfoInTree))) {
+        pruned <- .PrunedPairs(tree1, tree2, Value = InfoInTree)
+        info1 <- pruned[["info1"]]
+        info2 <- pruned[["info2"]]
+      } else {
+        trees <- .SharedOnly(tree1, tree2)
+        info1 <- InfoInTree(trees[[1]], ...)
+        info2 <- InfoInTree(trees[[2]], ...)
       }
-    } else {
-      infoInBoth <- how
+      infoInBoth <- CombineInfo(info1, info2, Combiner = Combiner,
+                                pairwise = !sameLabels)
     }
     # Return:
     unnormalized / infoInBoth
@@ -710,15 +719,16 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
       n2 <- length(tree2)
       nPairs <- n1 * n2
       ret <- list(vector("list", nPairs), vector("list", nPairs))
-      pair1 <- rep(tree1, each = n2)
-      pair2 <- rep.int(tree2, times = n1)
+      # Column-major order, matching an n1 x n2 matrix
+      pair1 <- rep.int(tree1, times = n2)
+      pair2 <- rep(tree2, each = n1)
       lab1 <- if (is.list(lab1)) {
-        rep(lab1, each = n2)
+        rep.int(lab1, times = n2)
       } else {
         rep.int(list(lab1), times = n1 * n2)
       }
       lab2 <- if (is.list(lab2)) {
-        rep.int(lab2, times = n1)
+        rep(lab2, each = n1)
       } else {
         rep.int(list(lab2), times = n1 * n2)
       }
@@ -774,4 +784,94 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 ReportMatching <- function(splits1, splits2, realMatch = TRUE) {
   paste(as.character(splits1), ifelse(realMatch, "=>", ".."),
         as.character(splits2))
+}
+
+# Code identifying a split-scoring function to cpp_pruned_pairs(),
+# or NA if it has no C++ implementation.
+.PrunedMetric <- function(Func) {
+  if (identical(Func, MutualClusteringInfoSplits)) {
+    1L
+  } else if (identical(Func, InfoRobinsonFouldsSplits)) {
+    2L
+  } else if (identical(Func, MatchingSplitDistanceSplits)) {
+    3L
+  } else if (identical(Func, MatchingSplitInfoSplits)) {
+    4L
+  } else if (identical(Func, SharedPhylogeneticInfoSplits)) {
+    5L
+  } else if (identical(Func, NyeSplitSimilarity) ||
+             identical(Func, JaccardSplitSimilarity)) {
+    6L
+  } else if (identical(Func, RobinsonFouldsSplits)) {
+    7L
+  } else {
+    NA_integer_
+  }
+}
+
+# Code identifying a tree information function to cpp_pruned_pairs(),
+# or NA if it has no C++ implementation.
+.PrunedInfo <- function(Value) {
+  if (identical(Value, ClusteringEntropy)) {
+    1L
+  } else if (identical(Value, SplitwiseInfo)) {
+    2L
+  } else if (identical(Value, NSplits)) {
+    3L
+  } else {
+    NA_integer_
+  }
+}
+
+# Compare each pair of trees on the leaves they share, without constructing
+# the pruned trees.
+# `tree2 = NULL` compares all pairs in `tree1`, returning values in
+# combn() order; otherwise values correspond to an
+# `length(tree1)` x `length(tree2)` matrix, in column-major order.
+# Returns a list:
+#  - `score`: the value of `Func` for each pair, if `Func` is supplied;
+#  - `info1`, `info2`: the information content (computed by `Value`) of the
+#    trees in `tree1` and `tree2`, pruned to the leaves in each pair.
+#' @importFrom TreeTools as.Splits TipLabels
+.PrunedPairs <- function(tree1, tree2 = NULL, Func = NULL, Value = NULL,
+                         k = 1, allowConflict = TRUE) {
+  .AsList <- function(x) if (inherits(x, c("phylo", "Splits"))) list(x) else x
+  tree1 <- .AsList(tree1)
+  allPairs <- is.null(tree2)
+  tree2 <- if (allPairs) list() else .AsList(tree2)
+  lab1 <- lapply(tree1, TipLabels)
+  lab2 <- lapply(tree2, TipLabels)
+  allLabels <- unique(unlist(c(lab1, lab2), use.names = FALSE))
+  .CheckMaxTips(length(allLabels))
+  .Splits <- function(trees, labs) {
+    .mapply(as.Splits, list(trees, labs), list(asSplits = FALSE))
+  }
+  .Tips <- function(labs) lapply(labs, function(x) match(x, allLabels) - 1L)
+  
+  metric <- if (is.null(Func)) 0L else .PrunedMetric(Func)
+  info <- if (is.null(Value)) 0L else .PrunedInfo(Value)
+  if (is.na(metric) || is.na(info)) {
+    stop("No C++ implementation available")                            # nocov
+  }
+  if (identical(Func, NyeSplitSimilarity)) {
+    k <- 1
+    allowConflict <- TRUE
+  }
+  ret <- cpp_pruned_pairs(.Splits(tree1, lab1), .Tips(lab1),
+                          .Splits(tree2, lab2), .Tips(lab2),
+                          all_pairs = allPairs,
+                          n_union = length(allLabels),
+                          metric = metric, info = info,
+                          k = as.double(k),
+                          allow_conflict = as.logical(allowConflict),
+                          n_threads = as.integer(getOption("mc.cores", 1L)))
+  names(ret) <- c("score", "info1", "info2")
+  ret
+}
+
+# Value of `Func` for each pair of trees, compared on their shared leaves
+.PrunedScore <- function(Func, tree1, tree2 = NULL, k = 1,
+                         allowConflict = TRUE, ...) {
+  .PrunedPairs(tree1, tree2, Func = Func, k = k,
+               allowConflict = allowConflict)[["score"]]
 }

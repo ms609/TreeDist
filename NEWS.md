@@ -1,6 +1,18 @@
-# TreeDist 2.15.0.9007 (development)
+# TreeDist 2.15.0.9008 (development)
 
 ## Bug fixes
+
+- Comparing all pairs of trees whose leaf sets differ could misalign leaves
+  when pruning each pair to its shared leaves, giving incorrect values from
+  `TreeDistance()` and other split-based measures (#123).
+
+- `RobinsonFoulds(trees)` now compares each pair of trees on its shared leaves
+  when the trees' leaf sets differ, rather than returning incorrect values.
+
+- When `tree1` and `tree2` are lists of trees with differing leaf sets,
+  the returned matrix now has a row for each tree in `tree1` and a column
+  for each tree in `tree2`, as when leaf sets agree; previously it was
+  transposed.
 
 - Fix `MASTSize()` under-counting on some trees: the root of each tree was
   never compared with the subtrees of the other, so a maximum agreement
@@ -12,6 +24,10 @@
   (ms609/TreeTools#287).
 
 ## Performance
+
+- Trees with different leaf sets are pruned to their shared leaves in C++,
+  without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
+  is c. 15× faster, with lower memory use (#123).
 
 - `SPRDist(method = "Rogue")` bounds each candidate's clustering information
   with the optimal dual prices of the parent pair, skipping most assignment

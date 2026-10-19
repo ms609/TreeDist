@@ -135,7 +135,13 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
-  if (is.null(tree2)) {
+  if (is.null(tree2) && !.AllTipsSame(TipLabels(tree1), NULL)) {
+    # Trees must be compared on their shared leaves
+    unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1)
+    if (similarity) {
+      unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+    }
+  } else if (is.null(tree2)) {
     ct <- as.ClusterTable(tree1)
     rf <- robinson_foulds_all_pairs(if (is.list(ct)) ct else list(ct))
     if (similarity) {

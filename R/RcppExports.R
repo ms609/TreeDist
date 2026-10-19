@@ -184,6 +184,10 @@ cpp_splitwise_info_batch <- function(splits_list, n_tip) {
     .Call(`_TreeDist_cpp_splitwise_info_batch`, splits_list, n_tip)
 }
 
+cpp_pruned_pairs <- function(splits_a, tips_a, splits_b, tips_b, all_pairs, n_union, metric, info, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_pruned_pairs`, splits_a, tips_a, splits_b, tips_b, all_pairs, n_union, metric, info, k, allow_conflict, n_threads)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }
