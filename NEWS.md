@@ -6,8 +6,10 @@
   when pruning each pair to its shared leaves, giving incorrect values from
   `TreeDistance()` and other split-based measures (#123).
 
-- `RobinsonFoulds(trees)` now compares each pair of trees on its shared leaves
-  when the trees' leaf sets differ, rather than returning incorrect values.
+- `RobinsonFoulds()` now compares each pair of trees on its shared leaves
+  when the trees' leaf sets differ, rather than returning incorrect values
+  (all pairs, or cross pairs where a tree's leaves were a subset of those of
+  the first tree).
 
 - When `tree1` and `tree2` are lists of trees with differing leaf sets,
   the returned matrix now has a row for each tree in `tree1` and a column

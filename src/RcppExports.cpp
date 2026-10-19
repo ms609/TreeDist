@@ -33,6 +33,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cluster_table_n_tip
+IntegerVector cluster_table_n_tip(const List& tables);
+RcppExport SEXP _TreeDist_cluster_table_n_tip(SEXP tablesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tables(tablesSEXP);
+    rcpp_result_gen = Rcpp::wrap(cluster_table_n_tip(tables));
+    return rcpp_result_gen;
+END_RCPP
+}
 // robinson_foulds_all_pairs
 IntegerVector robinson_foulds_all_pairs(const List& tables);
 RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
@@ -864,6 +875,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_binary_entropy_counts", (DL_FUNC) &_TreeDist_binary_entropy_counts, 2},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
+    {"_TreeDist_cluster_table_n_tip", (DL_FUNC) &_TreeDist_cluster_table_n_tip, 1},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_robinson_foulds_cross_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_cross_pairs, 2},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},

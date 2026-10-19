@@ -135,15 +135,15 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
-  if (is.null(tree2) && !.AllTipsSame(TipLabels(tree1), NULL)) {
+  ct <- if (is.null(tree2)) .SameLeafClusterTables(tree1)
+  if (is.null(tree2) && is.null(ct)) {
     # Trees must be compared on their shared leaves
     unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1)
     if (similarity) {
       unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
     }
   } else if (is.null(tree2)) {
-    ct <- as.ClusterTable(tree1)
-    rf <- robinson_foulds_all_pairs(if (is.list(ct)) ct else list(ct))
+    rf <- robinson_foulds_all_pairs(ct)
     if (similarity) {
       unnormalized <- structure(rf + rf, Size = length(tree1), class = "dist")
     } else {
@@ -166,13 +166,10 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
       lab2 <- TipLabels(tree2)
       if (is.list(lab1)) lab1 <- lab1[[1]]
       if (is.list(lab2)) lab2 <- lab2[[1]]
-      if (setequal(lab1, lab2)) {
-        ct1 <- as.ClusterTable(tree1, tipLabels = lab1)
-        ct2 <- as.ClusterTable(tree2, tipLabels = lab1)
-        shared <- robinson_foulds_cross_pairs(
-          if (is.list(ct1)) ct1 else list(ct1),
-          if (is.list(ct2)) ct2 else list(ct2)
-        )
+      ct1 <- if (setequal(lab1, lab2)) .SameLeafClusterTables(tree1, lab1)
+      ct2 <- if (!is.null(ct1)) .SameLeafClusterTables(tree2, lab1)
+      if (!is.null(ct2)) {
+        shared <- robinson_foulds_cross_pairs(ct1, ct2)
         splits1 <- NSplits(tree1)
         splits2 <- NSplits(tree2)
         if (similarity) {
@@ -226,4 +223,23 @@ RobinsonFouldsSplits <- function(splits1, splits2,
                                   reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
                 maximize = FALSE, reportMatching = reportMatching)
+}
+
+# List of ClusterTables, one per tree, or NULL if trees' leaves differ
+#' @importFrom TreeTools as.ClusterTable TipLabels
+.SameLeafClusterTables <- function(trees, tipLabels = NULL) {
+  if (is.null(tipLabels)) {
+    tipLabels <- TipLabels(if (inherits(trees, "phylo")) trees else trees[[1]])
+  }
+  # Errors if a tree has a leaf absent from tipLabels
+  ct <- tryCatch(as.ClusterTable(trees, tipLabels = tipLabels),
+                 error = function(e) NULL)
+  if (is.null(ct)) {
+    return(NULL)
+  }
+  if (!is.list(ct)) {
+    ct <- list(ct)
+  }
+  # Trees with a strict subset of tipLabels have fewer leaves
+  if (all(cluster_table_n_tip(ct) == length(tipLabels))) ct else NULL
 }

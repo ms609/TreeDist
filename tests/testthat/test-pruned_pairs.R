@@ -83,6 +83,22 @@ test_that("Distances between trees with different leaves match pruned trees", {
                OracleAll(SharedPhylogeneticInfo, trees, normalize = pmax))
 })
 
+test_that("RobinsonFoulds() detects trees whose leaves are a subset", {
+  # The first tree in each list holds every leaf
+  full <- trees[c(1, 1)]
+  part <- trees[c(1, 3)]
+  expect_equal(RobinsonFoulds(full, part),
+               OracleCross(RobinsonFoulds, full, part))
+  expect_equal(RobinsonFoulds(part, full, similarity = TRUE),
+               OracleCross(RobinsonFoulds, part, full, similarity = TRUE))
+  expect_equal(AsPairs(RobinsonFoulds(part)),
+               OracleAll(RobinsonFoulds, part))
+  expect_null(.SameLeafClusterTables(part))
+  expect_length(.SameLeafClusterTables(full), 2)
+  expect_length(.SameLeafClusterTables(trees[[1]]), 1)
+  expect_null(.SameLeafClusterTables(trees[c(3, 1)]))
+})
+
 test_that("Pruned pairs: results are independent of thread count", {
   withr::local_options(mc.cores = 1L)
   serial <- TreeDistance(trees)

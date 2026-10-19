@@ -9,6 +9,10 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
+cluster_table_n_tip <- function(tables) {
+    .Call(`_TreeDist_cluster_table_n_tip`, tables)
+}
+
 robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
