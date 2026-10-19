@@ -794,6 +794,9 @@ private:
     const int n_vertex = 2 * n_tip;
     x_.Build(edge1, n_vertex);
     y_.Build(edge2, n_vertex);
+    if (!x_.RootedOnLeaf1(n_tip) || !y_.RootedOnLeaf1(n_tip)) {
+      return false;
+    }
     row_of1_.assign(n_vertex, -1);
     row_of2_.assign(n_vertex, -1);
     in1_.resize(n_split_);
@@ -859,6 +862,14 @@ private:
           child[p] = c;
         }
       }
+    }
+    // Whether the root's children are leaf 1 and an internal node, as
+    // reduce_trees() expects.
+    bool RootedOnLeaf1(const int n_tip) const {
+      const int root = parent[1];
+      if (parent[root]) return false;
+      const int other = child[root] == 1 ? sibling[1] : child[root];
+      return sibling[1] == other && other > n_tip;
     }
     // As REMOVE_TIP() in reduce_trees(); `tip`'s parent is not the root.
     void RemoveTip(const int tip) {

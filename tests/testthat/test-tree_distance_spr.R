@@ -362,6 +362,12 @@ test_that("Single-leaf candidates scored from parent splits", {
   ))
   expect_true(Compare(chain[[1]], chain[[2]]))
 
+  # Trees not rooted on leaf 1 use the full rebuild for every candidate
+  tree1 <- Postorder(RootTree(chain[[1]], "t5"))
+  tree2 <- Postorder(RenumberTips(chain[[2]], tree1))
+  expect_equal(spr_rogue_scores(tree1, tree2, 1L),
+               spr_rogue_scores(tree1, tree2, 1L, FALSE))
+
   Moved <- function(tree, nMoves) {
     for (i in seq_len(nMoves)) {
       leaf <- sample(tree[["tip.label"]], 1)
