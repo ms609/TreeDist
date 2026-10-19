@@ -57,19 +57,33 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # The r-hub fedora-44 binary of ape links libRlapack.so, which the
-      # current gcc-asan image's R-devel no longer provides, so loading ape
-      # fails.  Building ape from source first means the action's pak call
-      # finds it already installed and leaves it be.
-      - name: Install ape from source
+      # r-hub's fedora-44 binaries (ape, mvtnorm, ...) link libRlapack.so,
+      # but the current gcc-asan image builds R against an external LAPACK
+      # and has no libRlapack.so, so those packages fail to load.  Point
+      # libRlapack.so at the LAPACK that R itself uses: it exports the same
+      # Fortran symbols.
+      - name: Provide libRlapack.so
+        shell: bash
         run: |
-          lib <- path.expand(strsplit(Sys.getenv("R_LIBS_USER"), ":")[[1]][1])
-          dir.create(lib, recursive = TRUE, showWarnings = FALSE)
-          .libPaths(c(lib, .libPaths()))
-          install.packages("ape", lib = lib, type = "source",
-                           repos = "https://cloud.r-project.org")
-          library("ape")
-        shell: Rscript {0}
+          rlib="$(Rscript -e 'cat(R.home("lib"))')"
+          if [ -e "$rlib/libRlapack.so" ]; then
+            echo "libRlapack.so present; nothing to do"
+            exit 0
+          fi
+          flags="$(R CMD config LAPACK_LIBS) $(R CMD config BLAS_LIBS)"
+          echo "R links LAPACK with: $flags"
+          libs="$(echo "$flags" | grep -o -- '-l[A-Za-z0-9_]*' | sed 's/^-l//' |
+                  grep -E 'lapack|flexiblas|openblas|blis|mkl')"
+          for name in $libs flexiblas openblas lapack; do
+            target="$(ldconfig -p | awk -v l="lib${name}.so" '$1 ~ "^"l {print $NF; exit}')"
+            if [ -n "$target" ]; then
+              ln -s "$target" "$rlib/libRlapack.so"
+              echo "Linked $rlib/libRlapack.so -> $target"
+              exit 0
+            fi
+          done
+          echo "::error::No LAPACK library found to stand in for libRlapack.so"
+          exit 1
 
       - uses: ms609/actions/asan@main
         with:
