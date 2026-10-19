@@ -99,8 +99,14 @@ static void initialize_cache() {
   for (int32_t i = 8192 + 1; i != 16384 + 1; i++) lg2_ceiling[i] = 14;
   for (int32_t i = 16384 + 1; i != 32768 + 1; i++) lg2_ceiling[i] = 15;
   
+  /* Fack et al. (2002), theorem 3: with N = n - 2 internal nodes,
+   * diam <= N ceil(lg N) - 2^ceil(lg N) + 1 + 2 (N - ceil(lg(N + 1))).
+   * Never looser than the bound in their theorem 1. */
   for (int32_t i = 4; i != NNI_MAX_TIPS + 1; i++) {
-    fack_lookup[i] = int32_t(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
+    const int32_t n_node = i - 2;
+    const int32_t lg_n = lg2_ceiling[n_node];
+    fack_lookup[i] = n_node * lg_n - (int32_t(1) << lg_n) + 1 +
+      2 * (n_node - lg2_ceiling[n_node + 1]);
   }
   for (int32_t i = 4; i != NNI_MAX_TIPS + 1; i++) {
     const int32_t log_ceiling = lg2_ceiling[i];
@@ -138,14 +144,16 @@ inline void ensure_cache() {
 
 // Score subtree, add to score, and reset subtree size
 void update_score(const int32_t subtree_edges, int32_t *lower_bound,
-                  int32_t *closest_lower_bound,
                   int32_t *tight_bound, 
                   int32_t *closest_upper_bound,
                   int32_t *loose_bound, 
                   int32_t *li_bound, int32_t *fack_bound) {
   if (subtree_edges) {
     const int32_t subtree_tips = subtree_edges + 3;
-    const int32_t lower = min_diameter[subtree_edges];
+    // Each unmatched edge must undergo at least one NNI (Li et al. 1996).
+    // Diameters bound a single pair's distance from above only, so they
+    // cannot tighten this lower bound.
+    const int32_t lower = subtree_edges;
     const int32_t this_li = li[subtree_tips],
       fack = fack_lookup[subtree_tips],
       upper = this_li < fack ? this_li : fack;
@@ -157,13 +165,11 @@ void update_score(const int32_t subtree_edges, int32_t *lower_bound,
     
     if (subtree_tips <= N_EXACT) {
       const int32_t exact = exact_diameter[subtree_tips];
-      *closest_lower_bound += exact;
       if (*tight_bound != NA_INT32) {
         *tight_bound += exact;
       }
       *closest_upper_bound += exact;
     } else {
-      *closest_lower_bound += lower;
       *tight_bound = NA_INT32;
       *closest_upper_bound += upper;
     }
@@ -296,7 +302,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   const int32_t n_edge = int32_t(edge1.nrow());
   
   int32_t lower_bound = 0;
-  int32_t best_lower_bound = 0;
   int32_t tight_score_bound = 0;
   
   int32_t loose_score_bound = 0;
@@ -379,8 +384,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
         unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
         update_score(unmatched_below[child_i - node_0], &lower_bound,
-                     &best_lower_bound, &tight_score_bound,
-                     &best_upper_bound, &loose_score_bound,
+                     &tight_score_bound, &best_upper_bound, &loose_score_bound,
                      &li_score_bound, &fack_score_bound);
       }
     }
@@ -400,31 +404,31 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
       if (!matched_1[root_child_2 - node_0]) {
         update_score(int32_t(unmatched_below[root_node]
                              + unmatched_1
-                             + unmatched_2), &lower_bound, &best_lower_bound,
+                             + unmatched_2), &lower_bound,
                      &tight_score_bound, &best_upper_bound, &loose_score_bound,
                      &li_score_bound, &fack_score_bound);
       } else {
-        update_score(unmatched_1, &lower_bound, &best_lower_bound, 
+        update_score(unmatched_1, &lower_bound,
                      &tight_score_bound, &best_upper_bound, &loose_score_bound,
                      &li_score_bound, &fack_score_bound);
-        update_score(unmatched_2, &lower_bound, &best_lower_bound, 
+        update_score(unmatched_2, &lower_bound,
                      &tight_score_bound, &best_upper_bound, &loose_score_bound,
                      &li_score_bound, &fack_score_bound);
       }
     } else {
-      update_score(unmatched_1, &lower_bound, &best_lower_bound, 
-                   &tight_score_bound, &best_upper_bound, &loose_score_bound, 
+      update_score(unmatched_1, &lower_bound,
+                   &tight_score_bound, &best_upper_bound, &loose_score_bound,
                    &li_score_bound, &fack_score_bound);
     }
   } else {
-    update_score(unmatched_below[root_node], &lower_bound, &best_lower_bound,
+    update_score(unmatched_below[root_node], &lower_bound,
                  &tight_score_bound, &best_upper_bound, &loose_score_bound,
                  &li_score_bound, &fack_score_bound);
   }
 
   return IntegerVector::create(
     Named("lower")   = lower_bound,
-    _["best_lower"] = best_lower_bound,
+    _["best_lower"] = lower_bound, // No tighter lower bound is known
     _["tight_upper"] = tight_score_bound == NA_INT32 
                      ? NA_INTEGER : tight_score_bound,
     _["best_upper"] = best_upper_bound,
