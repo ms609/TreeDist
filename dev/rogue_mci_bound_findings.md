@@ -72,3 +72,7 @@ The LAPs that remain run 2.0×, 3.4× and 4.1× faster at 30, 80 and 150 tips. T
    - 97.6% of candidates drop a single leaf. A child cell's quadrant counts are the parent cell's counts minus that leaf's quadrant, so each cell costs O(1).
    - This would also skip KeepAndReduce and GetSplits (about 30% of runtime) for those candidates.
    - It is the largest remaining lever.
+
+## Follow-up: single-leaf candidates (2026-10-19)
+
+Done; see `.AGENTS/memory/Optimizations.md`, "Rogue SPR: single-leaf candidates from parent overlaps". Popcount turned out not to be the fill's cost (parent counts save ~1 of ~14.5 cycles per cell); the gains come from a cheaper cell formula and from skipping KeepAndReduce, GetSplits and FirstMatchingSplit for the 96% of candidates whose trees need no further reduction: 55–61% faster at 30–150 leaves.

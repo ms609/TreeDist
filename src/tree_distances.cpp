@@ -7,6 +7,7 @@
 #include <Rcpp/Lightest>
 #include "tree_distances.h"
 #include "col_prices.h"
+#include "split_counts.h"
 
 using Rcpp::_;
 using Rcpp::IntegerVector;
@@ -463,6 +464,19 @@ static cost_matrix &BoundedPool(const int i, const std::size_t dim) {
   return pool[i];
 }
 
+// k log2 k for 0 <= k <= n_tips, for the bounded mutual clustering fill.
+static const double *KLg2K(const int32 n_tips) {
+  static thread_local std::vector<double> table;
+  if (table.size() <= static_cast<std::size_t>(n_tips)) {
+    const int32 old_size = static_cast<int32>(table.size());
+    table.resize(n_tips + 1);
+    for (int32 k = old_size; k <= n_tips; ++k) {
+      table[k] = k * lg2_lookup(k);
+    }
+  }
+  return table.data();
+}
+
 template <bool Bounded, typename Pop>
 List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
                        const int32 n_tips, const double min_score,
@@ -519,6 +533,22 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
   std::vector<int> a_match(a.n_splits);
   std::unique_ptr<split_int[]> b_match = std::make_unique<split_int[]>(b.n_splits);
 
+  // Bounded only: write each cell's information as
+  //   sum_q f(n_q) - f(na) - f(nA) - f(nb) - f(nB) + f(n),
+  // where f(k) = k log2 k and q ranges over the four quadrants, hoisting the
+  // row and column terms.  This takes four table lookups and additions per
+  // cell, against four lookups and multiplications; the result agrees with
+  // the unbounded form to within a unit of the integer cost.
+  [[maybe_unused]] static thread_local std::vector<double> col_term;
+  [[maybe_unused]] const double *f = nullptr;
+  if constexpr (Bounded) {
+    f = KLg2K(n_tips);
+    col_term.resize(b.n_splits);
+    for (split_int bi = 0; bi < b.n_splits; ++bi) {
+      col_term[bi] = -f[b.in_split[bi]] - f[n_tips - b.in_split[bi]];
+    }
+  }
+
   for (split_int ai = 0; ai < a.n_splits; ++ai) {
     if (!Bounded && (ai & 1023) == 0) Rcpp::checkUserInterrupt();
     if (a_match[ai]) continue;
@@ -526,9 +556,13 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
     const split_int na = a.in_split[ai];
     const split_int nA = n_tips - na;
     const auto *a_row = a.state[ai];
-    const double offset_a = lg2_n - lg2_lookup(na);
-    const double offset_A = lg2_n - lg2_lookup(nA);
+    [[maybe_unused]] const double offset_a = lg2_n - lg2_lookup(na);
+    [[maybe_unused]] const double offset_A = lg2_n - lg2_lookup(nA);
     [[maybe_unused]] cost row_min = max_score;
+    [[maybe_unused]] double row_term = 0;
+    if constexpr (Bounded) {
+      row_term = f[n_tips] - f[na] - f[nA];
+    }
 
     for (split_int bi = 0; bi < b.n_splits; ++bi) {
 
@@ -556,6 +590,10 @@ List mutual_clustering_impl(const RawMatrix &x, const RawMatrix &y,
                    && a_and_b == a_and_B
                    && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
+      } else if constexpr (Bounded) {
+        const double ic_sum = f[a_and_b] + f[a_and_B] + f[A_and_b] +
+          f[A_and_B] + row_term + col_term[bi];
+        score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       } else {
         const double lg2_nb = lg2_lookup(nb);
         const double lg2_nB = lg2_lookup(nB);
@@ -900,6 +938,103 @@ double mutual_clustering_bounded_score(const RawMatrix &x, const RawMatrix &y,
                                        const ColPrices *prices) {
   return Rcpp::as<double>(
     mutual_clustering<true>(x, y, n_tip, min_score, prices)["score"]);
+}
+
+// As mutual_clustering_bounded_score(), for trees obtained by removing one
+// leaf from a parent pair whose splits overlap by `sc.overlap`, when the
+// resulting trees share no split.  See split_counts.h.
+double mutual_clustering_bounded_counts(const SplitCounts &sc,
+                                        const double min_score,
+                                        const ColPrices *prices) {
+  const split_int n_tips = sc.n_tip;
+  const split_int dim = sc.n_split;
+  constexpr cost max_score = BIG;
+  constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
+  const double n_tips_reciprocal = 1.0 / n_tips;
+  const double max_over_tips = static_cast<double>(max_score) *
+    n_tips_reciprocal;
+
+  // Row bound, as mutual_clustering<true>().  The entropy bound that precedes
+  // it there is omitted: it rejects a candidate only if the trees' entropies
+  // differ by more than the best score so far, which no candidate met in
+  // 600,000 tested.
+  double upper_bound = 0;
+  for (split_int i = 0; i < dim; ++i) {
+    upper_bound += TreeDist::ic_matching(sc.row_in[i], n_tips - sc.row_in[i],
+                                         n_tips);
+  }
+  upper_bound *= n_tips_reciprocal;
+
+  const double *f = KLg2K(n_tips);
+  static thread_local std::vector<double> col_term;
+  col_term.resize(dim);
+  for (split_int j = 0; j < dim; ++j) {
+    col_term[j] = -f[sc.col_in[j]] - f[n_tips - sc.col_in[j]];
+  }
+  cost_matrix &score = BoundedPool(0, dim);
+  for (split_int i = 0; i < dim; ++i) {
+    const split_int na = sc.row_in[i];
+    const split_int nA = n_tips - na;
+    const int16_t *overlap = sc.overlap + std::size_t(sc.row[i]) * sc.stride;
+    const int16_t row_has = sc.row_has[i];
+    const double row_term = f[n_tips] - f[na] - f[nA];
+    cost *out = score.row(i);
+    cost row_min = max_score;
+    for (split_int j = 0; j < dim; ++j) {
+      const split_int a_and_b = overlap[sc.col[j]] - (row_has & sc.col_has[j]);
+      const split_int nb = sc.col_in[j];
+      const split_int a_and_B = na - a_and_b;
+      const split_int A_and_b = nb - a_and_b;
+      const split_int A_and_B = nA - A_and_b;
+      ASSERT(a_and_B || A_and_b);
+      ASSERT(a_and_b || A_and_B);
+      const cost c = (a_and_b == A_and_b && a_and_b == a_and_B &&
+                      a_and_b == A_and_B) ? max_score :
+        max_score - static_cast<cost>(
+            (f[a_and_b] + f[a_and_B] + f[A_and_b] + f[A_and_B] + row_term +
+            col_term[j]) * max_over_tips);
+      out[j] = c;
+      if (c < row_min) row_min = c;
+    }
+    upper_bound += static_cast<double>(max_score - row_min) * over_max_score -
+      TreeDist::ic_matching(na, nA, n_tips) * n_tips_reciprocal;
+    if (upper_bound < min_score) {
+      return upper_bound;
+    }
+  }
+
+  const cost *col_price = (prices && dim <= SL_MAX_SPLITS / 2) ?
+    prices->get(prices->context) : nullptr;
+  if (col_price) {
+    cost lb = 0;
+    for (split_int j = 0; j < dim; ++j) {
+      lb += col_price[j];
+    }
+    for (split_int i = 0; i < dim; ++i) {
+      const cost *row = score.row(i);
+      cost row_min = row[0] - col_price[0];
+      for (split_int j = 1; j < dim; ++j) {
+        const cost reduced = row[j] - col_price[j];
+        if (reduced < row_min) row_min = reduced;
+      }
+      lb += row_min;
+    }
+    const double bound = static_cast<double>(max_score * dim - lb) *
+      over_max_score;
+    if (bound < min_score) {
+      return bound;
+    }
+  }
+
+  static thread_local std::vector<lap_col> rowsol;
+  static thread_local std::vector<lap_row> colsol;
+  static thread_local LapScratch warm_scratch;
+  resize_uninitialized(rowsol, dim);
+  resize_uninitialized(colsol, dim);
+  const cost lap_cost = col_price ?
+    lap_warm(dim, score, rowsol, colsol, warm_scratch, col_price) :
+    lap(dim, score, rowsol, colsol, false); // #nocov: > 16k leaves
+  return static_cast<double>(max_score * dim - lap_cost) * over_max_score;
 }
 
 // Optimal column duals of the mutual clustering LAP between the splits `x`
