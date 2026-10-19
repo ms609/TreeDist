@@ -269,8 +269,8 @@ distance calculation uses a multi-threaded OpenMP batch path
 automatically. Control the number of threads with the `"mc.cores"`
 option:
 
-    options(mc.cores = parallel::detectCores())  # use all cores
-    options(mc.cores = 4L)                        # or a fixed number
+    options(mc.cores = parallelly::availableCores())  # use all cores
+    options(mc.cores = 4L)                             # or a fixed number
 
 Do **not** call
 [`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)

@@ -117,8 +117,8 @@ no cluster setup is required.  The affected functions are:</p><ul><li><p><code><
 <li><p><code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code></p></li>
 </ul><p>The number of <acronym>OpenMP</acronym> threads is controlled by the standard
 <code>"mc.cores"</code> option:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>  <span class="co"># use all available cores</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                        <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallelly</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>  <span class="co"># use all available cores</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                             <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
 <p>The default is <code>1</code> (single-threaded).</p>
 </div>
 
