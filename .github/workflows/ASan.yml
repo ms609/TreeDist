@@ -57,6 +57,38 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      # r-hub's fedora-44 binaries (ape, mvtnorm, ...) were built against an
+      # R using OpenBLAS and R's own LAPACK, so link libopenblasp.so.0 and
+      # libRlapack.so.  The current gcc-asan image's R uses FlexiBLAS and has
+      # neither, so those packages fail to load.  Install OpenBLAS, and point
+      # libRlapack.so at the LAPACK that R itself uses: it exports the same
+      # Fortran symbols.
+      - name: Provide libopenblasp.so and libRlapack.so
+        shell: bash
+        run: |
+          if ! ldconfig -p | grep -q 'libopenblasp\.so\.0'; then
+            dnf install -y openblas-threads
+          fi
+          rlib="$(Rscript -e 'cat(R.home("lib"))')"
+          if [ -e "$rlib/libRlapack.so" ]; then
+            echo "libRlapack.so present; nothing to do"
+            exit 0
+          fi
+          flags="$(R CMD config LAPACK_LIBS) $(R CMD config BLAS_LIBS)"
+          echo "R links LAPACK with: $flags"
+          libs="$(echo "$flags" | grep -o -- '-l[A-Za-z0-9_]*' | sed 's/^-l//' |
+                  grep -E 'lapack|flexiblas|openblas|blis|mkl')"
+          for name in $libs flexiblas openblas lapack; do
+            target="$(ldconfig -p | awk -v l="lib${name}.so" '$1 ~ "^"l {print $NF; exit}')"
+            if [ -n "$target" ]; then
+              ln -s "$target" "$rlib/libRlapack.so"
+              echo "Linked $rlib/libRlapack.so -> $target"
+              exit 0
+            fi
+          done
+          echo "::error::No LAPACK library found to stand in for libRlapack.so"
+          exit 1
+
       - uses: ms609/actions/asan@main
         with:
           test: ${{ matrix.config.test }}

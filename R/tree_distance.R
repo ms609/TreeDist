@@ -85,46 +85,31 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 
-#' @importFrom cli cli_progress_along
 .MaxValue <- function(tree1, tree2, Value) {
   lab1 <- TipLabels(tree1)
   sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
-  if (!is.null(tree2)) {
-    if (!sameTips) {
-      trees <- .SharedOnly(tree1, tree2)
-      tree1 <- trees[[1]]
-      tree2 <- trees[[2]]
+  
+  if (!sameTips) {
+    # Trees in `tree1` do not all share leaves if !sameTips and tree2 is NULL
+    if (!is.na(.PrunedInfo(Value))) {
+      pruned <- .PrunedPairs(tree1, tree2, Value = Value)
+      ret <- pruned[["info1"]] + pruned[["info2"]]
+      single <- c("phylo", "Splits")
+      if (!is.null(tree2) && !inherits(tree1, single) &&
+          !inherits(tree2, single)) {
+        dim(ret) <- c(length(tree1), length(tree2))
+      }
+      return(ret)
     }
+    trees <- .SharedOnly(tree1, tree2)
+    return(Value(trees[[1]]) + Value(trees[[2]]))
   }
   
+  value1 <- Value(tree1)
   if (is.null(tree2)) {
-    if (sameTips) {
-      value1 <- Value(tree1)
-      # Much faster to discard unneeded than to only calculate required
-      maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
-      maxValue[lower.tri(maxValue)]
-    } else {
-      # !sameTips implies that tree1 contains multiple trees
-      pairs <- combn(seq_along(tree1), 2)
-      nPairs <- dim(pairs)[[2]]
-      
-      vapply(cli_progress_along(seq_len(nPairs), "Calc max value"),
-             function(pair) {
-               i <- pairs[1, pair]
-               j <- pairs[2, pair]
-               common <- intersect(lab1[[i]], lab1[[j]])
-               Value(KeepTip(tree1[[i]], common)) +
-                 Value(KeepTip(tree1[[j]], common))
-             }, double(1))
-      
-    }
+    .PairwiseSums(value1)
   } else {
-    value1 <- Value(tree1)
-    if (sameTips) {
-      outer(value1, Value(tree2), "+")[, , drop = TRUE]
-    } else {
-      value1 + Value(tree2)
-    }
+    outer(value1, Value(tree2), "+")[, , drop = TRUE]
   }
 }
 

@@ -1756,3 +1756,361 @@ NumericVector cpp_splitwise_info_batch(
   }
   return result;
 }
+
+
+// =============================================================================
+// Pairs of trees with different leaf sets
+// =============================================================================
+//
+// Each pair is compared on the leaves the two trees share.  Restricting a
+// tree's splits to a leaf subset, then discarding trivial splits and merging
+// splits that become identical, gives the splits of the tree pruned to that
+// subset; this avoids materialising pruned trees in R, one pair at a time.
+//
+// Splits arrive on each tree's own leaf order, with `tips[k]` giving the
+// position of each of tree k's leaves in a label set shared by all trees.
+// Shared leaves are numbered in the order they occur in the first tree of the
+// pair, so both pruned trees index the same leaf with the same bit.
+
+enum PrunedMetric {
+  PM_NONE = 0, PM_MCI = 1, PM_IRF = 2, PM_MSD = 3, PM_MSI = 4, PM_SPI = 5,
+  PM_JACCARD = 6, PM_RF = 7
+};
+enum PrunedInfo {
+  PI_NONE = 0, PI_CLUSTERING = 1, PI_SPLITWISE = 2, PI_NSPLITS = 3
+};
+
+// A tree pruned to the leaves it shares with its partner.
+//
+// SplitList can only be built from an R RawMatrix, which is not thread-safe, so
+// each thread builds one up front, sized for the largest input, and overwrites
+// its public fields for every pair.  This relies on the row pointers in
+// `state` having a stride of at least the pruned number of bins, which holds
+// because pruning never adds splits or leaves.
+struct PrunedTree {
+  std::unique_ptr<SplitList> sl;
+  CanonSplits canon;
+  std::vector<splitbit> buf;     // pruned splits before deduplication
+  std::vector<split_int> order;
+};
+
+struct PrunedScratch {
+  PrunedTree a, b;
+  std::vector<int32> rank;       // indexed by label: shared-leaf number, or < 0
+  std::vector<int32> local_a, local_b;  // shared-leaf number of each leaf, or -1
+  LapScratch lap;
+  MatchScratch match;
+  PinScratch pin;
+};
+
+// Restrict `src` to the shared leaves numbered by `local` (-1 if not shared),
+// dropping trivial and duplicate splits; write the result to `out`.
+static void prune_tree(const SplitList& src, const std::vector<int32>& local,
+                       const int32 m, PrunedTree& out) {
+  SplitList& dst = *out.sl;
+  const int32 n_bins = std::max(int32(1), (m + SL_BIN_SIZE - 1) / SL_BIN_SIZE);
+  const int32 n_local = static_cast<int32>(local.size());
+  const splitbit last_mask = (m % SL_BIN_SIZE == 0)
+    ? ~splitbit(0)
+    : (splitbit(1) << (m % SL_BIN_SIZE)) - 1;
+
+  out.buf.assign(static_cast<size_t>(src.n_splits) * n_bins, 0);
+  split_int kept = 0;
+  for (split_int s = 0; s < src.n_splits; ++s) {
+    splitbit* row = &out.buf[static_cast<size_t>(kept) * n_bins];
+    const splitbit* in = src.state[s];
+    int32 count = 0;
+    for (int32 t = 0; t < n_local; ++t) {
+      const int32 r = local[t];
+      if (r >= 0 && ((in[t / SL_BIN_SIZE] >> (t % SL_BIN_SIZE)) & 1)) {
+        row[r / SL_BIN_SIZE] |= splitbit(1) << (r % SL_BIN_SIZE);
+        ++count;
+      }
+    }
+    if (count < 2 || m - count < 2) {
+      std::fill(row, row + n_bins, splitbit(0));
+      continue;
+    }
+    // Canonical form: shared leaf 0 on the "in" side
+    if (!(row[0] & 1)) {
+      for (int32 bin = 0; bin < n_bins; ++bin) row[bin] = ~row[bin];
+      row[n_bins - 1] &= last_mask;
+    }
+    ++kept;
+  }
+
+  const splitbit* t = out.buf.data();
+  out.order.resize(kept);
+  std::iota(out.order.begin(), out.order.end(), split_int(0));
+  std::sort(out.order.begin(), out.order.end(),
+            [t, n_bins](split_int i, split_int j) {
+              const splitbit* pi = t + static_cast<size_t>(i) * n_bins;
+              const splitbit* pj = t + static_cast<size_t>(j) * n_bins;
+              for (int32 bin = 0; bin < n_bins; ++bin) {
+                if (pi[bin] != pj[bin]) return pi[bin] < pj[bin];
+              }
+              return false;
+            });
+
+  // Sorted, so duplicates are adjacent
+  std::vector<splitbit>& canon = out.canon.canon;
+  canon.resize(static_cast<size_t>(kept) * n_bins);
+  split_int n_unique = 0;
+  for (split_int pos = 0; pos < kept; ++pos) {
+    const splitbit* row = t + static_cast<size_t>(out.order[pos]) * n_bins;
+    splitbit* next = canon.data() + static_cast<size_t>(n_unique) * n_bins;
+    if (n_unique > 0 && std::equal(row, row + n_bins, next - n_bins)) continue;
+    std::memcpy(next, row, static_cast<size_t>(n_bins) * sizeof(splitbit));
+    ++n_unique;
+  }
+  canon.resize(static_cast<size_t>(n_unique) * n_bins);
+  out.canon.idx.resize(n_unique);
+  std::iota(out.canon.idx.begin(), out.canon.idx.end(), split_int(0));
+
+  dst.n_splits = n_unique;
+  dst.n_bins = n_bins;
+  for (split_int s = 0; s < n_unique; ++s) {
+    const splitbit* row = &canon[static_cast<size_t>(s) * n_bins];
+    int32 count = 0;
+    for (int32 bin = 0; bin < n_bins; ++bin) {
+      dst.state[s][bin] = row[bin];
+      count += TreeTools::count_bits(row[bin]);
+    }
+    dst.in_split[s] = count;
+  }
+}
+
+// Information content of a pruned tree on `m` leaves; matches
+// cpp_clustering_entropy_batch() / cpp_splitwise_info_batch() / NSplits().
+static double pruned_info(const SplitList& s, const int32 m, const int info,
+                          const std::vector<double>& l2r) {
+  switch (info) {
+  case PI_CLUSTERING: {
+    constexpr double invLog2 = 1.442695040888963387005;
+    const double invN = 1.0 / static_cast<double>(m);
+    double total = 0.0;
+    for (split_int i = 0; i < s.n_splits; ++i) {
+      const double p = s.in_split[i] * invN;
+      total += -(p * std::log(p) + (1.0 - p) * std::log1p(-p));
+    }
+    return total * invLog2;
+  }
+  case PI_SPLITWISE: {
+    if (s.n_splits == 0) return 0.0;
+    const double l2u_m = l2r[m] - std::log2(2 * m - 3);
+    double total = 0.0;
+    for (split_int i = 0; i < s.n_splits; ++i) {
+      const int32 k = s.in_split[i];
+      total += l2u_m - l2r[k] - l2r[m - k];
+    }
+    return total;
+  }
+  case PI_NSPLITS:
+    return static_cast<double>(s.n_splits);
+  default: return NA_REAL; // #nocov
+  }
+}
+
+static void pruned_pair(const SplitList& sa, const std::vector<int32>& tips_a,
+                        const SplitList& sb, const std::vector<int32>& tips_b,
+                        const int metric, const int info,
+                        const double k, const bool allow_conflict,
+                        const std::vector<double>& l2r, PrunedScratch& sc,
+                        double& score, double& info_a, double& info_b) {
+  // Flag b's leaves, then number the shared leaves in a's order
+  constexpr int32 IN_B = -2;
+  for (const int32 u : tips_b) sc.rank[u] = IN_B;
+  const int32 n_a = static_cast<int32>(tips_a.size());
+  sc.local_a.resize(n_a);
+  int32 m = 0;
+  for (int32 t = 0; t < n_a; ++t) {
+    int32& r = sc.rank[tips_a[t]];
+    if (r == IN_B) {
+      r = m++;
+      sc.local_a[t] = r;
+    } else {
+      sc.local_a[t] = -1;
+    }
+  }
+  const int32 n_b = static_cast<int32>(tips_b.size());
+  sc.local_b.resize(n_b);
+  for (int32 t = 0; t < n_b; ++t) {
+    const int32 r = sc.rank[tips_b[t]];
+    sc.local_b[t] = r >= 0 ? r : -1;
+  }
+  // Only b's leaves were touched
+  for (const int32 u : tips_b) sc.rank[u] = -1;
+
+  prune_tree(sa, sc.local_a, m, sc.a);
+  prune_tree(sb, sc.local_b, m, sc.b);
+  const SplitList& a = *sc.a.sl;
+  const SplitList& b = *sc.b.sl;
+
+  if (info != PI_NONE) {
+    info_a = pruned_info(a, m, info, l2r);
+    info_b = pruned_info(b, m, info, l2r);
+  }
+
+  if (metric == PM_NONE) return;
+  if (m < 4) {
+    score = 0.0;
+    return;
+  }
+  const CanonSplits& ca = sc.a.canon;
+  const CanonSplits& cb = sc.b.canon;
+  switch (metric) {
+  case PM_MCI:
+    score = mutual_clustering_score(a, b, m, ca, cb, sc.lap, sc.match);
+    break;
+  case PM_IRF:
+    score = rf_info_score(a, b, m, ca, cb, sc.match);
+    break;
+  case PM_MSD:
+    score = msd_score(a, b, m, ca, cb, sc.lap, sc.match);
+    break;
+  case PM_MSI:
+    score = msi_score(a, b, m, sc.lap);
+    break;
+  case PM_SPI:
+    score = shared_phylo_score(a, b, m, ca, cb, sc.lap, sc.match, sc.pin);
+    break;
+  case PM_JACCARD:
+    score = jaccard_score(a, b, m, ca, cb, k, allow_conflict, sc.lap, sc.match);
+    break;
+  case PM_RF:
+    score = a.n_splits + b.n_splits -
+      2.0 * find_exact_matches(ca, cb, a.n_bins, sc.match);
+    break;
+  default: score = NA_REAL; // #nocov
+  }
+}
+
+static void parse_tips(const List& list, const int n_union,
+                       std::vector<std::vector<int32>>& out) {
+  const int n = list.size();
+  out.resize(n);
+  for (int i = 0; i < n; ++i) {
+    const Rcpp::IntegerVector v(list[i]);
+    out[i].assign(v.begin(), v.end());
+    for (const int32 u : out[i]) {
+      if (u < 0 || u >= n_union) {
+        Rcpp::stop("Leaf index out of range");                    // #nocov
+      }
+    }
+  }
+}
+
+// Compare trees with different leaves, each pair on the leaves it shares.
+//
+// splits_a, splits_b: lists of raw split matrices, each on its tree's own leaf
+//   order.  splits_b and tips_b are ignored if all_pairs.
+// tips_a, tips_b: for each tree, the zero-based index of each of its leaves in
+//   a label set of size n_union.
+// all_pairs: compare all pairs within splits_a, in combn() order; otherwise
+//   each tree in a with each tree in b, in column-major nA x nB order.
+// metric: a PrunedMetric; info: a PrunedInfo, the information content of each
+//   pruned tree to report.
+// Returns list(score, info_a, info_b).
+// [[Rcpp::export]]
+List cpp_pruned_pairs(
+    const List& splits_a, const List& tips_a,
+    const List& splits_b, const List& tips_b,
+    const bool all_pairs, const int n_union,
+    const int metric, const int info,
+    const double k = 1.0, const bool allow_conflict = true,
+    const int n_threads = 1
+) {
+  TreeDist::check_ntip(n_union);
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  std::vector<std::vector<int32>> ta, tb;
+  parse_split_list(splits_a, sa);
+  parse_tips(tips_a, n_union, ta);
+  if (!all_pairs) {
+    parse_split_list(splits_b, sb);
+    parse_tips(tips_b, n_union, tb);
+  }
+  if (ta.size() != sa.size() || tb.size() != sb.size()) {
+    Rcpp::stop("Each tree needs splits and leaf indices");        // #nocov
+  }
+
+  const int nA = static_cast<int>(sa.size());
+  const int nB = all_pairs ? nA : static_cast<int>(sb.size());
+  const R_xlen_t total = all_pairs
+    ? static_cast<R_xlen_t>(nA) * (nA - 1) / 2
+    : static_cast<R_xlen_t>(nA) * nB;
+
+  NumericVector score(total, NA_REAL), info_a(total, NA_REAL),
+    info_b(total, NA_REAL);
+  if (total == 0) {
+    return List::create(Rcpp::Named("score") = score,
+                        Rcpp::Named("info_a") = info_a,
+                        Rcpp::Named("info_b") = info_b);
+  }
+
+  int32 max_splits = 1, max_tips = 1;
+  for (const auto* set : {&sa, &sb}) {
+    for (const auto& s : *set) max_splits = std::max(max_splits, s->n_splits);
+  }
+  for (const auto* set : {&ta, &tb}) {
+    for (const auto& t : *set) {
+      max_tips = std::max(max_tips, static_cast<int32>(t.size()));
+    }
+  }
+
+  // Log2Rooted(m) = log2((2m - 3)!!), as in cpp_splitwise_info_batch()
+  std::vector<double> l2r(n_union + 1, 0.0);
+  for (int m = 3; m <= n_union; ++m) {
+    l2r[m] = l2r[m - 1] + std::log2(2 * m - 3);
+  }
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<PrunedScratch> scratch(n_scratch);
+  {
+    const RawMatrix blank(max_splits, (max_tips + R_BIN_SIZE - 1) / R_BIN_SIZE);
+    for (PrunedScratch& sc : scratch) {
+      sc.a.sl = std::make_unique<SplitList>(blank);
+      sc.b.sl = std::make_unique<SplitList>(blank);
+      sc.rank.assign(n_union, -1);
+    }
+  }
+
+  double* const res = score.begin();
+  double* const res_a = info_a.begin();
+  double* const res_b = info_b.begin();
+  const int n_outer = all_pairs ? nA - 1 : nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int j = 0; j < n_outer; ++j) {
+#ifndef _OPENMP
+    Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    const int tid = omp_get_thread_num();
+#else
+    const int tid = 0;
+#endif
+    PrunedScratch& sc = scratch[tid];
+    if (all_pairs) {
+      // Pair (j, i), j < i, is entry j(N-1) - j(j-1)/2 + i - j - 1 of combn()
+      const R_xlen_t base = static_cast<R_xlen_t>(j) * (nA - 1) -
+        static_cast<R_xlen_t>(j) * (j - 1) / 2 - j - 1;
+      for (int i = j + 1; i < nA; ++i) {
+        const R_xlen_t p = base + i;
+        pruned_pair(*sa[j], ta[j], *sa[i], ta[i], metric, info, k,
+                    allow_conflict, l2r, sc, res[p], res_a[p], res_b[p]);
+      }
+    } else {
+      for (int i = 0; i < nA; ++i) {
+        const R_xlen_t p = static_cast<R_xlen_t>(j) * nA + i;
+        pruned_pair(*sa[i], ta[i], *sb[j], tb[j], metric, info, k,
+                    allow_conflict, l2r, sc, res[p], res_a[p], res_b[p]);
+      }
+    }
+  }
+
+  return List::create(Rcpp::Named("score") = score,
+                      Rcpp::Named("info_a") = info_a,
+                      Rcpp::Named("info_b") = info_b);
+}
