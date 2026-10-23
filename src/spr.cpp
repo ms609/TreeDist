@@ -1103,8 +1103,9 @@ void FitchAdded(const IntegerMatrix &edge, const int n_tip,
 // rather than their exact score.
 // `incremental = FALSE` scores every candidate by rebuilding its trees
 // (SingleDrop is not used), for testing.
-// If `candidates` (1-based) is given, only those leaves are scored, and other
-// leaves receive `Inf`; pairs are then not scored.
+// If `candidates` (1-based) is given, only those leaves are scored; pairs are
+// then not scored.  Leaves not scored (including those after a non-finite
+// score ends scoring) receive `Inf`.
 // [[Rcpp::export]]
 List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
                       const bool incremental = true,

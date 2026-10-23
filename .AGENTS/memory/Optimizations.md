@@ -1020,3 +1020,27 @@ pay; what pays is what the parent overlaps let a candidate *skip*.
   double matrix once the fill is no longer dominant.
 - Next: depth-2 pair candidates (two leaves) by the same route; the
   unbounded MCI could use the Tier 1 form if tests tolerate ulp changes.
+
+## Rogue SPR: Fitch leaf selector, MCI breaking ties (#174, 2026-10-23)
+Research prototype: branch `claude/rogue-polescapa`,
+`dev/rogue_polescapa_findings.md`.  Depth 1 now drops the leaf whose
+removal saves the most Fitch steps (Pol & Escapa 2009), each tree's splits
+scored as binary characters on the other (`FitchAdded()`, `spr.cpp`: one
+downpass and uppass per tree, two bit planes, 64 characters per word).
+Bounded MCI scores only the leaves tied at the top score
+(`spr_rogue_scores(candidates = )`): tied in 30-46% of iterations, 2-3
+leaves on average.  Input trees of <= 14 leaves keep the MCI selector
+(`sprFitch = 14`), which removes the prototype's only regression (random
+8-14-leaf pairs) and changes nothing else on the reference set.  Depth 2 is
+unchanged.
+- Accuracy: no estimate below exact uSPR on 554 reference pairs; on 60
+  random 50-150-leaf pairs, W/L 52/0 against the MCI selector.
+- **Prototype tie-break artefact**: the prototype took `which.min()` over
+  `spr_rogue_scores()` for *all* leaves, where leaves above the running best
+  hold lower bounds, not scores.  All 8 pairs (of 614) where C++ differs from
+  the prototype reproduce under the prototype harness with an exact
+  tie-break.
+- Release install, `bench::mark`, median per random pair vs main:
+  30 leaves 2.8 vs 6-7 ms; 80 leaves 12.3 vs 86 ms; 150 leaves 53 vs 774 ms.
+- Next: re-run the depth-2 comparison with this selector; Fitch for depth-2
+  singles.
