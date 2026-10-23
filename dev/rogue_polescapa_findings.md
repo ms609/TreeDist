@@ -7,7 +7,7 @@ Research prototype for ms609/TreeDist#174 at 0dd26a81. No package code is change
 **Adopt it as the selector, and keep MCI only to break ties** (variant `both-tied` below). Score each leaf by the Fitch length it adds, over both trees. Drop the highest-scoring leaf. When several leaves share the top score, score just those with the existing bounded MCI.
 
 - **Accuracy.** It is better than the current selector on random pairs of 25 or more leaves, and much better at 50–150 leaves. Across the 60 extra large pairs it wins 52 and loses 1. Elsewhere it is equal, except on random pairs of 8–14 leaves, where it is slightly worse (below).
-- **Cost.** It runs MCI on 0.1–6% of the candidates that the current selector scores. The Fitch pass costs 25–125 µs per iteration in C++, against 1.5–99 ms for `spr_rogue_scores()`. End to end, that is roughly 2× faster at 30 leaves, ~10× at 80 and ~40× at 150.
+- **Cost.** The Fitch pass costs 25–125 µs per iteration in C++, against 1.5–99 ms for `spr_rogue_scores()`. Pure Fitch (`both-k0`) measured roughly 2× faster than `SPRDist` at HEAD at 30 leaves, ~10× at 80 and ~40× at 150. `both-tied` was not timed end to end, because the prototype calls the full `spr_rogue_scores()` on every tie. Its projected extra cost is scoring 2–3 tied candidates in 30–46% of iterations, about 0.1–6% of the current selector's MCI work.
 
 Using it only as a pre-filter (top-k then MCI) is dominated. Small k gives no better accuracy than `both-tied` and costs k LAPs per iteration. Larger k drifts back towards MCI's worse choices at large n.
 
@@ -33,6 +33,8 @@ Cells give the number of pairs over-estimated by 0 / +1 / +2 / ≥ +3 moves, wit
 - The two fixtures from git history. Their trees regenerate exactly: 36/36 spot checks agree with the stored matrices.
 
 25 of the 80 random 15–20-leaf pairs exceeded the 60 s limit for `USPRDist` and are excluded. That biases this set towards easier pairs.
+
+No estimate fell below the exact distance. All 528 × 13 estimates are ≥ exact uSPR, as the leaf-dropping construction guarantees, and `summarize.R` asserts this.
 
 | Selector | rand8-14 (120) | rand15-20 (55) | near20-50 (80) | near20-50x (59) | fix25-12spr (78) | fix32-16spr (136) | W/L |
 |---|---|---|---|---|---|---|---|
@@ -87,7 +89,7 @@ All timings are on this machine, with another session's benchmark running at the
 
 On `mid80` / `mid150`, the harness takes 5.8 / 18 ms per pair, against 51 / 510 ms for `SPRDist`.
 
-The kernel is O(nodes × ⌈splits/64⌉) per direction: one pass up the tree and one down, with a few AND/OR/popcount operations per word. In TreeDist the characters are the other tree's split bitsets, transposed, so a C++ version needs no phyDat and no new data structures. The harness-plus-Fitch figures above are dominated by R glue and `spr_keep_and_reduce()`, so a native version would be faster still.
+The kernel times include packing the characters from an R logical matrix (n² scalar reads), which a native version would skip. The kernel is O(nodes × ⌈splits/64⌉) per direction: one pass up the tree and one down, with a few AND/OR/popcount operations per word. In TreeDist the characters are the other tree's split bitsets, transposed, so a C++ version needs no phyDat and no new data structures. The harness-plus-Fitch figures above are dominated by R glue and `spr_keep_and_reduce()`, so a native version would be faster still.
 
 For `both-tied`, add the MCI tie-break on top. It scores 2–3 candidates in 30–46% of iterations, and those candidates could skip the parent-price LAP. That adds a few percent of the current MCI work.
 

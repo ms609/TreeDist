@@ -20,6 +20,7 @@ Load <- function(which) {
 
 Dist <- function(x) {
   x <- x[!is.na(x)]
+  stopifnot(all(x >= 0)) # Leaf dropping gives an upper bound
   sprintf("%d/%d/%d/%d (%.2f)", sum(x == 0), sum(x == 1), sum(x == 2),
           sum(x >= 3), mean(x))
 }
