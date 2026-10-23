@@ -257,15 +257,30 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_nni_distance
-IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, const IntegerMatrix& edge2, const IntegerVector& nTip);
-RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
+IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, const IntegerMatrix& edge2, const IntegerVector& nTip, const int exactTips);
+RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP, SEXP exactTipsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge1(edge1SEXP);
     Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge2(edge2SEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge1, edge2, nTip));
+    Rcpp::traits::input_parameter< const int >::type exactTips(exactTipsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge1, edge2, nTip, exactTips));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_nni_exact
+IntegerVector cpp_nni_exact(const IntegerMatrix& edge1, const IntegerMatrix& edge2, const IntegerVector& nTip, const NumericVector& budget);
+RcppExport SEXP _TreeDist_cpp_nni_exact(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP, SEXP budgetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge1(edge1SEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge2(edge2SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type budget(budgetSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nni_exact(edge1, edge2, nTip, budget));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -895,7 +910,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
-    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
+    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 4},
+    {"_TreeDist_cpp_nni_exact", (DL_FUNC) &_TreeDist_cpp_nni_exact, 4},
     {"_TreeDist_min_subtree_entropy", (DL_FUNC) &_TreeDist_min_subtree_entropy, 1},
     {"_TreeDist_nni_max_step", (DL_FUNC) &_TreeDist_nni_max_step, 2},
     {"_TreeDist_cpp_mutual_clustering_all_pairs", (DL_FUNC) &_TreeDist_cpp_mutual_clustering_all_pairs, 3},
