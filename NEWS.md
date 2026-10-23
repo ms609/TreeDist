@@ -14,6 +14,8 @@
 - `NNIDist()` and `NNIDiameter()` use theorem 3 of Fack _et al._ (2002) for
   `fack_upper` and `fackMax`, tightening `loose_upper` and `best_upper`.
 
+- `NNIDist()` returns `best_upper` second, after `lower`.
+
 - Comparing all pairs of trees whose leaf sets differ could misalign leaves
   when pruning each pair to its shared leaves, giving incorrect values from
   `TreeDistance()` and other split-based measures (#123).

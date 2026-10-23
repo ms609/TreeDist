@@ -327,8 +327,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   
   if (n_tip < 4) {
     IntegerVector zero = IntegerVector::create(Named("lower") = 0,
-                                               _["tight_upper"] = 0,
                                                _["best_upper"] = 0,
+                                               _["tight_upper"] = 0,
                                                _["loose_upper"] = 0,
                                                _["fack_upper"] = 0,
                                                _["li_upper"] = 0);
@@ -444,9 +444,9 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
 
   IntegerVector ret = IntegerVector::create(
     Named("lower")   = lower_bound,
+    _["best_upper"] = best_upper_bound,
     _["tight_upper"] = tight_score_bound == NA_INT32 
                      ? NA_INTEGER : tight_score_bound,
-    _["best_upper"] = best_upper_bound,
     _["loose_upper"] = loose_score_bound,
     _["fack_upper"] = fack_score_bound,
     _["li_upper"] = li_score_bound);

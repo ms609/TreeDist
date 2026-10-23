@@ -27,12 +27,12 @@ containing six integers, or seven if \code{regionTips > 0}:
 \item \code{lower} is a lower bound on the NNI distance: the number of edges in
 one tree that do not occur in the other, i.e. half the Robinson-Foulds
 distance between the trees.
-\item \code{tight_upper} is an upper bound on the distance, based on calculated
-maximum diameters for trees with < 13 leaves.  \emph{NA} is returned if trees are
-too different to employ this approach.
 \item \code{best_upper} is the tightest available upper bound: it uses the exact
 diameter for regions with < 13 leaves, and \code{loose_upper} for larger
 regions.
+\item \code{tight_upper} is an upper bound on the distance, based on calculated
+maximum diameters for trees with < 13 leaves.  \emph{NA} is returned if trees are
+too different to employ this approach.
 \item \code{loose_upper} is a looser upper bound on the distance, using \emph{n} log \emph{n} +
 O(\emph{n}): the smaller of \code{fack_upper} and \code{li_upper}.
 \item \code{fack_upper} is an upper bound based on the maximum diameter given by

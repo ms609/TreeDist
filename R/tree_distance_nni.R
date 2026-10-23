@@ -57,13 +57,13 @@
 #' one tree that do not occur in the other, i.e. half the Robinson-Foulds
 #' distance between the trees.
 #'
-#' - `tight_upper` is an upper bound on the distance, based on calculated
-#' maximum diameters for trees with < 13 leaves.  _NA_ is returned if trees are
-#' too different to employ this approach.
-#'
 #' - `best_upper` is the tightest available upper bound: it uses the exact
 #' diameter for regions with < 13 leaves, and `loose_upper` for larger
 #' regions.
+#'
+#' - `tight_upper` is an upper bound on the distance, based on calculated
+#' maximum diameters for trees with < 13 leaves.  _NA_ is returned if trees are
+#' too different to employ this approach.
 #'
 #' - `loose_upper` is a looser upper bound on the distance, using _n_ log _n_ +
 #' O(_n_): the smaller of `fack_upper` and `li_upper`.
