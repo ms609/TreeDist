@@ -6,25 +6,27 @@
 \alias{NNIDiameter}
 \title{Approximate Nearest Neighbour Interchange distance}
 \usage{
-NNIDist(tree1, tree2 = tree1)
+NNIDist(tree1, tree2 = tree1, regionTips = 0L)
 
 NNIDiameter(tree)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 
+\item{regionTips}{Integer specifying the largest region, in leaves, whose
+distance is computed exactly when calculating \code{region_upper}, up to 16;
+\code{0} omits \code{region_upper}.}
+
 \item{tree}{Object of supported class representing a tree or list of trees,
 or an integer specifying the number of leaves in a tree/trees.}
 }
 \value{
 \code{NNIDist()} returns, for each pair of trees, a named vector
-containing seven integers:
+containing six integers, or seven if \code{regionTips > 0}:
 \itemize{
 \item \code{lower} is a lower bound on the NNI distance: the number of edges in
 one tree that do not occur in the other, i.e. half the Robinson-Foulds
 distance between the trees.
-\item \code{best_lower} is the tightest available lower bound.
-No bound tighter than \code{lower} is known, so the two values are equal.
 \item \code{tight_upper} is an upper bound on the distance, based on calculated
 maximum diameters for trees with < 13 leaves.  \emph{NA} is returned if trees are
 too different to employ this approach.
@@ -37,6 +39,9 @@ O(\emph{n}): the smaller of \code{fack_upper} and \code{li_upper}.
 theorem 3 of \insertCite{Fack2002;textual}{TreeDist}.
 \item \code{li_upper} is an upper bound based on the sorting approach of
 \insertCite{Li1996;textual}{TreeDist}.
+\item \code{region_upper} is an upper bound that sums the exact distances between
+the two trees' subtrees within each region of up to \code{regionTips} leaves
+(see Details); it is never larger than \code{best_upper}.
 }
 
 \code{NNIDiameter()} returns a matrix specifying (bounds on) the diameter
@@ -85,23 +90,26 @@ small trees \insertCite{Fack2002}{TreeDist}; this provides a tighter upper
 bound, but is unavailable for \emph{n} > 12.
 \code{NNIDiameter()} reports the limits on this bound.
 
+Where \code{regionTips} is positive, each region with up to \code{regionTips} leaves
+instead contributes the exact NNI distance between its two subtrees,
+found by bidirectional breadth-first search of tree space.
+Reconciling each region separately is one way to transform one tree into
+the other, so the sum, \code{region_upper}, is an upper bound on the distance.
+It need not be the exact distance: a shortest path may break a split
+that the two trees share \insertCite{Li1996}{TreeDist}, so NNI distance
+does not decompose into regions.
+Larger regions, and any region whose search would visit more than two
+million trees, contribute their \code{best_upper} value.
+Searching a region of up to 11 leaves takes under a second; larger regions
+repay the search only when their two subtrees are similar, as a search
+that exhausts its budget takes several seconds.
+
 \tabular{rccccccccccccc}{
 Leaves:   \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
 \tab 10 \tab 11 \tab 12 \tab 13 \cr
 Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 \tab 15 \tab 18 \tab 21 \tab ? \cr
 }
-
-Upper bounds treat each region separately: transforming each region in turn
-is a valid path between the trees, so the sum of the diameters of the regions
-bounds the distance from above.
-A diameter is the distance between the \emph{most} different pair of trees with
-that many leaves, so it says nothing about how close a particular pair might
-be: the only known lower bound is the number of unmatched edges
-\insertCite{Li1996}{TreeDist}.
-An optimal path need not leave matched edges untouched
-\insertCite{Li1996}{TreeDist}, so even the exact distance between the trees
-that each region induces is not a lower bound.
 }
 \examples{
 library("TreeTools", quietly = TRUE)
@@ -115,6 +123,8 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
 CompareAll(as.phylo(30:33, 8), NNIDist)
+
+NNIDist(BalancedTree(9), PectinateTree(9), regionTips = 9)
 }
 \references{
 \insertAllCited{}

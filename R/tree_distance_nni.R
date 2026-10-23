@@ -28,12 +28,14 @@
 #' found by bidirectional breadth-first search of tree space.
 #' Reconciling each region separately is one way to transform one tree into
 #' the other, so the sum, `region_upper`, is an upper bound on the distance.
-#' It is not the exact distance: a shortest path may move edges between
-#' regions, so the NNI distance is not decomposable into its regions
-#' \insertCite{Li1996}{TreeDist}.
-#' Search costs grow steeply with region size; larger regions, and any region
-#' whose search would visit more than two million trees, contribute their
-#' `best_upper` value.
+#' It need not be the exact distance: a shortest path may break a split
+#' that the two trees share \insertCite{Li1996}{TreeDist}, so NNI distance
+#' does not decompose into regions.
+#' Larger regions, and any region whose search would visit more than two
+#' million trees, contribute their `best_upper` value.
+#' Searching a region of up to 11 leaves takes under a second; larger regions
+#' repay the search only when their two subtrees are similar, as a search
+#' that exhausts its budget takes several seconds.
 #' 
 #' 
 #' \tabular{rccccccccccccc}{

@@ -251,18 +251,13 @@ struct UnrootedTree {
 
   // Does the edge above internal `node` describe an internal edge of the
   // unrooted tree that no other node describes?  The two edges below a
-  // binary root form one edge, described by `first_root_child`, and that
-  // edge is internal only if both root children are internal.
+  // binary root form one edge, described by `first_root_child`: the root's
+  // lowest-numbered child.  Tips are numbered before internal nodes, so if
+  // that child is internal, so is its sibling, and the edge is internal.
   bool represents_edge(const int32_t node, const int32_t first_root_child)
     const {
     if (node == root) return false;
-    if (rooted && parent[node] == root) {
-      if (node != first_root_child) return false;
-      for (int32_t i = n_tip; i < n_node; ++i) {
-        if (i != node && parent[i] == root) return true;
-      }
-      return false;
-    }
+    if (rooted && parent[node] == root) return node == first_root_child;
     return true;
   }
 };

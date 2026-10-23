@@ -1,10 +1,8 @@
 # Cost and tightness of NNIDist(regionTips = ...), the region-by-region
-# exact upper bound.  Run from the package root against a release install:
-#   R CMD INSTALL --library=.agent-lib .
-#   Rscript benchmark/nni-region-upper.R
+# exact upper bound.  Run from the package root against a release install
+# (not load_all()); phangorn supplies random NNI perturbations.
 # Not a CI benchmark (no `bench-` prefix).
 
-.libPaths(c(".agent-lib", .libPaths()))
 library("TreeTools", quietly = TRUE)
 library("TreeDist")
 .NNIExact <- TreeDist:::.NNIExact

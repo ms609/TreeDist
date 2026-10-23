@@ -241,7 +241,16 @@ test_that("NNIDist() region_upper", {
     NNIDist(RootTree(tree1, "a1"), RootTree(tree2, "b3"), regionTips = 16),
     bounds
   )
+  bSide <- paste0("b", 1:8)
+  expect_equal(
+    NNIDist(RootTree(tree1, bSide), RootTree(tree2, bSide), regionTips = 16),
+    bounds
+  )
   expect_equal(NNIDist(tree2, tree1, regionTips = 16), bounds)
+  expect_equal(
+    NNIDist(tree1, list(tree1, tree2), regionTips = 16)["region_upper", ],
+    c(0L, 14L)
+  )
 
   # Regions above the cap contribute best_upper
   expect_equal(
@@ -249,6 +258,14 @@ test_that("NNIDist() region_upper", {
     bounds[["best_upper"]]
   )
   expect_equal(NNIDist(tree1, tree2, regionTips = 7)[["region_upper"]], 17L)
+  set.seed(0)
+  repeat { # Single region of 20 leaves
+    big1 <- RandomTree(20, root = FALSE)
+    big2 <- RenumberTips(RandomTree(20, root = FALSE), big1)
+    big <- NNIDist(big1, big2, regionTips = 16)
+    if (big[["lower"]] == 17) break
+  }
+  expect_equal(big[["region_upper"]], big[["best_upper"]])
 
   # Polytomies fall back to best_upper, whichever tree holds them
   poly1 <- .Tree(sub("(a1, a2)", "a1, a2", aSide1, fixed = TRUE), bSide1)
