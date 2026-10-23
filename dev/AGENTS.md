@@ -43,7 +43,7 @@ performance and can be pushed to CRAN independently when ready.
 | `spr.cpp` | 7 KB | SPR distance approximation |
 | `spr_lookup.cpp` | — | SPR lookup-table implementation |
 | `nni_distance.cpp` | 16 KB | NNI distance approximations; HybridBuffer allocation |
-| `li_diameters.h` | 30 KB | Precomputed NNI diameter lookup tables |
+| `li_diameters.h` | \<1 KB | Exact NNI diameters for trees with ≤ 12 leaves |
 | `information.h` | 6 KB | log₂ / factorial lookup tables (max 8192); cached at startup |
 | `binary_entropy_counts.cpp` | — | Binary entropy calculations |
 | `day_1985.cpp` | 10 KB | Consensus tree information |

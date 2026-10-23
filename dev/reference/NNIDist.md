@@ -26,17 +26,28 @@ NNIDiameter(tree)
 ## Value
 
 `NNIDist()` returns, for each pair of trees, a named vector containing
-three integers:
+six integers:
 
-- `lower` is a lower bound on the NNI distance, and corresponds to the
-  RF distance between the trees.
+- `lower` is a lower bound on the NNI distance: the number of edges in
+  one tree that do not occur in the other, i.e. half the Robinson-Foulds
+  distance between the trees.
+
+- `best_upper` is the tightest available upper bound: it uses the exact
+  diameter for regions with \< 13 leaves, and `loose_upper` for larger
+  regions.
 
 - `tight_upper` is an upper bound on the distance, based on calculated
   maximum diameters for trees with \< 13 leaves. *NA* is returned if
   trees are too different to employ this approach.
 
 - `loose_upper` is a looser upper bound on the distance, using *n* log
-  *n* + O(*n*).
+  *n* + O(*n*): the smaller of `fack_upper` and `li_upper`.
+
+- `fack_upper` is an upper bound based on the maximum diameter given by
+  theorem 3 of Fack et al. (2002) .
+
+- `li_upper` is an upper bound based on the sorting approach of Li et
+  al. (1996) .
 
 `NNIDiameter()` returns a matrix specifying (bounds on) the diameter of
 the NNI distance metric on the specified tree(s). Columns correspond to:
@@ -54,10 +65,9 @@ the NNI distance metric on the specified tree(s). Columns correspond to:
 - `liMax`: Upper bound on diameter following Li *et al.* (1996), i.e.
   \$\$n \log2{n} + \textrm{O}(n)\$\$;
 
-- `fackMax`: Upper bound on diameter following Fack *et al*. (2002),
-  i.e. (\$\$N - 2\$\$) ceiling(\$\$\log2{n}\$\$)
-
-  - *N*;
+- `fackMax`: Upper bound on diameter following theorem 3 of Fack *et
+  al*. (2002), i.e. *N* *c* − 2^*c* + 1 + 2(*N* − ceiling(log₂ (*N* +
+  1))), where *c* = ceiling(log₂ *N*);
 
 - `max`: The smaller of `liMax` and `fackMax`;
 
@@ -137,28 +147,24 @@ Other tree distances:
 library("TreeTools", quietly = TRUE)
 
 NNIDist(BalancedTree(7), PectinateTree(7))
-#>       lower  best_lower tight_upper  best_upper loose_upper  fack_upper 
-#>           2           2           2           2           4           4 
-#>    li_upper 
-#>          10 
+#>       lower  best_upper tight_upper loose_upper  fack_upper    li_upper 
+#>           2           2           2           2           2          10 
 
 NNIDist(BalancedTree(7), as.phylo(0:2, 7))
 #>             [,1] [,2] [,3]
 #> lower          4    3    4
-#> best_lower     7    5    7
-#> tight_upper    7    5    7
 #> best_upper     7    5    7
-#> loose_upper   14    8   14
-#> fack_upper    14    8   14
+#> tight_upper    7    5    7
+#> loose_upper   12    7   12
+#> fack_upper    12    7   12
 #> li_upper      16   13   16
 NNIDist(as.phylo(0:2, 7), PectinateTree(7))
 #>             [,1] [,2] [,3]
 #> lower          4    4    4
-#> best_lower     7    7    7
-#> tight_upper    7    7    7
 #> best_upper     7    7    7
-#> loose_upper   14   14   14
-#> fack_upper    14   14   14
+#> tight_upper    7    7    7
+#> loose_upper   12   12   12
+#> fack_upper    12   12   12
 #> li_upper      16   16   16
 
 NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
@@ -169,7 +175,7 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 #> bal    4    3    4
 #> pec    4    4    4
 #> 
-#> , , best_lower
+#> , , best_upper
 #> 
 #>     [,1] [,2] [,3]
 #> bal    7    5    7
@@ -181,23 +187,17 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 #> bal    7    5    7
 #> pec    7    7    7
 #> 
-#> , , best_upper
-#> 
-#>     [,1] [,2] [,3]
-#> bal    7    5    7
-#> pec    7    7    7
-#> 
 #> , , loose_upper
 #> 
 #>     [,1] [,2] [,3]
-#> bal   14    8   14
-#> pec   14   14   14
+#> bal   12    7   12
+#> pec   12   12   12
 #> 
 #> , , fack_upper
 #> 
 #>     [,1] [,2] [,3]
-#> bal   14    8   14
-#> pec   14   14   14
+#> bal   12    7   12
+#> pec   12   12   12
 #> 
 #> , , li_upper
 #> 
@@ -214,7 +214,7 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 #> 3 1 1   2
 #> 4 2 2 2  
 #> 
-#> $best_lower
+#> $best_upper
 #>   1 2 3 4
 #> 1   1 1 3
 #> 2 1   1 3
@@ -228,25 +228,18 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 #> 3 1 1   3
 #> 4 3 3 3  
 #> 
-#> $best_upper
-#>   1 2 3 4
-#> 1   1 1 3
-#> 2 1   1 3
-#> 3 1 1   3
-#> 4 3 3 3  
-#> 
 #> $loose_upper
 #>   1 2 3 4
-#> 1   2 2 5
-#> 2 2   2 5
-#> 3 2 2   5
+#> 1   1 1 5
+#> 2 1   1 5
+#> 3 1 1   5
 #> 4 5 5 5  
 #> 
 #> $fack_upper
 #>   1 2 3 4
-#> 1   2 2 5
-#> 2 2   2 5
-#> 3 2 2   5
+#> 1   1 1 5
+#> 2 1   1 5
+#> 3 1 1   5
 #> 4 5 5 5  
 #> 
 #> $li_upper

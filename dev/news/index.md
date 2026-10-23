@@ -4,6 +4,19 @@
 
 ### Bug fixes
 
+- [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md):
+  `best_lower` was not a lower bound, and has been removed. `lower` is
+  now calculated correctly.
+
+- [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md)
+  and
+  [`NNIDiameter()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md)
+  use theorem 3 of Fack *et al.* (2002) for `fack_upper` and `fackMax`,
+  tightening `loose_upper` and `best_upper`.
+
+- [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md)
+  returns `best_upper` second, after `lower`.
+
 - Comparing all pairs of trees whose leaf sets differ could misalign
   leaves when pruning each pair to its shared leaves, giving incorrect
   values from

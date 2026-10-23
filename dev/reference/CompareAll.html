@@ -126,7 +126,7 @@ Identical trees are assumed to have zero distance.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    2     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $best_lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $best_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> bal1         2    2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         3</span>
@@ -138,23 +138,17 @@ Identical trees are assumed to have zero distance.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    3     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $best_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bal1         2    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    3     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $loose_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bal1         4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    4         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    4    5     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bal1         2    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    5     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $fack_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bal1         4    4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    4         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    4    5     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bal1         2    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    5     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $li_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
@@ -165,13 +159,12 @@ Identical trees are assumed to have zero distance.</p>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Providing FUN.VALUE yields a modest speed gain:</span></span></span>
 <span class="r-in"><span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">CompareAll</span><span class="op">(</span><span class="va">trees</span>, <span class="va">NNIDist</span>, FUN.VALUE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in vapply(seq_along(i), function(k) {    cli_progress_update(1, .envir = parent.frame(2))    Func(i[[k]], j[[k]], ...)}, FUN.VALUE):</span> values must be length 7,</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>  but FUN(X[[1]]) result is length 6</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># View distances as a matrix</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">dist</span><span class="op">$</span><span class="va">lower</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      bal1 pec1 pec2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bal1    0    2    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec1    2    0    2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> pec2    2    2    0</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dist$lower:</span> object of type 'closure' is not subsettable</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
