@@ -987,3 +987,36 @@ row-filling skips ≤1.5% of fill.  Next lever: build child cost matrices
 incrementally from the parent (97.6% of candidates drop one leaf); the fill is
 now 37–55% of runtime.  Parent prices are computed lazily (first candidate
 past the row bound).
+
+## Rogue SPR: single-leaf candidates from parent overlaps (2026-10-19)
+Measured first (rdtsc-instrumented release build, workloads in
+`dev/rogue_bound/workloads.rds`): fill 35% of runtime at 80 tips, 54% at 150;
+KeepAndReduce + GetSplits + FirstMatchingSplit 46% / 31%.  **Popcount is not
+the fill's cost**: in a standalone kernel (1-3 64-bit bins), replacing the
+popcount with a lookup of parent counts saves 1 of ~14.5 cycles/cell.  The
+cost is the per-cell log arithmetic.  So "O(1) quadrant counts" alone does not
+pay; what pays is what the parent overlaps let a candidate *skip*.
+- Tier 1 (all bounded MCI calls): cell information as
+  `sum_q f(n_q) + row_term + col_term`, `f(k) = k lg2 k` tabled
+  (`KLg2K()`), row/column terms hoisted.  Kernel 14.5 -> 8.5 cycles/cell;
+  costs agree within 1 unit.  Alone: -6..-16% (80/150 tips).
+- Tier 2 (`SingleDrop` in `spr.cpp`, `mutual_clustering_bounded_counts()`):
+  for leaf l != 1 whose removal neither creates a reducible structure
+  (cherry/root/chain tests of `reduce_trees()` replayed on ledgers with l
+  removed) nor makes a pair of splits identical (precomputed: parent pairs
+  differing in l alone), the child matrix comes from parent overlaps minus l's
+  membership; the vanishing split per tree is par(l)'s row, or sib(l)'s if
+  par(l) is the root's child.  96% of candidates qualify (84% on 15-move
+  pairs).  Predicate agreed with KeepAndReduce on all 589,686 candidates.
+- Min of 9 interleaved runs vs main: rand30 -56%, rand80 -61%, rand150 -60%,
+  mid80 -53%, mid150 -55%; depth 2 only -3% (pair candidates still rebuild).
+- Correctness: 13,833 score vectors (2.9 M candidates): argmin sets identical
+  to the non-incremental path in the same build; vs main, 5 differ, all exact
+  ties (within 1e-12) that main broke by rounding noise.  1/410 SPRDist
+  results changed (an 8-leaf tie).  Max score difference 4e-13 bits.
+- Dropped from the counts path: the initial entropy bound (never fired in
+  600k candidates).  Rejected: storing parent cell information and
+  updating it by an O(1) delta (5.3 cycles/cell vs 8.5) - not worth a d^2
+  double matrix once the fill is no longer dominant.
+- Next: depth-2 pair candidates (two leaves) by the same route; the
+  unbounded MCI could use the Tier 1 form if tests tolerate ulp changes.
