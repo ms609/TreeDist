@@ -95,11 +95,12 @@ CompareAll(trees, NNIDist)
 #> 
   
 # Providing FUN.VALUE yields a modest speed gain:
-dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(7))
-#> Error in vapply(seq_along(i), function(k) {    cli_progress_update(1, .envir = parent.frame(2))    Func(i[[k]], j[[k]], ...)}, FUN.VALUE): values must be length 7,
-#>  but FUN(X[[1]]) result is length 6
+dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(6))
   
 # View distances as a matrix
 as.matrix(dist$lower)
-#> Error in dist$lower: object of type 'closure' is not subsettable
+#>      bal1 pec1 pec2
+#> bal1    0    2    2
+#> pec1    2    0    2
+#> pec2    2    2    0
 ```
