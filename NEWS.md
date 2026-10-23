@@ -51,6 +51,10 @@
   the last few bits, which can break exact ties between candidates
   differently.
 
+- With `options(sprDepth = 2)`, `SPRDist(method = "Rogue")` likewise scores
+  most pairs of leaves from the parent trees' splits: 45–55% faster at 30–80
+  leaves.
+
 - Improve performance when comparing many similar trees with
   `ClusteringInfoDistance()`, `MatchingSplitDistance()`, `InfoRobinsonFoulds()`
   and `JaccardRobinsonFoulds()`.

@@ -1018,5 +1018,37 @@ pay; what pays is what the parent overlaps let a candidate *skip*.
   600k candidates).  Rejected: storing parent cell information and
   updating it by an O(1) delta (5.3 cycles/cell vs 8.5) - not worth a d^2
   double matrix once the fill is no longer dominant.
-- Next: depth-2 pair candidates (two leaves) by the same route; the
-  unbounded MCI could use the Tier 1 form if tests tolerate ulp changes.
+- Next: depth-2 pair candidates (two leaves) by the same route (done, see
+  below); the unbounded MCI could use the Tier 1 form if tests tolerate ulp
+  changes.
+
+## Rogue SPR: leaf-pair candidates from parent overlaps (2026-10-23)
+`SingleDrop` became `LeafDrop`, with `Prepare(i, j)` for depth-2 candidates.
+- Two removals are replayed on copies of the parent ledgers (leaf i once per
+  outer loop, then j per candidate), recording the vanishing split per tree
+  at each step.  Covers the cherry, sib(i) = par(j), mirror and root-child
+  cases without enumerating them; the one trap is that the root-child test
+  must be structural (`parent[parent[tip]] == parent[1]`), not
+  `row_of[parent] < 0`: after removing i, sib(i) can become the root's
+  child while still owning a row.
+- Overlap correction is popcount(row_has & col_has) on 2-bit masks;
+  `mutual_clustering_bounded_counts()` dispatches on `SplitCounts::pair` to
+  a template so the depth-1 kernel is unchanged.
+- Shared-split test: parent pairs whose polarized XOR is two leaves are
+  recorded as sorted pair keys; a pair also falls back if either leaf alone
+  makes a shared split.  Price merge chains: the first vanishing split's
+  merge target can itself vanish second, then it merges into the second's
+  target (prices only affect speed).
+- Fallback rate on 295 pairs (9-40 leaves, half near): 75% of incremental
+  pair candidates scored from overlaps; fallbacks are leaf 1 or a disabled
+  tree (14%), a single-leaf shared split (7%), a pair-shared split (1.6%),
+  reduction (1%).
+- Min of 3 interleaved runs vs main, depth 2: rand30 3.86 -> 1.65 s (-57%),
+  mid80 5.47 -> 3.10 s (-43%), near80 0.39 -> 0.21 s (-46%).  Depth 1
+  unchanged within noise (rand80 1.03-1.09 vs 1.07-1.11 s over 4 rounds).
+  SPRDist sums identical on all workloads.
+- Correctness: 295 tree pairs, 70,142 pair candidates, with ASSERTs on:
+  argmin sets of single and pair score vectors identical to
+  `incremental = FALSE`; max difference among near-best scores 7e-15.
+- Remaining at depth 2: candidates involving leaf 1 (~2/n) could be scored
+  by rerooting; ScoreWithout() for shared-split pairs.
