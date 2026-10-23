@@ -23,6 +23,13 @@
   most assignment problems and warm-starting the rest: c. 50% faster at
   80 leaves and 65% at 150 leaves on unrelated trees.
 
+- `SPRDist(method = "Rogue")` scores most single-leaf candidates from
+  the overlaps between the parent trees’ splits, without rebuilding,
+  reducing or splitting the smaller trees, and fills cost matrices with
+  fewer operations: a further 55–60% faster at 30–150 leaves. Scores can
+  differ from before in the last few bits, which can break exact ties
+  between candidates differently.
+
 - Improve performance when comparing many similar trees with
   [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
   [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/dev/reference/MatchingSplitDistance.md),

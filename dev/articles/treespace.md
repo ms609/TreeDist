@@ -488,13 +488,13 @@ if (umatrixInstalled) {
     ## [1] "Epoch: 1 started"
     ## [1] "Epoch: 1 finished. 220 datapoints changed bestmatch"
     ## [1] "Epoch: 2 started"
-    ## [1] "Epoch: 2 finished. 216 datapoints changed bestmatch"
+    ## [1] "Epoch: 2 finished. 213 datapoints changed bestmatch"
     ## [1] "Epoch: 3 started"
-    ## [1] "Epoch: 3 finished. 212 datapoints changed bestmatch"
+    ## [1] "Epoch: 3 finished. 214 datapoints changed bestmatch"
     ## [1] "Epoch: 4 started"
-    ## [1] "Epoch: 4 finished. 203 datapoints changed bestmatch"
+    ## [1] "Epoch: 4 finished. 199 datapoints changed bestmatch"
     ## [1] "Epoch: 5 started"
-    ## [1] "Epoch: 5 finished. 165 datapoints changed bestmatch"
+    ## [1] "Epoch: 5 finished. 172 datapoints changed bestmatch"
     ## [1] "---- Esom Training Finished ----"
 
     ## Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
