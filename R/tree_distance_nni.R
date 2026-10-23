@@ -31,17 +31,6 @@
 #'    \tab 15 \tab 18 \tab 21 \tab ? \cr
 #'  }
 #' 
-#' Upper bounds treat each region separately: transforming each region in turn
-#' is a valid path between the trees, so the sum of the diameters of the regions
-#' bounds the distance from above.
-#' A diameter is the distance between the _most_ different pair of trees with
-#' that many leaves, so it says nothing about how close a particular pair might
-#' be: the only known lower bound is the number of unmatched edges
-#' \insertCite{Li1996}{TreeDist}.
-#' An optimal path need not leave matched edges untouched
-#' \insertCite{Li1996}{TreeDist}, so even the exact distance between the trees
-#' that each region induces is not a lower bound.
-#'
 #' @template tree12Params
 #' 
 #' @return `NNIDist()` returns, for each pair of trees, a named vector
