@@ -18,15 +18,23 @@ or an integer specifying the number of leaves in a tree/trees.}
 }
 \value{
 \code{NNIDist()} returns, for each pair of trees, a named vector
-containing three integers:
+containing six integers:
 \itemize{
-\item \code{lower} is a lower bound on the NNI distance, and corresponds
-to the RF distance between the trees.
+\item \code{lower} is a lower bound on the NNI distance: the number of edges in
+one tree that do not occur in the other, i.e. half the Robinson-Foulds
+distance between the trees.
+\item \code{best_upper} is the tightest available upper bound: it uses the exact
+diameter for regions with < 13 leaves, and \code{loose_upper} for larger
+regions.
 \item \code{tight_upper} is an upper bound on the distance, based on calculated
 maximum diameters for trees with < 13 leaves.  \emph{NA} is returned if trees are
 too different to employ this approach.
 \item \code{loose_upper} is a looser upper bound on the distance, using \emph{n} log \emph{n} +
-O(\emph{n}).
+O(\emph{n}): the smaller of \code{fack_upper} and \code{li_upper}.
+\item \code{fack_upper} is an upper bound based on the maximum diameter given by
+theorem 3 of \insertCite{Fack2002;textual}{TreeDist}.
+\item \code{li_upper} is an upper bound based on the sorting approach of
+\insertCite{Li1996;textual}{TreeDist}.
 }
 
 \code{NNIDiameter()} returns a matrix specifying (bounds on) the diameter
@@ -41,11 +49,9 @@ Columns correspond to:
 \item \code{exact}: The exact value of the diameter, where \emph{n} < 13;
 \item \code{liMax}: Upper bound on diameter following Li \emph{et al.} (1996), i.e.
 \deqn{n \log2{n} + \textrm{O}(n)}{n log&#8322; _n_ + O(_n_)};
-\item \code{fackMax}: Upper bound on diameter following Fack \emph{et al}. (2002), i.e.
-(\deqn{N - 2}{_N_ &minus; 2}) ceiling(\deqn{\log2{n}}{log&#8322; _N_})
-\itemize{
-\item \emph{N};
-}
+\item \code{fackMax}: Upper bound on diameter following theorem 3 of
+Fack \emph{et al}. (2002), i.e. \emph{N} \emph{c} − 2^\emph{c} + 1 + 2(\emph{N} −
+ceiling(log₂ (\emph{N} + 1))), where \emph{c} = ceiling(log₂ \emph{N});
 \item \code{max}: The smaller of \code{liMax} and \code{fackMax};
 }
 

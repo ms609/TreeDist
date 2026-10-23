@@ -34,18 +34,29 @@
 #' @template tree12Params
 #' 
 #' @return `NNIDist()` returns, for each pair of trees, a named vector
-#'  containing three integers:
-#' 
-#' - `lower` is a lower bound on the NNI distance, and corresponds
-#' to the RF distance between the trees. 
-#' 
+#'  containing six integers:
+#'
+#' - `lower` is a lower bound on the NNI distance: the number of edges in
+#' one tree that do not occur in the other, i.e. half the Robinson-Foulds
+#' distance between the trees.
+#'
+#' - `best_upper` is the tightest available upper bound: it uses the exact
+#' diameter for regions with < 13 leaves, and `loose_upper` for larger
+#' regions.
+#'
 #' - `tight_upper` is an upper bound on the distance, based on calculated
 #' maximum diameters for trees with < 13 leaves.  _NA_ is returned if trees are
 #' too different to employ this approach.
-#' 
+#'
 #' - `loose_upper` is a looser upper bound on the distance, using _n_ log _n_ +
-#' O(_n_).
-#' 
+#' O(_n_): the smaller of `fack_upper` and `li_upper`.
+#'
+#' - `fack_upper` is an upper bound based on the maximum diameter given by
+#' theorem 3 of \insertCite{Fack2002;textual}{TreeDist}.
+#'
+#' - `li_upper` is an upper bound based on the sorting approach of
+#' \insertCite{Li1996;textual}{TreeDist}.
+#'
 #' 
 #' @references 
 #' \insertAllCited{}
@@ -108,9 +119,9 @@ NNIDist <- function(tree1, tree2 = tree1) {
 #' - `liMax`: Upper bound on diameter following Li _et al._ (1996), i.e. 
 #'   \deqn{n \log2{n} + \textrm{O}(n)}{n log&#8322; _n_ + O(_n_)};
 #'   
-#' - `fackMax`: Upper bound on diameter following Fack _et al_. (2002), i.e.
-#'   (\deqn{N - 2}{_N_ &minus; 2}) ceiling(\deqn{\log2{n}}{log&#8322; _N_}) 
-#'   + _N_;
+#' - `fackMax`: Upper bound on diameter following theorem 3 of
+#'   Fack _et al_. (2002), i.e. _N_ _c_ &minus; 2^_c_ + 1 + 2(_N_ &minus;
+#'   ceiling(log&#8322; (_N_ + 1))), where _c_ = ceiling(log&#8322; _N_);
 #'   
 #' - `max`: The smaller of `liMax` and `fackMax`;
 #'   
@@ -145,7 +156,8 @@ NNIDiameter.numeric <- function(tree) {
   fackMin <- ceiling(lfactorial(n) / 4L / log(2))
   
   liMax <- .SortingNumber(tree) + (2 * .DegenerateDistance(tree))
-  fackMax <- ((n - 2L) * ceiling(log2(n))) + n
+  lgN <- ceiling(log2(n))
+  fackMax <- (n * lgN) - (2 ^ lgN) + 1 + (2 * (n - ceiling(log2(n + 1))))
   cbind(liMin = liMin,
         fackMin = fackMin,
         min = pmax(liMin, fackMin),
