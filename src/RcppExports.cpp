@@ -578,8 +578,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // spr_rogue_scores
-List spr_rogue_scores(const List& tree1, const List& tree2, const int depth, const bool incremental);
-RcppExport SEXP _TreeDist_spr_rogue_scores(SEXP tree1SEXP, SEXP tree2SEXP, SEXP depthSEXP, SEXP incrementalSEXP) {
+List spr_rogue_scores(const List& tree1, const List& tree2, const int depth, const bool incremental, Nullable<IntegerVector> candidates);
+RcppExport SEXP _TreeDist_spr_rogue_scores(SEXP tree1SEXP, SEXP tree2SEXP, SEXP depthSEXP, SEXP incrementalSEXP, SEXP candidatesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -587,7 +587,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
     Rcpp::traits::input_parameter< const int >::type depth(depthSEXP);
     Rcpp::traits::input_parameter< const bool >::type incremental(incrementalSEXP);
-    rcpp_result_gen = Rcpp::wrap(spr_rogue_scores(tree1, tree2, depth, incremental));
+    Rcpp::traits::input_parameter< Nullable<IntegerVector> >::type candidates(candidatesSEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_rogue_scores(tree1, tree2, depth, incremental, candidates));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_fitch_scores
+IntegerVector spr_fitch_scores(const List& tree1, const List& tree2);
+RcppExport SEXP _TreeDist_spr_fitch_scores(SEXP tree1SEXP, SEXP tree2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_fitch_scores(tree1, tree2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -919,7 +932,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
-    {"_TreeDist_spr_rogue_scores", (DL_FUNC) &_TreeDist_spr_rogue_scores, 4},
+    {"_TreeDist_spr_rogue_scores", (DL_FUNC) &_TreeDist_spr_rogue_scores, 5},
+    {"_TreeDist_spr_fitch_scores", (DL_FUNC) &_TreeDist_spr_fitch_scores, 2},
     {"_TreeDist_spr_bounded_cid", (DL_FUNC) &_TreeDist_spr_bounded_cid, 3},
     {"_TreeDist_spr_first_shared_split", (DL_FUNC) &_TreeDist_spr_first_shared_split, 2},
     {"_TreeDist_spr_keep_and_reduce", (DL_FUNC) &_TreeDist_spr_keep_and_reduce, 3},

@@ -279,8 +279,17 @@ SPRDist.multiPhylo <- SPRDist.list
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
 #' @importFrom TreeTools FirstMatchingSplit
-.SPRRogue <- function(tree1, tree2, check = TRUE) {
+.SPRRogue <- function(tree1, tree2, check = TRUE, fitch = NULL) {
   moves <- 0
+  # Option `sprFitch`: select leaves by Fitch score (Pol & Escapa 2009) for
+  # input trees of more than `sprFitch` leaves (`TRUE`: always; `FALSE`:
+  # never), otherwise by the proxy alone.  The proxy alone does better on
+  # small random pairs.  The cut-off applies to the input trees, so `fitch`
+  # passes unchanged to the halves of a shared split.
+  if (is.null(fitch)) {
+    opt <- getOption("sprFitch", 14)
+    fitch <- if (is.numeric(opt)) NTip(tree1) > opt else !isFALSE(opt)
+  }
   
   # A score above `cutoff` cannot be selected, so ProxyDistance() may return
   # any value above `cutoff` in place of the exact distance.
@@ -337,11 +346,13 @@ SPRDist.multiPhylo <- SPRDist.list
 
       moves1 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips1),
-        KeepTipPostorder(tr2, subtips1)
+        KeepTipPostorder(tr2, subtips1),
+        fitch = fitch
       )
       moves2 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips2),
-        KeepTipPostorder(tr2, subtips2)
+        KeepTipPostorder(tr2, subtips2),
+        fitch = fitch
       )
       return(moves + moves1 + moves2)
     }
@@ -352,8 +363,23 @@ SPRDist.multiPhylo <- SPRDist.list
 
     depth <- max(getOption("sprDepth", 1), 1)
     
-    if (useCpp) {
-      rogue <- spr_rogue_scores(tr1, tr2, as.integer(min(depth, 2)))
+    # At depth 1, candidates are the leaves whose removal saves the most Fitch
+    # steps; the proxy breaks ties.  Depth 2 scores every leaf and pair with
+    # the proxy alone.
+    candidates <- if (depth == 1 && fitch) {
+      fitchScores <- spr_fitch_scores(tr1, tr2)
+      which(fitchScores == max(fitchScores))
+    } else {
+      seq_along(labels)
+    }
+    
+    if (length(candidates) == 1L) {
+      scores[-candidates] <- Inf
+    } else if (useCpp) {
+      rogue <- spr_rogue_scores(tr1, tr2, as.integer(min(depth, 2)),
+                                candidates = if (depth == 1 && fitch) {
+                                  candidates
+                                })
       scores <- rogue[["scores"]]
       if (any(!is.finite(scores))) {
         depth <- 1
@@ -401,7 +427,8 @@ SPRDist.multiPhylo <- SPRDist.list
         }
       }
       best <- Inf
-      for (i in seq_along(labels)) {
+      scores[] <- Inf
+      for (i in candidates) {
         scores[[i]] <- .ScoreWithout(i, best)
         if (!is.finite(scores[[i]])) break
         best <- min(best, scores[[i]])

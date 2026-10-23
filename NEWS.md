@@ -35,6 +35,16 @@
 
 ## Performance
 
+- `SPRDist(method = "Rogue")` selects the leaf to remove by its Fitch
+  instability (Pol & Escapa 2009): the parsimony steps saved, when the leaf is
+  coded as ambiguous, by the splits of each tree treated as characters on the
+  other.  The clustering information proxy now scores only the leaves that tie
+  for the highest instability.  On unrelated trees, estimates are lower (closer
+  to the true SPR distance) above c. 25 leaves, and calculation is c. 2× faster
+  at 30 leaves, 7× at 80 and 14× at 150.  Input trees of 14 leaves or fewer, and
+  `options(sprDepth = 2)`, use the previous selector, as does
+  `options(sprFitch = FALSE)`.
+
 - Trees with different leaf sets are pruned to their shared leaves in C++,
   without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
   is c. 15× faster, with lower memory use (#123).

@@ -991,6 +991,109 @@ private:
   std::vector<price_t> price_;
 };
 
+// Adds to `added[t]` the number of Fitch steps saved on `edge`'s tree when
+// leaf t is coded `?` in each of `n_char` binary characters, after
+// Pol & Escapa (2009).  Character c is the split at
+// `chars[c * n_word ... ]`: leaf t has state 1 if it sets bit t.
+// `edge` must be binary, rooted and in postorder.
+//
+// Coding a leaf `?` is equivalent to deleting it, so the saving is the
+// Fitch length of the tree minus that of the tree without the leaf.
+// A downpass gives each node's state set D and cost dc for its subtree; an
+// uppass gives U and uc for the rest of the tree, seen from the node's
+// attachment point.  Then the length without leaf t is uc[t].
+// State sets are held as two bit planes (has 0, has 1), 64 characters
+// to a word.
+void FitchAdded(const IntegerMatrix &edge, const int n_tip,
+                const std::vector<uint64_t> &chars, const int n_char,
+                const int n_word, std::vector<int> &added) {
+  if (n_char == 0) return;
+  const int n_edge = edge.nrow();
+  const int n_node = n_edge + 1;
+  const int c_word = (n_char + 63) / 64;
+  const int *parent = edge.begin();
+  const int *child = parent + n_edge;
+  const int root = parent[n_edge - 1] - 1;
+
+  std::vector<int> kid1(n_node, -1), kid2(n_node, -1);
+  std::vector<uint64_t> d0(size_t(n_node) * c_word, 0),
+    d1(size_t(n_node) * c_word, 0), u0(size_t(n_node) * c_word),
+    u1(size_t(n_node) * c_word);
+  std::vector<int> dc(n_node, 0), uc(n_node, 0);
+  std::vector<uint64_t> live(c_word, ~uint64_t(0));
+  if (n_char % 64) {
+    live[c_word - 1] = (uint64_t(1) << (n_char % 64)) - 1;
+  }
+
+  // Transpose the characters into leaf state sets
+  for (int c = 0; c != n_char; ++c) {
+    const uint64_t *split = &chars[size_t(c) * n_word];
+    const uint64_t bit = uint64_t(1) << (c & 63);
+    for (int t = 0; t != n_tip; ++t) {
+      if ((split[t >> 6] >> (t & 63)) & 1) {
+        d1[size_t(t) * c_word + (c >> 6)] |= bit;
+      }
+    }
+  }
+  for (int t = 0; t != n_tip; ++t) {
+    for (int w = 0; w != c_word; ++w) {
+      d0[size_t(t) * c_word + w] = ~d1[size_t(t) * c_word + w] & live[w];
+    }
+  }
+
+  // Fitch union of `a` and `b` into `out`; returns the steps added
+  const auto Combine = [&](const uint64_t *a0, const uint64_t *a1,
+                           const uint64_t *b0, const uint64_t *b1,
+                           uint64_t *o0, uint64_t *o1) {
+    int cost = 0;
+    for (int w = 0; w != c_word; ++w) {
+      const uint64_t i0 = a0[w] & b0[w];
+      const uint64_t i1 = a1[w] & b1[w];
+      const uint64_t empty = ~(i0 | i1) & live[w];
+      o0[w] = i0 | (empty & (a0[w] | b0[w]));
+      o1[w] = i1 | (empty & (a1[w] | b1[w]));
+      cost += TreeDist::count_bits(empty);
+    }
+    return cost;
+  };
+
+  // Downpass: postorder completes a node at the edge to its second child
+  for (int e = 0; e != n_edge; ++e) {
+    const int p = parent[e] - 1;
+    const int c = child[e] - 1;
+    if (kid1[p] < 0) {
+      kid1[p] = c;
+      continue;
+    }
+    kid2[p] = c;
+    const int a = kid1[p];
+    const size_t pw = size_t(p) * c_word, aw = size_t(a) * c_word,
+      cw = size_t(c) * c_word;
+    dc[p] = dc[a] + dc[c] +
+      Combine(&d0[aw], &d1[aw], &d0[cw], &d1[cw], &d0[pw], &d1[pw]);
+  }
+
+  // Uppass: reverse postorder visits each parent before its children
+  for (int e = n_edge; e--; ) {
+    const int p = parent[e] - 1;
+    const int v = child[e] - 1;
+    const int s = kid1[p] == v ? kid2[p] : kid1[p];
+    const size_t vw = size_t(v) * c_word, sw = size_t(s) * c_word;
+    if (p == root) {
+      std::copy_n(&d0[sw], c_word, &u0[vw]);
+      std::copy_n(&d1[sw], c_word, &u1[vw]);
+      uc[v] = dc[s];
+    } else {
+      const size_t pw = size_t(p) * c_word;
+      uc[v] = dc[s] + uc[p] +
+        Combine(&d0[sw], &d1[sw], &u0[pw], &u1[pw], &u0[vw], &u1[vw]);
+    }
+  }
+  for (int t = 0; t != n_tip; ++t) {
+    added[t] += dc[root] - uc[t];
+  }
+}
+
 }
 
 // Scores for dropping each leaf from `tree1` and `tree2`, as .SPRRogue();
@@ -1000,9 +1103,12 @@ private:
 // rather than their exact score.
 // `incremental = FALSE` scores every candidate by rebuilding its trees
 // (SingleDrop is not used), for testing.
+// If `candidates` (1-based) is given, only those leaves are scored, and other
+// leaves receive `Inf`; pairs are then not scored.
 // [[Rcpp::export]]
 List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
-                      const bool incremental = true) {
+                      const bool incremental = true,
+                      Nullable<IntegerVector> candidates = R_NilValue) {
   const CharacterVector labels = tree1["tip.label"];
   const int n_tip = labels.size();
   const IntegerMatrix pre1 = reverse(tree1["edge"]);
@@ -1034,11 +1140,25 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
   const ParentPrices *pp_ptr = pp.n_split ? &pp : nullptr;
   SingleDrop single(tree1["edge"], tree2["edge"], incremental ? n_tip : 0,
                     pp.n_word, bits1, pp.bits, node1, node2);
-  NumericVector scores(n_tip);
+  std::vector<int> leaves;
+  if (candidates.isNotNull()) {
+    for (const int c : IntegerVector(candidates)) {
+      if (c < 1 || c > n_tip) {
+        Rcpp::stop("`candidates` must index leaves of `tree1`");
+      }
+      leaves.push_back(c - 1);
+    }
+  } else {
+    leaves.resize(n_tip);
+    for (int t = 0; t != n_tip; ++t) {
+      leaves[t] = t;
+    }
+  }
+  NumericVector scores(n_tip, R_PosInf);
   double best = R_PosInf;
   bool all_finite = true;
   LogicalVector keep(n_tip, true);
-  for (int i = 0; i != n_tip; ++i) {
+  for (const int i : leaves) {
     Rcpp::checkUserInterrupt();
     if (single.Prepare(i)) {
       scores[i] = single.Score(best, pp_ptr);
@@ -1054,7 +1174,7 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
     best = std::min(best, double(scores[i]));
   }
   
-  if (depth < 2 || !all_finite) {
+  if (depth < 2 || !all_finite || candidates.isNotNull()) {
     return List::create(Named("scores") = scores,
                         _["pair_scores"] = R_NilValue);
   }
@@ -1080,6 +1200,34 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
   }
   return List::create(Named("scores") = scores,
                       _["pair_scores"] = pair_scores);
+}
+
+// Fitch steps saved by coding each leaf `?`, summed over the splits of
+// `tree2` as characters on `tree1` and those of `tree1` on `tree2`.
+// Trees must have identical tip labels and edges in postorder, and be binary.
+// [[Rcpp::export]]
+IntegerVector spr_fitch_scores(const List &tree1, const List &tree2) {
+  const CharacterVector labels = tree1["tip.label"];
+  const int n_tip = labels.size();
+  const int n_word = (n_tip + 63) / 64;
+  std::vector<int> identity(n_tip);
+  for (int t = 0; t != n_tip; ++t) {
+    identity[t] = t;
+  }
+  const IntegerMatrix edge1 = tree1["edge"];
+  const IntegerMatrix edge2 = tree2["edge"];
+  if (edge1.nrow() != 2 * n_tip - 2 || edge2.nrow() != 2 * n_tip - 2) {
+    Rcpp::stop("Trees must be binary and rooted");
+  }
+  std::vector<uint64_t> bits1, bits2;
+  const int n_split1 = GetSplits(edge1, n_tip, &identity, n_word,
+                                 &bits1).bits.nrow();
+  const int n_split2 = GetSplits(edge2, n_tip, &identity, n_word,
+                                 &bits2).bits.nrow();
+  std::vector<int> added(n_tip, 0);
+  FitchAdded(edge1, n_tip, bits2, n_split2, n_word, added);
+  FitchAdded(edge2, n_tip, bits1, n_split1, n_word, added);
+  return IntegerVector(added.begin(), added.end());
 }
 
 // Test hook for BoundedCID().

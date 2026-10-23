@@ -307,11 +307,12 @@ test_that("C++ Rogue scorer matches R implementation", {
   tree2 <- AddTip(DropTip(tree1, "t1"), 11, "t1")
   expect_equal(spr_rogue_scores(Postorder(tree1),
                                 Postorder(RenumberTips(tree2, tree1)), 2L),
-               list(scores = c(-Inf, double(7)), pair_scores = NULL))
-  for (depth in 1:2) {
-    expect_equal(Rogue(tree1, tree2, sprDepth = depth, sprShortcut = 0), 1)
+               list(scores = c(-Inf, rep(Inf, 7)), pair_scores = NULL))
+  for (depth in 1:2) for (fitch in c(FALSE, TRUE)) {
     expect_equal(Rogue(tree1, tree2, sprDepth = depth, sprShortcut = 0,
-                       sprCpp = FALSE), 1)
+                       sprFitch = fitch), 1)
+    expect_equal(Rogue(tree1, tree2, sprDepth = depth, sprShortcut = 0,
+                       sprFitch = fitch, sprCpp = FALSE), 1)
   }
   
   set.seed(2174)
@@ -319,11 +320,80 @@ test_that("C++ Rogue scorer matches R implementation", {
     nTip <- 4 + i
     tree1 <- RandomTree(nTip, root = TRUE)
     tree2 <- RandomTree(nTip, root = TRUE)
-    for (depth in 1:2) {
-      expect_identical(Rogue(tree1, tree2, sprDepth = depth),
-                       Rogue(tree1, tree2, sprDepth = depth, sprCpp = FALSE))
+    for (depth in 1:2) for (fitch in c(FALSE, TRUE)) {
+      expect_identical(Rogue(tree1, tree2, sprDepth = depth, sprFitch = fitch),
+                       Rogue(tree1, tree2, sprDepth = depth, sprFitch = fitch,
+                             sprCpp = FALSE))
     }
   }
+})
+
+test_that("spr_fitch_scores() counts Fitch steps saved", {
+  skip_if_not_installed("phangorn")
+  library("TreeTools", quietly = TRUE)
+  # Steps saved by deleting each leaf, scoring `chars` on `tree`
+  Saved <- function(tree, chars) {
+    Length <- function(tr, ch) {
+      phangorn::parsimony(Preorder(tr), phangorn::phyDat(ch, type = "USER",
+                                               levels = c("0", "1")),
+                          method = "fitch")
+    }
+    full <- Length(tree, chars)
+    vapply(TipLabels(tree), function(leaf) {
+      full - Length(DropTip(tree, leaf), chars[rownames(chars) != leaf, ,
+                                                drop = FALSE])
+    }, double(1))
+  }
+  Chars <- function(splitTree, labels) {
+    ch <- t(as.logical(as.Splits(splitTree, tipLabels = labels)))
+    ch[] <- as.character(as.integer(ch))
+    rownames(ch) <- labels
+    ch
+  }
+  set.seed(7174)
+  for (nTip in c(8, 20, 70)) { # 70 leaves: characters span two words
+    # Tip labels in shuffled order exercise leaf numbering
+    tree1 <- RandomTree(sample(paste0("t", seq_len(nTip))), root = TRUE)
+    tree2 <- RandomTree(nTip, root = TRUE)
+    reduced <- ReduceTrees(tree1, tree2)
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
+    labels <- TipLabels(tr1)
+    expect_equal(spr_fitch_scores(tr1, tr2),
+                 unname(Saved(tr1, Chars(tr2, labels)) +
+                          Saved(tr2, Chars(tr1, labels))))
+  }
+  
+  # Trees without splits
+  tr <- Postorder(RootTree(BalancedTree(3), 1))
+  expect_equal(spr_fitch_scores(tr, tr), integer(3))
+  expect_error(spr_fitch_scores(Postorder(StarTree(8)), Postorder(StarTree(8))),
+               "binary")
+})
+
+test_that("spr_rogue_scores() scores candidates", {
+  library("TreeTools", quietly = TRUE)
+  set.seed(8174)
+  for (i in 1:10) {
+    reduced <- ReduceTrees(RandomTree(30, root = TRUE),
+                           RandomTree(30, root = TRUE))
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
+    cand <- sort(sample(NTip(tr1), 3))
+    for (incremental in c(TRUE, FALSE)) {
+      sub <- spr_rogue_scores(tr1, tr2, 2L, incremental, candidates = cand)
+      expect_null(sub[["pair_scores"]])
+      expect_true(all(is.infinite(sub[["scores"]][-cand])))
+      # The best candidate, and its score, are exact
+      exact <- vapply(cand, function(leaf) {
+        spr_rogue_scores(tr1, tr2, 1L, candidates = leaf)[["scores"]][[leaf]]
+      }, double(1))
+      expect_equal(which.min(sub[["scores"]]), cand[[which.min(exact)]])
+      expect_equal(min(sub[["scores"]]), min(exact), tolerance = 1e-12)
+    }
+  }
+  expect_error(spr_rogue_scores(tr1, tr2, 1L, candidates = 0L), "candidates")
+  expect_error(spr_rogue_scores(tr1, tr2, 1L, candidates = 99L), "candidates")
 })
 
 test_that("Single-leaf candidates scored from parent splits", {
@@ -438,18 +508,28 @@ test_that("Rogue SPR results unchanged by early exits", {
     SPRDist(trees[[1]], trees[-1], method = "Rogue")
   }
   # Values computed before early exits were introduced
-  expect_equal(Rogue(sprProxy = "C"), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "C", sprFitch = FALSE), c(10, 10, 11, 10, 11))
   expect_equal(Rogue(sprProxy = "C", sprDepth = 2), c(10, 10, 10, 10, 11))
-  expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
-  expect_equal(Rogue(sprProxy = "R"), c(11, 12, 11, 13, 13))
-  expect_equal(Rogue(sprCpp = FALSE), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "P", sprFitch = FALSE), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "R", sprFitch = FALSE), c(11, 12, 11, 13, 13))
+  expect_equal(Rogue(sprCpp = FALSE, sprFitch = FALSE), c(10, 10, 11, 10, 11))
   expect_equal(Rogue(sprCpp = FALSE, sprDepth = 2), c(10, 10, 10, 10, 11))
+  # Fitch candidates, ties broken by the proxy
+  expect_equal(Rogue(sprProxy = "C"), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "P"), c(10, 10, 11, 10, 11))
+  expect_equal(Rogue(sprProxy = "R"), c(10, 10, 11, 11, 11))
+  expect_equal(Rogue(sprCpp = FALSE), c(10, 10, 11, 10, 11))
+  # The cut-off applies to the input trees
+  expect_equal(Rogue(sprProxy = "R", sprFitch = 18), c(11, 12, 11, 13, 13))
+  expect_equal(Rogue(sprProxy = "R", sprFitch = 17), c(10, 10, 11, 11, 11))
   
   # Abandons a divide-and-conquer candidate after its first half
   pinned1 <- ape::read.tree(text = "(t1,((((t2,t4),t9),(((((((t3,t17),(t5,t7)),t11),t12),t14),t18),(t10,t13))),(t6,((t8,t16),t15))));")
   pinned2 <- ape::read.tree(text = "(((((((((((t1,(t4,t8)),t16),t6),t14),t15),(t2,t12)),t10),((t3,t18),t9)),((t7,t13),t17)),t11),t5);")
   expect_equal(SPRDist(pinned1, pinned2, method = "Rogue"), 9)
-  opt <- options(sprCpp = FALSE)
+  opt <- options(sprFitch = FALSE)
+  expect_equal(SPRDist(pinned1, pinned2, method = "Rogue"), 9)
+  options(sprCpp = FALSE)
   expect_equal(SPRDist(pinned1, pinned2, method = "Rogue"), 9)
   options(opt)
   skip_if_not_installed("Quartet")
