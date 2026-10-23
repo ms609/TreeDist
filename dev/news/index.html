@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.15.0.9007</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.15.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,15 +59,19 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.15.0.9007" id="treedist-21509007-development">TreeDist 2.15.0.9007 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509007-development"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.15.0.9008" id="treedist-21509008-development">TreeDist 2.15.0.9008 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509008-development"></a></h2>
 <div class="section level3">
-<h3 id="bug-fixes-2-15-0-9007">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9007"></a></h3>
-<ul><li><p>Fix <code><a href="../reference/MASTSize.html">MASTSize()</a></code> under-counting on some trees: the root of each tree was never compared with the subtrees of the other, so a maximum agreement subtree confined to one side of a root could be missed. Affects both <code>rooted = TRUE</code> and <code>rooted = FALSE</code>, and thus <code><a href="../reference/MASTSize.html">MASTInfo()</a></code>.</p></li>
+<h3 id="bug-fixes-2-15-0-9008">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9008"></a></h3>
+<ul><li><p>Comparing all pairs of trees whose leaf sets differ could misalign leaves when pruning each pair to its shared leaves, giving incorrect values from <code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> and other split-based measures (<a href="https://github.com/ms609/TreeDist/issues/123" class="external-link">#123</a>).</p></li>
+<li><p><code><a href="../reference/Robinson-Foulds.html">RobinsonFoulds()</a></code> now compares each pair of trees on its shared leaves when the trees’ leaf sets differ, rather than returning incorrect values (all pairs, or cross pairs where a tree’s leaves were a subset of those of the first tree).</p></li>
+<li><p>When <code>tree1</code> and <code>tree2</code> are lists of trees with differing leaf sets, the returned matrix now has a row for each tree in <code>tree1</code> and a column for each tree in <code>tree2</code>, as when leaf sets agree; previously it was transposed.</p></li>
+<li><p>Fix <code><a href="../reference/MASTSize.html">MASTSize()</a></code> under-counting on some trees: the root of each tree was never compared with the subtrees of the other, so a maximum agreement subtree confined to one side of a root could be missed. Affects both <code>rooted = TRUE</code> and <code>rooted = FALSE</code>, and thus <code><a href="../reference/MASTSize.html">MASTInfo()</a></code>.</p></li>
 <li><p>C++ code no longer executes the x86 POPCNT instruction on CPUs that lack it, which crashed R with “illegal operation” on some virtual machines (ms609/TreeTools#287).</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-2-15-0-9007">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9007"></a></h3>
-<ul><li><p><code>SPRDist(method = "Rogue")</code> bounds each candidate’s clustering information with the optimal dual prices of the parent pair, skipping most assignment problems and warm-starting the rest: c. 50% faster at 80 leaves and 65% at 150 leaves on unrelated trees.</p></li>
+<h3 id="performance-2-15-0-9008">Performance<a class="anchor" aria-label="anchor" href="#performance-2-15-0-9008"></a></h3>
+<ul><li><p>Trees with different leaf sets are pruned to their shared leaves in C++, without constructing pruned trees in R: <code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> on 150 gene trees is c. 15× faster, with lower memory use (<a href="https://github.com/ms609/TreeDist/issues/123" class="external-link">#123</a>).</p></li>
+<li><p><code>SPRDist(method = "Rogue")</code> bounds each candidate’s clustering information with the optimal dual prices of the parent pair, skipping most assignment problems and warm-starting the rest: c. 50% faster at 80 leaves and 65% at 150 leaves on unrelated trees.</p></li>
 <li><p><code>SPRDist(method = "Rogue")</code> scores most single-leaf candidates from the overlaps between the parent trees’ splits, without rebuilding, reducing or splitting the smaller trees, and fills cost matrices with fewer operations: a further 55–60% faster at 30–150 leaves. Scores can differ from before in the last few bits, which can break exact ties between candidates differently.</p></li>
 <li><p>Improve performance when comparing many similar trees with <code><a href="../reference/TreeDistance.html">ClusteringInfoDistance()</a></code>, <code><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code>, <code><a href="../reference/Robinson-Foulds.html">InfoRobinsonFoulds()</a></code> and <code><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>.</p></li>
 <li><p>Improve performance of <code><a href="../reference/KendallColijn.html">PathVector()</a></code>, and thus <code><a href="../reference/PathDist.html">PathDist()</a></code>.</p></li>
