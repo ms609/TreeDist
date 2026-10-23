@@ -2,16 +2,11 @@
 
 ## Bug fixes
 
-- `NNIDist()`: `best_lower` was not a lower bound. It added the diameter of
-  each region of unmatched edges, which bounds the distance from above; it
-  could exceed the true distance (#220). `lower` added a lower bound on the
-  diameter, which exceeded the number of unmatched edges in regions of 37 or
-  more edges. Both now count unmatched edges, the only known lower bound, and
-  are equal.
+- `NNIDist()`: `best_lower` was not a lower bound, and has been removed.
+  `lower` is now calculated correctly.
 
 - `NNIDist()` and `NNIDiameter()` use theorem 3 of Fack _et al._ (2002) for
   `fack_upper` and `fackMax`, tightening `loose_upper` and `best_upper`.
-  All seven fields of `NNIDist()` are now documented.
 
 - Comparing all pairs of trees whose leaf sets differ could misalign leaves
   when pruning each pair to its shared leaves, giving incorrect values from

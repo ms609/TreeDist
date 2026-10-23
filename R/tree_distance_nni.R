@@ -45,14 +45,11 @@
 #' @template tree12Params
 #' 
 #' @return `NNIDist()` returns, for each pair of trees, a named vector
-#'  containing seven integers:
+#'  containing six integers:
 #'
 #' - `lower` is a lower bound on the NNI distance: the number of edges in
 #' one tree that do not occur in the other, i.e. half the Robinson-Foulds
 #' distance between the trees.
-#'
-#' - `best_lower` is the tightest available lower bound.
-#' No bound tighter than `lower` is known, so the two values are equal.
 #'
 #' - `tight_upper` is an upper bound on the distance, based on calculated
 #' maximum diameters for trees with < 13 leaves.  _NA_ is returned if trees are

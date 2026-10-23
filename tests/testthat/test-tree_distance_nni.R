@@ -41,7 +41,7 @@ test_that("NNIDist() at NNI_MAX_TIPS", {
   
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
                            maxTips)
-  expect_gt(n[["best_upper"]], n[["best_lower"]])
+  expect_gt(n[["best_upper"]], n[["lower"]])
   if (!is.na(n[["tight_upper"]])) {
     expect_gte(n[["tight_upper"]], n[["best_upper"]])
   }
@@ -77,24 +77,18 @@ test_that("Simple NNI approximations", {
   }
   Li <- function(n_edges) Sorting(n_edges + 3) + (2 * DegDist(n_edges + 3))
   
-  allMatched <- c(lower = 0L, best_lower = 0L, tight_upper = 0L,
-                  best_upper = 0L, loose_upper = 0L, fack_upper = 0L,
-                  li_upper = 0L)
-  oneUnmatched <- c(lower = 1L, best_lower = 1L, tight_upper = 1L,
-                    best_upper = 1L, loose_upper = 1L, fack_upper = Fack(1),
-                    li_upper = Li(1))
-  fiveUnmatched <- c(lower = 5L, best_lower = 5L, tight_upper = 10L,
-                     best_upper = 10L, loose_upper = 17L, fack_upper = Fack(5),
-                     li_upper = Li(5))
+  allMatched <- c(lower = 0L, tight_upper = 0L, best_upper = 0L,
+                  loose_upper = 0L, fack_upper = 0L, li_upper = 0L)
+  oneUnmatched <- c(lower = 1L, tight_upper = 1L, best_upper = 1L,
+                    loose_upper = 1L, fack_upper = Fack(1), li_upper = Li(1))
+  fiveUnmatched <- c(lower = 5L, tight_upper = 10L, best_upper = 10L,
+                     loose_upper = 17L, fack_upper = Fack(5), li_upper = Li(5))
   
   Test <- function(tree, expect) {
     expectation <- rep(NA_integer_, 7L)
-    names(expectation) <- c("lower", "best_lower", "tight_upper", "best_upper",
+    names(expectation) <- c("lower", "tight_upper", "best_upper",
                             "loose_upper", "fack_upper", "li_upper")
     expectation[names(expect)] <- expect
-    if (is.na(expectation["best_lower"])) {
-      expectation["best_lower"] <- expect["lower"]
-    }
     if (is.na(expectation["best_upper"]) && !is.na(expect["tight_upper"])) {
       expectation["best_upper"] <- expect["tight_upper"]
     }
@@ -166,8 +160,7 @@ test_that("NNIDist() lower bounds are valid", {
   # Exact NNI distance is 2 (ms609/TreeDist issue 220)
   a <- read.tree(text = "(t1,(t2,(t4,t5)),(t3,t6));")
   b <- read.tree(text = "(t6,(t1,(t4,t5)),(t3,t2));")
-  expect_equal(NNIDist(a, b)[c("lower", "best_lower")],
-               c(lower = 2L, best_lower = 2L))
+  expect_equal(NNIDist(a, b)[c("lower")], c(lower = 2L))
 })
 
 .ExpectBoundsBracketExact <- function(nTip) {
@@ -197,7 +190,6 @@ test_that("NNIDist() lower bounds are valid", {
   exact <- exact[lower.tri(exact)]
   .Bound <- function(field) bounds[[field]][lower.tri(bounds[[field]])]
   testthat::expect_true(all(.Bound("lower") <= exact))
-  testthat::expect_equal(.Bound("best_lower"), .Bound("lower"))
   for (upper in c("tight_upper", "best_upper", "loose_upper", "fack_upper",
                   "li_upper")) {
     testthat::expect_true(all(.Bound(upper) >= exact))

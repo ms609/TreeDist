@@ -314,7 +314,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
 
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
-                                 _["best_lower"] = 0,
                                  _["tight_upper"] = 0,
                                  _["best_upper"] = 0,
                                  _["loose_upper"] = 0,
@@ -428,7 +427,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
 
   return IntegerVector::create(
     Named("lower")   = lower_bound,
-    _["best_lower"] = lower_bound, // No tighter lower bound is known
     _["tight_upper"] = tight_score_bound == NA_INT32 
                      ? NA_INTEGER : tight_score_bound,
     _["best_upper"] = best_upper_bound,
