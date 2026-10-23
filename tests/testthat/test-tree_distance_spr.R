@@ -259,10 +259,15 @@ test_that(".BoundedCID() matches ClusteringInfoDist()", {
     tree1 <- RandomTree(nTip, root = TRUE)
     tree2 <- RandomTree(nTip, root = TRUE)
     exact <- ClusteringInfoDist(tree1, tree2)
-    expect_equal(.BoundedCID(tree1, tree2), exact, tolerance = 0)
-    expect_equal(.BoundedCID(tree1, tree2, exact), exact, tolerance = 0)
+    # The bounded fill sums its terms in a different order, so agrees with
+    # ClusteringInfoDist() only to within rounding error
+    expect_equal(.BoundedCID(tree1, tree2), exact, tolerance = 1e-12)
+    expect_equal(.BoundedCID(tree1, tree2, exact), exact, tolerance = 1e-12)
     # Within numerical noise of the cutoff: must be exact, to preserve ties
-    expect_equal(.BoundedCID(tree1, tree2, exact - 1e-12), exact, tolerance = 0)
+    expect_equal(.BoundedCID(tree1, tree2, exact - 1e-12), exact,
+                 tolerance = 1e-12)
+    expect_identical(.BoundedCID(tree1, tree2, exact - 1e-12),
+                     .BoundedCID(tree1, tree2))
     if (exact > 0) {
       bounded <- .BoundedCID(tree1, tree2, exact / 2)
       expect_gt(bounded, exact / 2)
@@ -319,6 +324,74 @@ test_that("C++ Rogue scorer matches R implementation", {
                        Rogue(tree1, tree2, sprDepth = depth, sprCpp = FALSE))
     }
   }
+})
+
+test_that("Single-leaf candidates scored from parent splits", {
+  library("TreeTools", quietly = TRUE)
+  # Scores must agree with those from rebuilding the reduced trees, to within
+  # numerical error, with the same best candidates; candidates that cannot
+  # win may receive different lower bounds
+  Agree <- function(x, y) {
+    expect_equal(is.finite(x), is.finite(y))
+    fin <- is.finite(x)
+    if (!any(fin)) return()
+    best <- min(x[fin])
+    expect_equal(min(y[fin]), best, tolerance = 1e-12)
+    tol <- 1e-9 * max(1, best)
+    expect_equal(which(fin & x <= best + tol), which(fin & y <= best + tol))
+    exact <- fin & x <= best + 1e-6 & y <= best + 1e-6
+    expect_equal(x[exact], y[exact], tolerance = 1e-12)
+  }
+  Compare <- function(tree1, tree2) {
+    reduced <- ReduceTrees(tree1, tree2)
+    if (is.null(reduced) || NTip(reduced[[1]]) < 8) return(FALSE)
+    for (depth in 1:2) {
+      fast <- spr_rogue_scores(reduced[[1]], reduced[[2]], depth)
+      slow <- spr_rogue_scores(reduced[[1]], reduced[[2]], depth, FALSE)
+      Agree(fast[["scores"]], slow[["scores"]])
+      Agree(fast[["pair_scores"]], slow[["pair_scores"]])
+    }
+    TRUE
+  }
+
+  # Removing a leaf leaves a chain of leaves common to both trees, which
+  # reduce_trees() would shorten
+  chain <- ape::read.tree(text = c(
+    "(t1,((((((t2,t11),t10),t15),t13),((((((t3,t8),t7),t14),t4),t6),t5)),(t9,t12)));",
+    "(t1,(((t8,((t15,((t2,t11),t10)),t13)),(((((t3,(t7,t9)),t14),t4),t6),t5)),t12));"
+  ))
+  expect_true(Compare(chain[[1]], chain[[2]]))
+
+  # Trees not rooted on leaf 1 use the full rebuild for every candidate
+  tree1 <- Postorder(RootTree(chain[[1]], "t5"))
+  tree2 <- Postorder(RenumberTips(chain[[2]], tree1))
+  expect_equal(spr_rogue_scores(tree1, tree2, 1L),
+               spr_rogue_scores(tree1, tree2, 1L, FALSE))
+
+  Moved <- function(tree, nMoves) {
+    for (i in seq_len(nMoves)) {
+      leaf <- sample(tree[["tip.label"]], 1)
+      pruned <- DropTip(tree, leaf)
+      tree <- AddTip(pruned, sample(pruned[["edge"]][, 2], 1), leaf)
+    }
+    tree
+  }
+  set.seed(4174)
+  nScored <- 0
+  for (i in 1:60) {
+    nTip <- sample(8:40, 1)
+    tree1 <- RandomTree(nTip, root = TRUE)
+    tree2 <- if (i %% 2) RandomTree(nTip, root = TRUE) else
+      Moved(tree1, sample(2:5, 1))
+    nScored <- nScored + Compare(tree1, tree2)
+  }
+  expect_gt(nScored, 40)
+
+  # Trees that share a split use the full rebuild for every candidate
+  tree1 <- Postorder(RootTree(BalancedTree(12), 1))
+  tree2 <- Postorder(RootTree(RenumberTips(PectinateTree(12), tree1), 1))
+  expect_equal(spr_rogue_scores(tree1, tree2, 1L),
+               spr_rogue_scores(tree1, tree2, 1L, FALSE))
 })
 
 test_that("cpp_mutual_clustering_bounded() exits early", {

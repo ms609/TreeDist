@@ -224,6 +224,20 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
   return phylo_info ? info : info * n_tip;
 }
 
+// Number of leaves in each ClusterTable.
+// as.ClusterTable(tree, tipLabels) accepts a tree whose leaves are a strict
+// subset of tipLabels, so this detects trees with differing leaf sets.
+// [[Rcpp::export]]
+IntegerVector cluster_table_n_tip(const List& tables) {
+  const int n_trees = static_cast<int>(tables.size());
+  IntegerVector ret = Rcpp::no_init(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    Rcpp::XPtr<ClusterTable> xp = tables[i];
+    ret[i] = xp->N();
+  }
+  return ret;
+}
+
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(const List& tables) {
   const int n_trees = static_cast<int>(tables.size());

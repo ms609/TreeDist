@@ -9,6 +9,10 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
+cluster_table_n_tip <- function(tables) {
+    .Call(`_TreeDist_cluster_table_n_tip`, tables)
+}
+
 robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
@@ -184,6 +188,10 @@ cpp_splitwise_info_batch <- function(splits_list, n_tip) {
     .Call(`_TreeDist_cpp_splitwise_info_batch`, splits_list, n_tip)
 }
 
+cpp_pruned_pairs <- function(splits_a, tips_a, splits_b, tips_b, all_pairs, n_union, metric, info, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_pruned_pairs`, splits_a, tips_a, splits_b, tips_b, all_pairs, n_union, metric, info, k, allow_conflict, n_threads)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }
@@ -208,8 +216,8 @@ keep_and_reduce <- function(tree1, tree2, keep) {
     .Call(`_TreeDist_keep_and_reduce`, tree1, tree2, keep)
 }
 
-spr_rogue_scores <- function(tree1, tree2, depth) {
-    .Call(`_TreeDist_spr_rogue_scores`, tree1, tree2, depth)
+spr_rogue_scores <- function(tree1, tree2, depth, incremental = TRUE) {
+    .Call(`_TreeDist_spr_rogue_scores`, tree1, tree2, depth, incremental)
 }
 
 spr_bounded_cid <- function(tree1, tree2, cutoff) {
