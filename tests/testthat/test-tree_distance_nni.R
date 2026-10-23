@@ -41,7 +41,7 @@ test_that("NNIDist() at NNI_MAX_TIPS", {
   
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
                            maxTips)
-  expect_gt(n[["best_upper"]], n[["best_lower"]])
+  expect_gt(n[["best_upper"]], n[["lower"]])
   if (!is.na(n[["tight_upper"]])) {
     expect_gte(n[["tight_upper"]], n[["best_upper"]])
   }
@@ -57,7 +57,12 @@ test_that("Simple NNI approximations", {
   edge1 <- Postorder(tree1$edge)
   edge2 <- Postorder(tree2$edge)
   
-  Fack <- function(n) ((n - 2) * ceiling(log2(n))) + n
+  # Fack et al. 2002, theorem 3; N = internal nodes = n_edges + 1
+  Fack <- function(n_edges) {
+    N <- n_edges + 1
+    lgN <- ceiling(log2(N))
+    N * lgN - 2 ^ lgN + 1 + 2 * (N - ceiling(log2(N + 1)))
+  }
                                          
   Sorting <- function(n) {
     lc <- ceiling(log2(n))
@@ -72,23 +77,20 @@ test_that("Simple NNI approximations", {
   }
   Li <- function(n_edges) Sorting(n_edges + 3) + (2 * DegDist(n_edges + 3))
   
-  allMatched <- c(lower = 0L, best_lower = 0L, tight_upper = 0L,
-                  best_upper = 0L, loose_upper = 0L, fack_upper = 0L,
-                  li_upper = 0L)
-  oneUnmatched <- c(lower = 1L, best_lower = 1L, tight_upper = 1L,
-                    best_upper = 1L, loose_upper = 2L, fack_upper = 2L,
-                    li_upper = Li(1))
-  fiveUnmatched <- c(lower = 5L, best_lower = 10L, tight_upper = 10L,
-                     best_upper = 10L, loose_upper = 18L, fack_upper = 18L,
-                     li_upper = Li(5))
+  allMatched <- c(lower = 0L, best_upper = 0L, tight_upper = 0L,
+                  loose_upper = 0L, fack_upper = 0L, li_upper = 0L)
+  oneUnmatched <- c(lower = 1L, best_upper = 1L, tight_upper = 1L,
+                    loose_upper = 1L, fack_upper = Fack(1), li_upper = Li(1))
+  fiveUnmatched <- c(lower = 5L, best_upper = 10L, tight_upper = 10L,
+                     loose_upper = 17L, fack_upper = Fack(5), li_upper = Li(5))
   
   Test <- function(tree, expect) {
-    expectation <- rep(NA_integer_, 7L)
-    names(expectation) <- c("lower", "best_lower", "tight_upper", "best_upper",
+    expectation <- rep(NA_integer_, 6L)
+    names(expectation) <- c("lower", "best_upper", "tight_upper",
                             "loose_upper", "fack_upper", "li_upper")
     expectation[names(expect)] <- expect
-    if (is.na(expectation["best_lower"]) && !is.na(expect["tight_upper"])) {
-      expectation[c("best_lower", "best_upper")] <- expect["tight_upper"]
+    if (is.na(expectation["best_upper"]) && !is.na(expect["tight_upper"])) {
+      expectation["best_upper"] <- expect["tight_upper"]
     }
     if (is.na(expect["loose_upper"])) {
       expectation["loose_upper"] <- min(expect[c("fack_upper", "li_upper")])
@@ -130,11 +132,11 @@ test_that("Simple NNI approximations", {
   
   # One region of three unmatched edges
   Test(read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));"),
-       c(lower = 3L, tight_upper = 5L, fack_upper = 8L, li_upper = Li(3)))
+       c(lower = 3L, tight_upper = 5L, fack_upper = Fack(3), li_upper = Li(3)))
   
   # One region of four unmatched edges
   Test(ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));"),
-       c(lower = 4L, tight_upper = 7L, fack_upper = 14L, li_upper = Li(4)))
+       c(lower = 4L, tight_upper = 7L, fack_upper = Fack(4), li_upper = Li(4)))
   
   # One region of five unmatched edges
   Test(ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));"),
@@ -152,6 +154,55 @@ test_that("Simple NNI approximations", {
   # Large, different trees: check that 64 leaf disagreements don't cause crash
   expect_gt(NNIDist(RandomTree(600), RandomTree(600))["li_upper"], 1)
   
+})
+
+test_that("NNIDist() lower bounds are valid", {
+  # Exact NNI distance is 2 (ms609/TreeDist issue 220)
+  a <- read.tree(text = "(t1,(t2,(t4,t5)),(t3,t6));")
+  b <- read.tree(text = "(t6,(t1,(t4,t5)),(t3,t2));")
+  expect_equal(NNIDist(a, b)[c("lower")], c(lower = 2L))
+})
+
+.ExpectBoundsBracketExact <- function(nTip) {
+  # Exact distances by breadth-first search over all trees, which are an NNI
+  # apart iff they differ in a single split
+  trees <- as.phylo(seq_len(NUnrooted(nTip)) - 1, nTip)
+  adjacent <- as.matrix(RobinsonFoulds(trees)) == 2
+  exact <- matrix(NA_integer_, length(trees), length(trees))
+  for (origin in seq_along(trees)) {
+    dist <- rep(NA_integer_, length(trees))
+    dist[origin] <- 0L
+    frontier <- origin
+    step <- 0L
+    while (length(frontier)) {
+      step <- step + 1L
+      reached <- which(colSums(adjacent[frontier, , drop = FALSE]) > 0 &
+                         is.na(dist))
+      dist[reached] <- step
+      frontier <- reached
+    }
+    exact[origin, ] <- dist
+  }
+  testthat::expect_equal(max(exact), NNIDiameter(nTip)[, "exact"],
+                         ignore_attr = TRUE)
+
+  bounds <- lapply(NNIDist(trees), as.matrix)
+  exact <- exact[lower.tri(exact)]
+  .Bound <- function(field) bounds[[field]][lower.tri(bounds[[field]])]
+  testthat::expect_true(all(.Bound("lower") <= exact))
+  for (upper in c("tight_upper", "best_upper", "loose_upper", "fack_upper",
+                  "li_upper")) {
+    testthat::expect_true(all(.Bound(upper) >= exact))
+  }
+}
+
+test_that("NNIDist() bounds bracket exact distances: 6 leaves", {
+  .ExpectBoundsBracketExact(6)
+})
+
+test_that("NNIDist() bounds bracket exact distances: 7 leaves", {
+  skip_on_cran() # c. 70 s
+  .ExpectBoundsBracketExact(7)
 })
 
 test_that("NNI with lists of trees", {
@@ -192,7 +243,10 @@ test_that("NNIDiameter() is sane", {
   FackMin <- function(n) ceiling(0.25 * lfactorial(n) / log(2))
   exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
   liMaxes <- c(0, 1, 3, 5, 8, 13, 16, 21, 25, 31, 37, 43, 47, 53, 59, 65)
-  FackMax <- function(n) n * ceiling(log2(n)) + n - (2 * ceiling(log2(n)))
+  FackMax <- function(n) {
+    lgN <- ceiling(log2(n))
+    n * lgN - 2 ^ lgN + 1 + 2 * (n - ceiling(log2(n + 1)))
+  }
   n <- 4:8
   expect_equal(NNIDiameter(n), cbind(
     liMin = n - 3L,
