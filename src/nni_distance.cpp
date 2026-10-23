@@ -8,6 +8,7 @@
 
 #include "tree_distances.h"
 #include "li_diameters.h"
+#include "nni_exact.h"
 
 using namespace Rcpp;
 using TreeTools::SplitList;
@@ -140,6 +141,14 @@ static void initialize_cache() {
 
 inline void ensure_cache() {
   std::call_once(cache_init_flag, initialize_cache);
+}
+
+int32_t nni_region_bound(const int32_t subtree_edges) {
+  ensure_cache();
+  const int32_t subtree_tips = subtree_edges + 3;
+  if (subtree_tips <= N_EXACT) return exact_diameter[subtree_tips];
+  const int32_t this_li = li[subtree_tips], fack = fack_lookup[subtree_tips];
+  return this_li < fack ? this_li : fack;
 }
 
 // Score subtree, add to score, and reset subtree size
@@ -293,7 +302,8 @@ grf_match nni_rf_matching (
 // [[Rcpp::export]]
 IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, 
                                const IntegerMatrix& edge2,
-                               const IntegerVector& nTip) {
+                               const IntegerVector& nTip,
+                               const int exactTips = 0) {
   
   ASSERT(nTip[0] <= NNI_MAX_TIPS && "Cannot calculate NNI distance for trees with so many tips.");
   const int32_t n_tip = static_cast<int32_t>(nTip[0]);
@@ -312,13 +322,20 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   ASSERT(n_edge == int32_t(edge2.nrow())
          && "Both trees must have the same number of edges.");
 
+  const int32_t exact_tips = exactTips > NNI_EXACT_MAX_TIPS ?
+    NNI_EXACT_MAX_TIPS : static_cast<int32_t>(exactTips);
+  
   if (n_tip < 4) {
-    return(IntegerVector::create(Named("lower") = 0,
-                                 _["best_upper"] = 0,
-                                 _["tight_upper"] = 0,
-                                 _["loose_upper"] = 0,
-                                 _["fack_upper"] = 0,
-                                 _["li_upper"] = 0));
+    IntegerVector zero = IntegerVector::create(Named("lower") = 0,
+                                               _["best_upper"] = 0,
+                                               _["tight_upper"] = 0,
+                                               _["loose_upper"] = 0,
+                                               _["fack_upper"] = 0,
+                                               _["li_upper"] = 0);
+    if (exact_tips > 0) {
+      zero.push_back(0, "region_upper");
+    }
+    return zero;
   }
   
   const int32_t root_1 = static_cast<int32_t>(edge1(n_edge - 1, 0));
@@ -425,7 +442,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
                  &li_score_bound, &fack_score_bound);
   }
 
-  return IntegerVector::create(
+  IntegerVector ret = IntegerVector::create(
     Named("lower")   = lower_bound,
     _["best_upper"] = best_upper_bound,
     _["tight_upper"] = tight_score_bound == NA_INT32 
@@ -433,4 +450,10 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
     _["loose_upper"] = loose_score_bound,
     _["fack_upper"] = fack_score_bound,
     _["li_upper"] = li_score_bound);
+  if (exact_tips > 0) {
+    ret.push_back(lower_bound == 0 ? 0 :
+                    nni_region_upper(edge1, edge2, n_tip, exact_tips),
+                  "region_upper");
+  }
+  return ret;
 }

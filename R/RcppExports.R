@@ -94,8 +94,12 @@ cpp_mast <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_mast`, edge1, edge2, nTip)
 }
 
-cpp_nni_distance <- function(edge1, edge2, nTip) {
-    .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
+cpp_nni_distance <- function(edge1, edge2, nTip, exactTips = 0L) {
+    .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip, exactTips)
+}
+
+cpp_nni_exact <- function(edge1, edge2, nTip, budget) {
+    .Call(`_TreeDist_cpp_nni_exact`, edge1, edge2, nTip, budget)
 }
 
 min_subtree_entropy <- function(n) {

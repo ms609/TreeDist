@@ -1,5 +1,11 @@
 # TreeDist 2.15.0.9008 (development)
 
+## New features
+
+- `NNIDist(regionTips = n)` reports `region_upper`, a tighter upper bound
+  that searches for the exact distance within each region of up to `n`
+  leaves.
+
 ## Bug fixes
 
 - `NNIDist()`: `best_lower` was not a lower bound, and has been removed.
