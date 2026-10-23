@@ -2,10 +2,10 @@
 # Usage (from package root):
 #   Rscript dev/rogue_polescapa/evaluate.R reference   # pairs with exact uSPR
 #   Rscript dev/rogue_polescapa/evaluate.R large       # dev/rogue_bound workloads
+#   Rscript dev/rogue_polescapa/evaluate.R extra       # more large random pairs
 Sys.setenv(MAKEFLAGS = "-j2")
 suppressMessages(devtools::load_all(quiet = TRUE))
 source("dev/rogue_polescapa/selectors.R")
-#   Rscript dev/rogue_polescapa/evaluate.R extra       # more large random pairs
 # A second argument `hyb` runs only `mci` and the hybrids, saved separately.
 args <- commandArgs(TRUE)
 which <- args[[1]]
