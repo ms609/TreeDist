@@ -338,7 +338,7 @@ jobs:
       !cancelled() && needs.sense-check.result == 'success' &&
       contains(fromJSON('["success", "skipped"]'), needs.codemeta.result) &&
       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04 # RSPM below must name the same release
     # A hung setup or a wedged benchmark otherwise runs to the 6-hour default,
     # holding a runner the whole time.
     timeout-minutes: 45
@@ -354,7 +354,7 @@ jobs:
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      RSPM: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
+      RSPM: "https://packagemanager.posit.co/cran/__linux__/resolute/latest"
       _R_CHECK_BUILD_VIGNETTES_: false
       _R_CHECK_CRAN_INCOMING_: false
       _R_CHECK_FORCE_SUGGESTS_: false
@@ -672,7 +672,7 @@ jobs:
     # and codemeta is skipped outside pull requests, so without this the
     # backstop never ran on push, schedule or workflow_dispatch.
     if: ${{ !cancelled() && needs.core.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 120  # revdepchecks are genuinely long
 
     name: revdepcheck (${{ matrix.config.deps }})

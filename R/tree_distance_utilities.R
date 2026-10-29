@@ -535,28 +535,31 @@ Ntropy <- function(...) {
 CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
                         ...) {
   nTree <- length(x)
+  labels <- names(x)
   countUp <- seq_len(nTree - 1)
-  i <- x[rep(countUp, rev(countUp))]
-  j <- x[unlist(sapply(countUp, function(n) n + seq_len(nTree - n)))]
-  
+  i <- rep(countUp, rev(countUp))
+  j <- unlist(lapply(countUp, function(n) n + seq_len(nTree - n)))
+  # A plain list: on R 4.1, each `[[` on a multiPhylo copies the whole list
+  x <- lapply(seq_len(nTree), function(k) x[[k]])
+
   cluster <- getOption("TreeDist-cluster")
   ret <- if (is.null(cluster)) {
     cli_progress_bar("Comparing", total = length(i))
     vapply(seq_along(i), function(k) {
       cli_progress_update(1, .envir = parent.frame(2))
-      Func(i[[k]], j[[k]], ...)
+      Func(x[[i[k]]], x[[j[k]]], ...)
       }, FUN.VALUE)
   } else {
-    do.call("cbind", 
-            parLapply(cluster, seq_along(i), 
-                      function(k, Func) Func(i[[k]], j[[k]]),
+    do.call("cbind",
+            parLapply(cluster, seq_along(i),
+                      function(k, Func) Func(x[[i[k]]], x[[j[k]]]),
                       Func = Func))
   }
-  
+
   .WrapReturn <- function(dists) {
     structure(dists,
               Size = nTree,
-              Labels = names(x),
+              Labels = labels,
               Diag = FALSE,
               Upper = TRUE,
               class = "dist")
