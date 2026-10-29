@@ -326,7 +326,7 @@ test_that("C++ Rogue scorer matches R implementation", {
   }
 })
 
-test_that("Single-leaf candidates scored from parent splits", {
+test_that("Leaf and leaf-pair candidates scored from parent splits", {
   library("TreeTools", quietly = TRUE)
   # Scores must agree with those from rebuilding the reduced trees, to within
   # numerical error, with the same best candidates; candidates that cannot

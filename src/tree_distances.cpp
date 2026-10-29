@@ -941,11 +941,11 @@ double mutual_clustering_bounded_score(const RawMatrix &x, const RawMatrix &y,
 }
 
 // As mutual_clustering_bounded_score(), for trees obtained by removing one
-// leaf from a parent pair whose splits overlap by `sc.overlap`, when the
-// resulting trees share no split.  See split_counts.h.
-double mutual_clustering_bounded_counts(const SplitCounts &sc,
-                                        const double min_score,
-                                        const ColPrices *prices) {
+// or two leaves from a parent pair whose splits overlap by `sc.overlap`, when
+// the resulting trees share no split.  See split_counts.h.
+template <bool Pair>
+double bounded_counts_impl(const SplitCounts &sc, const double min_score,
+                           const ColPrices *prices) {
   const split_int n_tips = sc.n_tip;
   const split_int dim = sc.n_split;
   constexpr cost max_score = BIG;
@@ -981,7 +981,9 @@ double mutual_clustering_bounded_counts(const SplitCounts &sc,
     cost *out = score.row(i);
     cost row_min = max_score;
     for (split_int j = 0; j < dim; ++j) {
-      const split_int a_and_b = overlap[sc.col[j]] - (row_has & sc.col_has[j]);
+      const int16_t both = row_has & sc.col_has[j];
+      const split_int a_and_b = overlap[sc.col[j]] -
+        (Pair ? (both & 1) + (both >> 1) : both);
       const split_int nb = sc.col_in[j];
       const split_int a_and_B = na - a_and_b;
       const split_int A_and_b = nb - a_and_b;
@@ -1035,6 +1037,13 @@ double mutual_clustering_bounded_counts(const SplitCounts &sc,
     lap_warm(dim, score, rowsol, colsol, warm_scratch, col_price) :
     lap(dim, score, rowsol, colsol, false); // #nocov: > 16k leaves
   return static_cast<double>(max_score * dim - lap_cost) * over_max_score;
+}
+
+double mutual_clustering_bounded_counts(const SplitCounts &sc,
+                                        const double min_score,
+                                        const ColPrices *prices) {
+  return sc.pair ? bounded_counts_impl<true>(sc, min_score, prices) :
+    bounded_counts_impl<false>(sc, min_score, prices);
 }
 
 // Optimal column duals of the mutual clustering LAP between the splits `x`

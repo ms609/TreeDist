@@ -35,6 +35,10 @@
 
 ## Performance
 
+- `CompareAll()` no longer takes time quadratic in the number of pairs on
+  older versions of R (e.g. 4.1), where each element access to a
+  `multiPhylo` object copied the whole list.
+
 - Trees with different leaf sets are pruned to their shared leaves in C++,
   without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
   is c. 15× faster, with lower memory use (#123).
@@ -50,6 +54,10 @@
   a further 55–60% faster at 30–150 leaves.  Scores can differ from before in
   the last few bits, which can break exact ties between candidates
   differently.
+
+- With `options(sprDepth = 2)`, `SPRDist(method = "Rogue")` likewise scores
+  most pairs of leaves from the parent trees' splits: 45–55% faster at 30–80
+  leaves.
 
 - Improve performance when comparing many similar trees with
   `ClusteringInfoDistance()`, `MatchingSplitDistance()`, `InfoRobinsonFoulds()`

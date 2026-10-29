@@ -691,26 +691,27 @@ double ScoreWithout(const IntegerMatrix &pre1, const IntegerMatrix &pre2,
   return score1 + BoundedCID(sub2[0], sub2[1], cutoff - score1, pp);
 }
 
-// Scores candidates that drop a single leaf without rebuilding the trees.
+// Scores candidates that drop one or two leaves without rebuilding the trees.
 //
 // Removing leaf l from a binary tree suppresses its parent node, so exactly
 // one split vanishes from each tree, and every other split restricts to a
-// distinct split of the smaller tree.  If, once l is removed, the trees
-// still cannot be reduced and still share no split, then the smaller trees
-// are those that KeepAndReduce() would return (up to leaf numbering and
-// rooting), so their mutual clustering cost matrix follows from the overlaps
-// between the parent splits, without building, reducing or splitting trees.
-class SingleDrop {
+// distinct split of the smaller tree; removing a second leaf repeats this.
+// If, once the leaves are removed, the trees still cannot be reduced and
+// still share no split, then the smaller trees are those that
+// KeepAndReduce() would return (up to leaf numbering and rooting), so their
+// mutual clustering cost matrix follows from the overlaps between the parent
+// splits, without building, reducing or splitting trees.
+class LeafDrop {
 public:
   // `edge1` and `edge2`: postorder edges of the parent trees, binary and
   // rooted on leaf 1.  `bits1` and `bits2`: their splits, as from
   // GetSplits() with identity leaf indexing; `node1` and `node2`: the node
   // of each split.  Disabled if `n_tip` is zero.
-  SingleDrop(const IntegerMatrix &edge1, const IntegerMatrix &edge2,
-             const int n_tip, const int n_word,
-             const std::vector<uint64_t> &bits1,
-             const std::vector<uint64_t> &bits2,
-             const std::vector<int> &node1, const std::vector<int> &node2)
+  LeafDrop(const IntegerMatrix &edge1, const IntegerMatrix &edge2,
+           const int n_tip, const int n_word,
+           const std::vector<uint64_t> &bits1,
+           const std::vector<uint64_t> &bits2,
+           const std::vector<int> &node1, const std::vector<int> &node2)
     : n_tip_(n_tip), n_word_(n_word), n_split_(int(node1.size())),
       bits1_(bits1), bits2_(bits2) {
     ready_ = Init(edge1, edge2, node1, node2);
@@ -719,44 +720,56 @@ public:
   // Prepares to score the removal of `leaf` (0-based); false if it must be
   // scored by ScoreWithout() instead.
   bool Prepare(const int leaf) {
-    const int tip = leaf + 1;
-    if (!ready_ || tip == 1 || shared_[leaf] || Reduces(tip)) {
+    if (!ready_ || leaf == 0 || shared_[leaf]) {
       return false;
     }
-    const int drop1 = Vanishing(x_, row_of1_, tip, nullptr);
-    drop2_ = Vanishing(y_, row_of2_, tip, &merge2_);
-    const int n_child = n_split_ - 1;
-    row_.resize(n_child);
-    row_in_.resize(n_child);
-    row_has_.resize(n_child);
-    col_.resize(n_child);
-    col_in_.resize(n_child);
-    col_has_.resize(n_child);
-    const int word = leaf >> 6;
-    const uint64_t bit = uint64_t(1) << (leaf & 63);
-    for (int r = 0, k = 0; r != n_split_; ++r) {
-      if (r == drop1) continue;
-      const int16_t has = (bits1_[size_t(r) * n_word_ + word] & bit) != 0;
-      row_[k] = r;
-      row_has_[k] = has;
-      row_in_[k] = in1_[r] - has;
-      ++k;
+    xc_ = x_;
+    yc_ = y_;
+    drop1_[0] = Remove(xc_, row_of1_, leaf + 1, nullptr);
+    drop2_[0] = Remove(yc_, row_of2_, leaf + 1, &merge2_[0]);
+    drop1_[1] = drop2_[1] = merge2_[1] = -1;
+    if (Reduces()) {
+      return false;
     }
-    for (int c = 0, k = 0; c != n_split_; ++c) {
-      if (c == drop2_) continue;
-      const int16_t has = (bits2_[size_t(c) * n_word_ + word] & bit) != 0;
-      col_[k] = c;
-      col_has_[k] = has;
-      col_in_[k] = in2_[c] - has;
-      ++k;
+    Fill(leaf, -1);
+    return true;
+  }
+
+  // Prepares to score the removal of leaves `i` and `j` (0-based, i < j);
+  // false if they must be scored by ScoreWithout() instead.
+  bool Prepare(const int i, const int j) {
+    if (!ready_ || i == 0 || shared_[i] || shared_[j] ||
+        std::binary_search(shared_pair_.begin(), shared_pair_.end(),
+                           PairKey(i, j))) {
+      return false;
     }
+    if (base_leaf_ != i) {
+      // Trees less leaf i, reused for each j
+      xi_ = x_;
+      yi_ = y_;
+      base_drop1_ = Remove(xi_, row_of1_, i + 1, nullptr);
+      base_drop2_ = Remove(yi_, row_of2_, i + 1, &base_merge2_);
+      base_leaf_ = i;
+    }
+    xc_ = xi_;
+    yc_ = yi_;
+    drop1_[0] = base_drop1_;
+    drop2_[0] = base_drop2_;
+    merge2_[0] = base_merge2_;
+    drop1_[1] = Remove(xc_, row_of1_, j + 1, nullptr);
+    drop2_[1] = Remove(yc_, row_of2_, j + 1, &merge2_[1]);
+    if (Reduces()) {
+      return false;
+    }
+    Fill(i, j);
     return true;
   }
 
   // As ScoreWithout(), for the prepared candidate.
   double Score(const double cutoff, const ParentPrices *pp) {
-    const int n_child = n_split_ - 1;
-    const int n = n_tip_ - 1;
+    const int n_drop = drop1_[1] < 0 ? 1 : 2;
+    const int n_child = n_split_ - n_drop;
+    const int n = n_tip_ - n_drop;
     // As GetSplits()
     const double n_lg2_n = n * std::log2(double(n));
     double entropy1 = 0;
@@ -774,9 +787,10 @@ public:
     const double tol = std::max(1.0, info) * SQRT_EPS;
     const SplitCounts sc{n, n_child, overlap_.data(), n_split_,
                          row_.data(), row_in_.data(), row_has_.data(),
-                         col_.data(), col_in_.data(), col_has_.data()};
+                         col_.data(), col_in_.data(), col_has_.data(),
+                         n_drop == 2};
     pp_ = pp;
-    const ColPrices prices{&SingleDrop::Prices, this};
+    const ColPrices prices{&LeafDrop::Prices, this};
     const double mci = mutual_clustering_bounded_counts(
       sc, (info - cutoff) / 2 - tol, pp ? &prices : nullptr);
     const double ret = info - mci - mci;
@@ -807,11 +821,12 @@ private:
       in1_[r] = Count(&bits1_[size_t(r) * n_word_]);
       in2_[r] = Count(&bits2_[size_t(r) * n_word_]);
     }
-    // Overlaps between parent splits; and, for each leaf, whether removing
-    // it makes two splits identical, which happens if they differ in that
-    // leaf alone
+    // Overlaps between parent splits; and the leaves whose removal makes two
+    // splits identical: those in which they differ, if they differ in one
+    // leaf (shared_) or two (shared_pair_)
     overlap_.resize(size_t(n_split_) * n_split_);
     shared_.assign(n_tip, 0);
+    shared_pair_.clear();
     const int spare = n_word_ * 64 - n_tip;
     const uint64_t last_mask = spare ? ~uint64_t(0) >> spare : ~uint64_t(0);
     for (int i = 0; i != n_split_; ++i) {
@@ -827,19 +842,29 @@ private:
         if (a_xor_b == 0 || a_xor_b == n_tip) {
           return false; // The trees share a split
         }
-        if (a_xor_b == 1 || a_xor_b == n_tip - 1) {
-          const uint64_t flip = a_xor_b == 1 ? 0 : ~uint64_t(0);
-          for (int w = 0; w != n_word_; ++w) {
-            const uint64_t diff = (a[w] ^ b[w] ^ flip) &
-              (w == n_word_ - 1 ? last_mask : ~uint64_t(0));
-            if (diff) {
-              shared_[w * 64 + __builtin_ctzll(diff)] = 1;
-              break;
-            }
+        const int n_diff = std::min(a_xor_b, n_tip - a_xor_b);
+        if (n_diff > 2) {
+          continue;
+        }
+        // The leaves in which the splits differ
+        const uint64_t flip = a_xor_b == n_diff ? 0 : ~uint64_t(0);
+        int diff_leaf[2];
+        int n_found = 0;
+        for (int w = 0; w != n_word_ && n_found != n_diff; ++w) {
+          uint64_t diff = (a[w] ^ b[w] ^ flip) &
+            (w == n_word_ - 1 ? last_mask : ~uint64_t(0));
+          for (; diff && n_found != n_diff; diff &= diff - 1) {
+            diff_leaf[n_found++] = w * 64 + __builtin_ctzll(diff);
           }
+        }
+        if (n_diff == 1) {
+          shared_[diff_leaf[0]] = 1;
+        } else {
+          shared_pair_.push_back(PairKey(diff_leaf[0], diff_leaf[1]));
         }
       }
     }
+    std::sort(shared_pair_.begin(), shared_pair_.end());
     return true;
   }
 
@@ -883,6 +908,11 @@ private:
     }
   };
 
+  static uint64_t PairKey(const int i, const int j) {
+    return i < j ? (uint64_t(i) << 32) | uint64_t(j) :
+      (uint64_t(j) << 32) | uint64_t(i);
+  }
+
   int Count(const uint64_t *x) const {
     int ret = 0;
     for (int w = 0; w != n_word_; ++w) {
@@ -891,31 +921,34 @@ private:
     return ret;
   }
 
-  // The split that vanishes from `ledger`'s tree when `tip` is removed;
-  // `merge`, if given, receives the split that it then duplicates, or -1.
-  // `tip`'s parent is not the root.
-  static int Vanishing(const Ledger &ledger, const std::vector<int> &row_of,
-                       const int tip, int *merge) {
+  // Removes `tip` from `ledger`'s tree (a parent tree, perhaps already less
+  // a leaf), returning the parent split that vanishes from it; `merge`, if
+  // given, receives the parent split that the vanishing split then
+  // duplicates, or -1.  The root's children must be leaf 1 and a node with
+  // more than three leaves.
+  static int Remove(Ledger &ledger, const std::vector<int> &row_of,
+                    const int tip, int *merge) {
     const int parent = ledger.parent[tip];
     const int sibling = ledger.sibling[tip];
-    if (row_of[parent] >= 0) {
+    int ret;
+    if (ledger.parent[parent] != ledger.parent[1]) {
       if (merge) *merge = row_of[sibling];
-      return row_of[parent];
+      ret = row_of[parent];
+    } else {
+      // `parent` is the root's child, whose split omits leaf 1 alone; the
+      // sibling's split will omit only leaf 1 too
+      if (merge) *merge = -1;
+      ret = row_of[sibling];
     }
-    // `parent` is the root's child, whose split omits leaf 1 alone; the
-    // sibling's split will omit only leaf 1 too
-    if (merge) *merge = -1;
-    return row_of[sibling];
+    ASSERT(ret >= 0);
+    ledger.RemoveTip(tip);
+    return ret;
   }
 
-  // Whether reduce_trees() would remove further leaves once `tip` is gone:
-  // the tests of its cherry, root and chain rules, applied to the parent
-  // trees with `tip` removed.
-  bool Reduces(const int tip) {
-    xc_ = x_;
-    yc_ = y_;
-    xc_.RemoveTip(tip);
-    yc_.RemoveTip(tip);
+  // Whether reduce_trees() would remove further leaves from the prepared
+  // trees: the tests of its cherry, root and chain rules, applied to the
+  // parent trees with the candidate's leaves removed.
+  bool Reduces() const {
     const int n_tip = n_tip_;
     const auto IsTip = [n_tip](const int i) { return i <= n_tip; };
     const std::vector<int> &xs = xc_.sibling, &xp = xc_.parent,
@@ -956,20 +989,62 @@ private:
     return false;
   }
 
-  // Parent prices for the prepared candidate's splits of tree 2.  A split
-  // that two parent splits restrict to takes the lesser price.
-  static const price_t *Prices(void *context) {
-    SingleDrop &sd = *static_cast<SingleDrop *>(context);
-    const std::vector<price_t> &parent = sd.pp_->Price();
-    if (parent.empty()) return nullptr; // #nocov
-    const int n_child = sd.n_split_ - 1;
-    sd.price_.resize(n_child);
-    for (int k = 0; k != n_child; ++k) {
-      const int c = sd.col_[k];
-      sd.price_[k] = c == sd.merge2_ ?
-        std::min(parent[c], parent[sd.drop2_]) : parent[c];
+  // Child splits of the prepared candidate, which removes leaf `i` and, if
+  // `j` >= 0, leaf `j`.
+  void Fill(const int i, const int j) {
+    const int n_child = n_split_ - (j < 0 ? 1 : 2);
+    row_.resize(n_child);
+    row_in_.resize(n_child);
+    row_has_.resize(n_child);
+    col_.resize(n_child);
+    col_in_.resize(n_child);
+    col_has_.resize(n_child);
+    const int word_i = i >> 6;
+    const uint64_t bit_i = uint64_t(1) << (i & 63);
+    const int word_j = j < 0 ? 0 : j >> 6;
+    const uint64_t bit_j = j < 0 ? 0 : uint64_t(1) << (j & 63);
+    const auto Has = [&](const uint64_t *split) {
+      return int16_t(((split[word_i] & bit_i) != 0) |
+                     (((split[word_j] & bit_j) != 0) << 1));
+    };
+    for (int r = 0, k = 0; r != n_split_; ++r) {
+      if (r == drop1_[0] || r == drop1_[1]) continue;
+      const int16_t has = Has(&bits1_[size_t(r) * n_word_]);
+      row_[k] = r;
+      row_has_[k] = has;
+      row_in_[k] = in1_[r] - (has & 1) - (has >> 1);
+      ++k;
     }
-    return sd.price_.data();
+    for (int c = 0, k = 0; c != n_split_; ++c) {
+      if (c == drop2_[0] || c == drop2_[1]) continue;
+      const int16_t has = Has(&bits2_[size_t(c) * n_word_]);
+      col_[k] = c;
+      col_has_[k] = has;
+      col_in_[k] = in2_[c] - (has & 1) - (has >> 1);
+      ++k;
+    }
+  }
+
+  // Parent prices for the prepared candidate's splits of tree 2.  A split
+  // that several parent splits restrict to takes the least of their prices.
+  static const price_t *Prices(void *context) {
+    LeafDrop &ld = *static_cast<LeafDrop *>(context);
+    const std::vector<price_t> &parent = ld.pp_->Price();
+    if (parent.empty()) return nullptr; // #nocov
+    // The split into which the first vanishing split merges may itself
+    // vanish with the second leaf, merging in turn into the second's target
+    const int merge0 = ld.merge2_[0] >= 0 && ld.merge2_[0] == ld.drop2_[1] ?
+      ld.merge2_[1] : ld.merge2_[0];
+    const int n_child = int(ld.col_.size());
+    ld.price_.resize(n_child);
+    for (int k = 0; k != n_child; ++k) {
+      const int c = ld.col_[k];
+      price_t p = parent[c];
+      if (c == merge0) p = std::min(p, parent[ld.drop2_[0]]);
+      if (c == ld.merge2_[1]) p = std::min(p, parent[ld.drop2_[1]]);
+      ld.price_[k] = p;
+    }
+    return ld.price_.data();
   }
 
   const int n_tip_;
@@ -978,15 +1053,20 @@ private:
   const std::vector<uint64_t> &bits1_;
   const std::vector<uint64_t> &bits2_;
   bool ready_ = false;
-  Ledger x_, y_, xc_, yc_;
+  Ledger x_, y_, xi_, yi_, xc_, yc_;
   std::vector<int> row_of1_, row_of2_, in1_, in2_;
   std::vector<int16_t> overlap_;
   std::vector<uint8_t> shared_;
-  // The prepared candidate
+  std::vector<uint64_t> shared_pair_; // Sorted PairKey()s
+  // Trees less leaf base_leaf_
+  int base_leaf_ = -1;
+  int base_drop1_ = -1, base_drop2_ = -1, base_merge2_ = -1;
+  // The prepared candidate: the parent split that vanishes from each tree
+  // as each leaf is removed (-1 if only one leaf is removed), and the split
+  // of tree 2 that it then duplicates
+  int drop1_[2] = {-1, -1}, drop2_[2] = {-1, -1}, merge2_[2] = {-1, -1};
   std::vector<int> row_, row_in_, col_, col_in_;
   std::vector<int16_t> row_has_, col_has_;
-  int drop2_ = -1;
-  int merge2_ = -1;
   const ParentPrices *pp_ = nullptr;
   std::vector<price_t> price_;
 };
@@ -999,7 +1079,7 @@ private:
 // Candidates that cannot beat the best so far may receive a lower bound
 // rather than their exact score.
 // `incremental = FALSE` scores every candidate by rebuilding its trees
-// (SingleDrop is not used), for testing.
+// (LeafDrop is not used), for testing.
 // [[Rcpp::export]]
 List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
                       const bool incremental = true) {
@@ -1032,16 +1112,16 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
     pp.n_split = full2.bits.nrow();
   }
   const ParentPrices *pp_ptr = pp.n_split ? &pp : nullptr;
-  SingleDrop single(tree1["edge"], tree2["edge"], incremental ? n_tip : 0,
-                    pp.n_word, bits1, pp.bits, node1, node2);
+  LeafDrop drop(tree1["edge"], tree2["edge"], incremental ? n_tip : 0,
+                pp.n_word, bits1, pp.bits, node1, node2);
   NumericVector scores(n_tip);
   double best = R_PosInf;
   bool all_finite = true;
   LogicalVector keep(n_tip, true);
   for (int i = 0; i != n_tip; ++i) {
     Rcpp::checkUserInterrupt();
-    if (single.Prepare(i)) {
-      scores[i] = single.Score(best, pp_ptr);
+    if (drop.Prepare(i)) {
+      scores[i] = drop.Score(best, pp_ptr);
     } else {
       keep[i] = false;
       scores[i] = ScoreWithout(pre1, pre2, labels, keep, best, pp_ptr);
@@ -1065,10 +1145,14 @@ List spr_rogue_scores(const List &tree1, const List &tree2, const int depth,
     Rcpp::checkUserInterrupt();
     keep[i] = false;
     for (int j = i + 1; j != n_tip; ++j) {
-      keep[j] = false;
-      pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best,
-                                       pp_ptr);
-      keep[j] = true;
+      if (drop.Prepare(i, j)) {
+        pair_scores[pair] = drop.Score(best, pp_ptr);
+      } else {
+        keep[j] = false;
+        pair_scores[pair] = ScoreWithout(pre1, pre2, labels, keep, best,
+                                         pp_ptr);
+        keep[j] = true;
+      }
       if (!R_FINITE(pair_scores[pair])) {
         return List::create(Named("scores") = scores,
                             _["pair_scores"] = pair_scores);
