@@ -186,14 +186,22 @@ test_that("NNIDist() lower bounds are valid", {
   testthat::expect_equal(max(exact), NNIDiameter(nTip)[, "exact"],
                          ignore_attr = TRUE)
 
-  bounds <- lapply(NNIDist(trees), as.matrix)
+  testthat::expect_equal(
+    vapply(trees, .NNIExact, integer(1), tree1 = trees[[nTip]]),
+    exact[nTip, ]
+  )
+
+  bounds <- lapply(NNIDist(trees, regionTips = nTip), as.matrix)
   exact <- exact[lower.tri(exact)]
   .Bound <- function(field) bounds[[field]][lower.tri(bounds[[field]])]
   testthat::expect_true(all(.Bound("lower") <= exact))
-  for (upper in c("tight_upper", "best_upper", "loose_upper", "fack_upper",
-                  "li_upper")) {
+  for (upper in c("region_upper", "tight_upper", "best_upper", "loose_upper",
+                  "fack_upper", "li_upper")) {
     testthat::expect_true(all(.Bound(upper) >= exact))
   }
+  testthat::expect_true(all(.Bound("region_upper") <= .Bound("best_upper")))
+  # Not guaranteed in general, but holds for every pair of <= 7 leaves
+  testthat::expect_equal(.Bound("region_upper"), exact)
 }
 
 test_that("NNIDist() bounds bracket exact distances: 6 leaves", {
@@ -203,6 +211,74 @@ test_that("NNIDist() bounds bracket exact distances: 6 leaves", {
 test_that("NNIDist() bounds bracket exact distances: 7 leaves", {
   skip_on_cran() # c. 70 s
   .ExpectBoundsBracketExact(7)
+})
+
+test_that("NNIDist() region_upper", {
+  bal <- BalancedTree(9)
+  pec <- PectinateTree(9)
+  expect_false("region_upper" %in% names(NNIDist(bal, pec)))
+  expect_equal(NNIDist(bal, pec, regionTips = 9)[-7], NNIDist(bal, pec))
+  expect_equal(NNIDist(bal, bal, regionTips = 9)[["region_upper"]], 0L)
+  expect_equal(
+    NNIDist(PectinateTree(3), PectinateTree(3), regionTips = 9),
+    c(lower = 0L, best_upper = 0L, tight_upper = 0L, loose_upper = 0L,
+      fack_upper = 0L, li_upper = 0L, region_upper = 0L)
+  )
+
+  # Two regions, of 7 and 9 leaves, separated by a shared split
+  aSide1 <- "((a1, a2), (a3, a4)), (a5, a6)"
+  aSide2 <- "(a1, (a3, (a5, (a2, a4)))), a6"
+  bSide1 <- "((b1, b2), (b3, b4)), ((b5, b6), (b7, b8))"
+  bSide2 <- "b1, (b3, (b5, (b7, (b2, (b4, (b6, b8))))))"
+  .Tree <- function(a, b) read.tree(text = paste0("(", a, ", (", b, "));"))
+  tree1 <- .Tree(aSide1, bSide1)
+  tree2 <- .Tree(aSide2, bSide2)
+  bounds <- NNIDist(tree1, tree2, regionTips = 16)
+  expect_equal(bounds[["lower"]], 10L)
+  expect_equal(bounds[["best_upper"]], 19L)
+  expect_equal(bounds[["region_upper"]], 14L) # == .NNIExact(); c. 8 s
+  expect_equal(
+    NNIDist(RootTree(tree1, "a1"), RootTree(tree2, "b3"), regionTips = 16),
+    bounds
+  )
+  bSide <- paste0("b", 1:8)
+  expect_equal(
+    NNIDist(RootTree(tree1, bSide), RootTree(tree2, bSide), regionTips = 16),
+    bounds
+  )
+  expect_equal(NNIDist(tree2, tree1, regionTips = 16), bounds)
+  expect_equal(
+    NNIDist(tree1, list(tree1, tree2), regionTips = 16)["region_upper", ],
+    c(0L, 14L)
+  )
+
+  # Regions above the cap contribute best_upper
+  expect_equal(
+    NNIDist(tree1, tree2, regionTips = 6)[["region_upper"]],
+    bounds[["best_upper"]]
+  )
+  expect_equal(NNIDist(tree1, tree2, regionTips = 7)[["region_upper"]], 17L)
+  set.seed(0)
+  repeat { # Single region of 20 leaves
+    big1 <- RandomTree(20, root = FALSE)
+    big2 <- RenumberTips(RandomTree(20, root = FALSE), big1)
+    big <- NNIDist(big1, big2, regionTips = 16)
+    if (big[["lower"]] == 17) break
+  }
+  expect_equal(big[["region_upper"]], big[["best_upper"]])
+
+  # Polytomies fall back to best_upper, whichever tree holds them
+  poly1 <- .Tree(sub("(a1, a2)", "a1, a2", aSide1, fixed = TRUE), bSide1)
+  poly2 <- .Tree(aSide2, sub("(b6, b8)", "b6, b8", bSide2, fixed = TRUE))
+  polyBounds <- NNIDist(poly1, poly2, regionTips = 16)
+  expect_equal(polyBounds[["region_upper"]], polyBounds[["best_upper"]])
+
+  expect_equal(.NNIExact(PectinateTree(3), PectinateTree(3)), 0L)
+  expect_equal(.NNIExact(bal, bal), 0L)
+  expect_equal(.NNIExact(bal, pec), 2L)
+  expect_true(is.na(.NNIExact(BalancedTree(12), PectinateTree(12), 10)))
+  expect_error(.NNIExact(PectinateTree(17), PectinateTree(17)), "16 leaves")
+  expect_error(.NNIExact(poly1, poly2), "binary")
 })
 
 test_that("NNI with lists of trees", {
