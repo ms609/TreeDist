@@ -186,13 +186,26 @@ test_that("NNIDist() lower bounds are valid", {
   testthat::expect_equal(max(exact), NNIDiameter(nTip)[, "exact"],
                          ignore_attr = TRUE)
 
-  bounds <- lapply(NNIDist(trees), as.matrix)
+  # Bounds for each pair, in the order of exact[lower.tri(exact)].
+  # Calling the C++ kernel directly avoids NNIDist()'s per-pair R overhead,
+  # which makes 7 leaves (446,040 pairs) take minutes, and an hour on R 4.1;
+  # tip labels are already in a common order.
+  pairs <- which(lower.tri(exact), arr.ind = TRUE)
+  edges <- lapply(trees, function(tr) Postorder(tr[["edge"]]))
+  bounds <- vapply(seq_len(nrow(pairs)), function(k) {
+    cpp_nni_distance(edges[[pairs[k, 1]]], edges[[pairs[k, 2]]], nTip)
+  }, integer(6))
+  if (nTip == 6) {
+    viaR <- vapply(NNIDist(trees), function(d) as.matrix(d)[pairs],
+                   double(nrow(pairs)))
+    testthat::expect_equal(t(bounds), viaR, ignore_attr = TRUE)
+    testthat::expect_equal(colnames(viaR), rownames(bounds))
+  }
   exact <- exact[lower.tri(exact)]
-  .Bound <- function(field) bounds[[field]][lower.tri(bounds[[field]])]
-  testthat::expect_true(all(.Bound("lower") <= exact))
+  testthat::expect_true(all(bounds["lower", ] <= exact))
   for (upper in c("tight_upper", "best_upper", "loose_upper", "fack_upper",
                   "li_upper")) {
-    testthat::expect_true(all(.Bound(upper) >= exact))
+    testthat::expect_true(all(bounds[upper, ] >= exact))
   }
 }
 
@@ -201,7 +214,7 @@ test_that("NNIDist() bounds bracket exact distances: 6 leaves", {
 })
 
 test_that("NNIDist() bounds bracket exact distances: 7 leaves", {
-  skip_on_cran() # c. 70 s
+  skip_on_cran() # c. 7 s
   .ExpectBoundsBracketExact(7)
 })
 
