@@ -338,7 +338,9 @@ jobs:
       !cancelled() && needs.sense-check.result == 'success' &&
       contains(fromJSON('["success", "skipped"]'), needs.codemeta.result) &&
       (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest is now 26.04, on which setup-r apt-installs ~175
+    # packages and has timed out; RSPM below serves noble (24.04) binaries.
+    runs-on: ubuntu-24.04
     # A hung setup or a wedged benchmark otherwise runs to the 6-hour default,
     # holding a runner the whole time.
     timeout-minutes: 45
@@ -672,7 +674,7 @@ jobs:
     # and codemeta is skipped outside pull requests, so without this the
     # backstop never ran on push, schedule or workflow_dispatch.
     if: ${{ !cancelled() && needs.core.result == 'success' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # As benchmark
     timeout-minutes: 120  # revdepchecks are genuinely long
 
     name: revdepcheck (${{ matrix.config.deps }})
