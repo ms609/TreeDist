@@ -35,6 +35,10 @@
 
 ## Performance
 
+- `CompareAll()` no longer takes time quadratic in the number of pairs on
+  older versions of R (e.g. 4.1), where each element access to a
+  `multiPhylo` object copied the whole list.
+
 - Trees with different leaf sets are pruned to their shared leaves in C++,
   without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
   is c. 15× faster, with lower memory use (#123).
