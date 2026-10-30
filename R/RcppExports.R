@@ -98,6 +98,10 @@ cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
+cpp_nni_distance_all_pairs <- function(edges, nTip) {
+    .Call(`_TreeDist_cpp_nni_distance_all_pairs`, edges, nTip)
+}
+
 min_subtree_entropy <- function(n) {
     .Call(`_TreeDist_min_subtree_entropy`, n)
 }

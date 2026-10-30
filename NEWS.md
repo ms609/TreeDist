@@ -35,6 +35,11 @@
 
 ## Performance
 
+- `NNIDist()` on a single list of trees prepares each tree once and scores
+  all pairs in one C++ call, rather than renumbering and reordering both
+  trees for every pair: c. 8–45× faster on 40–100 trees, and 945 seven-leaf
+  trees take 0.2 s.
+
 - Trees with different leaf sets are pruned to their shared leaves in C++,
   without constructing pruned trees in R: `TreeDistance()` on 150 gene trees
   is c. 15× faster, with lower memory use (#123).
