@@ -269,6 +269,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_nni_distance_all_pairs
+IntegerMatrix cpp_nni_distance_all_pairs(const List& edges, const IntegerVector& nTip);
+RcppExport SEXP _TreeDist_cpp_nni_distance_all_pairs(SEXP edgesSEXP, SEXP nTipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type edges(edgesSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance_all_pairs(edges, nTip));
+    return rcpp_result_gen;
+END_RCPP
+}
 // min_subtree_entropy
 Rcpp::List min_subtree_entropy(const int n);
 RcppExport SEXP _TreeDist_min_subtree_entropy(SEXP nSEXP) {
@@ -896,6 +908,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
+    {"_TreeDist_cpp_nni_distance_all_pairs", (DL_FUNC) &_TreeDist_cpp_nni_distance_all_pairs, 2},
     {"_TreeDist_min_subtree_entropy", (DL_FUNC) &_TreeDist_min_subtree_entropy, 1},
     {"_TreeDist_nni_max_step", (DL_FUNC) &_TreeDist_nni_max_step, 2},
     {"_TreeDist_cpp_mutual_clustering_all_pairs", (DL_FUNC) &_TreeDist_cpp_mutual_clustering_all_pairs, 3},
