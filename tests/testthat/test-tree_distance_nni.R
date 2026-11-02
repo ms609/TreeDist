@@ -230,6 +230,31 @@ test_that("NNI with lists of trees", {
   )
 })
 
+test_that("NNIDist() all pairs matches pairwise calculation", {
+  .ExpectPairwise <- function(trees) {
+    expect_identical(NNIDist(trees), CompareAll(trees, NNIDist))
+  }
+  set.seed(0)
+  .ExpectPairwise(as.phylo(0:20, 5))
+  .ExpectPairwise(as.phylo(0:3, 3))
+  .ExpectPairwise(c(as.phylo(0:3, 8), as.phylo(0:2, 8)))
+  .ExpectPairwise(lapply(as.phylo(0:20, 6), UnrootTree))
+  shuffled <- lapply(1:5, function(i) {
+    RandomTree(sample(paste0("t", 1:60)), root = i %% 2 == 1)
+  })
+  .ExpectPairwise(lapply(shuffled, UnrootTree))
+  .ExpectPairwise(structure(lapply(shuffled, RootTree, "t1"),
+                            names = letters[1:5]))
+
+  # Same number of edges, but only some trees rooted
+  mixed <- ape::read.tree(text = c("((a, b, c), (d, e));", "(a, b, (c, (d, e)));",
+                                   "((a, d, c), (b, e));", "(a, e, (c, (d, b)));"))
+  .ExpectPairwise(mixed)
+
+  expect_error(NNIDist(list(BalancedTree(5), RootOnNode(BalancedTree(5), 1))),
+               "same number of edges")
+})
+
 test_that("NNIDiameter() is sane", {
   
   exacts <- NNIDiameter(3:12)

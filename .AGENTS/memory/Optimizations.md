@@ -1020,3 +1020,34 @@ pay; what pays is what the parent overlaps let a candidate *skip*.
   double matrix once the fill is no longer dominant.
 - Next: depth-2 pair candidates (two leaves) by the same route; the
   unbounded MCI could use the Tier 1 form if tests tolerate ulp changes.
+
+## NNIDist() all pairs in one C++ call (2026-10-30)
+
+- `NNIDist(trees)` (one list, all pairs) went through `CompareAll()` ->
+  `.NNIDistSingle()`, which per pair ran `RenumberTips()`, two `Postorder()`
+  calls and `cpp_nni_distance()`; on GHA ~85% of the time was this R overhead.
+- Now `.NNIDistAllPairs()` renumbers and postorders each tree once and calls
+  `cpp_nni_distance_all_pairs()`, which computes each tree's splits once
+  (under its own rootedness) and per pair runs only the matching and scoring.
+  Shared core: `nni_tree()`, `nni_edge_to_splits()`, `nni_rf_matching()`,
+  `nni_score()`, also used by `cpp_nni_distance()`.
+- Identity: a pair is scored under the *first* tree's rootedness (as before),
+  so when two trees with equal edge counts differ in rootedness (polytomies),
+  the second tree's splits are recomputed for that pair.  Output `identical()`
+  to `CompareAll(trees, NNIDist)` on all 945 7-leaf trees, unrooted 7-leaf,
+  random 60-200 leaves with shuffled labels, 3 leaves, polytomies, mixed
+  rootedness.
+- Release installs, min of N, single thread, R-devel (2026-06-29) on Windows,
+  same machine/session (main via `git archive origin/main`):
+
+  | Workload | main | PR |
+  |---|---|---|
+  | 945 × 7 leaves (`as.phylo(0:944, 7)`) | 136.7 s (n = 1) | 0.23 s (n = 3) |
+  | 100 × 50 leaves | 1.80 s (n = 3) | 0.040 s (n = 10) |
+  | 40 × 200 leaves | 0.86 s (n = 3) | 0.110 s (n = 10) |
+
+  Main's 945-tree time is inflated by `CompareAll()` indexing a multiPhylo
+  (PR #227); GHA measured 46 s on R 4.6, against ~7 s for the bare C++ calls.
+- Next: at 200 leaves the O(s^2 · bins) split matching now dominates.
+  Canonicalizing splits (tip-1 bit clear) and sorting each tree's splits once
+  would allow a linear merge per pair.

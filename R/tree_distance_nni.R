@@ -78,7 +78,40 @@
 #' @family tree distances
 #' @export
 NNIDist <- function(tree1, tree2 = tree1) {
-  .TreeDistance(.NNIDistSingle, tree1, tree2)
+  if (!inherits(tree1, "phylo") && length(tree1) > 1 &&
+      identical(tree1, tree2)) {
+    .NNIDistAllPairs(tree1)
+  } else {
+    .TreeDistance(.NNIDistSingle, tree1, tree2)
+  }
+}
+
+.StopEdgeMismatch <- function() {
+  stop("Both trees must have the same number of edges. ",
+       "Is one rooted and the other unrooted?")
+}
+
+#' @importFrom TreeTools Postorder RenumberTips TipLabels
+#' @importFrom stats setNames
+.NNIDistAllPairs <- function(trees) {
+  labelList <- lapply(trees, TipLabels)
+  .CheckLabelsSame(labelList)
+  tipLabels <- as.character(labelList[[1]])
+  nTip <- length(tipLabels)
+  .CheckMaxTips(nTip)
+  edges <- lapply(trees, function(tree) {
+    Postorder(RenumberTips(tree, tipLabels)[["edge"]])
+  })
+  if (length(unique(vapply(edges, nrow, integer(1)))) != 1) {
+    .StopEdgeMismatch()
+  }
+  bounds <- cpp_nni_distance_all_pairs(edges, nTip)
+
+  # Return:
+  lapply(setNames(nm = rownames(bounds)), function(bound) {
+    structure(bounds[bound, ], Size = length(trees), Labels = names(trees),
+              Diag = FALSE, Upper = TRUE, class = "dist")
+  })
 }
 
 #' @importFrom TreeTools Postorder RenumberTips
@@ -86,8 +119,7 @@ NNIDist <- function(tree1, tree2 = tree1) {
 .NNIDistSingle <- function(tree1, tree2, nTip, ...) {
   .CheckMaxTips(nTip)
   if (nrow(tree1[["edge"]]) != nrow(tree2[["edge"]])) {
-    stop("Both trees must have the same number of edges. ",
-         "Is one rooted and the other unrooted?")
+    .StopEdgeMismatch()
   }
   tree2 <- RenumberTips(tree2, as.character(tree1[["tip.label"]]))
   
