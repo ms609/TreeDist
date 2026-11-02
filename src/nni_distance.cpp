@@ -225,19 +225,19 @@ inline void nni_edge_to_splits(const NNITree& tree,
   const int32_t n_edge = int32_t(tree.parent.size());
   const int32_t n_node = n_edge + 1;
   const int32_t trivial_origin = tree.root - 1;
-  std::vector<uint64_t> tmp_splits(n_node * n_bin, 0);
+  std::vector<uint64_t> tmp_splits(size_t(n_node) * n_bin, 0);
 
   for (int32_t i = 0; i < n_tip; ++i) {
     const size_t bin_idx = static_cast<size_t>(i / SL_BIN_SIZE);
-    const size_t idx = i * n_bin + bin_idx;
+    const size_t idx = size_t(i) * n_bin + bin_idx;
     ASSERT(idx < tmp_splits.size());
     ASSERT((i % SL_BIN_SIZE) < 64); // 1 << 64 = 0
     tmp_splits[idx] = static_cast<uint64_t>(1) << (i % SL_BIN_SIZE);
   }
 
   for (int32_t i = 0; i < n_edge - 1; ++i) { /* final edge is second root edge */
-    const ptrdiff_t parent_row_i = (tree.parent[i] - 1) * n_bin;
-    const ptrdiff_t child_row_i = (tree.child[i] - 1) * n_bin;
+    const ptrdiff_t parent_row_i = ptrdiff_t(tree.parent[i] - 1) * n_bin;
+    const ptrdiff_t child_row_i = ptrdiff_t(tree.child[i] - 1) * n_bin;
     for (int32_t j = 0; j < n_bin; ++j) {
       tmp_splits[parent_row_i + j] |= tmp_splits[child_row_i + j];
     }
@@ -248,7 +248,7 @@ inline void nni_edge_to_splits(const NNITree& tree,
     if (i == trivial_origin || i == trivial_two) {
       ++n_trivial;
     } else {
-      const ptrdiff_t i_row = i * n_bin;
+      const ptrdiff_t i_row = ptrdiff_t(i) * n_bin;
       for (int32_t j = 0; j < n_bin; ++j) {
         const size_t idx = i - n_tip - n_trivial;
         ASSERT(idx >= 0 && idx < n_splits);
@@ -278,7 +278,7 @@ void nni_rf_matching (
 
     matching.assign(n_splits, NA_INT32);
     HybridBuffer<uint64_t, NNI_STACK_SPLITS * NNI_STACK_BINS>
-      b_complement(n_splits * n_bins);
+      b_complement(size_t(n_splits) * n_bins);
 
     for (int32_t i = 0; i < n_splits; ++i) {
       const int32_t row_i = i * n_bins;
@@ -453,8 +453,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
     ASSERT(false && "NNI distance is undefined for trees with no splits"); // #nocov
   }
 
-  std::unique_ptr<uint64_t[]> splits1(new uint64_t[n_splits * n_bin]);
-  std::unique_ptr<uint64_t[]> splits2(new uint64_t[n_splits * n_bin]);
+  std::unique_ptr<uint64_t[]> splits1(new uint64_t[size_t(n_splits) * n_bin]);
+  std::unique_ptr<uint64_t[]> splits2(new uint64_t[size_t(n_splits) * n_bin]);
   std::unique_ptr<int32_t[]> names_1(new int32_t[n_splits]);
   ensure_cache();
 
