@@ -1,4 +1,4 @@
-// Shinylive 0.10.15
+// Shinylive 0.10.16
 // Copyright 2026 Posit, PBC
 
 // node_modules/js-yaml/dist/js-yaml.mjs
