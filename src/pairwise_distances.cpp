@@ -2284,7 +2284,7 @@ SEXP cpp_oracle_prepare(const List& splits, const int n_tip, const int metric,
       Rcpp::stop("All trees must have the same number of leaves"); // #nocov
     }
   }
-  s.n_bins = (std::max(1, s.n_raw_cols) + R_BIN_SIZE - 1) /
+  s.n_bins = (std::max(int32(1), s.n_raw_cols) + R_BIN_SIZE - 1) /
     (SL_BIN_SIZE / R_BIN_SIZE);
   const size_t n_splits = s.first[N];
   s.data.resize(n_splits * s.n_bins);
