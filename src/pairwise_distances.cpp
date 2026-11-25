@@ -1626,15 +1626,21 @@ NumericVector cpp_clustering_entropy_batch(
   const double invN = 1.0 / static_cast<double>(n_tip);
   constexpr double invLog2 = 1.442695040888963387005;
 
+  // A split's entropy depends only on its size, so tabulate it once per size
+  std::vector<double> entropy(n_tip + 1, 0.0);
+  for (int k = 1; k < n_tip; ++k) {
+    const double p = k * invN;
+    const double q = 1.0 - p;
+    entropy[k] = -(p * std::log(p) + q * std::log1p(-p));
+  }
+
   for (int i = 0; i < N; ++i) {
     SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
     double total = 0.0;
     for (split_int s = 0; s < sl.n_splits; ++s) {
       const int k = sl.in_split[s];
       if (k <= 0 || k >= n_tip) continue;
-      const double p = k * invN;
-      const double q = 1.0 - p;
-      total += -(p * std::log(p) + q * std::log1p(-p));
+      total += entropy[k];
     }
     result[i] = total * invLog2;
   }
