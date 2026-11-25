@@ -499,3 +499,84 @@ test_that("SPI batch: pinning identical splits matches the full LAP", {
   ), class = "multiPhylo")
   Check(trees)
 })
+
+test_that("Batch paths match per-pair scores under each normalization", {
+  tips <- paste0("t", seq_len(14))
+  trees <- as.phylo(c(0:5, 90), tipLabels = tips)
+  trees[[3]] <- CollapseNode(trees[[3]], 17:18)
+  names(trees) <- letters[seq_along(trees)]
+  sp <- as.Splits(trees)
+  one <- trees[[2]]
+  PerPair <- function(Metric, x, y, ...) {
+    vapply(y, function(tr) Metric(x, tr, ...), double(1))
+  }
+
+  for (Metric in list(MutualClusteringInfo, SharedPhylogeneticInfo,
+                      MatchingSplitInfo, InfoRobinsonFoulds, RobinsonFoulds,
+                      ClusteringInfoDistance)) {
+    for (normalize in list(FALSE, TRUE, pmax, 40)) {
+      expected <- PerPair(Metric, one, trees, normalize = normalize)
+      expect_equal(Metric(one, trees, normalize = normalize), expected,
+                   tolerance = 1e-12)
+      expect_equal(Metric(sp, sp[[2]], normalize = normalize), expected,
+                   tolerance = 1e-12)
+      cross <- Metric(trees[1:3], sp[4:7], normalize = normalize)
+      expect_equal(cross[2, ], expected[4:7], tolerance = 1e-12)
+    }
+  }
+  for (normalize in list(FALSE, TRUE, pmin)) {
+    expect_equal(
+      RobinsonFoulds(sp[[2]], sp, similarity = TRUE, normalize = normalize),
+      PerPair(RobinsonFoulds, one, trees, similarity = TRUE,
+              normalize = normalize)
+    )
+  }
+  expect_equal(RobinsonFoulds(trees[1:3], trees[4:7], normalize = pmax),
+               RobinsonFoulds(sp[1:3], sp[4:7], normalize = pmax))
+
+  for (Metric in list(MutualClusteringInfo, SharedPhylogeneticInfo,
+                      MatchingSplitInfo)) {
+    for (normalize in list(FALSE, TRUE, pmin)) {
+      allPairs <- Metric(trees, normalize = normalize)
+      expected <- vapply(trees, function(x) {
+        PerPair(Metric, x, trees, normalize = normalize)
+      }, double(length(trees)))
+      expect_equal(unname(allPairs), unname(expected), tolerance = 1e-12)
+      noDiag <- Metric(trees, normalize = normalize, diag = FALSE)
+      expect_s3_class(noDiag, "dist")
+      expect_equal(as.matrix(noDiag)[2, 5], expected[2, 5], tolerance = 1e-12)
+    }
+  }
+  for (normalize in list(TRUE, pmin)) {
+    expect_equal(as.matrix(InfoRobinsonFoulds(trees, normalize = normalize))[3, 6],
+                 InfoRobinsonFoulds(trees[[3]], trees[[6]],
+                                    normalize = normalize),
+                 tolerance = 1e-12)
+  }
+  expect_equal(MutualClusteringInfo(one)[1, 1], ClusteringEntropy(one))
+  small <- as.phylo(0:2, 3)
+  expect_equal(as.vector(MutualClusteringInfo(small, diag = FALSE)), double(3))
+  pruned <- c(trees[1:2], DropTip(trees[[3]], "t1"))
+  expect_equal(as.matrix(MutualClusteringInfo(pruned))[3, 1],
+               MutualClusteringInfo(pruned[[3]], pruned[[1]]))
+
+  for (scale in c(TRUE, FALSE)) {
+    expected <- PerPair(TransferDist, one, trees, scale = scale)
+    expect_equal(TransferDist(sp, sp[[2]], scale = scale), expected)
+    expect_equal(TransferDist(sp[4:7], trees[1:3], scale = scale)[, 2],
+                 expected[4:7])
+  }
+  expect_equal(PathDist(one, trees), PerPair(PathDist, one, trees))
+  expect_equal(KendallColijn(trees, one), PerPair(KendallColijn, one, trees))
+  expect_equal(KendallColijn(trees, one, Vector = SplitVector),
+               PerPair(KendallColijn, one, trees, Vector = SplitVector))
+})
+
+test_that("KendallColijn() orders each tree's own leaves", {
+  trees <- as.phylo(0:1, 8)
+  other <- trees[[2]]
+  other[["tip.label"]] <- paste0("s", 8:1)
+  mixed <- structure(list(trees[[1]], other), class = "multiPhylo")
+  expect_equal(KendallColijn(mixed)[[1]],
+               sqrt(sum((KCVector(trees[[1]]) - KCVector(other)) ^ 2)))
+})

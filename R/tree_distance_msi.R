@@ -2,6 +2,14 @@
 #' @export
 MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                reportMatching = FALSE, diag = TRUE) {
+  fast <- .FastSimilarity(tree1, tree2, normalize, reportMatching, diag,
+                          cpp_msi_all_pairs, cpp_splitwise_info_batch,
+                          cpp_msi_cross_pairs)
+  if (!is.null(fast)) {
+    return(NormalizeInfo(fast[["scores"]], tree1, tree2, SplitwiseInfo,
+                         infoInBoth = fast[["infoInBoth"]], how = normalize,
+                         Combine = .PairMean))
+  }
   unnormalized <- CalculateTreeDistance(MatchingSplitInfoSplits, tree1,
                                         tree2, reportMatching)
   

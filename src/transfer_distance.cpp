@@ -21,6 +21,8 @@
 #include <numeric>
 #include <vector>
 
+#include "transfer_distance.h"
+
 using Rcpp::IntegerVector;
 using Rcpp::List;
 using Rcpp::LogicalVector;
@@ -257,8 +259,8 @@ List cpp_transfer_dist_scored(
 // Batch: all-pairs transfer dissimilarity (OpenMP parallel)
 // ============================================================================
 
-// Static helper for score-only per-pair computation.
-static double transfer_dissimilarity_score(
+// Score-only per-pair computation.
+double transfer_dissimilarity_score(
     const SplitList& sl_x, const SplitList& sl_y,
     int n_tip, int n_bins, bool scale
 ) {
@@ -330,48 +332,3 @@ NumericVector cpp_transfer_dist_all_pairs(
   return result;
 }
 
-
-//' Cross-pairs transfer dissimilarity (OpenMP)
-//'
-//' @param splits_a,splits_b Lists of raw matrices.
-//' @param n_tip Number of tips.
-//' @param scale Logical: use scaled transfer dissimilarity?
-//' @param n_threads Number of OpenMP threads.
-//'
-//' @return Numeric matrix of dimension `nA` x `nB`.
-//' @keywords internal
-// [[Rcpp::export]]
-NumericMatrix cpp_transfer_dist_cross_pairs(
-    const List& splits_a, const List& splits_b,
-    int n_tip, bool scale, int n_threads
-) {
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-
-  std::vector<std::unique_ptr<SplitList>> sls_a(nA);
-  std::vector<std::unique_ptr<SplitList>> sls_b(nB);
-  int n_bins = 0;
-
-  for (int i = 0; i < nA; ++i) {
-    sls_a[i] = std::make_unique<SplitList>(Rcpp::as<RawMatrix>(splits_a[i]));
-    if (i == 0) n_bins = sls_a[0]->n_bins;
-  }
-  for (int j = 0; j < nB; ++j) {
-    sls_b[j] = std::make_unique<SplitList>(Rcpp::as<RawMatrix>(splits_b[j]));
-  }
-
-  NumericMatrix result(nA, nB);
-  const int total = nA * nB;
-
-  #ifdef _OPENMP
-  #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-  #endif
-  for (int k = 0; k < total; ++k) {
-    int i = k / nB;
-    int j = k % nB;
-    result(i, j) = transfer_dissimilarity_score(
-        *sls_a[i], *sls_b[j], n_tip, n_bins, scale);
-  }
-
-  return result;
-}

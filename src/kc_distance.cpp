@@ -1,8 +1,7 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/renumber_tree.h> // for postorder_order
-#include <algorithm> // for std::copy
+#include <vector>
 #include <cmath> // for sqrt
-#include <memory> // for make_unique
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -24,22 +23,32 @@ IntegerVector cpp_kc_vector(IntegerMatrix edge, IntegerVector tip_order) {
   const int root_node = PO_PARENT(n_edge - 1);
   const int n_tip = root_node - 1;
 
-  // Build ancestry matrix (same as path_vector)
-  auto ancestry = std::make_unique<int[]>(n_tip * n_vert);
-  auto n_ancs = std::make_unique<int[]>(n_vert + 1);
-
+  // Parents precede children in reverse postorder
+  std::vector<int> depth(n_vert + 1, 0);
   for (int i = n_edge; i--; ) {
+    depth[PO_CHILD(i)] = depth[PO_PARENT(i)] + 1;
+  }
+
+  // Each pair of tips first meets in a subtree at their MRCA: visiting nodes
+  // in postorder, score each pair as its tips' subtrees merge.
+  std::vector<int> mrca_depth(static_cast<size_t>(n_tip) * n_tip);
+  std::vector<std::vector<int>> subtree_tips(n_vert + 1);
+  for (int i = 0; i < n_edge; ++i) {
     const int parent = PO_PARENT(i);
     const int child = PO_CHILD(i);
-    const int parent_ancs = n_ancs[parent];
-
-    const int* anc_parent = &ancestry[n_tip * (parent - 1)];
-    int* anc_child = &ancestry[n_tip * (child - 1)];
-
-    anc_child[parent_ancs] = child;
-    n_ancs[child] = parent_ancs + 1;
-
-    std::copy(anc_parent, anc_parent + parent_ancs, anc_child);
+    std::vector<int>& below = subtree_tips[child];
+    if (child <= n_tip) below.push_back(child - 1);
+    std::vector<int>& merged = subtree_tips[parent];
+    const int d = depth[parent];
+    for (const int t : below) {
+      int* row = &mrca_depth[static_cast<size_t>(t) * n_tip];
+      for (const int u : merged) {
+        row[u] = d;
+        mrca_depth[static_cast<size_t>(u) * n_tip + t] = d;
+      }
+    }
+    merged.insert(merged.end(), below.begin(), below.end());
+    std::vector<int>().swap(below);
   }
 
   // Iterate pairs in tip_order (matching R's combn(tipOrder, 2) column order)
@@ -47,24 +56,9 @@ IntegerVector cpp_kc_vector(IntegerMatrix edge, IntegerVector tip_order) {
   IntegerVector ret(ret_size);
   int ptr = 0;
   for (int i = 0; i < n_tip - 1; ++i) {
-    const int tip_i = tip_order[i];
-    const int ancs_i = n_ancs[tip_i];
-    const int* anc_i_base = &ancestry[n_tip * (tip_i - 1)];
-
+    const int* row = &mrca_depth[static_cast<size_t>(tip_order[i] - 1) * n_tip];
     for (int j = i + 1; j < n_tip; ++j) {
-      const int tip_j = tip_order[j];
-      const int ancs_j = n_ancs[tip_j];
-      const int min_ancs = ancs_i > ancs_j ? ancs_j : ancs_i;
-
-      const int* anc_j_base = &ancestry[n_tip * (tip_j - 1)];
-
-      int common = 0;
-      for (; common != min_ancs; ++common) {
-        if (anc_i_base[common] != anc_j_base[common]) {
-          break;
-        }
-      }
-      ret[ptr++] = common;
+      ret[ptr++] = row[tip_order[j] - 1];
     }
   }
 

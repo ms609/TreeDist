@@ -78,7 +78,14 @@
 #' @export
 KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
-  FunValue <- function(nTip) double(nTip * (nTip - 1L) / 2L)
+  .Vectors <- function(trees) {
+    if (identical(Vector, KCVector)) {
+      .KCVectors(trees)
+    } else {
+      nTip <- length(trees[[1]][["tip.label"]])
+      vapply(trees, Vector, double(nTip * (nTip - 1L) / 2L))
+    }
+  }
   
   if (inherits(tree1, "phylo")) {
     if (inherits(tree2, "phylo")) {
@@ -91,19 +98,15 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       if (is.null(tree2)) {
         0
       } else {
-        apply(Vector(tree1) - vapply(tree2, Vector,
-                                     FunValue(length(tree1[["tip.label"]]))),
-              2L, .EuclideanDistance)
+        .KCOneMany(tree1, tree2, .Vectors)
       }
     }
   } else {
     if (inherits(tree2, "phylo")) {
-      apply(Vector(tree2) - vapply(tree1, Vector,
-                                   FunValue(length(tree2[["tip.label"]]))),
-            2L, .EuclideanDistance)
+      .KCOneMany(tree2, tree1, .Vectors)
     } else if (is.null(tree2)) {
       
-      treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
+      treeVec <- .Vectors(tree1)
       nTree <- length(tree1)
       
       # C++ pairwise Euclidean distance (returns dist-order vector)
@@ -112,8 +115,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
                 pair_diff_euclidean(treeVec))
     }
       else {
-      vector1 <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
-      vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]][["tip.label"]])))
+      vector1 <- .Vectors(tree1)
+      vector2 <- .Vectors(tree2)
       ret <- vec_diff_euclidean(vector1, vector2)
       n1 <- names(tree1)
       n2 <- names(tree2)
@@ -126,6 +129,28 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
 }
 
 .EuclideanDistance <- function(x) sqrt(sum(x * x))
+
+.KCOneMany <- function(tree, trees, .Vectors) {
+  v1 <- .Vectors(list(tree))[, 1]
+  # Return:
+  sqrt(colSums((.Vectors(trees) - v1) ^ 2))
+}
+
+# KCVector() of each tree, ordering leaf labels once
+#' @importFrom TreeTools Preorder
+.KCVectors <- function(trees) {
+  labels <- trees[[1]][["tip.label"]]
+  sorted <- labels[order(labels)]
+  nTip <- length(labels)
+  vapply(trees, function(tree) {
+    tree <- Preorder(tree)
+    tipOrder <- match(sorted, tree[["tip.label"]])
+    if (anyNA(tipOrder)) {
+      tipOrder <- order(tree[["tip.label"]])
+    }
+    cpp_kc_vector(tree[["edge"]], tipOrder)
+  }, integer(nTip * (nTip - 1L) / 2L))
+}
 
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
 #' as described in \insertCite{Kendall2016;textual}{TreeDist}.

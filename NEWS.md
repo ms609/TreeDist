@@ -43,6 +43,13 @@
   c. 6× faster from `phylo` objects and 20× faster from `Splits`
   objects with 2000 trees of 183 leaves (#229).
 
+- Other one-to-many comparisons gain the same treatment.
+  With 2000 trees of 183 leaves, normalized `MutualClusteringInfo()`,
+  `SharedPhylogeneticInfo()`, `MatchingSplitInfo()` and
+  `InfoRobinsonFoulds()` run 3–18× faster; `RobinsonFoulds()` c. 2× faster
+  from `phylo` objects and 4× from `Splits`; `TransferDist()`, `PathDist()`
+  and `KendallColijn()` 1.3–3.6× faster.
+
 - `NNIDist()` on a single list of trees prepares each tree once and scores
   all pairs in one C++ call, rather than renumbering and reordering both
   trees for every pair: c. 8–45× faster on 40–100 trees, and 945 seven-leaf

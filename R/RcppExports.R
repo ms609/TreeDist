@@ -165,6 +165,11 @@ cpp_rf_info_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, w
 }
 
 #' @keywords internal
+cpp_rf_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, with_info = FALSE) {
+    .Call(`_TreeDist_cpp_rf_cross_pairs`, splits_a, splits_b, n_tip, n_threads, with_info)
+}
+
+#' @keywords internal
 cpp_msd_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
     .Call(`_TreeDist_cpp_msd_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
 }
@@ -182,6 +187,19 @@ cpp_shared_phylo_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 
 #' @keywords internal
 cpp_jaccard_cross_pairs <- function(splits_a, splits_b, n_tip, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
     .Call(`_TreeDist_cpp_jaccard_cross_pairs`, splits_a, splits_b, n_tip, k, allow_conflict, n_threads)
+}
+
+#' Cross-pairs transfer dissimilarity (OpenMP)
+#'
+#' @param splits_a,splits_b Lists of raw matrices.
+#' @param n_tip Number of tips.
+#' @param scale Logical: use scaled transfer dissimilarity?
+#' @param n_threads Number of OpenMP threads.
+#'
+#' @return Numeric matrix of dimension `nA` x `nB`.
+#' @keywords internal
+cpp_transfer_dist_cross_pairs <- function(splits_a, splits_b, n_tip, scale, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_transfer_dist_cross_pairs`, splits_a, splits_b, n_tip, scale, n_threads)
 }
 
 cpp_splits_on_labels <- function(x, labels) {
@@ -296,19 +314,6 @@ cpp_transfer_dist_scored <- function(x, y, nTip, scale) {
 #' @keywords internal
 cpp_transfer_dist_all_pairs <- function(splits_list, n_tip, scale, n_threads) {
     .Call(`_TreeDist_cpp_transfer_dist_all_pairs`, splits_list, n_tip, scale, n_threads)
-}
-
-#' Cross-pairs transfer dissimilarity (OpenMP)
-#'
-#' @param splits_a,splits_b Lists of raw matrices.
-#' @param n_tip Number of tips.
-#' @param scale Logical: use scaled transfer dissimilarity?
-#' @param n_threads Number of OpenMP threads.
-#'
-#' @return Numeric matrix of dimension `nA` x `nB`.
-#' @keywords internal
-cpp_transfer_dist_cross_pairs <- function(splits_a, splits_b, n_tip, scale, n_threads) {
-    .Call(`_TreeDist_cpp_transfer_dist_cross_pairs`, splits_a, splits_b, n_tip, scale, n_threads)
 }
 
 cpp_mci_impl_score <- function(x, y, n_tips) {

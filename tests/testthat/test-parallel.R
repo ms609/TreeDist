@@ -7,9 +7,11 @@ test_that("Parallelization works", {
   cl <- getOption("TreeDist-cluster")
   
   parallel <- ClusteringInfoDistance(trees)
+  oneMany <- ClusteringInfoDistance(trees[[1]], trees)
   SetParallel(NULL)
   expect_null(GetParallel())
   expect_equal(ClusteringInfoDistance(trees), parallel)
+  expect_equal(ClusteringInfoDistance(trees[[1]], trees), oneMany)
 
   expect_equal(options("TreeDist-cluster"), SetParallel(cl))
   expect_equal(cl, getOption("TreeDist-cluster"))

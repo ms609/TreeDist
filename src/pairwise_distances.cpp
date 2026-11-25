@@ -23,6 +23,7 @@
 #include <vector>
 #include <Rcpp/Lightest>
 
+#include "transfer_distance.h"
 #include "tree_distances.h"
 
 using Rcpp::List;
@@ -1650,6 +1651,29 @@ NumericMatrix cpp_rf_info_cross_pairs(
     with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
+// Robinson-Foulds distance; a tree's information is its number of splits.
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_rf_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
+) {
+  TreeDist::check_ntip(n_tip);
+  std::vector<MatchScratch> mscratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      const split_int shared = find_exact_matches(ca, cb, a.n_bins,
+                                                  mscratches[tid]);
+      return static_cast<double>(a.n_splits + b.n_splits - shared - shared);
+    },
+    with_info ? TreeInfo([](const SplitList& sl) {
+      return static_cast<double>(sl.n_splits);
+    }) : nullptr);
+}
+
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_msd_cross_pairs(
@@ -1727,6 +1751,29 @@ NumericMatrix cpp_jaccard_cross_pairs(
         const CanonSplits& ca, const CanonSplits& cb, const int tid) {
       return jaccard_score(a, b, n_tip, ca, cb, k, allow_conflict,
                            scratches[tid], mscratches[tid]);
+    });
+}
+
+//' Cross-pairs transfer dissimilarity (OpenMP)
+//'
+//' @param splits_a,splits_b Lists of raw matrices.
+//' @param n_tip Number of tips.
+//' @param scale Logical: use scaled transfer dissimilarity?
+//' @param n_threads Number of OpenMP threads.
+//'
+//' @return Numeric matrix of dimension `nA` x `nB`.
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_transfer_dist_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const bool scale, const int n_threads = 1
+) {
+  TreeDist::check_ntip(n_tip);
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, false,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits&, const CanonSplits&, const int) {
+      return transfer_dissimilarity_score(a, b, n_tip, a.n_bins, scale);
     });
 }
 
