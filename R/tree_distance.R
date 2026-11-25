@@ -254,6 +254,16 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
 }
 
+# Information against which NormalizeInfo() should scale a distance between
+# trees carrying information `info1` and `info2`, whose sum is `infoSum`
+.DistInfoToNormalize <- function(info1, info2, how, infoSum, lower = FALSE) {
+  if (is.function(how)) {
+    .InfoToNormalize(info1, info2, how, "+", lower = lower)
+  } else {
+    infoSum
+  }
+}
+
 # Similarities, and the information to normalize them against, from the batch
 # kernels that score them; NULL where these do not apply.
 .FastSimilarity <- function(tree1, tree2, normalize, reportMatching, diag,

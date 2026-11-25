@@ -255,11 +255,14 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                         cpp_splitwise_info_batch)
   if (!is.null(fast)) {
     spi <- fast[["info"]]
-    treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+    info <- fast[["entropies"]]
+    treesIndependentInfo <- .PairwiseSums(info)
+    normInfo <- .DistInfoToNormalize(info, info, normalize,
+                                     treesIndependentInfo, lower = TRUE)
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - spi - spi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = SplitwiseInfo, Combine = "+")
     attributes(ret) <- attributes(spi)
     return(ret)
@@ -271,10 +274,12 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (!is.null(fast_many)) {
     spi <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]
+    normInfo <- .DistInfoToNormalize(fast_many[["info1"]], fast_many[["info2"]],
+                                     normalize, treesIndependentInfo)
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - spi - spi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = SplitwiseInfo, Combine = "+")
     return(ret)
   }
@@ -282,10 +287,11 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
+  normInfo <- if (!is.function(normalize)) treesIndependentInfo
 
   ret <- .FloorNumericalNoise(treesIndependentInfo - spi - spi, treesIndependentInfo)
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                       infoInBoth = treesIndependentInfo,
+                       infoInBoth = normInfo,
                        InfoInTree = SplitwiseInfo, Combine = "+")
   attributes(ret) <- attributes(spi)
   
@@ -309,11 +315,14 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                         cpp_clustering_entropy_batch)
   if (!is.null(fast)) {
     mci <- fast[["info"]]
-    treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+    info <- fast[["entropies"]]
+    treesIndependentInfo <- .PairwiseSums(info)
+    normInfo <- .DistInfoToNormalize(info, info, normalize,
+                                     treesIndependentInfo, lower = TRUE)
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - mci - mci, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = ClusteringEntropy, Combine = "+")
     attributes(ret) <- attributes(mci)
     return(ret)
@@ -325,10 +334,12 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (!is.null(fast_many)) {
     mci <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]
+    normInfo <- .DistInfoToNormalize(fast_many[["info1"]], fast_many[["info2"]],
+                                     normalize, treesIndependentInfo)
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - mci - mci, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = ClusteringEntropy, Combine = "+")
     return(ret)
   }
@@ -336,10 +347,11 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, ClusteringEntropy)
+  normInfo <- if (!is.function(normalize)) treesIndependentInfo
 
   ret <- .FloorNumericalNoise(treesIndependentInfo - mci - mci, treesIndependentInfo)
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                       infoInBoth = treesIndependentInfo,
+                       infoInBoth = normInfo,
                        InfoInTree = ClusteringEntropy, Combine = "+")
   attributes(ret) <- attributes(mci)
   

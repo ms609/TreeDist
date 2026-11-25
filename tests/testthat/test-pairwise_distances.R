@@ -592,3 +592,66 @@ test_that("KendallColijn() orders each tree's own leaves", {
   expect_equal(KendallColijn(mixed)[[1]],
                sqrt(sum((KCVector(trees[[1]]) - KCVector(other)) ^ 2)))
 })
+
+test_that("Distances normalize against a function of each tree's information", {
+  set.seed(4120)
+  trees <- c(list(BalancedTree(9), CollapseNode(PectinateTree(9), 12:13)),
+             lapply(1:4, function(i) RandomTree(9, root = TRUE)))
+  trees[[4]] <- CollapseNode(trees[[4]], 11)
+  names(trees) <- letters[seq_along(trees)]
+  diffLeaves <- list(BalancedTree(9), DropTip(PectinateTree(9), "t2"),
+                     DropTip(RandomTree(9, TRUE), c("t5", "t9")),
+                     CollapseNode(BalancedTree(9), 12))
+
+  # Information in each tree, pruned to the leaves it shares with the other
+  Denominator <- function(x, y, Info, how) {
+    .PairInfo <- function(xi, yi) {
+      shared <- intersect(TipLabels(xi), TipLabels(yi))
+      how(Info(KeepTip(xi, shared)), Info(KeepTip(yi, shared)))
+    }
+    vapply(y, function(yi) vapply(x, .PairInfo, double(1), yi),
+           double(length(x)))
+  }
+  AsList <- function(x) if (inherits(x, "phylo")) list(x) else x
+
+  metrics <- list(
+    list(ClusteringInfoDistance, ClusteringEntropy),
+    list(DifferentPhylogeneticInfo, SplitwiseInfo),
+    list(MatchingSplitInfoDistance, SplitwiseInfo)
+  )
+  for (metric in metrics) {
+    Dist <- metric[[1]]
+    Info <- metric[[2]]
+    for (how in list(pmax, pmin)) {
+      Expect <- function(x, y, ...) {
+        raw <- Dist(x, y, normalize = FALSE, ...)
+        denom <- Denominator(AsList(x), AsList(y), Info, how)
+        expect_equal(Dist(x, y, normalize = how, ...), raw / drop(denom),
+                     tolerance = 1e-12)
+      }
+      ExpectAll <- function(x, ...) {
+        ret <- Dist(x, normalize = how, ...)
+        expect_s3_class(ret, "dist")
+        expected <- as.matrix(Dist(x, normalize = FALSE, ...)) /
+          Denominator(x, x, Info, how)
+        expect_equal(unname(as.matrix(ret)), unname(expected),
+                     tolerance = 1e-12)
+      }
+
+      for (set in list(trees, diffLeaves)) {
+        Expect(set[[1]], set[[2]])
+        Expect(set[[2]], set)
+        Expect(set, set[[2]])
+        Expect(set[1:2], set[2:4])
+        ExpectAll(set)
+      }
+      Expect(trees[[1]], trees[[2]], reportMatching = TRUE)
+      ExpectAll(trees[1:3], reportMatching = TRUE)
+    }
+  }
+
+  a <- BalancedTree(8)
+  b <- CollapseNode(PectinateTree(8), 10)
+  expect_gt(ClusteringInfoDistance(a, b, normalize = pmin),
+            ClusteringInfoDistance(a, b, normalize = pmax))
+})

@@ -35,11 +35,14 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
                         cpp_splitwise_info_batch)
   if (!is.null(fast)) {
     msi <- fast[["info"]]
-    treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+    info <- fast[["entropies"]]
+    treesIndependentInfo <- .PairwiseSums(info)
+    normInfo <- .DistInfoToNormalize(info, info, normalize,
+                                     treesIndependentInfo, lower = TRUE)
     
     ret <- .FloorNumericalNoise(treesIndependentInfo - msi - msi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = SplitwiseInfo, Combine = "+")
     attributes(ret) <- attributes(msi)
     return(ret)
@@ -51,10 +54,12 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
   if (!is.null(fast_many)) {
     msi <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]
+    normInfo <- .DistInfoToNormalize(fast_many[["info1"]], fast_many[["info2"]],
+                                     normalize, treesIndependentInfo)
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - msi - msi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                         infoInBoth = treesIndependentInfo,
+                         infoInBoth = normInfo,
                          InfoInTree = SplitwiseInfo, Combine = "+")
     return(ret)
   }
@@ -63,9 +68,10 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
                            reportMatching = reportMatching)
 
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
+  normInfo <- if (!is.function(normalize)) treesIndependentInfo
   ret <- .FloorNumericalNoise(treesIndependentInfo - msi - msi, treesIndependentInfo)
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                       infoInBoth = treesIndependentInfo,
+                       infoInBoth = normInfo,
                        InfoInTree = SplitwiseInfo, Combine = "+")
   attributes(ret) <- attributes(msi)
   # Return:
