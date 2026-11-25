@@ -1988,6 +1988,34 @@ static double pruned_info(const SplitList& s, const int32 m, const int info,
   }
 }
 
+// Score of trees `a` and `b` under `metric`, a PrunedMetric.
+static double metric_score(const int metric,
+                           const SplitList& a, const SplitList& b,
+                           const int32 n_tips,
+                           const CanonSplits& ca, const CanonSplits& cb,
+                           const double k, const bool allow_conflict,
+                           LapScratch& lap, MatchScratch& match,
+                           PinScratch& pin) {
+  switch (metric) {
+  case PM_MCI:
+    return mutual_clustering_score(a, b, n_tips, ca, cb, lap, match);
+  case PM_IRF:
+    return rf_info_score(a, b, n_tips, ca, cb, match);
+  case PM_MSD:
+    return msd_score(a, b, n_tips, ca, cb, lap, match);
+  case PM_MSI:
+    return msi_score(a, b, n_tips, lap);
+  case PM_SPI:
+    return shared_phylo_score(a, b, n_tips, ca, cb, lap, match, pin);
+  case PM_JACCARD:
+    return jaccard_score(a, b, n_tips, ca, cb, k, allow_conflict, lap, match);
+  case PM_RF:
+    return a.n_splits + b.n_splits -
+      2.0 * find_exact_matches(ca, cb, a.n_bins, match);
+  default: return NA_REAL; // #nocov
+  }
+}
+
 static void pruned_pair(const SplitList& sa, const std::vector<int32>& tips_a,
                         const SplitList& sb, const std::vector<int32>& tips_b,
                         const int metric, const int info,
@@ -2033,33 +2061,8 @@ static void pruned_pair(const SplitList& sa, const std::vector<int32>& tips_a,
     score = 0.0;
     return;
   }
-  const CanonSplits& ca = sc.a.canon;
-  const CanonSplits& cb = sc.b.canon;
-  switch (metric) {
-  case PM_MCI:
-    score = mutual_clustering_score(a, b, m, ca, cb, sc.lap, sc.match);
-    break;
-  case PM_IRF:
-    score = rf_info_score(a, b, m, ca, cb, sc.match);
-    break;
-  case PM_MSD:
-    score = msd_score(a, b, m, ca, cb, sc.lap, sc.match);
-    break;
-  case PM_MSI:
-    score = msi_score(a, b, m, sc.lap);
-    break;
-  case PM_SPI:
-    score = shared_phylo_score(a, b, m, ca, cb, sc.lap, sc.match, sc.pin);
-    break;
-  case PM_JACCARD:
-    score = jaccard_score(a, b, m, ca, cb, k, allow_conflict, sc.lap, sc.match);
-    break;
-  case PM_RF:
-    score = a.n_splits + b.n_splits -
-      2.0 * find_exact_matches(ca, cb, a.n_bins, sc.match);
-    break;
-  default: score = NA_REAL; // #nocov
-  }
+  score = metric_score(metric, a, b, m, sc.a.canon, sc.b.canon, k,
+                       allow_conflict, sc.lap, sc.match, sc.pin);
 }
 
 static void parse_tips(const List& list, const int n_union,
@@ -2190,4 +2193,189 @@ List cpp_pruned_pairs(
   return List::create(Rcpp::Named("score") = score,
                       Rcpp::Named("info_a") = info_a,
                       Rcpp::Named("info_b") = info_b);
+}
+
+
+// =============================================================================
+// Distance oracle: one tree against a prepared set
+// =============================================================================
+//
+// Repeated one-to-many comparisons against the same set (e.g. farthest-first
+// sampling) spend most of their time re-reading each tree's splits.  An
+// OracleStore parses the set once, keeping compact split rows and canonical
+// forms; each column then re-aims a few SplitList shells at the stored rows,
+// as PrunedTree does, and scores the query against every tree with the same
+// scorers as cross_pairs(), so results match the one-to-many kernels exactly.
+
+struct OracleStore {
+  int32 n_tip = 0, n_bins = 0, n_raw_cols = 0;
+  int metric = PM_NONE;
+  std::vector<size_t> first;       // tree t's splits: [first[t], first[t + 1])
+  std::vector<splitbit> data;      // split rows, n_bins per split
+  std::vector<splitbit*> rows;
+  std::vector<int32> in_split;
+  std::vector<CanonSplits> canon;
+  // Shells and scratch, grown on demand; [0] is the query's shell
+  std::vector<std::unique_ptr<SplitList>> shells;
+  std::vector<LapScratch> lap;
+  std::vector<MatchScratch> match;
+  std::vector<PinScratch> pin;
+
+  int size() const { return static_cast<int>(canon.size()); }
+
+  void aim(SplitList& shell, const int t) {
+    shell.n_splits = static_cast<int32>(first[t + 1] - first[t]);
+    shell.n_bins = n_bins;
+    shell.in_split = in_split.data() + first[t];
+    shell.state = rows.data() + first[t];
+  }
+
+  void reserve_threads(const int n_threads) {
+    const size_t n = static_cast<size_t>(std::max(1, n_threads));
+    if (shells.size() < n + 1) {
+      const RawMatrix blank(0, n_raw_cols);
+      while (shells.size() < n + 1) {
+        shells.push_back(std::make_unique<SplitList>(blank));
+      }
+    }
+    if (lap.size() < n) {
+      lap.resize(n);
+      match.resize(n);
+      pin.resize(n);
+    }
+  }
+};
+
+static double oracle_bytes(const OracleStore& s) {
+  double bytes = sizeof(OracleStore);
+  bytes += s.data.capacity() * sizeof(splitbit);
+  bytes += s.rows.capacity() * sizeof(splitbit*);
+  bytes += s.in_split.capacity() * sizeof(int32);
+  bytes += s.first.capacity() * sizeof(size_t);
+  for (const CanonSplits& c : s.canon) {
+    bytes += sizeof(CanonSplits) + c.canon.capacity() * sizeof(splitbit) +
+      c.idx.capacity() * sizeof(split_int);
+  }
+  return bytes;
+}
+
+// Prepare `splits` (raw split matrices on a common leaf order) for scoring
+// under `metric`, a PrunedMetric.  Returns an external pointer, with
+// attribute "info" giving each tree's information content under `info`
+// (a PrunedInfo), as reported by the one-to-many kernels, and "bytes" the
+// memory held.
+// [[Rcpp::export]]
+SEXP cpp_oracle_prepare(const List& splits, const int n_tip, const int metric,
+                        const int info, const int n_threads = 1) {
+  TreeDist::check_ntip(n_tip);
+  const int N = splits.size();
+  auto store = std::make_unique<OracleStore>();
+  OracleStore& s = *store;
+  s.n_tip = n_tip;
+  s.metric = metric;
+  s.first.resize(N + 1);
+  s.first[0] = 0;
+  for (int t = 0; t < N; ++t) {
+    const RawMatrix x = Rcpp::as<RawMatrix>(splits[t]);
+    s.first[t + 1] = s.first[t] + static_cast<size_t>(x.rows());
+    if (t == 0) {
+      s.n_raw_cols = x.cols();
+    } else if (x.cols() != s.n_raw_cols) {
+      Rcpp::stop("All trees must have the same number of leaves");
+    }
+  }
+  s.n_bins = (std::max(1, s.n_raw_cols) + R_BIN_SIZE - 1) /
+    (SL_BIN_SIZE / R_BIN_SIZE);
+  const size_t n_splits = s.first[N];
+  s.data.resize(n_splits * s.n_bins);
+  s.rows.resize(n_splits);
+  s.in_split.resize(n_splits);
+  for (size_t k = 0; k < n_splits; ++k) s.rows[k] = &s.data[k * s.n_bins];
+
+  NumericVector tree_info(N);
+  const ClusteringEntropy entropy(n_tip);
+  const SplitwiseInfo splitwise(n_tip);
+  std::unique_ptr<SplitList> slot;
+  for (int t = 0; t < N; ++t) {
+    if ((t & 0x3FF) == 0x3FF) Rcpp::checkUserInterrupt();
+    refill_split_list(slot, Rcpp::as<RawMatrix>(splits[t]));
+    const SplitList& sl = *slot;
+    const size_t at = s.first[t];
+    for (int32 k = 0; k < sl.n_splits; ++k) {
+      std::memcpy(s.rows[at + k], sl.state[k], s.n_bins * sizeof(splitbit));
+    }
+    std::copy(sl.in_split, sl.in_split + sl.n_splits, s.in_split.begin() + at);
+    switch (info) {
+    case PI_CLUSTERING: tree_info[t] = entropy(sl); break;
+    case PI_SPLITWISE: tree_info[t] = splitwise(sl); break;
+    case PI_NSPLITS: tree_info[t] = sl.n_splits; break;
+    default: tree_info[t] = NA_REAL;
+    }
+  }
+
+  s.canon.resize(N);
+  if (metric != PM_MSI) {
+    s.reserve_threads(n_threads);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static) num_threads(n_threads)
+#endif
+    for (int t = 0; t < N; ++t) {
+#ifdef _OPENMP
+      SplitList& shell = *s.shells[omp_get_thread_num() + 1];
+#else
+      SplitList& shell = *s.shells[1];
+#endif
+      s.aim(shell, t);
+      build_canon(shell, n_tip, s.canon[t]);
+    }
+  }
+
+  const double bytes = oracle_bytes(s);
+  Rcpp::XPtr<OracleStore> ptr(store.release(), true);
+  ptr.attr("info") = tree_info;
+  ptr.attr("bytes") = bytes;
+  return ptr;
+}
+
+// Scores between tree `i` (1-based) and every tree in the store prepared at
+// `xp`; NULL if the pointer is no longer valid (e.g. after readRDS()).
+// [[Rcpp::export]]
+SEXP cpp_oracle_column(SEXP xp, const int i, const double k = 1.0,
+                       const bool allow_conflict = true,
+                       const int n_threads = 1) {
+  if (TYPEOF(xp) != EXTPTRSXP || R_ExternalPtrAddr(xp) == nullptr) {
+    return R_NilValue;
+  }
+  OracleStore& s = *static_cast<OracleStore*>(R_ExternalPtrAddr(xp));
+  const int N = s.size();
+  if (i < 1 || i > N) Rcpp::stop("`i` must lie between 1 and %d", N);
+  s.reserve_threads(n_threads);
+  const int q = i - 1;
+  SplitList& query = *s.shells[0];
+  s.aim(query, q);
+  const CanonSplits& cq = s.canon[q];
+
+  NumericVector result(N);
+  double* const res = result.begin();
+  constexpr int block = 4096;
+  for (int start = 0; start < N; start += block) {
+    Rcpp::checkUserInterrupt();
+    const int end = std::min(N, start + block);
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic, 32) num_threads(n_threads)
+#endif
+    for (int t = start; t < end; ++t) {
+#ifdef _OPENMP
+      const int tid = omp_get_thread_num();
+#else
+      const int tid = 0;
+#endif
+      SplitList& other = *s.shells[tid + 1];
+      s.aim(other, t);
+      res[t] = metric_score(s.metric, query, other, s.n_tip, cq, s.canon[t],
+                            k, allow_conflict, s.lap[tid], s.match[tid],
+                            s.pin[tid]);
+    }
+  }
+  return result;
 }

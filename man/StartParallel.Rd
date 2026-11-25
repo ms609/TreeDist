@@ -55,7 +55,7 @@ The number of \acronym{OpenMP} threads is controlled by the standard
 \code{"mc.cores"} option:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{options(mc.cores = parallelly::availableCores())  # use all available cores
-options(mc.cores = 4L)                             # or a fixed number
+options(mc.cores = 4L)                            # or a fixed number
 }\if{html}{\out{</div>}}
 
 The default is \code{1} (single-threaded).

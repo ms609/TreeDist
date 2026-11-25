@@ -108,6 +108,7 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 }
 \seealso{
 Other tree distances:
+\code{\link[=DistanceOracle]{DistanceOracle()}},
 \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},
