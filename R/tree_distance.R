@@ -85,15 +85,15 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 
-.MaxValue <- function(tree1, tree2, Value) {
+.MaxValue <- function(tree1, tree2, Value, Combine = `+`) {
   lab1 <- TipLabels(tree1)
   sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
-  
+
   if (!sameTips) {
     # Trees in `tree1` do not all share leaves if !sameTips and tree2 is NULL
     if (!is.na(.PrunedInfo(Value))) {
       pruned <- .PrunedPairs(tree1, tree2, Value = Value)
-      ret <- pruned[["info1"]] + pruned[["info2"]]
+      ret <- Combine(pruned[["info1"]], pruned[["info2"]])
       single <- c("phylo", "Splits")
       if (!is.null(tree2) && !inherits(tree1, single) &&
           !inherits(tree2, single)) {
@@ -102,15 +102,47 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       return(ret)
     }
     trees <- .SharedOnly(tree1, tree2)
-    return(Value(trees[[1]]) + Value(trees[[2]]))
+    return(Combine(Value(trees[[1]]), Value(trees[[2]])))
   }
-  
+
   value1 <- Value(tree1)
   if (is.null(tree2)) {
-    .PairwiseSums(value1)
+    pairs <- outer(value1, value1, Combine)
+    pairs[lower.tri(pairs)]
   } else {
-    outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    outer(value1, Value(tree2), Combine)[, , drop = TRUE]
   }
+}
+
+# Vinh et al. (2010) D_max = 1 - I / max(H1, H2), where `Similarity` gives
+# I and `InfoInTree` gives H
+.DMaxDistance <- function(tree1, tree2, reportMatching, Similarity, InfoInTree,
+                          cpp_all_pairs_fn, cpp_info_fn, cpp_cross_pairs_fn) {
+  fast <- .FastDistPath(tree1, tree2, reportMatching, cpp_all_pairs_fn,
+                        cpp_info_fn)
+  if (is.null(fast)) {
+    fast <- .FastManyManyPath(tree1, tree2, reportMatching, cpp_cross_pairs_fn)
+    if (is.null(fast)) {
+      similarity <- Similarity(tree1, tree2, normalize = FALSE, diag = FALSE,
+                               reportMatching = reportMatching)
+      maxInfo <- .MaxValue(tree1, tree2, InfoInTree, pmax)
+    } else {
+      similarity <- fast[["dists"]]
+      maxInfo <- .InfoToNormalize(fast[["info1"]], fast[["info2"]], pmax)
+    }
+  } else {
+    similarity <- fast[["info"]]
+    info <- fast[["entropies"]]
+    maxInfo <- .InfoToNormalize(info, info, pmax, lower = TRUE)
+  }
+
+  ret <- .FloorNumericalNoise(maxInfo - similarity, maxInfo) / maxInfo
+  # Trees without information are identical in the information they hold
+  ret[maxInfo == 0] <- 0
+  attributes(ret) <- attributes(similarity)
+
+  # Return:
+  ret
 }
 
 # Fast path for *Distance() functions: computes pairwise distances and

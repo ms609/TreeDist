@@ -28,6 +28,11 @@ MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 MatchingSplitInfoDistance <- function(tree1, tree2 = NULL, 
                                        normalize = FALSE,
                                        reportMatching = FALSE) {
+  if (identical(normalize, "dmax")) {
+    return(.DMaxDistance(tree1, tree2, reportMatching, MatchingSplitInfo,
+                         SplitwiseInfo, cpp_msi_all_pairs,
+                         cpp_splitwise_info_batch, cpp_msi_cross_pairs))
+  }
   
   # Fast path (all-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,

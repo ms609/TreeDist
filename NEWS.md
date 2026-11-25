@@ -1,5 +1,11 @@
 # TreeDist 2.15.0.9008 (development)
 
+## New features
+
+- `ClusteringInfoDistance()`, `DifferentPhylogeneticInfo()` and
+  `MatchingSplitInfoDistance()` accept `normalize = "dmax"`, returning
+  1 - I / max(H1, H2) (Vinh _et al._ 2010).
+
 ## Bug fixes
 
 - `NNIDist()`: `best_lower` was not a lower bound, and has been removed.

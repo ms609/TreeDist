@@ -90,6 +90,15 @@
 #' To calculate the relative similarity against a reference tree that is known
 #' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
+#'
+#' Distance functions also accept `normalize = "dmax"`, which returns
+#' \eqn{D_{max} = 1 - I / \max(H_1, H_2)}{D_max = 1 - I / max(H1, H2)}
+#' (Vinh _et al._ 2010, table 3), where \eqn{I}{I} is the corresponding
+#' similarity and \eqn{H}{H} the information content or entropy of all splits
+#' in each tree.  This ranges from zero to one, and is zero between trees with
+#' no splits.  It cannot be written as a distance divided by a function of
+#' \eqn{H_1}{H1} and \eqn{H_2}{H2}, so is not available for similarities.
+#'
 #' For worked examples, see the internal function [`NormalizeInfo()`], which is
 #' called from distance functions with the parameter `how = normalize`.
 #' .
@@ -145,7 +154,7 @@
 #' the specified tree sizes and topology, as specified in the "Normalization" 
 #' section below.
 #' If `FALSE`, results will not be rescaled.
-#' 
+#'
 #' @param diag Logical specifying whether to return similarities along the
 #' diagonal, i.e. of each tree with itself.  Applies only if `tree2` is
 #' a list identical to `tree1`, or `NULL`.
@@ -248,6 +257,11 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @export
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                       reportMatching = FALSE) {
+  if (identical(normalize, "dmax")) {
+    return(.DMaxDistance(tree1, tree2, reportMatching, SharedPhylogeneticInfo,
+                         SplitwiseInfo, cpp_shared_phylo_all_pairs,
+                         cpp_splitwise_info_batch, cpp_shared_phylo_cross_pairs))
+  }
   
   # Fast path (all-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
@@ -302,6 +316,12 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @export
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
+  if (identical(normalize, "dmax")) {
+    return(.DMaxDistance(tree1, tree2, reportMatching, MutualClusteringInfo,
+                         ClusteringEntropy, cpp_mutual_clustering_all_pairs,
+                         cpp_clustering_entropy_batch,
+                         cpp_mutual_clustering_cross_pairs))
+  }
   
   # Fast path (all-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast <- .FastDistPath(tree1, tree2, reportMatching,
