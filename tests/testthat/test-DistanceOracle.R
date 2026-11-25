@@ -21,7 +21,6 @@
 }
 
 test_that("DistanceOracle() matches Func(trees[[i]], trees)", {
-  skip_on_cran()
   Max <- function(x, y) max(x, y)
   cases <- list(
     list(ClusteringInfoDistance),
@@ -37,6 +36,7 @@ test_that("DistanceOracle() matches Func(trees[[i]], trees)", {
     list(JaccardRobinsonFoulds, k = 2, allowConflict = FALSE, similarity = TRUE)
   )
   for (nTip in c(9, 140, 330)) {
+    if (nTip > 9) skip_on_cran()
     trees <- .OracleTrees(nTip)
     for (case in cases) {
       for (normalize in list(FALSE, TRUE, 17, Max)) {
@@ -52,7 +52,8 @@ test_that("DistanceOracle() matches Func(trees[[i]], trees)", {
 
 test_that("DistanceOracle() handles Splits, vectors and threads", {
   trees <- .OracleTrees(70)
-  splits <- lapply(trees, TreeTools::as.Splits, TreeTools::TipLabels(trees[[1]]))
+  labels <- TreeTools::TipLabels(trees[[1]])
+  splits <- lapply(trees, TreeTools::as.Splits, labels)
   oracle <- .ExpectOracle(splits, ClusteringInfoDistance)
 
   expect_equal(oracle(c(1, 4)),
@@ -63,6 +64,8 @@ test_that("DistanceOracle() handles Splits, vectors and threads", {
   expect_error(oracle(NA), "`i` must index")
   expect_error(oracle("1"), "`i` must index")
   expect_error(oracle(integer(0)), "`i` must index")
+
+  .ExpectOracle(structure(trees, class = "multiPhylo"), RobinsonFoulds)
 
   withr::local_options(mc.cores = 2L)
   .ExpectOracle(trees, MatchingSplitDistance)
@@ -83,7 +86,8 @@ test_that("DistanceOracle() falls back to Func", {
   trees <- .OracleTrees(12)
   bigOracle <- DistanceOracle(trees, RobinsonFoulds, normalize = TRUE,
                               maxBytes = 0)
-  expect_equal(bigOracle(3), RobinsonFoulds(trees[[3]], trees, normalize = TRUE))
+  expect_equal(bigOracle(3),
+               RobinsonFoulds(trees[[3]], trees, normalize = TRUE))
   expect_equal(dim(bigOracle(1:2)), c(length(trees), 2))
 
   permuted <- c(trees[1:3], list(TreeTools::BalancedTree(paste0("t", 12:1))))
