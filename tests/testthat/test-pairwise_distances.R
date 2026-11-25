@@ -605,10 +605,12 @@ test_that("Distances normalize against a function of each tree's information", {
 
   # Information in each tree, pruned to the leaves it shares with the other
   Denominator <- function(x, y, Info, how) {
-    vapply(y, function(yi) vapply(x, function(xi) {
+    .PairInfo <- function(xi, yi) {
       shared <- intersect(TipLabels(xi), TipLabels(yi))
       how(Info(KeepTip(xi, shared)), Info(KeepTip(yi, shared)))
-    }, double(1)), double(length(x)))
+    }
+    vapply(y, function(yi) vapply(x, .PairInfo, double(1), yi),
+           double(length(x)))
   }
   AsList <- function(x) if (inherits(x, "phylo")) list(x) else x
 
