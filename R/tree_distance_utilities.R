@@ -325,7 +325,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 # Score every pair from two lists of trees that share leaves via the batched
 # C++ kernel for `Func`; NULL when `Func` has no such kernel.
 .BatchCrossPairs <- function(Func, trees1, trees2, tipLabels, nTip, ...) {
-  kernel <- if (identical(Func, MutualClusteringInfoSplits)) {
+  .Kernel <- if (identical(Func, MutualClusteringInfoSplits)) {
     cpp_mutual_clustering_cross_pairs
   } else if (identical(Func, InfoRobinsonFouldsSplits)) {
     cpp_rf_info_cross_pairs
@@ -352,11 +352,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                               n_threads = nThreads)
     }
   }
-  if (is.null(kernel)) {
+  if (is.null(.Kernel)) {
     return(NULL)
   }
   # Return:
-  kernel(as.Splits(trees1, tipLabels = tipLabels, asSplits = FALSE),
+  .Kernel(as.Splits(trees1, tipLabels = tipLabels, asSplits = FALSE),
          as.Splits(trees2, tipLabels = tipLabels, asSplits = FALSE),
          as.integer(nTip), as.integer(getOption("mc.cores", 1L)))
 }

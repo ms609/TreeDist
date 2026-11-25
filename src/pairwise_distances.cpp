@@ -1470,6 +1470,9 @@ static Rcpp::NumericMatrix cross_pairs(
 #pragma omp for schedule(dynamic)
 #endif
       for (int p = 0; p < n_pairs; ++p) {
+#ifndef _OPENMP
+        if ((p & 0xFF) == 0xFF) Rcpp::checkUserInterrupt();
+#endif
         const int h = p % n_held;
         const int c = p / n_held;
         const size_t s = static_cast<size_t>(first + c);
