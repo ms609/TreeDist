@@ -228,6 +228,15 @@ least (\code{pmin}) informative tree in each pair.
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
+
+Distance functions also accept \code{normalize = "dmax"}, which returns
+\eqn{D_{max} = 1 - I / \max(H_1, H_2)}{D_max = 1 - I / max(H1, H2)}
+(Vinh \emph{et al.} 2010, table 3), where \eqn{I}{I} is the corresponding
+similarity and \eqn{H}{H} the information content or entropy of all splits
+in each tree.  This ranges from zero to one, and is zero between trees with
+no splits.  It cannot be written as a distance divided by a function of
+\eqn{H_1}{H1} and \eqn{H_2}{H2}, so is not available for similarities.
+
 For worked examples, see the internal function \code{\link[=NormalizeInfo]{NormalizeInfo()}}, which is
 called from distance functions with the parameter \code{how = normalize}.
 .
@@ -264,7 +273,7 @@ distance calculation uses a multi-threaded \acronym{OpenMP} batch path
 automatically.  Control the number of threads with the \code{"mc.cores"} option:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{options(mc.cores = parallelly::availableCores())  # use all cores
-options(mc.cores = 4L)                             # or a fixed number
+options(mc.cores = 4L)                            # or a fixed number
 }\if{html}{\out{</div>}}
 
 Do \strong{not} call \code{\link[=StartParallel]{StartParallel()}} for these functions: a registered

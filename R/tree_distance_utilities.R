@@ -676,6 +676,10 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
                           infoInBoth = NULL, how = TRUE, Combine = "+", ...) {
   
+  if (is.character(how)) {
+    stop("`normalize = \"", how[[1]], "\"` is not available here; ",
+         "\"dmax\" applies only to information-based distances")
+  }
   if (is.logical(how) && how == FALSE) {
     # Return:
     unnormalized
