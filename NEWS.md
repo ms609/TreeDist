@@ -36,10 +36,12 @@
 ## Performance
 
 - Comparing one tree with many (e.g. `ClusteringInfoDistance(tree, trees)`)
-  scores all pairs in one C++ call, as comparing lists of trees already did,
-  and cross-pair comparisons no longer allocate a split buffer for every tree:
-  c. 4× faster from `phylo` objects and 8× faster from `Splits` objects with
-  2000 trees of 183 leaves (#229).
+  scores all pairs in one C++ call, as comparing lists of trees already did.
+  Cross-pair comparisons no longer allocate a split buffer for every tree,
+  read each tree's information content while scoring it, and use `Splits`
+  objects that already carry the required leaf labels as they stand:
+  c. 6× faster from `phylo` objects and 20× faster from `Splits`
+  objects with 2000 trees of 183 leaves (#229).
 
 - `NNIDist()` on a single list of trees prepares each tree once and scores
   all pairs in one C++ call, rather than renumbering and reordering both

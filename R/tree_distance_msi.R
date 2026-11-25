@@ -39,8 +39,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_msi_cross_pairs,
-                                 cpp_splitwise_info_batch)
+                                 cpp_msi_cross_pairs)
   if (!is.null(fast_many)) {
     msi <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]

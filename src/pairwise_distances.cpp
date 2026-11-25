@@ -13,10 +13,12 @@
 #include <TreeTools/SplitList.h>
 #include <TreeDist/popcount.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <memory>
 #include <cstring>
+#include <functional>
 #include <numeric>
 #include <vector>
 #include <Rcpp/Lightest>
@@ -75,6 +77,38 @@ struct CanonSplits {
   std::vector<split_int> idx;    // idx[pos] = original split index
 };
 
+// With few bins, sorting the canonical forms themselves beats sorting indices
+// into them.
+template <int NB>
+static void build_canon_fixed(const SplitList& s, const splitbit last_mask,
+                              CanonSplits& out) {
+  struct Key {
+    std::array<splitbit, NB> bins;
+    split_int i;
+  };
+  const split_int n = s.n_splits;
+  std::vector<Key> keys(n);
+  for (split_int i = 0; i < n; ++i) {
+    const splitbit flip = (s.state[i][0] & 1) ? splitbit(0) : ~splitbit(0);
+    for (int bin = 0; bin < NB; ++bin) {
+      keys[i].bins[bin] = s.state[i][bin] ^ flip;
+    }
+    keys[i].bins[NB - 1] &= last_mask;
+    keys[i].i = i;
+  }
+  std::sort(keys.begin(), keys.end(), [](const Key& a, const Key& b) {
+    return a.bins < b.bins;
+  });
+
+  out.canon.resize(static_cast<size_t>(n) * NB);
+  out.idx.resize(n);
+  for (split_int pos = 0; pos < n; ++pos) {
+    std::memcpy(&out.canon[static_cast<size_t>(pos) * NB],
+                keys[pos].bins.data(), NB * sizeof(splitbit));
+    out.idx[pos] = keys[pos].i;
+  }
+}
+
 static void build_canon(const SplitList& s, const int32 n_tips,
                         CanonSplits& out) {
   const split_int n        = s.n_splits;
@@ -83,6 +117,13 @@ static void build_canon(const SplitList& s, const int32 n_tips,
   const splitbit last_mask = (n_tips % SL_BIN_SIZE == 0)
     ? ~splitbit(0)
     : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
+
+  switch (n_bins) {
+    case 1: return build_canon_fixed<1>(s, last_mask, out);
+    case 2: return build_canon_fixed<2>(s, last_mask, out);
+    case 3: return build_canon_fixed<3>(s, last_mask, out);
+    case 4: return build_canon_fixed<4>(s, last_mask, out);
+  }
 
   out.canon.resize(static_cast<size_t>(n) * n_bins);
   out.idx.resize(n);
@@ -1409,18 +1450,91 @@ static void refill_split_list(std::unique_ptr<SplitList>& slot,
   slot.reset(raw);
 }
 
+// Information content of a tree, which depends only on the sizes of its
+// splits.  The batch functions and cross_pairs() share these, so they give
+// identical values.
+
+// ClusteringEntropy: sum of binary_entropy(k/n) over splits, in nats then
+// converted to bits (divide by log(2)).
+// binary_entropy(p) = -(p log p + (1-p) log(1-p))
+class ClusteringEntropy {
+  std::vector<double> entropy_;  // entropy_[k]: nats in a split of k leaves
+  int n_tip_;
+
+ public:
+  explicit ClusteringEntropy(const int n_tip)
+    : entropy_(std::max(n_tip, 0) + 1, 0.0), n_tip_(n_tip) {
+    const double invN = 1.0 / static_cast<double>(n_tip);
+    for (int k = 1; k < n_tip; ++k) {
+      const double p = k * invN;
+      const double q = 1.0 - p;
+      entropy_[k] = -(p * std::log(p) + q * std::log1p(-p));
+    }
+  }
+
+  double operator()(const SplitList& sl) const {
+    constexpr double invLog2 = 1.442695040888963387005;
+    double total = 0.0;
+    for (split_int s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k <= 0 || k >= n_tip_) continue;
+      total += entropy_[k];
+    }
+    return total * invLog2;
+  }
+};
+
+// SplitwiseInfo: sum of (Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k))
+// over splits.
+// Log2Rooted(m) = log2((2m-3)!!) = sum_{j=1,3,...,2m-3} log2(j)
+// Log2Unrooted(n) = Log2Rooted(n) - log2(2n-3)  [= log2((2n-5)!!)]
+class SplitwiseInfo {
+  std::vector<double> l2r_;  // l2r_[m] = Log2Rooted(m); 0 for m < 3
+  double l2u_n_;
+  int n_tip_;
+
+ public:
+  explicit SplitwiseInfo(const int n_tip)
+    : l2r_(std::max(n_tip, 0) + 1, 0.0), n_tip_(n_tip) {
+    for (int m = 3; m <= n_tip; ++m) {
+      l2r_[m] = l2r_[m - 1] + std::log2(2 * m - 3);
+    }
+    l2u_n_ = n_tip < 4 ? 0.0 : l2r_[n_tip] - std::log2(2 * n_tip - 3);
+  }
+
+  double operator()(const SplitList& sl) const {
+    double total = 0.0;
+    for (split_int s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k < 2 || (n_tip_ - k) < 2) continue;
+      total += l2u_n_ - l2r_[k] - l2r_[n_tip_ - k];
+    }
+    return total;
+  }
+};
+
+using TreeInfo = std::function<double(const SplitList&)>;
+
 // Scores every pair (a, b) with `score(sa, sb, canon_a, canon_b, tid)`,
 // returning an nA × nB matrix.  Canonical forms are built only if
-// `need_canon`; otherwise empty placeholders are passed.
+// `need_canon`; otherwise empty placeholders are passed.  If `info` is given,
+// the matrix carries each tree's information content in attributes `info_a`
+// and `info_b`.
 template <typename Score>
 static Rcpp::NumericMatrix cross_pairs(
     const List& splits_a, const List& splits_b,
     const int n_tip, const int n_threads, const bool need_canon,
-    Score score
+    Score score, const TreeInfo& info = nullptr
 ) {
   const int nA = splits_a.size();
   const int nB = splits_b.size();
   Rcpp::NumericMatrix result(nA, nB);
+  NumericVector info_a(info ? nA : 0);
+  NumericVector info_b(info ? nB : 0);
+  if (info) {
+    result.attr("info_a") = info_a;
+    result.attr("info_b") = info_b;
+  }
   if (nA == 0 || nB == 0) return result;
   double* const res = result.begin();
 
@@ -1434,6 +1548,11 @@ static Rcpp::NumericMatrix cross_pairs(
   parse_split_list(held_list, held);
   std::vector<CanonSplits> held_canon(n_held);
   if (need_canon) build_canon_all(held, n_tip, n_threads, held_canon);
+  double* const held_info = stream_a ? info_b.begin() : info_a.begin();
+  double* const streamed_info = stream_a ? info_a.begin() : info_b.begin();
+  if (info) {
+    for (int h = 0; h < n_held; ++h) held_info[h] = info(*held[h]);
+  }
 
   const int chunk = std::min(n_streamed, std::max(16, 8 * n_threads));
   std::vector<std::unique_ptr<SplitList>> pool(chunk);
@@ -1458,12 +1577,13 @@ static Rcpp::NumericMatrix cross_pairs(
 #else
       const int tid = 0;
 #endif
-      if (need_canon) {
+      if (need_canon || info) {
 #ifdef _OPENMP
 #pragma omp for schedule(static)
 #endif
         for (int c = 0; c < n_chunk; ++c) {
-          build_canon(*pool[c], n_tip, pool_canon[c]);
+          if (need_canon) build_canon(*pool[c], n_tip, pool_canon[c]);
+          if (info) streamed_info[first + c] = info(*pool[c]);
         }
       }
 #ifdef _OPENMP
@@ -1495,7 +1615,8 @@ using Rcpp::NumericMatrix;
 // [[Rcpp::export]]
 NumericMatrix cpp_mutual_clustering_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
   const int n_scratch = std::max(1, n_threads);
@@ -1507,14 +1628,16 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
         const CanonSplits& ca, const CanonSplits& cb, const int tid) {
       return mutual_clustering_score(a, b, n_tip, ca, cb,
                                      scratches[tid], mscratches[tid]);
-    });
+    },
+    with_info ? TreeInfo(ClusteringEntropy(n_tip)) : nullptr);
 }
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_rf_info_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
   std::vector<MatchScratch> mscratches(std::max(1, n_threads));
@@ -1523,7 +1646,8 @@ NumericMatrix cpp_rf_info_cross_pairs(
     [&](const SplitList& a, const SplitList& b,
         const CanonSplits& ca, const CanonSplits& cb, const int tid) {
       return rf_info_score(a, b, n_tip, ca, cb, mscratches[tid]);
-    });
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
 //' @keywords internal
@@ -1548,7 +1672,8 @@ NumericMatrix cpp_msd_cross_pairs(
 // [[Rcpp::export]]
 NumericMatrix cpp_msi_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
   std::vector<LapScratch> scratches(std::max(1, n_threads));
@@ -1557,14 +1682,16 @@ NumericMatrix cpp_msi_cross_pairs(
     [&](const SplitList& a, const SplitList& b,
         const CanonSplits&, const CanonSplits&, const int tid) {
       return msi_score(a, b, n_tip, scratches[tid]);
-    });
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_shared_phylo_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
   const int n_scratch = std::max(1, n_threads);
@@ -1577,7 +1704,8 @@ NumericMatrix cpp_shared_phylo_cross_pairs(
         const CanonSplits& ca, const CanonSplits& cb, const int tid) {
       return shared_phylo_score(a, b, n_tip, ca, cb, scratches[tid],
                                 mscratches[tid], pscratches[tid]);
-    });
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
 //' @keywords internal
@@ -1602,6 +1730,23 @@ NumericMatrix cpp_jaccard_cross_pairs(
     });
 }
 
+// TRUE iff `x` is a list whose every element is a Splits object with leaf
+// labels identical to `labels`: as.Splits(x, labels) would return it unchanged.
+// [[Rcpp::export]]
+bool cpp_splits_on_labels(SEXP x, SEXP labels) {
+  if (TYPEOF(x) != VECSXP) return false;
+  SEXP tip_label = Rf_install("tip.label");
+  const R_xlen_t n = Rf_xlength(x);
+  for (R_xlen_t i = 0; i < n; ++i) {
+    SEXP el = VECTOR_ELT(x, i);
+    if (!Rf_inherits(el, "Splits")) return false;
+    SEXP el_labels = Rf_getAttrib(el, tip_label);
+    if (el_labels != labels && !R_compute_identical(el_labels, labels, 16)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 // ---------------------------------------------------------------------------
 // Per-tree entropy / information batch functions
@@ -1610,9 +1755,6 @@ NumericMatrix cpp_jaccard_cross_pairs(
 // C++ call over all trees, eliminating N R->C++ round-trips.
 // ---------------------------------------------------------------------------
 
-// ClusteringEntropy: sum of binary_entropy(k/n) over splits, in nats then
-// converted to bits (divide by log(2)).
-// binary_entropy(p) = -(p log p + (1-p) log(1-p))
 // [[Rcpp::export]]
 NumericVector cpp_clustering_entropy_batch(
     const List& splits_list,
@@ -1622,37 +1764,13 @@ NumericVector cpp_clustering_entropy_batch(
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip <= 0) return result;
-
-  const double invN = 1.0 / static_cast<double>(n_tip);
-  constexpr double invLog2 = 1.442695040888963387005;
-
-  // A split's entropy depends only on its size, so tabulate it once per size
-  std::vector<double> entropy(n_tip + 1, 0.0);
-  for (int k = 1; k < n_tip; ++k) {
-    const double p = k * invN;
-    const double q = 1.0 - p;
-    entropy[k] = -(p * std::log(p) + q * std::log1p(-p));
-  }
-
+  const ClusteringEntropy entropy(n_tip);
   for (int i = 0; i < N; ++i) {
-    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
-    double total = 0.0;
-    for (split_int s = 0; s < sl.n_splits; ++s) {
-      const int k = sl.in_split[s];
-      if (k <= 0 || k >= n_tip) continue;
-      total += entropy[k];
-    }
-    result[i] = total * invLog2;
+    result[i] = entropy(SplitList(Rcpp::as<RawMatrix>(splits_list[i])));
   }
   return result;
 }
 
-// SplitwiseInfo: sum of (Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k))
-// over splits.
-// Log2Rooted(m) = log2((2m-3)!!) = sum_{j=1,3,...,2m-3} log2(j)
-// Log2Unrooted(n) = Log2Rooted(n) - log2(2n-3)  [= log2((2n-5)!!)]
-//
-// We precompute a table of Log2Rooted values up to n_tip.
 // [[Rcpp::export]]
 NumericVector cpp_splitwise_info_batch(
     const List& splits_list,
@@ -1662,27 +1780,9 @@ NumericVector cpp_splitwise_info_batch(
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip < 4) return result;
-
-  // Precompute Log2Rooted table: log2((2m-3)!!) for m = 0..n_tip
-  // Log2Rooted(0) = Log2Rooted(1) = 0 (convention)
-  // Log2Rooted(2) = log2(1) = 0
-  // Log2Rooted(m) = Log2Rooted(m-1) + log2(2m-3)
-  std::vector<double> l2r(n_tip + 1, 0.0);
-  for (int m = 3; m <= n_tip; ++m) {
-    l2r[m] = l2r[m - 1] + std::log2(2 * m - 3);
-  }
-  // Log2Unrooted(n) = log2((2n-5)!!) = Log2Rooted(n) - log2(2n-3)
-  const double l2u_n = l2r[n_tip] - std::log2(2 * n_tip - 3);
-
+  const SplitwiseInfo info(n_tip);
   for (int i = 0; i < N; ++i) {
-    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
-    double total = 0.0;
-    for (split_int s = 0; s < sl.n_splits; ++s) {
-      const int k = sl.in_split[s];
-      if (k < 2 || (n_tip - k) < 2) continue;
-      total += l2u_n - l2r[k] - l2r[n_tip - k];
-    }
-    result[i] = total;
+    result[i] = info(SplitList(Rcpp::as<RawMatrix>(splits_list[i])));
   }
   return result;
 }

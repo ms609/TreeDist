@@ -159,7 +159,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 #' @importFrom stats setNames
 #' @importFrom TreeTools as.Splits TipLabels
 .FastManyManyPath <- function(tree1, tree2, reportMatching,
-                              cpp_cross_pairs_fn, cpp_entropy_fn) {
+                              cpp_cross_pairs_fn) {
   if (is.null(tree2) || reportMatching) return(NULL)
   single1 <- inherits(tree1, c("phylo", "Splits"))
   single2 <- inherits(tree2, c("phylo", "Splits"))
@@ -169,9 +169,14 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   names2 <- names(tree2)
   if (single1) tree1 <- .WrapSingle(tree1)
   if (single2) tree2 <- .WrapSingle(tree2)
-  
-  lab1 <- TipLabels(tree1)
-  lab2 <- TipLabels(tree2)
+
+  if (single2) {
+    lab2 <- TipLabels(tree2)
+    lab1 <- .TipLabelsLike(tree1, lab2)
+  } else {
+    lab1 <- TipLabels(tree1)
+    lab2 <- .TipLabelsLike(tree2, lab1)
+  }
   
   # Check tip label agreement
   if (is.list(lab1)) {
@@ -195,15 +200,14 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   if (nTip < 4) return(NULL)
   .CheckMaxTips(nTip)
   
-  splits1 <- as.Splits(tree1, tipLabels = tipLabels1)
-  splits2 <- as.Splits(tree2, tipLabels = tipLabels1)  # Use tipLabels1 to ensure order consistency
+  splits1 <- .SplitsOn(tree1, tipLabels1)
+  splits2 <- .SplitsOn(tree2, tipLabels1)
   n_threads <- as.integer(getOption("mc.cores", 1L))
   
-  dists <- cpp_cross_pairs_fn(splits1, splits2, as.integer(nTip), n_threads)
-  info1 <- cpp_entropy_fn(splits1, as.integer(nTip))
-  info2 <- cpp_entropy_fn(splits2, as.integer(nTip))
-  
-  infoBoth <- outer(info1, info2, "+")
+  dists <- cpp_cross_pairs_fn(splits1, splits2, as.integer(nTip), n_threads,
+                              with_info = TRUE)
+  infoBoth <- outer(attr(dists, "info_a"), attr(dists, "info_b"), "+")
+  attributes(dists) <- list(dim = dim(dists))
   if (single1) {
     dists <- setNames(dists[1, ], names2)
     infoBoth <- infoBoth[1, ]

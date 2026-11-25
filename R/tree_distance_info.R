@@ -260,8 +260,7 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_shared_phylo_cross_pairs,
-                                 cpp_splitwise_info_batch)
+                                 cpp_shared_phylo_cross_pairs)
   if (!is.null(fast_many)) {
     spi <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]
@@ -315,8 +314,7 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_mutual_clustering_cross_pairs,
-                                 cpp_clustering_entropy_batch)
+                                 cpp_mutual_clustering_cross_pairs)
   if (!is.null(fast_many)) {
     mci <- fast_many[["dists"]]
     treesIndependentInfo <- fast_many[["infoBoth"]]

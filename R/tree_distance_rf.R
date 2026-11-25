@@ -86,8 +86,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
 
     # Cross-pairs fast path
     fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                   cpp_rf_info_cross_pairs,
-                                   cpp_splitwise_info_batch)
+                                   cpp_rf_info_cross_pairs)
     if (!is.null(fast_many)) {
       irf <- fast_many[["dists"]]
       treesIndependentInfo <- fast_many[["infoBoth"]]

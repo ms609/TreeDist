@@ -44,7 +44,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     stop("`tree1` must be a tree, or list of trees, with class ", 
          paste(supportedClasses, collapse = " / "))
   }
-  labels1 <- TipLabels(tree1)
+  labels1 <- if (!single1 && inherits(tree2, supportedClasses)) {
+    .TipLabelsLike(tree1, TipLabels(tree2))
+  } else {
+    TipLabels(tree1)
+  }
   if (is.list(labels1)) {
     if (!all(vapply(labels1[-1], setequal, logical(1), labels1[[1]]))) {
       nTip <- NA
@@ -63,7 +67,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       stop("`tree2` must be a tree, or list of trees, with class ", 
            paste(supportedClasses, collapse = " / "))
     }
-    labels2 <- TipLabels(tree2)
+    labels2 <- .TipLabelsLike(tree2, labels1)
     if (is.list(labels2)) {
       if (!all(vapply(labels2[-1], setequal, logical(1), labels2[[1]]))) {
         nTip <- NA
@@ -361,10 +365,30 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   }
   # Return:
   .Kernel(
-    as.Splits(trees1, tipLabels = tipLabels, asSplits = FALSE),
-    as.Splits(trees2, tipLabels = tipLabels, asSplits = FALSE),
+    .SplitsOn(trees1, tipLabels),
+    .SplitsOn(trees2, tipLabels),
     as.integer(nTip), as.integer(getOption("mc.cores", 1L))
   )
+}
+
+# as.Splits(trees, tipLabels), skipping the per-tree R calls when `trees`
+# already holds Splits on exactly these labels
+.SplitsOn <- function(trees, tipLabels) {
+  if (cpp_splits_on_labels(trees, tipLabels)) {
+    trees
+  } else {
+    as.Splits(trees, tipLabels = tipLabels, asSplits = FALSE)
+  }
+}
+
+# TipLabels(trees), taking the labels of `like` when `trees` are Splits on
+# exactly those labels
+.TipLabelsLike <- function(trees, like) {
+  if (!is.list(like) && cpp_splits_on_labels(trees, like)) {
+    like
+  } else {
+    TipLabels(trees)
+  }
 }
 
 #' Calculate distance between trees, or lists of trees

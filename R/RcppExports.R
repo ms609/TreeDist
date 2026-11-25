@@ -155,13 +155,13 @@ cpp_jaccard_all_pairs <- function(splits_list, n_tip, k = 1.0, allow_conflict = 
 }
 
 #' @keywords internal
-cpp_mutual_clustering_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
-    .Call(`_TreeDist_cpp_mutual_clustering_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+cpp_mutual_clustering_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, with_info = FALSE) {
+    .Call(`_TreeDist_cpp_mutual_clustering_cross_pairs`, splits_a, splits_b, n_tip, n_threads, with_info)
 }
 
 #' @keywords internal
-cpp_rf_info_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
-    .Call(`_TreeDist_cpp_rf_info_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+cpp_rf_info_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, with_info = FALSE) {
+    .Call(`_TreeDist_cpp_rf_info_cross_pairs`, splits_a, splits_b, n_tip, n_threads, with_info)
 }
 
 #' @keywords internal
@@ -170,18 +170,22 @@ cpp_msd_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
 }
 
 #' @keywords internal
-cpp_msi_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
-    .Call(`_TreeDist_cpp_msi_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+cpp_msi_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, with_info = FALSE) {
+    .Call(`_TreeDist_cpp_msi_cross_pairs`, splits_a, splits_b, n_tip, n_threads, with_info)
 }
 
 #' @keywords internal
-cpp_shared_phylo_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
-    .Call(`_TreeDist_cpp_shared_phylo_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+cpp_shared_phylo_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L, with_info = FALSE) {
+    .Call(`_TreeDist_cpp_shared_phylo_cross_pairs`, splits_a, splits_b, n_tip, n_threads, with_info)
 }
 
 #' @keywords internal
 cpp_jaccard_cross_pairs <- function(splits_a, splits_b, n_tip, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
     .Call(`_TreeDist_cpp_jaccard_cross_pairs`, splits_a, splits_b, n_tip, k, allow_conflict, n_threads)
+}
+
+cpp_splits_on_labels <- function(x, labels) {
+    .Call(`_TreeDist_cpp_splits_on_labels`, x, labels)
 }
 
 cpp_clustering_entropy_batch <- function(splits_list, n_tip) {
