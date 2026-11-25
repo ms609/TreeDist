@@ -2,7 +2,7 @@
 % Please edit documentation in R/DistanceOracle.R
 \name{DistanceOracle}
 \alias{DistanceOracle}
-\title{Distances from one tree to many, with the trees prepared once}
+\title{Create function to Efficiently compute distances from one tree to others in a set}
 \usage{
 DistanceOracle(trees, Func = ClusteringInfoDistance, ..., maxBytes = 2^31)
 }
@@ -12,46 +12,40 @@ object.}
 
 \item{Func}{Function giving the distance between trees: one of
 \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}}, \code{\link[=InfoRobinsonFoulds]{InfoRobinsonFoulds()}}, \code{\link[=RobinsonFoulds]{RobinsonFoulds()}},
-\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}}, \code{\link[=NyeSimilarity]{NyeSimilarity()}} or
+\code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}}, \code{\link[=NyeSimilarity]{NyeSimilarity()}} (returns a similarity unless \code{similarity = FALSE}), or
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}}.}
 
 \item{\dots}{Further arguments to \code{Func}, such as \code{normalize}.}
 
-\item{maxBytes}{Numeric giving the most memory, in bytes, that the prepared
+\item{maxBytes}{Numeric giving the maximum memory, in bytes, that the prepared
 trees may occupy.}
 }
 \value{
-\code{DistanceOracle()} returns a function of \code{i}, an integer vector
-indexing \code{trees}.  It returns the values of \code{Func} between \code{trees[[i]]} and
+\code{DistanceOracle()} returns a function that takes a single argument \code{i},
+an integer vector that specifies the indices of one or more elements in \code{trees}.
+That function returns the values of \code{Func} between \code{trees[[i]]} and
 each tree in \code{trees}: a vector if \code{i} has length one, otherwise a matrix
 with one column per entry of \code{i}.
 }
 \description{
-\code{DistanceOracle()} prepares a set of trees once, returning a function that
-gives the distances from any one of them to all of them.
+\code{DistanceOracle()} prepares a set of trees and returns a function that efficiently
+computes the distances from any one of them to all of them.
 }
 \details{
-Algorithms such as farthest-first sampling request one column of a distance
-matrix at a time, each time comparing a single tree with the whole set.
-Calling \code{Func(trees[[i]], trees)} re-reads the splits of every tree in each
-call; the oracle reads them only once, so each column is cheaper.
-\code{oracle(i)} returns the same values as \code{Func(trees[[i]], trees, ...)}, in the
-shape that \code{Coreset::FarFirst(d = )} accepts.
+In use cases that require one column of a distance matrix at a time, it is faster to
+run a single preparation pass over all trees, than to repeat the preparatory steps
+each time a new column is required. \code{DistanceOracle()} produces a function that,
+when passed \code{i}, returns the same as \code{Func(trees[[i]], trees, ...)}; repeated calls
+to that function are faster than repeated calls to \code{Func}.
 
-\code{NyeSimilarity()} returns a similarity unless \code{similarity = FALSE}.
-
-The prepared trees live in C++ memory, and are rebuilt if lost, as after
-\code{\link[=saveRDS]{saveRDS()}}/\code{\link[=readRDS]{readRDS()}}.
-Where trees do not share a set of four or more leaves, or would occupy more
-than \code{maxBytes}, \code{oracle(i)} simply calls \code{Func(trees[[i]], trees, ...)}.
 Columns are computed using \code{getOption("mc.cores")} threads.
 }
 \examples{
 library("TreeTools", quietly = TRUE)
 trees <- as.phylo(0:9, nTip = 12)
-oracle <- DistanceOracle(trees, ClusteringInfoDistance)
-oracle(3)
-all.equal(oracle(3), ClusteringInfoDistance(trees[[3]], trees))
+Oracle <- DistanceOracle(trees, ClusteringInfoDistance)
+Oracle(3)
+all.equal(Oracle(3), ClusteringInfoDistance(trees[[3]], trees))
 }
 \seealso{
 Other tree distances:
