@@ -5,7 +5,7 @@ Cross-pairs transfer dissimilarity (OpenMP)
 ## Usage
 
 ``` r
-cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads)
+cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads = 1L)
 ```
 
 ## Arguments

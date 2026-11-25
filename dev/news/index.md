@@ -49,6 +49,33 @@
 
 ### Performance
 
+- Comparing one tree with many
+  (e.g. `ClusteringInfoDistance(tree, trees)`) scores all pairs in one
+  C++ call, as comparing lists of trees already did. Cross-pair
+  comparisons no longer allocate a split buffer for every tree, read
+  each tree’s information content while scoring it, and use `Splits`
+  objects that already carry the required leaf labels as they stand:
+
+  3.  6× faster from `phylo` objects and 20× faster from `Splits`
+      objects with 2000 trees of 183 leaves
+      ([\#229](https://github.com/ms609/TreeDist/issues/229)).
+
+- Other one-to-many comparisons gain the same treatment. With 2000 trees
+  of 183 leaves, normalized
+  [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
+  [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md),
+  [`MatchingSplitInfo()`](https://ms609.github.io/TreeDist/dev/reference/TreeDistance.md)
+  and
+  [`InfoRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md)
+  run 3–18× faster;
+  [`RobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/Robinson-Foulds.md)
+  c. 2× faster from `phylo` objects and 4× from `Splits`;
+  [`TransferDist()`](https://ms609.github.io/TreeDist/dev/reference/TransferDist.md),
+  [`PathDist()`](https://ms609.github.io/TreeDist/dev/reference/PathDist.md)
+  and
+  [`KendallColijn()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md)
+  1.3–3.6× faster.
+
 - [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md)
   on a single list of trees prepares each tree once and scores all pairs
   in one C++ call, rather than renumbering and reordering both trees for
