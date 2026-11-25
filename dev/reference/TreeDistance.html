@@ -327,7 +327,7 @@ which the maintainer plans to attempt in the future; please <a href="https://git
 distance calculation uses a multi-threaded <acronym>OpenMP</acronym> batch path
 automatically.  Control the number of threads with the <code>"mc.cores"</code> option:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fu">parallelly</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>  <span class="co"># use all cores</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                             <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>mc.cores <span class="op">=</span> <span class="fl">4L</span><span class="op">)</span>                            <span class="co"># or a fixed number</span></span></code></pre><p></p></div>
 <p>Do <strong>not</strong> call <code><a href="StartParallel.html">StartParallel()</a></code> for these functions: a registered
 R cluster disables the <acronym>OpenMP</acronym> path and replaces it with slower
 inter-process communication.  See <code><a href="StartParallel.html">StartParallel()</a></code> for full guidance
@@ -359,6 +359,7 @@ Cambridge University Press, Cambridge.
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other tree distances:
+<code><a href="DistanceOracle.html">DistanceOracle()</a></code>,
 <code><a href="HierarchicalMutualInfo.html">HierarchicalMutualInfo()</a></code>,
 <code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code>,
 <code><a href="KendallColijn.html">KendallColijn()</a></code>,

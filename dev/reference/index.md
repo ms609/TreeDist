@@ -35,6 +35,10 @@ Functions for calculating distances between pairs of trees.
   [`MatchingSplitDistanceSplits()`](https://ms609.github.io/TreeDist/dev/reference/MatchingSplitDistance.md)
   : Matching Split Distance
 
+- [`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md)
+  : Create function to Efficiently compute distances from one tree to
+  others in a set
+
 - [`HierarchicalMutualInfo()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md)
   [`HMI()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md)
   [`SelfHMI()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md)

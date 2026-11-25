@@ -127,6 +127,7 @@ is a more sophisticated, if more cumbersome, implementation that
 supports lambda \> 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances:
+[`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md),
 [`HierarchicalMutualInfo()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md),
 [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md),
 [`MASTSize()`](https://ms609.github.io/TreeDist/dev/reference/MASTSize.md),

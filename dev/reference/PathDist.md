@@ -76,6 +76,7 @@ classifications of the same set of elements.” *Taxon*, **20**(4),
 ## See also
 
 Other tree distances:
+[`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md),
 [`HierarchicalMutualInfo()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md),
 [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md),
 [`KendallColijn()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md),

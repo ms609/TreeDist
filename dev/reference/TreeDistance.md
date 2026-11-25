@@ -270,7 +270,7 @@ automatically. Control the number of threads with the `"mc.cores"`
 option:
 
     options(mc.cores = parallelly::availableCores())  # use all cores
-    options(mc.cores = 4L)                             # or a fixed number
+    options(mc.cores = 4L)                            # or a fixed number
 
 Do **not** call
 [`StartParallel()`](https://ms609.github.io/TreeDist/dev/reference/StartParallel.md)
@@ -309,6 +309,7 @@ correction for chance.” *Journal of Machine Learning Research*, **11**,
 ## See also
 
 Other tree distances:
+[`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md),
 [`HierarchicalMutualInfo()`](https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.md),
 [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md),
 [`KendallColijn()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md),

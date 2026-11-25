@@ -2,6 +2,14 @@
 
 ## TreeDist 2.15.0.9008 (development)
 
+### New features
+
+- [`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md)
+  prepares a set of trees once, returning a function that gives the
+  distances from any one tree to all of them, as required by
+  farthest-first sampling
+  ([\#229](https://github.com/ms609/TreeDist/issues/229)).
+
 ### Bug fixes
 
 - [`NNIDist()`](https://ms609.github.io/TreeDist/dev/reference/NNIDist.md):

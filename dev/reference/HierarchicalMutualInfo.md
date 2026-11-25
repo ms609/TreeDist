@@ -126,6 +126,7 @@ Matter Physics*, **92**(6), 062825-1–062825-13.
 ## See also
 
 Other tree distances:
+[`DistanceOracle()`](https://ms609.github.io/TreeDist/dev/reference/DistanceOracle.md),
 [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.md),
 [`KendallColijn()`](https://ms609.github.io/TreeDist/dev/reference/KendallColijn.md),
 [`MASTSize()`](https://ms609.github.io/TreeDist/dev/reference/MASTSize.md),

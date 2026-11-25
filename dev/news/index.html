@@ -61,6 +61,11 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.15.0.9008" id="treedist-21509008-development">TreeDist 2.15.0.9008 (development)<a class="anchor" aria-label="anchor" href="#treedist-21509008-development"></a></h2>
 <div class="section level3">
+<h3 id="new-features-2-15-0-9008">New features<a class="anchor" aria-label="anchor" href="#new-features-2-15-0-9008"></a></h3>
+<ul><li>
+<code><a href="../reference/DistanceOracle.html">DistanceOracle()</a></code> prepares a set of trees once, returning a function that gives the distances from any one tree to all of them, as required by farthest-first sampling (<a href="https://github.com/ms609/TreeDist/issues/229" class="external-link">#229</a>).</li>
+</ul></div>
+<div class="section level3">
 <h3 id="bug-fixes-2-15-0-9008">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-15-0-9008"></a></h3>
 <ul><li><p><code><a href="../reference/NNIDist.html">NNIDist()</a></code>: <code>best_lower</code> was not a lower bound, and has been removed. <code>lower</code> is now calculated correctly.</p></li>
 <li><p><code><a href="../reference/NNIDist.html">NNIDist()</a></code> and <code><a href="../reference/NNIDist.html">NNIDiameter()</a></code> use theorem 3 of Fack <em>et al.</em> (2002) for <code>fack_upper</code> and <code>fackMax</code>, tightening <code>loose_upper</code> and <code>best_upper</code>.</p></li>
