@@ -1,5 +1,11 @@
 # TreeDist 2.15.0.9008 (development)
 
+## New features
+
+- `DistanceOracle()` prepares a set of trees once, returning a function that
+  gives the distances from any one tree to all of them, as required by
+  farthest-first sampling (#229).
+
 ## Bug fixes
 
 - `NNIDist()`: `best_lower` was not a lower bound, and has been removed.

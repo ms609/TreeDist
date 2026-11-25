@@ -86,7 +86,9 @@ test_that("DistanceOracle() falls back to Func", {
   expect_equal(bigOracle(3), RobinsonFoulds(trees[[3]], trees, normalize = TRUE))
   expect_equal(dim(bigOracle(1:2)), c(length(trees), 2))
 
-  mixed <- c(trees[1:3], list(TreeTools::BalancedTree(paste0("t", 1:12))))
+  permuted <- c(trees[1:3], list(TreeTools::BalancedTree(paste0("t", 12:1))))
+  .ExpectOracle(permuted, ClusteringInfoDistance)
+  mixed <- c(trees[1:3], list(TreeTools::BalancedTree(paste0("u", 1:12))))
   .ExpectOracle(mixed, ClusteringInfoDistance)
   .ExpectOracle(mixed, JaccardRobinsonFoulds, k = 2)
 
