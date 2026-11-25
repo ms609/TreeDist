@@ -1,44 +1,38 @@
-#' Distances from one tree to many, with the trees prepared once
+#' Create function to Efficiently compute distances from one tree to others in a set
 #'
-#' `DistanceOracle()` prepares a set of trees once, returning a function that
-#' gives the distances from any one of them to all of them.
+#' `DistanceOracle()` prepares a set of trees and returns a function that efficiently
+#' computes the distances from any one of them to all of them.
 #'
-#' Algorithms such as farthest-first sampling request one column of a distance
-#' matrix at a time, each time comparing a single tree with the whole set.
-#' Calling `Func(trees[[i]], trees)` re-reads the splits of every tree in each
-#' call; the oracle reads them only once, so each column is cheaper.
-#' `oracle(i)` returns the same values as `Func(trees[[i]], trees, ...)`, in the
-#' shape that `Coreset::FarFirst(d = )` accepts.
+#' In use cases that require one column of a distance matrix at a time, it is faster to
+#' run a single preparation pass over all trees, than to repeat the preparatory steps
+#' each time a new column is required. `DistanceOracle()` produces a function that,
+#' when passed `i`, returns the same as `Func(trees[[i]], trees, ...)`; repeated calls
+#' to that function are faster than repeated calls to `Func`.
 #'
-#' `NyeSimilarity()` returns a similarity unless `similarity = FALSE`.
-#'
-#' The prepared trees live in C++ memory, and are rebuilt if lost, as after
-#' [`saveRDS()`]/[`readRDS()`].
-#' Where trees do not share a set of four or more leaves, or would occupy more
-#' than `maxBytes`, `oracle(i)` simply calls `Func(trees[[i]], trees, ...)`.
 #' Columns are computed using `getOption("mc.cores")` threads.
 #'
 #' @param trees List of trees of class `phylo` or `Splits`, or a `multiPhylo`
 #' object.
 #' @param Func Function giving the distance between trees: one of
 #' [`ClusteringInfoDistance()`], [`InfoRobinsonFoulds()`], [`RobinsonFoulds()`],
-#' [`MatchingSplitDistance()`], [`NyeSimilarity()`] or
+#' [`MatchingSplitDistance()`], [`NyeSimilarity()`] (returns a similarity unless `similarity = FALSE`), or
 #' [`JaccardRobinsonFoulds()`].
 #' @param \dots Further arguments to `Func`, such as `normalize`.
-#' @param maxBytes Numeric giving the most memory, in bytes, that the prepared
+#' @param maxBytes Numeric giving the maximum memory, in bytes, that the prepared
 #' trees may occupy.
 #'
-#' @return `DistanceOracle()` returns a function of `i`, an integer vector
-#' indexing `trees`.  It returns the values of `Func` between `trees[[i]]` and
+#' @return `DistanceOracle()` returns a function that takes a single argument `i`,
+#' an integer vector that specifies the indices of one or more elements in `trees`.
+#' That function returns the values of `Func` between `trees[[i]]` and
 #' each tree in `trees`: a vector if `i` has length one, otherwise a matrix
 #' with one column per entry of `i`.
 #'
 #' @examples
 #' library("TreeTools", quietly = TRUE)
 #' trees <- as.phylo(0:9, nTip = 12)
-#' oracle <- DistanceOracle(trees, ClusteringInfoDistance)
-#' oracle(3)
-#' all.equal(oracle(3), ClusteringInfoDistance(trees[[3]], trees))
+#' Oracle <- DistanceOracle(trees, ClusteringInfoDistance)
+#' Oracle(3)
+#' all.equal(Oracle(3), ClusteringInfoDistance(trees[[3]], trees))
 #' @template MRS
 #' @family tree distances
 #' @export
