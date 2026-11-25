@@ -319,7 +319,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 
 # Wrap a single tree or Splits object as a list of length one
 .WrapSingle <- function(x) {
-  if (inherits(x, "phylo")) structure(list(x), class = "multiPhylo") else list(x)
+  if (inherits(x, "phylo")) {
+    structure(list(x), class = "multiPhylo")
+  } else {
+    list(x)
+  }
 }
 
 # Score every pair from two lists of trees that share leaves via the batched
@@ -356,9 +360,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     return(NULL)
   }
   # Return:
-  .Kernel(as.Splits(trees1, tipLabels = tipLabels, asSplits = FALSE),
-         as.Splits(trees2, tipLabels = tipLabels, asSplits = FALSE),
-         as.integer(nTip), as.integer(getOption("mc.cores", 1L)))
+  .Kernel(
+    as.Splits(trees1, tipLabels = tipLabels, asSplits = FALSE),
+    as.Splits(trees2, tipLabels = tipLabels, asSplits = FALSE),
+    as.integer(nTip), as.integer(getOption("mc.cores", 1L))
+  )
 }
 
 #' Calculate distance between trees, or lists of trees
