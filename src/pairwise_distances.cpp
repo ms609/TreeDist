@@ -1375,8 +1375,13 @@ NumericVector cpp_jaccard_all_pairs(
 // =============================================================================
 //
 // Each function computes the full nA × nB matrix of pairwise distances between
-// two sets of trees.  Like the all_pairs variants, these use OpenMP where
-// available and reuse LapScratch / CostMatrix pools across pairs.
+// two sets of trees, using OpenMP where available.
+//
+// A SplitList carries fixed stack-storage arrays (hundreds of KB), so giving
+// every tree its own heap-allocated SplitList costs far more than scoring one
+// pair.  cross_pairs() therefore holds only the smaller set in memory and
+// streams the larger set through a small, reused pool of SplitLists: comparing
+// one tree with many costs one pool's allocations, not one per tree.
 
 static void parse_split_list(const List& list,
                              std::vector<std::unique_ptr<SplitList>>& out) {
@@ -1389,6 +1394,98 @@ static void parse_split_list(const List& list,
   }
 }
 
+// Rebuild the SplitList held by `slot` from `x`, reusing its storage.
+static void refill_split_list(std::unique_ptr<SplitList>& slot,
+                              const RawMatrix& x) {
+  if (!slot) {
+    slot = std::make_unique<SplitList>(x);
+    return;
+  }
+  // Release first: should the constructor throw, the storage leaks rather
+  // than being destroyed twice.
+  SplitList* raw = slot.release();
+  raw->~SplitList();
+  ::new (static_cast<void*>(raw)) SplitList(x);
+  slot.reset(raw);
+}
+
+// Scores every pair (a, b) with `score(sa, sb, canon_a, canon_b, tid)`,
+// returning an nA × nB matrix.  Canonical forms are built only if
+// `need_canon`; otherwise empty placeholders are passed.
+template <typename Score>
+static Rcpp::NumericMatrix cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads, const bool need_canon,
+    Score score
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  Rcpp::NumericMatrix result(nA, nB);
+  if (nA == 0 || nB == 0) return result;
+  double* const res = result.begin();
+
+  const bool stream_a = nA > nB;
+  const List& held_list = stream_a ? splits_b : splits_a;
+  const List& streamed_list = stream_a ? splits_a : splits_b;
+  const int n_held = held_list.size();
+  const int n_streamed = streamed_list.size();
+
+  std::vector<std::unique_ptr<SplitList>> held;
+  parse_split_list(held_list, held);
+  std::vector<CanonSplits> held_canon(n_held);
+  if (need_canon) build_canon_all(held, n_tip, n_threads, held_canon);
+
+  const int chunk = std::min(n_streamed, std::max(16, 8 * n_threads));
+  std::vector<std::unique_ptr<SplitList>> pool(chunk);
+  std::vector<CanonSplits> pool_canon(chunk);
+
+  for (int first = 0; first < n_streamed; first += chunk) {
+    Rcpp::checkUserInterrupt();
+    const int n_chunk = std::min(chunk, n_streamed - first);
+    // R objects may be read on the main thread only
+    for (int c = 0; c < n_chunk; ++c) {
+      refill_split_list(pool[c],
+                        Rcpp::as<RawMatrix>(streamed_list[first + c]));
+    }
+    const int n_pairs = n_chunk * n_held;
+
+#ifdef _OPENMP
+#pragma omp parallel num_threads(n_threads)
+#endif
+    {
+#ifdef _OPENMP
+      const int tid = omp_get_thread_num();
+#else
+      const int tid = 0;
+#endif
+      if (need_canon) {
+#ifdef _OPENMP
+#pragma omp for schedule(static)
+#endif
+        for (int c = 0; c < n_chunk; ++c) {
+          build_canon(*pool[c], n_tip, pool_canon[c]);
+        }
+      }
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic)
+#endif
+      for (int p = 0; p < n_pairs; ++p) {
+        const int h = p % n_held;
+        const int c = p / n_held;
+        const size_t s = static_cast<size_t>(first + c);
+        if (stream_a) {
+          res[s + static_cast<size_t>(nA) * h] = score(
+            *pool[c], *held[h], pool_canon[c], held_canon[h], tid);
+        } else {
+          res[h + static_cast<size_t>(nA) * s] = score(
+            *held[h], *pool[c], held_canon[h], pool_canon[c], tid);
+        }
+      }
+    }
+  }
+  return result;
+}
+
 using Rcpp::NumericMatrix;
 
 //' @keywords internal
@@ -1398,46 +1495,16 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip,
-                                       canon_a[i], canon_b[j], scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return mutual_clustering_score(a, b, n_tip, ca, cb,
+                                     scratches[tid], mscratches[tid]);
+    });
 }
 
 //' @keywords internal
@@ -1447,43 +1514,13 @@ NumericMatrix cpp_rf_info_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-  const int total = nA * nB;
-
-  const int n_scratch = std::max(1, n_threads);
-  std::vector<MatchScratch> mscratches(n_scratch);
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    MatchScratch& mscratch = mscratches[omp_get_thread_num()];
-#else
-    MatchScratch& mscratch = mscratches[0];
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip,
-                             canon_a[i], canon_b[j], mscratch);
-  }
-  return result;
+  std::vector<MatchScratch> mscratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return rf_info_score(a, b, n_tip, ca, cb, mscratches[tid]);
+    });
 }
 
 //' @keywords internal
@@ -1493,46 +1530,15 @@ NumericMatrix cpp_msd_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = msd_score(*sa[i], *sb[j], n_tip,
-                         canon_a[i], canon_b[j], scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return msd_score(a, b, n_tip, ca, cb, scratches[tid], mscratches[tid]);
+    });
 }
 
 //' @keywords internal
@@ -1542,38 +1548,13 @@ NumericMatrix cpp_msi_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
-  const int n_scratch = std::max(1, n_threads);
-  std::vector<LapScratch> scratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
-#else
-    LapScratch& scratch = scratches[0];
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = msi_score(*sa[i], *sb[j], n_tip, scratch);
-  }
-  return result;
+  std::vector<LapScratch> scratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, false,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits&, const CanonSplits&, const int tid) {
+      return msi_score(a, b, n_tip, scratches[tid]);
+    });
 }
 
 //' @keywords internal
@@ -1583,46 +1564,17 @@ NumericMatrix cpp_shared_phylo_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
   std::vector<PinScratch> pscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = shared_phylo_score(*sa[i], *sb[j], n_tip, canon_a[i], canon_b[j],
-                                  scratches[tid], mscratches[tid],
-                                  pscratches[tid]);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return shared_phylo_score(a, b, n_tip, ca, cb, scratches[tid],
+                                mscratches[tid], pscratches[tid]);
+    });
 }
 
 //' @keywords internal
@@ -1635,47 +1587,16 @@ NumericMatrix cpp_jaccard_cross_pairs(
     const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip,
-                             canon_a[i], canon_b[j], k, allow_conflict,
-                             scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return jaccard_score(a, b, n_tip, ca, cb, k, allow_conflict,
+                           scratches[tid], mscratches[tid]);
+    });
 }
 
 

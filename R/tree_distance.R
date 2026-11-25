@@ -153,17 +153,22 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 # Fast path for cross-pairs (ManyMany): avoids duplicate as.Splits() calls by
 # computing both pairwise distances and per-tree entropies in a single pass.
 # Returns NULL when not applicable. When applicable, returns list with:
-#   $dists: nA × nB matrix of pairwise distances
-#   $info1: per-tree entropies for tree1 (length nA)
-#   $info2: per-tree entropies for tree2 (length nB)
+#   $dists: nA × nB matrix of pairwise distances, or a vector if either
+#           input is a single tree
+#   $infoBoth: summed per-tree entropies, with the same shape as $dists
+#' @importFrom stats setNames
 #' @importFrom TreeTools as.Splits TipLabels
 .FastManyManyPath <- function(tree1, tree2, reportMatching,
                               cpp_cross_pairs_fn, cpp_entropy_fn) {
   if (is.null(tree2) || reportMatching) return(NULL)
-  if (inherits(tree1, c("phylo", "Splits")) || inherits(tree2, c("phylo", "Splits"))) {
-    return(NULL) # nocov
-  }
+  single1 <- inherits(tree1, c("phylo", "Splits"))
+  single2 <- inherits(tree2, c("phylo", "Splits"))
+  if (single1 && single2) return(NULL)
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
+  names1 <- names(tree1)
+  names2 <- names(tree2)
+  if (single1) tree1 <- .WrapSingle(tree1)
+  if (single2) tree2 <- .WrapSingle(tree2)
   
   lab1 <- TipLabels(tree1)
   lab2 <- TipLabels(tree2)
@@ -198,15 +203,18 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   info1 <- cpp_entropy_fn(splits1, as.integer(nTip))
   info2 <- cpp_entropy_fn(splits2, as.integer(nTip))
   
-  # Add row/column names to the distance matrix
-  rownames(dists) <- names(tree1)
-  colnames(dists) <- names(tree2)
-  
-  list(
-    dists = dists,
-    info1 = info1,
-    info2 = info2
-  )
+  infoBoth <- outer(info1, info2, "+")
+  if (single1) {
+    dists <- setNames(dists[1, ], names2)
+    infoBoth <- infoBoth[1, ]
+  } else if (single2) {
+    dists <- setNames(dists[, 1], names1)
+    infoBoth <- infoBoth[, 1]
+  } else {
+    dimnames(dists) <- list(names1, names2)
+  }
+
+  list(dists = dists, infoBoth = infoBoth)
 }
 
 # Lower-tri pairwise sums: outer(x, x, "+")[lower.tri(.)]

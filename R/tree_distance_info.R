@@ -264,9 +264,7 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  cpp_splitwise_info_batch)
   if (!is.null(fast_many)) {
     spi <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - spi - spi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
@@ -321,9 +319,7 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  cpp_clustering_entropy_batch)
   if (!is.null(fast_many)) {
     mci <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - mci - mci, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,

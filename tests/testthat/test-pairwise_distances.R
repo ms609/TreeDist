@@ -222,6 +222,69 @@ test_that(".FastManyManyPath: cross-pairs distance exercises happy path", {
                tolerance = 1e-10)
 })
 
+test_that("One-to-many distances use batch kernels and match per-pair scores", {
+  # 40 trees span several streamed chunks; names test labelling
+  tips <- paste0("t", seq_len(20))
+  many <- ape::as.phylo(seq(0, 3900, by = 100), tipLabels = tips)
+  names(many) <- paste0("tree", seq_along(many))
+  one <- ape::as.phylo(7, tipLabels = rev(tips))
+  manySplits <- as.Splits(many)
+  oneSplits <- as.Splits(one)
+
+  metrics <- list(
+    ClusteringInfoDistance, MutualClusteringInfo, DifferentPhylogeneticInfo,
+    SharedPhylogeneticInfo, MatchingSplitInfoDistance, MatchingSplitInfo,
+    InfoRobinsonFoulds, MatchingSplitDistance, NyeSimilarity,
+    JaccardRobinsonFoulds,
+    function(...) JaccardRobinsonFoulds(..., k = 2, allowConflict = FALSE),
+    function(...) ClusteringInfoDistance(..., normalize = TRUE)
+  )
+  for (Metric in metrics) {
+    expected <- vapply(many, Metric, double(1), one)
+    expect_equal(Metric(one, many), expected, tolerance = 1e-10)
+    expect_equal(Metric(many, one), expected, tolerance = 1e-10)
+    expect_equal(Metric(oneSplits, manySplits), expected, tolerance = 1e-10)
+    expect_equal(Metric(manySplits, oneSplits), expected, tolerance = 1e-10)
+    expect_equal(Metric(one, many[1:3]), expected[1:3], tolerance = 1e-10)
+  }
+
+  unnamed <- unname(many)
+  expect_null(names(ClusteringInfoDistance(one, unnamed)))
+  expect_null(names(MutualClusteringInfo(unnamed, one)))
+
+  # Functions without a batch kernel score pair by pair
+  expect_equal(
+    CalculateTreeDistance(RobinsonFouldsSplits, one, many),
+    vapply(many, CalculateTreeDistance, double(1),
+           Func = RobinsonFouldsSplits, tree1 = one)
+  )
+})
+
+test_that("Cross-pairs kernels stream either side, with threads", {
+  tips <- paste0("t", seq_len(70)) # multi-bin splits
+  a <- as.Splits(ape::as.phylo(seq(0, 2400, by = 100), tipLabels = tips))
+  b <- as.Splits(ape::as.phylo(c(3, 33, 333), tipLabels = tips), tips)
+  expected <- outer(seq_along(a), seq_along(b), Vectorize(function(i, j) {
+    MutualClusteringInfoSplits(a[[i]], b[[j]])
+  }))
+  for (nThreads in 1:2) {
+    expect_equal(cpp_mutual_clustering_cross_pairs(a, b, 70L, nThreads),
+                 expected, tolerance = 1e-10)
+    expect_equal(cpp_mutual_clustering_cross_pairs(b, a, 70L, nThreads),
+                 t(expected), tolerance = 1e-10)
+  }
+  expect_equal(dim(cpp_msi_cross_pairs(a, list(), 70L)), c(25L, 0L))
+})
+
+test_that("One-to-many distances on trees with < 4 leaves", {
+  tips <- paste0("t", 1:3)
+  many <- ape::as.phylo(0:2, tipLabels = tips)
+  one <- ape::as.phylo(0, tipLabels = tips)
+  expect_equal(ClusteringInfoDistance(one, many), double(3))
+  expect_equal(MutualClusteringInfo(many, one),
+               vapply(many, MutualClusteringInfo, double(1), one))
+})
+
 test_that(".FastManyManyPath: guards return NULL for edge cases", {
   tips <- paste0("t", seq_len(8))
   tA <- ape::as.phylo(0:2, tipLabels = tips)

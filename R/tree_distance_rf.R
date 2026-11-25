@@ -90,9 +90,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                    cpp_splitwise_info_batch)
     if (!is.null(fast_many)) {
       irf <- fast_many[["dists"]]
-      info1 <- fast_many[["info1"]]
-      info2 <- fast_many[["info2"]]
-      treesIndependentInfo <- outer(info1, info2, "+")
+      treesIndependentInfo <- fast_many[["infoBoth"]]
 
       unnormalized <- .FloorNumericalNoise(treesIndependentInfo - irf - irf,
                                             treesIndependentInfo)

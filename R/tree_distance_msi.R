@@ -43,9 +43,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
                                  cpp_splitwise_info_batch)
   if (!is.null(fast_many)) {
     msi <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - msi - msi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
