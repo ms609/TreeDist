@@ -2,6 +2,10 @@
 
 ## Bug fixes
 
+- `ClusteringInfoDistance()`, `DifferentPhylogeneticInfo()` and
+  `MatchingSplitInfoDistance()` now respect `normalize = pmax`, `pmin` or
+  another function, which they treated as `normalize = TRUE`.
+
 - `NNIDist()`: `best_lower` was not a lower bound, and has been removed.
   `lower` is now calculated correctly.
 
