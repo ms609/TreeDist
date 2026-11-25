@@ -125,6 +125,7 @@ AHMI(tree1, tree2, precision = 0.1)
 }
 \seealso{
 Other tree distances:
+\code{\link[=DistanceOracle]{DistanceOracle()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},
 \code{\link[=MASTSize]{MASTSize()}},

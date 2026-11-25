@@ -561,6 +561,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_oracle_prepare
+SEXP cpp_oracle_prepare(const List& splits, const int n_tip, const int metric, const int info, const int n_threads);
+RcppExport SEXP _TreeDist_cpp_oracle_prepare(SEXP splitsSEXP, SEXP n_tipSEXP, SEXP metricSEXP, SEXP infoSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type splits(splitsSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_tip(n_tipSEXP);
+    Rcpp::traits::input_parameter< const int >::type metric(metricSEXP);
+    Rcpp::traits::input_parameter< const int >::type info(infoSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_oracle_prepare(splits, n_tip, metric, info, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_oracle_column
+SEXP cpp_oracle_column(SEXP xp, const int i, const double k, const bool allow_conflict, const int n_threads);
+RcppExport SEXP _TreeDist_cpp_oracle_column(SEXP xpSEXP, SEXP iSEXP, SEXP kSEXP, SEXP allow_conflictSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< const int >::type i(iSEXP);
+    Rcpp::traits::input_parameter< const double >::type k(kSEXP);
+    Rcpp::traits::input_parameter< const bool >::type allow_conflict(allow_conflictSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_oracle_column(xp, i, k, allow_conflict, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // path_vector
 IntegerVector path_vector(IntegerMatrix edge);
 RcppExport SEXP _TreeDist_path_vector(SEXP edgeSEXP) {
@@ -960,6 +990,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_clustering_entropy_batch", (DL_FUNC) &_TreeDist_cpp_clustering_entropy_batch, 2},
     {"_TreeDist_cpp_splitwise_info_batch", (DL_FUNC) &_TreeDist_cpp_splitwise_info_batch, 2},
     {"_TreeDist_cpp_pruned_pairs", (DL_FUNC) &_TreeDist_cpp_pruned_pairs, 11},
+    {"_TreeDist_cpp_oracle_prepare", (DL_FUNC) &_TreeDist_cpp_oracle_prepare, 5},
+    {"_TreeDist_cpp_oracle_column", (DL_FUNC) &_TreeDist_cpp_oracle_column, 5},
     {"_TreeDist_path_vector", (DL_FUNC) &_TreeDist_path_vector, 1},
     {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 3},
     {"_TreeDist_mismatch_size", (DL_FUNC) &_TreeDist_mismatch_size, 2},

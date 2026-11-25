@@ -58,6 +58,7 @@ The distance itself: \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance
 Diameter of the NNI metric: \code{\link[=NNIDiameter]{NNIDiameter()}}
 
 Other tree distances:
+\code{\link[=DistanceOracle]{DistanceOracle()}},
 \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}},
 \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}},
 \code{\link[=KendallColijn]{KendallColijn()}},
