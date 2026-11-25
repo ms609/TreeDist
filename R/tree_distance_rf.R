@@ -162,7 +162,10 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
     # reportMatching is not requested: ClusterTables (Day 1985) for two lists
     # of phylo objects; else a batch C++ kernel on splits.
     fast <- NULL
-    phyloLists <- inherits(tree1, "multiPhylo") && inherits(tree2, "multiPhylo")
+    .PhyloList <- function(x) {
+      !inherits(x, c("phylo", "Splits")) && inherits(x[[1]], "phylo")
+    }
+    phyloLists <- .PhyloList(tree1) && .PhyloList(tree2)
     if (!phyloLists) {
       fastSplits <- .FastManyManyPath(tree1, tree2, reportMatching,
                                       cpp_rf_cross_pairs)
