@@ -78,7 +78,10 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
       unnormalized <- .FloorNumericalNoise(
         treesIndependentInfo - fast[["info"]] - fast[["info"]],
         treesIndependentInfo)
+      info <- fast[["entropies"]]
       ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                           infoInBoth = .InfoToNormalize(info, info, normalize,
+                                                         "+", lower = TRUE),
                            InfoInTree = SplitwiseInfo, Combine = "+")
       attributes(ret) <- attributes(fast[["info"]])
       return(ret)
@@ -86,17 +89,17 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
 
     # Cross-pairs fast path
     fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                   cpp_rf_info_cross_pairs,
-                                   cpp_splitwise_info_batch)
+                                   cpp_rf_info_cross_pairs)
     if (!is.null(fast_many)) {
       irf <- fast_many[["dists"]]
-      info1 <- fast_many[["info1"]]
-      info2 <- fast_many[["info2"]]
-      treesIndependentInfo <- outer(info1, info2, "+")
+      treesIndependentInfo <- fast_many[["infoBoth"]]
 
       unnormalized <- .FloorNumericalNoise(treesIndependentInfo - irf - irf,
                                             treesIndependentInfo)
+      infoInBoth <- .InfoToNormalize(fast_many[["info1"]], fast_many[["info2"]],
+                                     normalize, "+")
       ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                           infoInBoth = infoInBoth,
                            InfoInTree = SplitwiseInfo, Combine = "+")
       return(ret)
     }
@@ -135,6 +138,7 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
+  infoInBoth <- NULL
   ct <- if (is.null(tree2)) .SameLeafClusterTables(tree1)
   if (is.null(tree2) && is.null(ct)) {
     # Trees must be compared on their shared leaves
@@ -154,14 +158,28 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 class = "dist")
     }
   } else {
-    # Fast cross-pairs path: batch C++ via ClusterTable (Day 1985).
-    # Only applicable when both inputs are lists of trees with matching
-    # tip labels and reportMatching is not requested.
+    # Fast cross-pairs paths, where all trees share leaves and
+    # reportMatching is not requested: ClusterTables (Day 1985) for two lists
+    # of phylo objects; else a batch C++ kernel on splits.
     fast <- NULL
-    if (!reportMatching &&
-        !inherits(tree1, c("phylo", "Splits")) &&
-        !inherits(tree2, c("phylo", "Splits")) &&
-        is.null(getOption("TreeDist-cluster"))) {
+    .PhyloList <- function(x) {
+      !inherits(x, c("phylo", "Splits")) && inherits(x[[1]], "phylo")
+    }
+    phyloLists <- .PhyloList(tree1) && .PhyloList(tree2)
+    if (!phyloLists) {
+      fastSplits <- .FastManyManyPath(tree1, tree2, reportMatching,
+                                      cpp_rf_cross_pairs)
+      if (!is.null(fastSplits)) {
+        nSplits <- fastSplits[["infoBoth"]]
+        fast <- if (similarity) {
+          nSplits - fastSplits[["dists"]]
+        } else {
+          fastSplits[["dists"]]
+        }
+        infoInBoth <- .InfoToNormalize(fastSplits[["info1"]],
+                                       fastSplits[["info2"]], normalize, `+`)
+      }
+    } else if (!reportMatching && is.null(getOption("TreeDist-cluster"))) {
       lab1 <- TipLabels(tree1)
       lab2 <- TipLabels(tree2)
       if (is.list(lab1)) lab1 <- lab1[[1]]
@@ -194,6 +212,7 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                infoInBoth = infoInBoth,
                 InfoInTree = NSplits, Combine = `+`)
 }
 

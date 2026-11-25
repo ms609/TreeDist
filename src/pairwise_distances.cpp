@@ -13,14 +13,17 @@
 #include <TreeTools/SplitList.h>
 #include <TreeDist/popcount.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <memory>
 #include <cstring>
+#include <functional>
 #include <numeric>
 #include <vector>
 #include <Rcpp/Lightest>
 
+#include "transfer_distance.h"
 #include "tree_distances.h"
 
 using Rcpp::List;
@@ -75,6 +78,38 @@ struct CanonSplits {
   std::vector<split_int> idx;    // idx[pos] = original split index
 };
 
+// With few bins, sorting the canonical forms themselves beats sorting indices
+// into them.
+template <int NB>
+static void build_canon_fixed(const SplitList& s, const splitbit last_mask,
+                              CanonSplits& out) {
+  struct Key {
+    std::array<splitbit, NB> bins;
+    split_int i;
+  };
+  const split_int n = s.n_splits;
+  std::vector<Key> keys(n);
+  for (split_int i = 0; i < n; ++i) {
+    const splitbit flip = (s.state[i][0] & 1) ? splitbit(0) : ~splitbit(0);
+    for (int bin = 0; bin < NB; ++bin) {
+      keys[i].bins[bin] = s.state[i][bin] ^ flip;
+    }
+    keys[i].bins[NB - 1] &= last_mask;
+    keys[i].i = i;
+  }
+  std::sort(keys.begin(), keys.end(), [](const Key& a, const Key& b) {
+    return a.bins < b.bins;
+  });
+
+  out.canon.resize(static_cast<size_t>(n) * NB);
+  out.idx.resize(n);
+  for (split_int pos = 0; pos < n; ++pos) {
+    std::memcpy(&out.canon[static_cast<size_t>(pos) * NB],
+                keys[pos].bins.data(), NB * sizeof(splitbit));
+    out.idx[pos] = keys[pos].i;
+  }
+}
+
 static void build_canon(const SplitList& s, const int32 n_tips,
                         CanonSplits& out) {
   const split_int n        = s.n_splits;
@@ -83,6 +118,13 @@ static void build_canon(const SplitList& s, const int32 n_tips,
   const splitbit last_mask = (n_tips % SL_BIN_SIZE == 0)
     ? ~splitbit(0)
     : (splitbit(1) << (n_tips % SL_BIN_SIZE)) - 1;
+
+  switch (n_bins) {
+    case 1: return build_canon_fixed<1>(s, last_mask, out);
+    case 2: return build_canon_fixed<2>(s, last_mask, out);
+    case 3: return build_canon_fixed<3>(s, last_mask, out);
+    case 4: return build_canon_fixed<4>(s, last_mask, out);
+  }
 
   out.canon.resize(static_cast<size_t>(n) * n_bins);
   out.idx.resize(n);
@@ -1375,8 +1417,13 @@ NumericVector cpp_jaccard_all_pairs(
 // =============================================================================
 //
 // Each function computes the full nA × nB matrix of pairwise distances between
-// two sets of trees.  Like the all_pairs variants, these use OpenMP where
-// available and reuse LapScratch / CostMatrix pools across pairs.
+// two sets of trees, using OpenMP where available.
+//
+// A SplitList carries fixed stack-storage arrays (hundreds of KB), so giving
+// every tree its own heap-allocated SplitList costs far more than scoring one
+// pair.  cross_pairs() therefore holds only the smaller set in memory and
+// streams the larger set through a small, reused pool of SplitLists: comparing
+// one tree with many costs one pool's allocations, not one per tree.
 
 static void parse_split_list(const List& list,
                              std::vector<std::unique_ptr<SplitList>>& out) {
@@ -1389,101 +1436,242 @@ static void parse_split_list(const List& list,
   }
 }
 
+// Rebuild the SplitList held by `slot` from `x`, reusing its storage.
+static void refill_split_list(std::unique_ptr<SplitList>& slot,
+                              const RawMatrix& x) {
+  if (!slot) {
+    slot = std::make_unique<SplitList>(x);
+    return;
+  }
+  // Release first: should the constructor throw, the storage leaks rather
+  // than being destroyed twice.
+  SplitList* raw = slot.release();
+  raw->~SplitList();
+  ::new (static_cast<void*>(raw)) SplitList(x);
+  slot.reset(raw);
+}
+
+// Information content of a tree, which depends only on the sizes of its
+// splits.  The batch functions and cross_pairs() share these, so they give
+// identical values.
+
+// ClusteringEntropy: sum of binary_entropy(k/n) over splits, in nats then
+// converted to bits (divide by log(2)).
+// binary_entropy(p) = -(p log p + (1-p) log(1-p))
+class ClusteringEntropy {
+  std::vector<double> entropy_;  // entropy_[k]: nats in a split of k leaves
+  int n_tip_;
+
+ public:
+  explicit ClusteringEntropy(const int n_tip)
+    : entropy_(std::max(n_tip, 0) + 1, 0.0), n_tip_(n_tip) {
+    const double invN = 1.0 / static_cast<double>(n_tip);
+    for (int k = 1; k < n_tip; ++k) {
+      const double p = k * invN;
+      const double q = 1.0 - p;
+      entropy_[k] = -(p * std::log(p) + q * std::log1p(-p));
+    }
+  }
+
+  double operator()(const SplitList& sl) const {
+    constexpr double invLog2 = 1.442695040888963387005;
+    double total = 0.0;
+    for (split_int s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k <= 0 || k >= n_tip_) continue;
+      total += entropy_[k];
+    }
+    return total * invLog2;
+  }
+};
+
+// SplitwiseInfo: sum of (Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k))
+// over splits.
+// Log2Rooted(m) = log2((2m-3)!!) = sum_{j=1,3,...,2m-3} log2(j)
+// Log2Unrooted(n) = Log2Rooted(n) - log2(2n-3)  [= log2((2n-5)!!)]
+class SplitwiseInfo {
+  std::vector<double> l2r_;  // l2r_[m] = Log2Rooted(m); 0 for m < 3
+  double l2u_n_;
+  int n_tip_;
+
+ public:
+  explicit SplitwiseInfo(const int n_tip)
+    : l2r_(std::max(n_tip, 0) + 1, 0.0), n_tip_(n_tip) {
+    for (int m = 3; m <= n_tip; ++m) {
+      l2r_[m] = l2r_[m - 1] + std::log2(2 * m - 3);
+    }
+    l2u_n_ = n_tip < 4 ? 0.0 : l2r_[n_tip] - std::log2(2 * n_tip - 3);
+  }
+
+  double operator()(const SplitList& sl) const {
+    double total = 0.0;
+    for (split_int s = 0; s < sl.n_splits; ++s) {
+      const int k = sl.in_split[s];
+      if (k < 2 || (n_tip_ - k) < 2) continue;
+      total += l2u_n_ - l2r_[k] - l2r_[n_tip_ - k];
+    }
+    return total;
+  }
+};
+
+using TreeInfo = std::function<double(const SplitList&)>;
+
+// Scores every pair (a, b) with `score(sa, sb, canon_a, canon_b, tid)`,
+// returning an nA × nB matrix.  Canonical forms are built only if
+// `need_canon`; otherwise empty placeholders are passed.  If `info` is given,
+// the matrix carries each tree's information content in attributes `info_a`
+// and `info_b`.
+template <typename Score>
+static Rcpp::NumericMatrix cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads, const bool need_canon,
+    Score score, const TreeInfo& info = nullptr
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  Rcpp::NumericMatrix result(nA, nB);
+  NumericVector info_a(info ? nA : 0);
+  NumericVector info_b(info ? nB : 0);
+  if (info) {
+    result.attr("info_a") = info_a;
+    result.attr("info_b") = info_b;
+  }
+  if (nA == 0 || nB == 0) return result;
+  double* const res = result.begin();
+
+  const bool stream_a = nA > nB;
+  const List& held_list = stream_a ? splits_b : splits_a;
+  const List& streamed_list = stream_a ? splits_a : splits_b;
+  const int n_held = held_list.size();
+  const int n_streamed = streamed_list.size();
+
+  std::vector<std::unique_ptr<SplitList>> held;
+  parse_split_list(held_list, held);
+  std::vector<CanonSplits> held_canon(n_held);
+  if (need_canon) build_canon_all(held, n_tip, n_threads, held_canon);
+  double* const held_info = stream_a ? info_b.begin() : info_a.begin();
+  double* const streamed_info = stream_a ? info_a.begin() : info_b.begin();
+  if (info) {
+    for (int h = 0; h < n_held; ++h) held_info[h] = info(*held[h]);
+  }
+
+  const int chunk = std::min(n_streamed, std::max(16, 8 * n_threads));
+  std::vector<std::unique_ptr<SplitList>> pool(chunk);
+  std::vector<CanonSplits> pool_canon(chunk);
+
+  for (int first = 0; first < n_streamed; first += chunk) {
+    Rcpp::checkUserInterrupt();
+    const int n_chunk = std::min(chunk, n_streamed - first);
+    // R objects may be read on the main thread only
+    for (int c = 0; c < n_chunk; ++c) {
+      refill_split_list(pool[c],
+                        Rcpp::as<RawMatrix>(streamed_list[first + c]));
+    }
+    const int n_pairs = n_chunk * n_held;
+
+#ifdef _OPENMP
+#pragma omp parallel num_threads(n_threads)
+#endif
+    {
+#ifdef _OPENMP
+      const int tid = omp_get_thread_num();
+#else
+      const int tid = 0;
+#endif
+      if (need_canon || info) {
+#ifdef _OPENMP
+#pragma omp for schedule(static)
+#endif
+        for (int c = 0; c < n_chunk; ++c) {
+          if (need_canon) build_canon(*pool[c], n_tip, pool_canon[c]);
+          if (info) streamed_info[first + c] = info(*pool[c]);
+        }
+      }
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic)
+#endif
+      for (int p = 0; p < n_pairs; ++p) {
+#ifndef _OPENMP
+        if ((p & 0xFF) == 0xFF) Rcpp::checkUserInterrupt();
+#endif
+        const int h = p % n_held;
+        const int c = p / n_held;
+        const size_t s = static_cast<size_t>(first + c);
+        if (stream_a) {
+          res[s + static_cast<size_t>(nA) * h] = score(
+            *pool[c], *held[h], pool_canon[c], held_canon[h], tid);
+        } else {
+          res[h + static_cast<size_t>(nA) * s] = score(
+            *held[h], *pool[c], held_canon[h], pool_canon[c], tid);
+        }
+      }
+    }
+  }
+  return result;
+}
+
 using Rcpp::NumericMatrix;
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_mutual_clustering_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip,
-                                       canon_a[i], canon_b[j], scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return mutual_clustering_score(a, b, n_tip, ca, cb,
+                                     scratches[tid], mscratches[tid]);
+    },
+    with_info ? TreeInfo(ClusteringEntropy(n_tip)) : nullptr);
 }
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_rf_info_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+  std::vector<MatchScratch> mscratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return rf_info_score(a, b, n_tip, ca, cb, mscratches[tid]);
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
+}
 
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-  const int total = nA * nB;
-
-  const int n_scratch = std::max(1, n_threads);
-  std::vector<MatchScratch> mscratches(n_scratch);
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    MatchScratch& mscratch = mscratches[omp_get_thread_num()];
-#else
-    MatchScratch& mscratch = mscratches[0];
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip,
-                             canon_a[i], canon_b[j], mscratch);
-  }
-  return result;
+// Robinson-Foulds distance; a tree's information is its number of splits.
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_rf_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
+) {
+  TreeDist::check_ntip(n_tip);
+  std::vector<MatchScratch> mscratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      const split_int shared = find_exact_matches(ca, cb, a.n_bins,
+                                                  mscratches[tid]);
+      return static_cast<double>(a.n_splits + b.n_splits - shared - shared);
+    },
+    with_info ? TreeInfo([](const SplitList& sl) {
+      return static_cast<double>(sl.n_splits);
+    }) : nullptr);
 }
 
 //' @keywords internal
@@ -1493,136 +1681,55 @@ NumericMatrix cpp_msd_cross_pairs(
     const int n_tip, const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = msd_score(*sa[i], *sb[j], n_tip,
-                         canon_a[i], canon_b[j], scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return msd_score(a, b, n_tip, ca, cb, scratches[tid], mscratches[tid]);
+    });
 }
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_msi_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
-  const int n_scratch = std::max(1, n_threads);
-  std::vector<LapScratch> scratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
-#else
-    LapScratch& scratch = scratches[0];
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = msi_score(*sa[i], *sb[j], n_tip, scratch);
-  }
-  return result;
+  std::vector<LapScratch> scratches(std::max(1, n_threads));
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, false,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits&, const CanonSplits&, const int tid) {
+      return msi_score(a, b, n_tip, scratches[tid]);
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
 //' @keywords internal
 // [[Rcpp::export]]
 NumericMatrix cpp_shared_phylo_cross_pairs(
     const List& splits_a, const List& splits_b,
-    const int n_tip, const int n_threads = 1
+    const int n_tip, const int n_threads = 1,
+    const bool with_info = false
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
   std::vector<PinScratch> pscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = shared_phylo_score(*sa[i], *sb[j], n_tip, canon_a[i], canon_b[j],
-                                  scratches[tid], mscratches[tid],
-                                  pscratches[tid]);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return shared_phylo_score(a, b, n_tip, ca, cb, scratches[tid],
+                                mscratches[tid], pscratches[tid]);
+    },
+    with_info ? TreeInfo(SplitwiseInfo(n_tip)) : nullptr);
 }
 
 //' @keywords internal
@@ -1635,49 +1742,58 @@ NumericMatrix cpp_jaccard_cross_pairs(
     const int n_threads = 1
 ) {
   TreeDist::check_ntip(n_tip);
-  const int nA = splits_a.size();
-  const int nB = splits_b.size();
-  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
-
-  std::vector<std::unique_ptr<SplitList>> sa, sb;
-  parse_split_list(splits_a, sa);
-  parse_split_list(splits_b, sb);
-
-  std::vector<CanonSplits> canon_a, canon_b;
-  build_canon_all(sa, n_tip, n_threads, canon_a);
-  build_canon_all(sb, n_tip, n_threads, canon_b);
-
-  NumericMatrix result(nA, nB);
-  double* res = result.begin();
-
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
   std::vector<MatchScratch> mscratches(n_scratch);
-  const int total = nA * nB;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
-#endif
-  for (int idx = 0; idx < total; ++idx) {
-#ifndef _OPENMP
-    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
-#endif
-#ifdef _OPENMP
-    const int tid = omp_get_thread_num();
-#else
-    const int tid = 0;
-#endif
-    LapScratch& scratch = scratches[tid];
-    MatchScratch& mscratch = mscratches[tid];
-    const int i = idx % nA;
-    const int j = idx / nA;
-    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip,
-                             canon_a[i], canon_b[j], k, allow_conflict,
-                             scratch, mscratch);
-  }
-  return result;
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, true,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits& ca, const CanonSplits& cb, const int tid) {
+      return jaccard_score(a, b, n_tip, ca, cb, k, allow_conflict,
+                           scratches[tid], mscratches[tid]);
+    });
 }
 
+//' Cross-pairs transfer dissimilarity (OpenMP)
+//'
+//' @param splits_a,splits_b Lists of raw matrices.
+//' @param n_tip Number of tips.
+//' @param scale Logical: use scaled transfer dissimilarity?
+//' @param n_threads Number of OpenMP threads.
+//'
+//' @return Numeric matrix of dimension `nA` x `nB`.
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_transfer_dist_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const bool scale, const int n_threads = 1
+) {
+  TreeDist::check_ntip(n_tip);
+  return cross_pairs(
+    splits_a, splits_b, n_tip, n_threads, false,
+    [&](const SplitList& a, const SplitList& b,
+        const CanonSplits&, const CanonSplits&, const int) {
+      return transfer_dissimilarity_score(a, b, n_tip, a.n_bins, scale);
+    });
+}
+
+// TRUE iff `x` is a list whose every element is a Splits object with leaf
+// labels identical to `labels`: as.Splits(x, labels) would return it unchanged.
+// [[Rcpp::export]]
+bool cpp_splits_on_labels(SEXP x, SEXP labels) {
+  if (TYPEOF(x) != VECSXP) return false;
+  SEXP tip_label = Rf_install("tip.label");
+  const R_xlen_t n = Rf_xlength(x);
+  for (R_xlen_t i = 0; i < n; ++i) {
+    SEXP el = VECTOR_ELT(x, i);
+    if (!Rf_inherits(el, "Splits")) return false;
+    SEXP el_labels = Rf_getAttrib(el, tip_label);
+    if (el_labels != labels && !R_compute_identical(el_labels, labels, 16)) {
+      return false;
+    }
+  }
+  return true;
+}
 
 // ---------------------------------------------------------------------------
 // Per-tree entropy / information batch functions
@@ -1686,9 +1802,6 @@ NumericMatrix cpp_jaccard_cross_pairs(
 // C++ call over all trees, eliminating N R->C++ round-trips.
 // ---------------------------------------------------------------------------
 
-// ClusteringEntropy: sum of binary_entropy(k/n) over splits, in nats then
-// converted to bits (divide by log(2)).
-// binary_entropy(p) = -(p log p + (1-p) log(1-p))
 // [[Rcpp::export]]
 NumericVector cpp_clustering_entropy_batch(
     const List& splits_list,
@@ -1698,31 +1811,13 @@ NumericVector cpp_clustering_entropy_batch(
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip <= 0) return result;
-
-  const double invN = 1.0 / static_cast<double>(n_tip);
-  constexpr double invLog2 = 1.442695040888963387005;
-
+  const ClusteringEntropy entropy(n_tip);
   for (int i = 0; i < N; ++i) {
-    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
-    double total = 0.0;
-    for (split_int s = 0; s < sl.n_splits; ++s) {
-      const int k = sl.in_split[s];
-      if (k <= 0 || k >= n_tip) continue;
-      const double p = k * invN;
-      const double q = 1.0 - p;
-      total += -(p * std::log(p) + q * std::log1p(-p));
-    }
-    result[i] = total * invLog2;
+    result[i] = entropy(SplitList(Rcpp::as<RawMatrix>(splits_list[i])));
   }
   return result;
 }
 
-// SplitwiseInfo: sum of (Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k))
-// over splits.
-// Log2Rooted(m) = log2((2m-3)!!) = sum_{j=1,3,...,2m-3} log2(j)
-// Log2Unrooted(n) = Log2Rooted(n) - log2(2n-3)  [= log2((2n-5)!!)]
-//
-// We precompute a table of Log2Rooted values up to n_tip.
 // [[Rcpp::export]]
 NumericVector cpp_splitwise_info_batch(
     const List& splits_list,
@@ -1732,27 +1827,9 @@ NumericVector cpp_splitwise_info_batch(
   const int N = splits_list.size();
   NumericVector result(N);
   if (N == 0 || n_tip < 4) return result;
-
-  // Precompute Log2Rooted table: log2((2m-3)!!) for m = 0..n_tip
-  // Log2Rooted(0) = Log2Rooted(1) = 0 (convention)
-  // Log2Rooted(2) = log2(1) = 0
-  // Log2Rooted(m) = Log2Rooted(m-1) + log2(2m-3)
-  std::vector<double> l2r(n_tip + 1, 0.0);
-  for (int m = 3; m <= n_tip; ++m) {
-    l2r[m] = l2r[m - 1] + std::log2(2 * m - 3);
-  }
-  // Log2Unrooted(n) = log2((2n-5)!!) = Log2Rooted(n) - log2(2n-3)
-  const double l2u_n = l2r[n_tip] - std::log2(2 * n_tip - 3);
-
+  const SplitwiseInfo info(n_tip);
   for (int i = 0; i < N; ++i) {
-    SplitList sl(Rcpp::as<RawMatrix>(splits_list[i]));
-    double total = 0.0;
-    for (split_int s = 0; s < sl.n_splits; ++s) {
-      const int k = sl.in_split[s];
-      if (k < 2 || (n_tip - k) < 2) continue;
-      total += l2u_n - l2r[k] - l2r[n_tip - k];
-    }
-    result[i] = total;
+    result[i] = info(SplitList(Rcpp::as<RawMatrix>(splits_list[i])));
   }
   return result;
 }

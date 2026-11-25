@@ -222,7 +222,14 @@ TreeDistance <- function(tree1, tree2 = NULL) {
 #' @export
 SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE, diag = TRUE) {
-  
+  fast <- .FastSimilarity(tree1, tree2, normalize, reportMatching, diag,
+                          cpp_shared_phylo_all_pairs, cpp_splitwise_info_batch,
+                          cpp_shared_phylo_cross_pairs)
+  if (!is.null(fast)) {
+    return(NormalizeInfo(fast[["scores"]], tree1, tree2, SplitwiseInfo,
+                         infoInBoth = fast[["infoInBoth"]], how = normalize,
+                         Combine = .PairMean))
+  }
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
@@ -260,13 +267,10 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_shared_phylo_cross_pairs,
-                                 cpp_splitwise_info_batch)
+                                 cpp_shared_phylo_cross_pairs)
   if (!is.null(fast_many)) {
     spi <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - spi - spi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
@@ -317,13 +321,10 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_mutual_clustering_cross_pairs,
-                                 cpp_clustering_entropy_batch)
+                                 cpp_mutual_clustering_cross_pairs)
   if (!is.null(fast_many)) {
     mci <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - mci - mci, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
@@ -399,6 +400,15 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
 #' @export
 MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  reportMatching = FALSE, diag = TRUE) {
+  fast <- .FastSimilarity(tree1, tree2, normalize, reportMatching, diag,
+                          cpp_mutual_clustering_all_pairs,
+                          cpp_clustering_entropy_batch,
+                          cpp_mutual_clustering_cross_pairs)
+  if (!is.null(fast)) {
+    return(NormalizeInfo(fast[["scores"]], tree1, tree2, ClusteringEntropy,
+                         infoInBoth = fast[["infoInBoth"]], how = normalize,
+                         Combine = .PairMean))
+  }
   unnormalized <- CalculateTreeDistance(Func = MutualClusteringInfoSplits,
                                         tree1, tree2, reportMatching)
   if (diag && is.null(tree2)) {

@@ -79,8 +79,8 @@ PathDist <- function(tree1, tree2 = NULL) {
 
 .PathDist1Many <- function(tree1, treeMany) {
   v1 <- PathVector(tree1)
-  apply(v1 - vapply(RenumberTips(treeMany, tree1), PathVector, v1), 2,
-        .EuclideanDistance)
+  vMany <- vapply(RenumberTips(treeMany, tree1), PathVector, v1)
+  setNames(vec_diff_euclidean(matrix(v1), vMany)[1, ], names(treeMany))
 }
 
 .PathDistManyMany <- function(trees1, trees2) {

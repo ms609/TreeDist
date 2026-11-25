@@ -178,9 +178,7 @@ TransferDistSplits <- function(splits1, splits2,
     }
   }
   
-  splitsList <- lapply(tree1, function(tr) {
-    unclass(as.Splits(tr, tipLabels))
-  })
+  splitsList <- .SplitsOn(tree1, tipLabels)
   
   nThreads <- max(1L, getOption("TreeDist.threads",
                                  getOption("mc.cores", 1L)))
@@ -200,45 +198,15 @@ TransferDistSplits <- function(splits1, splits2,
 
 # Cross-pairs fast path
 .TransferDistCrossPairs <- function(tree1, tree2, scale) {
-  single1 <- inherits(tree1, c("phylo", "Splits"))
-  single2 <- inherits(tree2, c("phylo", "Splits"))
-  if (single1 && single2) return(NULL) # use generic path for single pair
-  
-  trees1 <- if (single1) list(tree1) else tree1
-  trees2 <- if (single2) list(tree2) else tree2
-  
-  tipLabels <- TipLabels(trees1[[1]])
-  if (is.null(tipLabels)) return(NULL)
-  nTip <- length(tipLabels)
-  if (nTip < 4L) return(NULL)
-  .CheckMaxTips(nTip)
-  
-  # Check all trees share same tip set
-  allLabels1 <- TipLabels(trees1)
-  allLabels2 <- TipLabels(trees2)
-  if (is.list(allLabels1)) {
-    if (!all(vapply(allLabels1, setequal, logical(1), tipLabels))) return(NULL)
-  }
-  if (is.list(allLabels2)) {
-    if (!all(vapply(allLabels2, setequal, logical(1), tipLabels))) return(NULL)
-  } else {
-    if (!setequal(allLabels2, tipLabels)) return(NULL)
-  }
-  
-  splits1 <- lapply(trees1, function(tr) unclass(as.Splits(tr, tipLabels)))
-  splits2 <- lapply(trees2, function(tr) unclass(as.Splits(tr, tipLabels)))
-  
+  x <- .CrossSplits(tree1, tree2)
+  if (is.null(x)) return(NULL)
   nThreads <- max(1L, getOption("TreeDist.threads",
                                  getOption("mc.cores", 1L)))
-  
-  mat <- cpp_transfer_dist_cross_pairs(splits1, splits2, nTip, scale, nThreads)
-  
-  rownames(mat) <- names(trees1)
-  colnames(mat) <- names(trees2)
-  
-  # If one input was a single tree, simplify to vector
-  if (single1) return(mat[1, ])
-  if (single2) return(mat[, 1])
+  mat <- cpp_transfer_dist_cross_pairs(x[["splits1"]], x[["splits2"]],
+                                       x[["nTip"]], scale, nThreads)
+  if (x[["single1"]]) return(setNames(mat[1, ], x[["names2"]]))
+  if (x[["single2"]]) return(setNames(mat[, 1], x[["names1"]]))
+  dimnames(mat) <- list(x[["names1"]], x[["names2"]])
   mat
 }
 

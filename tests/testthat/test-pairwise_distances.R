@@ -222,6 +222,151 @@ test_that(".FastManyManyPath: cross-pairs distance exercises happy path", {
                tolerance = 1e-10)
 })
 
+test_that("One-to-many distances use batch kernels and match per-pair scores", {
+  # 40 trees span several streamed chunks; names test labelling
+  tips <- paste0("t", seq_len(20))
+  many <- ape::as.phylo(seq(0, 3900, by = 100), tipLabels = tips)
+  names(many) <- paste0("tree", seq_along(many))
+  one <- ape::as.phylo(7, tipLabels = rev(tips))
+  manySplits <- as.Splits(many)
+  oneSplits <- as.Splits(one)
+
+  metrics <- list(
+    ClusteringInfoDistance, MutualClusteringInfo, DifferentPhylogeneticInfo,
+    SharedPhylogeneticInfo, MatchingSplitInfoDistance, MatchingSplitInfo,
+    InfoRobinsonFoulds, MatchingSplitDistance, NyeSimilarity,
+    JaccardRobinsonFoulds,
+    function(...) JaccardRobinsonFoulds(..., k = 2, allowConflict = FALSE),
+    function(...) ClusteringInfoDistance(..., normalize = TRUE)
+  )
+  for (Metric in metrics) {
+    expected <- vapply(many, Metric, double(1), one)
+    expect_equal(Metric(one, many), expected, tolerance = 1e-10)
+    expect_equal(Metric(many, one), expected, tolerance = 1e-10)
+    expect_equal(Metric(oneSplits, manySplits), expected, tolerance = 1e-10)
+    expect_equal(Metric(manySplits, oneSplits), expected, tolerance = 1e-10)
+    expect_equal(Metric(one, many[1:3]), expected[1:3], tolerance = 1e-10)
+  }
+
+  unnamed <- unname(many)
+  expect_null(names(ClusteringInfoDistance(one, unnamed)))
+  expect_null(names(MutualClusteringInfo(unnamed, one)))
+
+  # Each *Splits function reaches its kernel through CalculateTreeDistance()
+  for (Func in list(MutualClusteringInfoSplits, InfoRobinsonFouldsSplits,
+                    MatchingSplitDistanceSplits, MatchingSplitInfoSplits,
+                    SharedPhylogeneticInfoSplits, NyeSplitSimilarity,
+                    JaccardSplitSimilarity)) {
+    expect_equal(
+      CalculateTreeDistance(Func, one, many),
+      vapply(many, CalculateTreeDistance, double(1), Func = Func, tree1 = one),
+      tolerance = 1e-10
+    )
+  }
+
+  # Functions without a batch kernel score pair by pair
+  expect_equal(
+    CalculateTreeDistance(RobinsonFouldsSplits, one, many),
+    vapply(many, CalculateTreeDistance, double(1),
+           Func = RobinsonFouldsSplits, tree1 = one)
+  )
+})
+
+test_that("Cross-pairs kernels stream either side, with threads", {
+  tips <- paste0("t", seq_len(70)) # multi-bin splits
+  a <- as.Splits(ape::as.phylo(seq(0, 2400, by = 100), tipLabels = tips))
+  b <- as.Splits(ape::as.phylo(c(3, 33, 333), tipLabels = tips), tips)
+  expected <- outer(seq_along(a), seq_along(b), Vectorize(function(i, j) {
+    MutualClusteringInfoSplits(a[[i]], b[[j]])
+  }))
+  for (nThreads in 1:2) {
+    expect_equal(cpp_mutual_clustering_cross_pairs(a, b, 70L, nThreads),
+                 expected, tolerance = 1e-10)
+    expect_equal(cpp_mutual_clustering_cross_pairs(b, a, 70L, nThreads),
+                 t(expected), tolerance = 1e-10)
+  }
+  expect_equal(dim(cpp_msi_cross_pairs(a, list(), 70L)), c(25L, 0L))
+})
+
+test_that("Cross-pairs kernels report each tree's information", {
+  tips <- paste0("t", seq_len(70))
+  a <- as.Splits(ape::as.phylo(seq(0, 2400, by = 100), tipLabels = tips))
+  b <- as.Splits(ape::as.phylo(c(3, 33, 333), tipLabels = tips), tips)
+  kernels <- list(
+    list(cpp_mutual_clustering_cross_pairs, cpp_clustering_entropy_batch),
+    list(cpp_rf_info_cross_pairs, cpp_splitwise_info_batch),
+    list(cpp_msi_cross_pairs, cpp_splitwise_info_batch),
+    list(cpp_shared_phylo_cross_pairs, cpp_splitwise_info_batch)
+  )
+  for (k in kernels) {
+    Kernel <- k[[1]]
+    Info <- k[[2]]
+    for (nThreads in 1:2) {
+      ab <- Kernel(a, b, 70L, nThreads, with_info = TRUE)
+      expect_identical(attr(ab, "info_a"), Info(a, 70L))
+      expect_identical(attr(ab, "info_b"), Info(b, 70L))
+      ba <- Kernel(b, a, 70L, nThreads, with_info = TRUE)
+      expect_identical(attr(ba, "info_a"), Info(b, 70L))
+      expect_identical(attr(ba, "info_b"), Info(a, 70L))
+      expect_equal(ba, t(ab), ignore_attr = TRUE)
+    }
+    expect_identical(attributes(Kernel(a, b, 70L)), list(dim = c(25L, 3L)))
+  }
+})
+
+test_that("Batch kernels match per-pair scores for every split width", {
+  # Up to 64 leaves fill one bin; 300 leaves need five
+  for (nTip in c(100L, 150L, 250L, 300L)) {
+    trees <- ape::as.phylo(0:3, nTip) # Consecutive trees share most splits
+    expected <- outer(1:4, 1:4, Vectorize(function(i, j) {
+      MutualClusteringInfo(trees[[i]], trees[[j]])
+    }))
+    expect_equal(MutualClusteringInfo(trees[1:2], trees[3:4]),
+                 expected[1:2, 3:4], ignore_attr = TRUE, tolerance = 1e-10)
+    expect_equal(MutualClusteringInfo(trees), expected, ignore_attr = TRUE,
+                 tolerance = 1e-10)
+  }
+})
+
+test_that("Splits already on the target labels are used as they stand", {
+  tips <- paste0("t", seq_len(12))
+  trees <- ape::as.phylo(0:5, tipLabels = tips)
+  sp <- as.Splits(trees)
+  expect_true(cpp_splits_on_labels(sp, tips))
+  expect_true(cpp_splits_on_labels(sp, attr(sp[[1]], "tip.label")))
+  expect_true(cpp_splits_on_labels(list(), tips))
+  expect_false(cpp_splits_on_labels(sp, rev(tips)))
+  expect_false(cpp_splits_on_labels(sp[[1]], tips))
+  expect_false(cpp_splits_on_labels(trees, tips))
+
+  reordered <- sp
+  reordered[[3]] <- as.Splits(reordered[[3]], rev(tips))
+  expect_false(cpp_splits_on_labels(reordered, tips))
+  mixed <- c(sp[1:2], list(trees[[3]]))
+  expect_false(cpp_splits_on_labels(mixed, tips))
+  unlabelled <- sp
+  attr(unlabelled[[2]], "tip.label") <- NULL
+  expect_false(cpp_splits_on_labels(unlabelled, tips))
+
+  one <- sp[[2]]
+  for (many in list(sp, reordered, mixed)) {
+    for (Metric in list(ClusteringInfoDistance, MatchingSplitDistance)) {
+      expected <- vapply(many, Metric, double(1), one)
+      expect_equal(Metric(one, many), expected, tolerance = 1e-10)
+      expect_equal(Metric(many, one), expected, tolerance = 1e-10)
+    }
+  }
+})
+
+test_that("One-to-many distances on trees with < 4 leaves", {
+  tips <- paste0("t", 1:3)
+  many <- ape::as.phylo(0:2, tipLabels = tips)
+  one <- ape::as.phylo(0, tipLabels = tips)
+  expect_equal(ClusteringInfoDistance(one, many), double(3))
+  expect_equal(MutualClusteringInfo(many, one),
+               vapply(many, MutualClusteringInfo, double(1), one))
+})
+
 test_that(".FastManyManyPath: guards return NULL for edge cases", {
   tips <- paste0("t", seq_len(8))
   tA <- ape::as.phylo(0:2, tipLabels = tips)
@@ -365,4 +510,85 @@ test_that("SPI batch: pinning identical splits matches the full LAP", {
     CollapseNode(as.phylo(3, tipLabels = tips), 35:37)
   ), class = "multiPhylo")
   Check(trees)
+})
+
+test_that("Batch paths match per-pair scores under each normalization", {
+  tips <- paste0("t", seq_len(14))
+  trees <- as.phylo(c(0:5, 90), tipLabels = tips)
+  trees[[3]] <- CollapseNode(trees[[3]], 17:18)
+  names(trees) <- letters[seq_along(trees)]
+  sp <- as.Splits(trees)
+  one <- trees[[2]]
+  PerPair <- function(Metric, x, y, ...) {
+    vapply(y, function(tr) Metric(x, tr, ...), double(1))
+  }
+
+  for (Metric in list(MutualClusteringInfo, SharedPhylogeneticInfo,
+                      MatchingSplitInfo, InfoRobinsonFoulds, RobinsonFoulds,
+                      ClusteringInfoDistance)) {
+    for (normalize in list(FALSE, TRUE, pmax, 40)) {
+      expected <- PerPair(Metric, one, trees, normalize = normalize)
+      expect_equal(Metric(one, trees, normalize = normalize), expected,
+                   tolerance = 1e-12)
+      expect_equal(Metric(sp, sp[[2]], normalize = normalize), expected,
+                   tolerance = 1e-12)
+      cross <- Metric(trees[1:3], sp[4:7], normalize = normalize)
+      expect_equal(cross[2, ], expected[4:7], tolerance = 1e-12)
+    }
+  }
+  for (normalize in list(FALSE, TRUE, pmin)) {
+    expect_equal(
+      RobinsonFoulds(sp[[2]], sp, similarity = TRUE, normalize = normalize),
+      PerPair(RobinsonFoulds, one, trees, similarity = TRUE,
+              normalize = normalize)
+    )
+  }
+  expect_equal(RobinsonFoulds(trees[1:3], trees[4:7], normalize = pmax),
+               RobinsonFoulds(sp[1:3], sp[4:7], normalize = pmax))
+
+  for (Metric in list(MutualClusteringInfo, SharedPhylogeneticInfo,
+                      MatchingSplitInfo)) {
+    for (normalize in list(FALSE, TRUE, pmin)) {
+      allPairs <- Metric(trees, normalize = normalize)
+      expected <- vapply(trees, function(x) {
+        PerPair(Metric, x, trees, normalize = normalize)
+      }, double(length(trees)))
+      expect_equal(unname(allPairs), unname(expected), tolerance = 1e-12)
+      noDiag <- Metric(trees, normalize = normalize, diag = FALSE)
+      expect_s3_class(noDiag, "dist")
+      expect_equal(as.matrix(noDiag)[2, 5], expected[2, 5], tolerance = 1e-12)
+    }
+  }
+  for (normalize in list(TRUE, pmin)) {
+    expect_equal(as.matrix(InfoRobinsonFoulds(trees, normalize = normalize))[3, 6],
+                 InfoRobinsonFoulds(trees[[3]], trees[[6]],
+                                    normalize = normalize),
+                 tolerance = 1e-12)
+  }
+  expect_equal(MutualClusteringInfo(one)[1, 1], ClusteringEntropy(one))
+  small <- as.phylo(0:2, 3)
+  expect_equal(as.vector(MutualClusteringInfo(small, diag = FALSE)), double(3))
+  pruned <- c(trees[1:2], DropTip(trees[[3]], "t1"))
+  expect_equal(as.matrix(MutualClusteringInfo(pruned))[3, 1],
+               MutualClusteringInfo(pruned[[3]], pruned[[1]]))
+
+  for (scale in c(TRUE, FALSE)) {
+    expected <- PerPair(TransferDist, one, trees, scale = scale)
+    expect_equal(TransferDist(sp, sp[[2]], scale = scale), expected)
+    expect_equal(TransferDist(sp[4:7], trees[1:3], scale = scale)[, 2],
+                 expected[4:7])
+  }
+  expect_equal(PathDist(one, trees), PerPair(PathDist, one, trees))
+  expect_equal(KendallColijn(trees, one), PerPair(KendallColijn, one, trees))
+  expect_equal(KendallColijn(trees, one, Vector = SplitVector),
+               PerPair(KendallColijn, one, trees, Vector = SplitVector))
+})
+
+test_that("KendallColijn() orders each tree's own leaves", {
+  trees <- as.phylo(0:1, 8)
+  other <- trees[[2]]
+  other[["tip.label"]] <- paste0("s", 8:1)
+  mixed <- structure(list(trees[[1]], other), class = "multiPhylo")
+  expect_equal(KendallColijn(mixed)[[1]],
+               sqrt(sum((KCVector(trees[[1]]) - KCVector(other)) ^ 2)))
 })

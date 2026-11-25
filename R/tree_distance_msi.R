@@ -2,6 +2,14 @@
 #' @export
 MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                reportMatching = FALSE, diag = TRUE) {
+  fast <- .FastSimilarity(tree1, tree2, normalize, reportMatching, diag,
+                          cpp_msi_all_pairs, cpp_splitwise_info_batch,
+                          cpp_msi_cross_pairs)
+  if (!is.null(fast)) {
+    return(NormalizeInfo(fast[["scores"]], tree1, tree2, SplitwiseInfo,
+                         infoInBoth = fast[["infoInBoth"]], how = normalize,
+                         Combine = .PairMean))
+  }
   unnormalized <- CalculateTreeDistance(MatchingSplitInfoSplits, tree1,
                                         tree2, reportMatching)
   
@@ -39,13 +47,10 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
 
   # Fast path (cross-pairs): same tips, no matching — avoids duplicate as.Splits()
   fast_many <- .FastManyManyPath(tree1, tree2, reportMatching,
-                                 cpp_msi_cross_pairs,
-                                 cpp_splitwise_info_batch)
+                                 cpp_msi_cross_pairs)
   if (!is.null(fast_many)) {
     msi <- fast_many[["dists"]]
-    info1 <- fast_many[["info1"]]
-    info2 <- fast_many[["info2"]]
-    treesIndependentInfo <- outer(info1, info2, "+")
+    treesIndependentInfo <- fast_many[["infoBoth"]]
 
     ret <- .FloorNumericalNoise(treesIndependentInfo - msi - msi, treesIndependentInfo)
     ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,

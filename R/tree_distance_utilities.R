@@ -44,7 +44,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     stop("`tree1` must be a tree, or list of trees, with class ", 
          paste(supportedClasses, collapse = " / "))
   }
-  labels1 <- TipLabels(tree1)
+  labels1 <- if (!single1 && inherits(tree2, supportedClasses)) {
+    .TipLabelsLike(tree1, TipLabels(tree2))
+  } else {
+    TipLabels(tree1)
+  }
   if (is.list(labels1)) {
     if (!all(vapply(labels1[-1], setequal, logical(1), labels1[[1]]))) {
       nTip <- NA
@@ -63,7 +67,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       stop("`tree2` must be a tree, or list of trees, with class ", 
            paste(supportedClasses, collapse = " / "))
     }
-    labels2 <- TipLabels(tree2)
+    labels2 <- .TipLabelsLike(tree2, labels1)
     if (is.list(labels2)) {
       if (!all(vapply(labels2[-1], setequal, logical(1), labels2[[1]]))) {
         nTip <- NA
@@ -140,6 +144,12 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       )
     }, dots = list(manySplits, common), MoreArgs = NULL)), names(manySplits))
   } else {
+    .CheckMaxTips(nTip)
+    batch <- .BatchCrossPairs(Func, .WrapSingle(oneSplit), manySplits,
+                              tipLabels, nTip, ...)
+    if (!is.null(batch)) {
+      return(setNames(batch[1, ], names(manySplits)))
+    }
     s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
     vapply(manySplits,
            function(s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
@@ -292,55 +302,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       setNames(double(length(splits2)), names(splits2))
     ))
   } else {
-    # Fast path: use OpenMP batch functions when available
-    .n_threads <- as.integer(getOption("mc.cores", 1L))
-    .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_mutual_clustering_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
-
-    } else if (identical(Func, InfoRobinsonFouldsSplits)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_rf_info_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
-
-    } else if (identical(Func, MatchingSplitDistanceSplits)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_msd_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
-
-    } else if (identical(Func, MatchingSplitInfoSplits)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_msi_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
-
-    } else if (identical(Func, SharedPhylogeneticInfoSplits)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_shared_phylo_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
-
-    } else if (identical(Func, NyeSplitSimilarity)) {
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_jaccard_cross_pairs(s1, s2, as.integer(nTip),
-                              k = 1.0, allow_conflict = TRUE, .n_threads)
-
-    } else if (identical(Func, JaccardSplitSimilarity)) {
-      dots <- list(...)
-      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-      cpp_jaccard_cross_pairs(
-        s1, s2, as.integer(nTip),
-        k = as.double(if ("k" %in% names(dots)) dots[["k"]] else 1L),
-        allow_conflict = as.logical(
-          if ("allowConflict" %in% names(dots)) dots[["allowConflict"]] else TRUE),
-        .n_threads
-      )
-
-    } else {
-      NULL
-    }
-
+    .batch_result <- .BatchCrossPairs(Func, splits1, splits2, tipLabels, nTip,
+                                      ...)
     if (!is.null(.batch_result)) {
       dimnames(.batch_result) <- list(names(splits1), names(splits2))
       return(.batch_result)
@@ -355,6 +318,76 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       length(splits2),
       dimnames = list(names(splits1), names(splits2))
     )
+  }
+}
+
+# Wrap a single tree or Splits object as a list of length one
+.WrapSingle <- function(x) {
+  if (inherits(x, "phylo")) {
+    structure(list(x), class = "multiPhylo")
+  } else {
+    list(x)
+  }
+}
+
+# Score every pair from two lists of trees that share leaves via the batched
+# C++ kernel for `Func`; NULL when `Func` has no such kernel.
+.BatchCrossPairs <- function(Func, trees1, trees2, tipLabels, nTip, ...) {
+  .Kernel <- if (identical(Func, MutualClusteringInfoSplits)) {
+    cpp_mutual_clustering_cross_pairs
+  } else if (identical(Func, InfoRobinsonFouldsSplits)) {
+    cpp_rf_info_cross_pairs
+  } else if (identical(Func, MatchingSplitDistanceSplits)) {
+    cpp_msd_cross_pairs
+  } else if (identical(Func, MatchingSplitInfoSplits)) {
+    cpp_msi_cross_pairs
+  } else if (identical(Func, SharedPhylogeneticInfoSplits)) {
+    cpp_shared_phylo_cross_pairs
+  } else if (identical(Func, NyeSplitSimilarity)) {
+    function(s1, s2, nTip, nThreads) {
+      cpp_jaccard_cross_pairs(s1, s2, nTip, k = 1.0, allow_conflict = TRUE,
+                              n_threads = nThreads)
+    }
+  } else if (identical(Func, JaccardSplitSimilarity)) {
+    dots <- list(...)
+    k <- as.double(if ("k" %in% names(dots)) dots[["k"]] else 1L)
+    allowConflict <- as.logical(
+      if ("allowConflict" %in% names(dots)) dots[["allowConflict"]] else TRUE
+    )
+    function(s1, s2, nTip, nThreads) {
+      cpp_jaccard_cross_pairs(s1, s2, nTip, k = k,
+                              allow_conflict = allowConflict,
+                              n_threads = nThreads)
+    }
+  }
+  if (is.null(.Kernel)) {
+    return(NULL)
+  }
+  # Return:
+  .Kernel(
+    .SplitsOn(trees1, tipLabels),
+    .SplitsOn(trees2, tipLabels),
+    as.integer(nTip), as.integer(getOption("mc.cores", 1L))
+  )
+}
+
+# as.Splits(trees, tipLabels), skipping the per-tree R calls when `trees`
+# already holds Splits on exactly these labels
+.SplitsOn <- function(trees, tipLabels) {
+  if (cpp_splits_on_labels(trees, tipLabels)) {
+    trees
+  } else {
+    as.Splits(trees, tipLabels = tipLabels, asSplits = FALSE)
+  }
+}
+
+# TipLabels(trees), taking the labels of `like` when `trees` are Splits on
+# exactly those labels
+.TipLabelsLike <- function(trees, like) {
+  if (!is.list(like) && cpp_splits_on_labels(trees, like)) {
+    like
+  } else {
+    TipLabels(trees)
   }
 }
 

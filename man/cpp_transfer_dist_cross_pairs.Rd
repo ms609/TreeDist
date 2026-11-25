@@ -4,7 +4,7 @@
 \alias{cpp_transfer_dist_cross_pairs}
 \title{Cross-pairs transfer dissimilarity (OpenMP)}
 \usage{
-cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads)
+cpp_transfer_dist_cross_pairs(splits_a, splits_b, n_tip, scale, n_threads = 1L)
 }
 \arguments{
 \item{splits_a, splits_b}{Lists of raw matrices.}

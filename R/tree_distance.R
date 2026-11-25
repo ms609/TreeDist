@@ -120,23 +120,21 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 .FastDistPath <- function(tree1, tree2, reportMatching,
                           cpp_batch_fn, cpp_entropy_fn) {
   if (!is.null(tree2) || reportMatching) return(NULL)
-  if (inherits(tree1, c("phylo", "Splits"))) return(NULL) # nocov
+  if (inherits(tree1, c("phylo", "Splits"))) return(NULL)
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
   
   labs <- TipLabels(tree1)
   if (is.list(labs)) {
-    # nocov start
     if (!all(vapply(labs[-1], setequal, logical(1), labs[[1]]))) return(NULL)
     tipLabels <- labs[[1]]
-    # nocov end
   } else {
     tipLabels <- labs
   }
   nTip <- length(tipLabels)
-  if (nTip < 4) return(NULL) # nocov
+  if (nTip < 4) return(NULL)
   .CheckMaxTips(nTip)
   
-  splits_list <- as.Splits(tree1, tipLabels = tipLabels)
+  splits_list <- .SplitsOn(tree1, tipLabels)
   n_threads <- as.integer(getOption("mc.cores", 1L))
   
   info_vec <- cpp_batch_fn(splits_list, as.integer(nTip), n_threads)
@@ -153,20 +151,56 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 # Fast path for cross-pairs (ManyMany): avoids duplicate as.Splits() calls by
 # computing both pairwise distances and per-tree entropies in a single pass.
 # Returns NULL when not applicable. When applicable, returns list with:
-#   $dists: nA × nB matrix of pairwise distances
-#   $info1: per-tree entropies for tree1 (length nA)
-#   $info2: per-tree entropies for tree2 (length nB)
+#   $dists: nA × nB matrix of pairwise distances, or a vector if either
+#           input is a single tree
+#   $info1, $info2: each tree's information, if `withInfo`
+#   $infoBoth: summed per-tree information, with the same shape as $dists
+#' @importFrom stats setNames
 #' @importFrom TreeTools as.Splits TipLabels
 .FastManyManyPath <- function(tree1, tree2, reportMatching,
-                              cpp_cross_pairs_fn, cpp_entropy_fn) {
+                              cpp_cross_pairs_fn, withInfo = TRUE) {
   if (is.null(tree2) || reportMatching) return(NULL)
-  if (inherits(tree1, c("phylo", "Splits")) || inherits(tree2, c("phylo", "Splits"))) {
-    return(NULL) # nocov
-  }
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
-  
-  lab1 <- TipLabels(tree1)
-  lab2 <- TipLabels(tree2)
+  x <- .CrossSplits(tree1, tree2)
+  if (is.null(x)) return(NULL)
+  n_threads <- as.integer(getOption("mc.cores", 1L))
+  dists <- cpp_cross_pairs_fn(x[["splits1"]], x[["splits2"]], x[["nTip"]],
+                              n_threads, with_info = withInfo)
+  info1 <- attr(dists, "info_a")
+  info2 <- attr(dists, "info_b")
+  attributes(dists) <- list(dim = dim(dists))
+  infoBoth <- if (withInfo) outer(info1, info2, "+")
+  if (x[["single1"]]) {
+    dists <- setNames(dists[1, ], x[["names2"]])
+    infoBoth <- infoBoth[1, ]
+  } else if (x[["single2"]]) {
+    dists <- setNames(dists[, 1], x[["names1"]])
+    infoBoth <- infoBoth[, 1]
+  } else {
+    dimnames(dists) <- list(x[["names1"]], x[["names2"]])
+  }
+
+  list(dists = dists, info1 = info1, info2 = info2, infoBoth = infoBoth)
+}
+
+# Splits for a cross-pairs kernel to compare `tree1` with `tree2`, at least
+# one of which is a list; NULL unless all trees share a set of >= 4 leaves.
+.CrossSplits <- function(tree1, tree2) {
+  single1 <- inherits(tree1, c("phylo", "Splits"))
+  single2 <- inherits(tree2, c("phylo", "Splits"))
+  if (single1 && single2) return(NULL)
+  names1 <- names(tree1)
+  names2 <- names(tree2)
+  if (single1) tree1 <- .WrapSingle(tree1)
+  if (single2) tree2 <- .WrapSingle(tree2)
+
+  if (single2) {
+    lab2 <- TipLabels(tree2)
+    lab1 <- .TipLabelsLike(tree1, lab2)
+  } else {
+    lab1 <- TipLabels(tree1)
+    lab2 <- .TipLabelsLike(tree2, lab1)
+  }
   
   # Check tip label agreement
   if (is.list(lab1)) {
@@ -190,23 +224,66 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   if (nTip < 4) return(NULL)
   .CheckMaxTips(nTip)
   
-  splits1 <- as.Splits(tree1, tipLabels = tipLabels1)
-  splits2 <- as.Splits(tree2, tipLabels = tipLabels1)  # Use tipLabels1 to ensure order consistency
-  n_threads <- as.integer(getOption("mc.cores", 1L))
-  
-  dists <- cpp_cross_pairs_fn(splits1, splits2, as.integer(nTip), n_threads)
-  info1 <- cpp_entropy_fn(splits1, as.integer(nTip))
-  info2 <- cpp_entropy_fn(splits2, as.integer(nTip))
-  
-  # Add row/column names to the distance matrix
-  rownames(dists) <- names(tree1)
-  colnames(dists) <- names(tree2)
-  
   list(
-    dists = dists,
-    info1 = info1,
-    info2 = info2
+    splits1 = .SplitsOn(tree1, tipLabels1),
+    splits2 = .SplitsOn(tree2, tipLabels1),
+    nTip = nTip, single1 = single1, single2 = single2,
+    names1 = names1, names2 = names2
   )
+}
+
+# Information against which NormalizeInfo() should scale scores between trees
+# carrying information `info1` and `info2`; NULL where `how` supplies it, or
+# where no normalization is required.
+.InfoToNormalize <- function(info1, info2, how, Combine, lower = FALSE) {
+  if (!isTRUE(how) && !is.function(how)) {
+    return(NULL)
+  }
+  single <- length(info1) == 1 || length(info2) == 1
+  if (is.function(how) && single) {
+    # User functions need not be vectorized, as in NormalizeInfo()
+    return(unlist(.mapply(how, list(info1, info2), NULL)))
+  }
+  ret <- outer(info1, info2, if (is.function(how)) how else Combine)
+  if (lower) {
+    ret[lower.tri(ret)]
+  } else if (single) {
+    as.vector(ret)
+  } else {
+    ret
+  }
+}
+
+# Similarities, and the information to normalize them against, from the batch
+# kernels that score them; NULL where these do not apply.
+.FastSimilarity <- function(tree1, tree2, normalize, reportMatching, diag,
+                            cpp_all_pairs_fn, cpp_info_fn, cpp_cross_pairs_fn) {
+  if (is.null(tree2)) {
+    fast <- .FastDistPath(tree1, NULL, reportMatching, cpp_all_pairs_fn,
+                          cpp_info_fn)
+    if (is.null(fast)) {
+      return(NULL)
+    }
+    info <- fast[["entropies"]]
+    scores <- fast[["info"]]
+    if (diag) {
+      scores <- as.matrix(scores)
+      diag(scores) <- info
+    }
+    infoInBoth <- .InfoToNormalize(info, info, normalize, .PairMean,
+                                   lower = !diag)
+  } else {
+    fast <- .FastManyManyPath(tree1, tree2, reportMatching,
+                              cpp_cross_pairs_fn,
+                              isTRUE(normalize) || is.function(normalize))
+    if (is.null(fast)) {
+      return(NULL)
+    }
+    scores <- fast[["dists"]]
+    infoInBoth <- .InfoToNormalize(fast[["info1"]], fast[["info2"]], normalize,
+                                   .PairMean)
+  }
+  list(scores = scores, infoInBoth = infoInBoth)
 }
 
 # Lower-tri pairwise sums: outer(x, x, "+")[lower.tri(.)]
