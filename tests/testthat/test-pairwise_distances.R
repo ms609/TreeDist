@@ -252,6 +252,18 @@ test_that("One-to-many distances use batch kernels and match per-pair scores", {
   expect_null(names(ClusteringInfoDistance(one, unnamed)))
   expect_null(names(MutualClusteringInfo(unnamed, one)))
 
+  # Each *Splits function reaches its kernel through CalculateTreeDistance()
+  for (Func in list(MutualClusteringInfoSplits, InfoRobinsonFouldsSplits,
+                    MatchingSplitDistanceSplits, MatchingSplitInfoSplits,
+                    SharedPhylogeneticInfoSplits, NyeSplitSimilarity,
+                    JaccardSplitSimilarity)) {
+    expect_equal(
+      CalculateTreeDistance(Func, one, many),
+      vapply(many, CalculateTreeDistance, double(1), Func = Func, tree1 = one),
+      tolerance = 1e-10
+    )
+  }
+
   # Functions without a batch kernel score pair by pair
   expect_equal(
     CalculateTreeDistance(RobinsonFouldsSplits, one, many),
